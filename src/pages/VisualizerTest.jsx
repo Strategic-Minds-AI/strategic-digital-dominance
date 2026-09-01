@@ -98,7 +98,7 @@ export default function VisualizerTest() {
           <label className="block text-sm font-semibold text-stone-700 mb-2">
             Color Chart ({colorRecords.length} colors) — Selected: {selectedColor?.name} ({selectedColor?.code}) — Hex: {selectedColor?.hex}
           </label>
-          <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 max-h-48 overflow-y-auto p-1">
+          <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 max-h-56 overflow-y-auto p-1">
             {colorRecords.map((c) => (
               <button
                 key={c.code}
@@ -109,8 +109,18 @@ export default function VisualizerTest() {
                     : "border-stone-200 bg-white hover:border-stone-300"
                 }`}
               >
-                <span className="h-8 w-full rounded" style={{ background: c.hex }} />
-                <span className="text-[10px] text-stone-600 truncate w-full text-center">{c.name}</span>
+                {c.image_url ? (
+                  <img
+                    src={c.image_url}
+                    alt={c.name}
+                    loading="lazy"
+                    className="h-12 w-full object-cover object-top rounded"
+                  />
+                ) : (
+                  <span className="h-12 w-full rounded" style={{ background: c.hex }} />
+                )}
+                <span className="text-[10px] font-medium text-stone-700 truncate w-full text-center">{c.name}</span>
+                <span className="text-[9px] text-stone-400">{c.code}</span>
               </button>
             ))}
           </div>
