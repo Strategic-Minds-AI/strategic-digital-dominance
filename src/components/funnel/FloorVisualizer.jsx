@@ -2,7 +2,6 @@ import React, { useState, useMemo, useRef } from "react";
 import { Loader2, Sparkles, AlertCircle, Upload, Wand2 } from "lucide-react";
 import { getSystemColorRecords, getSystemRepresentative } from "@/lib/floorColors";
 import { FLOOR_SYSTEM_DATA } from "@/data/colorData";
-import { compositeFloorImage } from "@/lib/floorComposite";
 import { base44 } from "@/api/base44Client";
 import Disclosure from "@/components/vq/Disclosure";
 import { AI_DISCLOSURE } from "@/lib/brand";
@@ -18,14 +17,14 @@ const FINISHES = [
   { key: "gloss", label: "High Gloss", desc: "High-gloss wet-look with sharp mirror-like reflections" },
 ];
 
-// Visualizer flow from the xtremevisualizer4 package:
+// Visualizer flow (from the xtremevisualizer package):
 // 1. Pick a floor system
-// 2. Pick a color from the system's exact color chart
+// 2. Pick a color from the system's exact manufacturer color chart
 // 3. Pick a finish (Matte / Satin / High Gloss)
 // 4. Upload a photo of the floor
-// 5. Press "Visualize My Floor" — the system composites the exact color chart
-//    color onto the uploaded photo using canvas-based procedural rendering.
-//    This guarantees the EXACT color (no AI guessing).
+// 5. Press "Visualize My Floor" — the user's photo is attached to an AI image
+//    generation call with the exact color name + sheen in the prompt,
+//    producing a before/after with the floor in the chosen color.
 export default function FloorVisualizer({ onPhotoChange, onColorSelected, initialPhoto, initialColor }) {
   // Normalize initialColor: Funnel passes { code, color_name, hex, system }
   // but color records use { name, hex, code, image_url }
@@ -34,6 +33,7 @@ export default function FloorVisualizer({ onPhotoChange, onColorSelected, initia
     : null;
   const [systemName, setSystemName] = useState(normalizedInitial?.system || "Flake Epoxy");
   const [photoUrl, setPhotoUrl] = useState(initialPhoto || "");
+  const [uploadedUrl, setUploadedUrl] = useState(initialPhoto || "");
   const [selectedColor, setSelectedColor] = useState(normalizedInitial);
   const [finish, setFinish] = useState("gloss");
   const [generating, setGenerating] = useState(false);
@@ -67,12 +67,14 @@ export default function FloorVisualizer({ onPhotoChange, onColorSelected, initia
       reader.readAsDataURL(file);
     });
     setPhotoUrl(dataUrl);
+    setUploadedUrl("");
     setConceptUrl("");
 
-    // Upload for storage separately (non-blocking) so the Funnel/Lead has
-    // a permanent URL. If it fails, fall back to the data URL.
+    // Upload for storage — the uploaded URL is publicly fetchable and is what
+    // GenerateImage needs as existing_image_urls (data URLs won't work server-side).
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setUploadedUrl(file_url);
       onPhotoChange?.(file_url);
     } catch {
       onPhotoChange?.(dataUrl);
@@ -85,15 +87,25 @@ export default function FloorVisualizer({ onPhotoChange, onColorSelected, initia
     setError("");
     setConceptUrl("");
     try {
-      // Pass systemName directly — compositeFloorImage normalizes it
-      const dataUrl = await compositeFloorImage(photoUrl, {
-        hex: selectedColor.hex,
-        system: systemName,
-      }, finish);
-      setConceptUrl(dataUrl);
+      // Package visualizer flow: attach the user's floor photo and render the
+      // EXACT color chart color + sheen onto it via AI image generation.
+      const sheenDesc =
+        finish === "matte" ? "flat matte sheen with no reflections" :
+        finish === "satin" ? "soft satin sheen with gentle subtle reflections" :
+        "high-gloss wet-look sheen with sharp mirror-like reflections";
+      const prompt =
+        'Photorealistic interior design rendering of the uploaded room with a newly installed ' +
+        systemName + ' floor in the color "' + (selectedColor.name || "") +
+        '" with a ' + sheenDesc +
+        '. Seamless, professional concrete coating finish. Same room geometry, walls, and lighting as the original photo. High-end real-estate photography, wide angle, natural light.';
+      const res = await base44.integrations.Core.GenerateImage({
+        prompt,
+        existing_image_urls: uploadedUrl ? [uploadedUrl] : undefined,
+      });
+      setConceptUrl(res.url);
     } catch (err) {
       setError(`Could not generate preview: ${err?.message || "Unknown error"}`);
-      console.error("[FloorVisualizer] composite failed:", err);
+      console.error("[FloorVisualizer] generate failed:", err);
     }
     setGenerating(false);
   };
@@ -209,7 +221,7 @@ export default function FloorVisualizer({ onPhotoChange, onColorSelected, initia
         <div>
           <button
             onClick={generate}
-            disabled={generating}
+            disabled={generating || !uploadedUrl}
             className="w-full h-14 rounded-xl flex items-center justify-center gap-2 text-base font-bold disabled:opacity-60 transition"
             style={{
               background: "linear-gradient(180deg, #FFF6D5 0%, #D4AF37 45%, #8B6914 100%)",
@@ -221,6 +233,10 @@ export default function FloorVisualizer({ onPhotoChange, onColorSelected, initia
             {generating ? (
               <>
                 <Loader2 className="h-5 w-5 animate-spin" /> Rendering your floor…
+              </>
+            ) : !uploadedUrl ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" /> Uploading your photo…
               </>
             ) : (
               <>
