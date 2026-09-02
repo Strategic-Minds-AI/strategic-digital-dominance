@@ -1,74 +1,77 @@
-# robots.txt — EpoxyGarageFloorEstimate.com
-# Allow all crawlers, including AI/answer-engine bots, full access.
-
 User-agent: *
 Allow: /
 Disallow: /admin
-Disallow: /app-settings
+Disallow: /admin/
+Disallow: /api/
 Disallow: /app-onboarding
+Disallow: /app-settings
 Disallow: /elite
-Disallow: /download
-Disallow: /questionnaire
 Disallow: /visualizer-test
+Disallow: /questionnaire
+Disallow: /download
 Disallow: /ThankYou
 
-# ── Explicitly allow AI / answer-engine crawlers ──────────────────────────
-# OpenAI (ChatGPT Search, GPTBot)
+# AI / Answer Engine Crawlers — explicitly allowed
 User-agent: GPTBot
 Allow: /
 
 User-agent: OAI-SearchBot
 Allow: /
 
-# Google AI (Gemini, AI Overviews)
+User-agent: ChatGPT-User
+Allow: /
+
 User-agent: Google-Extended
 Allow: /
 
-# Anthropic (Claude)
-User-agent: ClaudeBot
-Allow: /
-
-User-agent: anthropic-ai
-Allow: /
-
-User-agent: Claude-Web
-Allow: /
-
-# Perplexity
 User-agent: PerplexityBot
 Allow: /
 
 User-agent: Perplexity-User
 Allow: /
 
-# Meta AI
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
 User-agent: Meta-ExternalAgent
 Allow: /
 
 User-agent: Meta-ExternalFetcher
 Allow: /
 
-# Apple Intelligence / AppleBot
+User-agent: AppleBot
+Allow: /
+
 User-agent: AppleBot-Extended
 Allow: /
 
-# Cohere
-User-agent: cohere-ai
-Allow: /
-
-# Common Crawl / Bytespider / Others
 User-agent: CCBot
 Allow: /
 
 User-agent: Bytespider
 Allow: /
 
-User-agent: Diffbot
+User-agent: Sogou
 Allow: /
 
-User-agent: ImagesiftBot
+User-agent: DuckDuckBot
 Allow: /
 
-# ── Sitemaps ──────────────────────────────────────────────────────────────
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: CommonCrawl
+Allow: /
+
+# Sitemaps
 Sitemap: https://epoxygaragefloorestimate.com/sitemap.xml
-Sitemap: https://epoxygaragefloorestimate.com/sitemap-index.xml
+Sitemap: https://epoxyquotenearme.com/sitemap-epn.xml

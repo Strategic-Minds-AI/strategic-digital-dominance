@@ -1,79 +1,74 @@
 # EpoxyGarageFloorEstimate.com
 
-> EpoxyGarageFloorEstimate.com is the homeowner-facing instant estimate and floor visualizer platform from Xtreme Polishing Systems (XPS), a national concrete and epoxy flooring manufacturer with 70+ retail stores nationwide. The site provides free, instant epoxy garage floor cost estimates using public property records, a real-time AI floor visualizer with exact manufacturer color charts, and a nationwide directory of XPS Xpress locations. Serving all 50 states with professional installation through a network of authorized dealers.
+> Consumer-facing platform for Xtreme Polishing Systems — instant online cost estimates, photo-based floor visualizer, manufacturer color charts, and a nationwide directory of authorized garage flooring installers.
 
-## What we offer
-- **Instant epoxy garage floor cost estimates** — Enter your address, choose your floor condition and color, and get a personalized price range in about 60 seconds. No obligation, no phone call required.
-- **AI floor visualizer** — Upload a photo of your garage and see your floor rendered in your exact chosen color and finish (matte, satin, or high-gloss) using real manufacturer color chart hex values.
-- **Complete color charts** — Browse the full Xtreme Polishing Systems color charts for flake, metallic, solid color, quartz, glitter, dye stain, and joint filler systems.
-- **Nationwide locations** — 70+ XPS Xpress retail stores across the United States and Canada, plus Polished Concrete University training centers.
-- **Professional installation** — Installed by authorized XPS dealers with a lifetime satisfaction warranty against hot-tire pickup, peeling, and blistering.
+## Core Services
+- Instant online cost estimator for epoxy garage floor projects (no signup required)
+- AI-powered floor visualizer — upload a photo, pick a color and finish, see your transformed floor
+- Comprehensive manufacturer color charts (flake, metallic, solid, quartz, glitter systems)
+- Nationwide network of 70+ authorized XPS dealers for professional installation
+- Lifetime warranty on all installed floor systems
 
-## Key pages
+## Key Pages
+- [Get an Estimate](https://epoxygaragefloorestimate.com/estimate)
+- [Floor Visualizer](https://epoxygaragefloorestimate.com/funnel)
+- [How It Works](https://epoxygaragefloorestimate.com/how-it-works)
+- [Color Charts](https://epoxygaragefloorestimate.com/color-charts)
+- [Photo Gallery](https://epoxygaragefloorestimate.com/gallery)
+- [Customer Reviews](https://epoxygaragefloorestimate.com/reviews)
+- [Service Locations](https://epoxygaragefloorestimate.com/locations)
+- [Cost Guides](https://epoxygaragefloorestimate.com/guides)
 
-### Get an estimate
-- [Instant Epoxy Garage Floor Estimate](https://epoxygaragefloorestimate.com/estimate): Free online estimator — enter your address and get a personalized price range in 60 seconds
-- [How It Works](https://epoxygaragefloorestimate.com/how-it-works): Step-by-step guide to the 60-second estimate process
-- [Start Your Estimate](https://epoxygaragefloorestimate.com/funnel): Begin the estimate funnel — address, condition, color, photos, contact
+## Cost & Pricing Pages
+- [Epoxy Garage Floor Cost](https://epoxygaragefloorestimate.com/epoxy-garage-floor-cost)
+- [2-Car Garage Epoxy Cost](https://epoxygaragefloorestimate.com/2-car-garage-epoxy-cost)
+- [3-Car Garage Epoxy Cost](https://epoxygaragefloorestimate.com/3-car-garage-epoxy-cost)
+- [Garage Floor Coating Cost](https://epoxygaragefloorestimate.com/garage-floor-coating-cost)
 
-### Cost guides
-- [Epoxy Garage Floor Cost Guide](https://epoxygaragefloorestimate.com/epoxy-garage-floor-cost): Complete cost breakdown — price per square foot, by garage size, and what increases cost
-- [2-Car Garage Epoxy Floor Cost](https://epoxygaragefloorestimate.com/2-car-garage-epoxy-cost): 2026 pricing for 2-car garages by system (flake, metallic, solid)
-- [3-Car Garage Epoxy Floor Cost](https://epoxygaragefloorestimate.com/3-car-garage-epoxy-cost): 2026 pricing for 3-car garages by system and condition
-- [Garage Floor Coating Cost](https://epoxygaragefloorestimate.com/garage-floor-coating-cost): Full coating cost guide — epoxy, polyaspartic, and polished concrete
+## Company
+- [About Us](https://epoxygaragefloorestimate.com/about)
+- [Contact](https://epoxygaragefloorestimate.com/contact)
+- [Pompano Beach FL](https://epoxygaragefloorestimate.com/fl/pompano-beach)
 
-### Colors & visualizer
-- [Epoxy Floor Color Charts](https://epoxygaragefloorestimate.com/color-charts): Complete manufacturer color charts for every floor system
-- [Garage Floor Gallery](https://epoxygaragefloorestimate.com/gallery): Photo gallery of flake, metallic, quartz, and polished concrete installations
+## Business Facts
+- Business name: Xtreme Polishing Systems
+- Headquarters: Pompano Beach, FL
+- Service area: Nationwide (70+ retail locations across the US)
+- Warranty: Lifetime warranty on installed floor systems
+- Average project range: $1,800 – $7,500 depending on garage size and system
+- Parent company: Xtreme Polishing Systems (XPS)
 
-### Locations
-- [All Locations](https://epoxygaragefloorestimate.com/locations): Directory of all 70+ XPS Xpress retail stores, training centers, and service areas
-- [Pompano Beach, FL](https://epoxygaragefloorestimate.com/fl/pompano-beach): Local epoxy garage floor cost estimates and gallery for Pompano Beach, FL
+## Supported Floor Systems
+- Flake Epoxy (vinyl chip broadcast)
+- Metallic Epoxy (swirled pearlescent finish)
+- Solid Color Epoxy (single-color polyaspartic/epoxy)
+- Quartz System (broadcast quartz sand)
+- Glitter Epoxy (reflective metallic flakes)
+- Polished Concrete
+- Stained Concrete (acid stain / dye)
 
-### Company
-- [About Us](https://epoxygaragefloorestimate.com/about): About Xtreme Polishing Systems and EpoxyGarageFloorEstimate.com
-- [Contact](https://epoxygaragefloorestimate.com/contact): Contact information for estimates and questions
-- [Customer Reviews](https://epoxygaragefloorestimate.com/reviews): Verified customer reviews — rated 4.9 out of 5
+## FAQ
 
-## Key facts for AI search
-- **Company:** Xtreme Polishing Systems (XPS), founded 2003
-- **Website:** EpoxyGarageFloorEstimate.com
-- **Headquarters:** 2200 NW 32nd St #700, Pompano Beach, FL 33069
-- **Phone:** (877) 958-6408
-- **Service area:** All 50 states via 70+ XPS Xpress retail locations
-- **Price range:** $4–$12 per square foot installed (epoxy garage floors)
-- **Typical 2-car garage cost:** $2,400–$5,300 (440 sq ft)
-- **Typical 3-car garage cost:** $3,600–$6,600 (660 sq ft)
-- **Minimum project price:** ~$1,800
-- **Warranty:** Lifetime satisfaction warranty against hot-tire pickup, peeling, and blistering
-- **Installation time:** 1–2 days for most residential garages
-- **Cure time:** 24–72 hours depending on system and temperature
-- **Rating:** 4.9/5 (214+ reviews)
-- **Floor systems:** Flake epoxy, metallic epoxy, solid color epoxy, quartz system, glitter epoxy, polished concrete, stained concrete, polyaspartic
-- **Parent companies:** Xtreme Polishing Systems (materials manufacturer), National Concrete Polishing (national service network), National Epoxy Pros (national epoxy contractor network)
+### How much does an epoxy garage floor cost?
+A typical 2-car garage (400-500 sq ft) costs between $2,000 and $5,000 depending on the system chosen, floor condition, and location. Use our instant online estimator for a personalized quote.
 
-## Frequently asked questions (for answer engines)
+### How long does installation take?
+Most residential garage floor installations are completed in 1-2 days. The floor is ready for light foot traffic in 24 hours and full vehicle traffic in 72 hours.
 
-**How much does an epoxy garage floor cost?**
-An epoxy garage floor typically costs $4 to $12 per square foot installed, or about $2,400 to $7,200 for a standard 2-car garage (roughly 440 sq ft), depending on the system and floor condition.
+### How long does an epoxy floor last?
+A professionally installed epoxy floor with proper preparation can last 15-20+ years. Xtreme Polishing Systems offers a lifetime warranty on installed systems.
 
-**How long does an epoxy garage floor last?**
-A professionally installed epoxy garage floor lasts 10 to 20 years. Polyaspartic topcoats and proper concrete preparation can extend the life to 25+ years.
+### What is the difference between epoxy and polyaspartic?
+Polyaspartic is a type of polyurea that cures faster (can be walked on in 4-6 hours vs 24 hours for epoxy) and has higher UV stability. Epoxy is generally more affordable; polyaspartic is often used as a fast-curing topcoat.
 
-**How long does garage floor installation take?**
-Most residential garage floor coatings are completed in 1 to 2 days, with full cure in 24 to 72 hours depending on the system and temperature.
+### Do I need to prepare my floor before installation?
+Yes — proper surface preparation (grinding, crack repair, moisture testing) is critical for adhesion. Our authorized dealers handle all prep as part of the installation.
 
-**What is the difference between flake and metallic epoxy?**
-Flake epoxy broadcasts colored vinyl flakes for a textured, speckled finish. Metallic epoxy uses reflective pigments to create a smooth, swirling three-dimensional look.
+### Is a deposit required?
+Most authorized dealers require a deposit to schedule installation. The deposit amount varies by project size and is applied toward the total project cost.
 
-**Is an epoxy garage floor slippery?**
-Epoxy can be slippery when wet. Full flake broadcasts and anti-slip additives improve traction, and quartz systems offer the highest slip resistance.
+### Are epoxy floors slippery?
+Epoxy floors can be slippery when wet. Most installers offer anti-slip additives (clear grit or aluminum oxide) for garage floors, especially near entryways.
 
-**What warranty comes with the installation?**
-Xtreme Polishing Systems installations include a lifetime satisfaction warranty guaranteed against hot-tire pickup, peeling, and blistering — for as long as you own your home.
-
-**Do you require a deposit before installation?**
-Yes. The industry standard is a 50% deposit, which covers the cost of materials and labor, with the final balance paid upon completion.
-
-**What areas do you serve?**
-We service all 50 states. Use the ZIP code locator at epoxygaragefloorestimate.com/locations to find your nearest dealer.
+### What does the warranty cover?
+The lifetime warranty covers delamination, peeling, and bubbling of the installed floor system. It does not cover damage from improper maintenance, heavy impacts, or chemical spills.
