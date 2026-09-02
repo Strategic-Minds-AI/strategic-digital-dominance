@@ -39,25 +39,25 @@
   <url>
     <loc>https://epoxygaragefloorestimate.com/about</loc>
     <lastmod>2026-09-02</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://epoxygaragefloorestimate.com/contact</loc>
     <lastmod>2026-09-02</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://epoxygaragefloorestimate.com/locations</loc>
     <lastmod>2026-09-02</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://epoxygaragefloorestimate.com/color-charts</loc>
     <lastmod>2026-09-02</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
@@ -69,32 +69,32 @@
   <url>
     <loc>https://epoxygaragefloorestimate.com/epoxy-garage-floor-cost</loc>
     <lastmod>2026-09-02</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://epoxygaragefloorestimate.com/2-car-garage-epoxy-cost</loc>
     <lastmod>2026-09-02</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://epoxygaragefloorestimate.com/3-car-garage-epoxy-cost</loc>
     <lastmod>2026-09-02</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://epoxygaragefloorestimate.com/garage-floor-coating-cost</loc>
     <lastmod>2026-09-02</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://epoxygaragefloorestimate.com/fl/pompano-beach</loc>
     <lastmod>2026-09-02</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
   <url>
     <loc>https://epoxygaragefloorestimate.com/fl/miami</loc>
@@ -371,5 +371,11 @@
     <lastmod>2026-09-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://epoxygaragefloorestimate.com/polyaspartic-vs-epoxy-garage-floor</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 </urlset>
