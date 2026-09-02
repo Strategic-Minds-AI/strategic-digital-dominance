@@ -1,47 +1,74 @@
-# Allow all crawlers including AI answer engines
+# robots.txt — EpoxyGarageFloorEstimate.com
+# Allow all crawlers, including AI/answer-engine bots, full access.
+
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /app-settings
+Disallow: /app-onboarding
+Disallow: /elite
+Disallow: /download
+Disallow: /questionnaire
+Disallow: /visualizer-test
+Disallow: /ThankYou
 
-# Explicitly allow AI/LLM crawlers (answer engine optimization)
+# ── Explicitly allow AI / answer-engine crawlers ──────────────────────────
+# OpenAI (ChatGPT Search, GPTBot)
 User-agent: GPTBot
 Allow: /
 
-User-agent: ChatGPT-User
+User-agent: OAI-SearchBot
 Allow: /
 
+# Google AI (Gemini, AI Overviews)
+User-agent: Google-Extended
+Allow: /
+
+# Anthropic (Claude)
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+# Perplexity
 User-agent: PerplexityBot
 Allow: /
 
 User-agent: Perplexity-User
 Allow: /
 
-User-agent: Claude-Web
+# Meta AI
+User-agent: Meta-ExternalAgent
 Allow: /
 
-User-agent: ClaudeBot
+User-agent: Meta-ExternalFetcher
 Allow: /
 
-User-agent: Google-Extended
+# Apple Intelligence / AppleBot
+User-agent: AppleBot-Extended
+Allow: /
+
+# Cohere
+User-agent: cohere-ai
+Allow: /
+
+# Common Crawl / Bytespider / Others
+User-agent: CCBot
 Allow: /
 
 User-agent: Bytespider
 Allow: /
 
-User-agent: CCBot
+User-agent: Diffbot
 Allow: /
 
-User-agent: Applebot
+User-agent: ImagesiftBot
 Allow: /
 
-User-agent: Amazonbot
-Allow: /
-
-# Block resource-heavy or non-content crawlers
-User-agent: AhrefsBot
-Allow: /
-
-User-agent: SemrushBot
-Allow: /
-
-# Sitemaps
+# ── Sitemaps ──────────────────────────────────────────────────────────────
 Sitemap: https://epoxygaragefloorestimate.com/sitemap.xml
+Sitemap: https://epoxygaragefloorestimate.com/sitemap-index.xml

@@ -1,145 +1,177 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- ════════════════════════════════════════════════════════════════════ -->
+  <!--  EpoxyGarageFloorEstimate.com — Comprehensive Sitemap                  -->
+  <!--  Last updated: 2026-09-02                                              -->
+  <!-- ════════════════════════════════════════════════════════════════════ -->
+
+  <!-- ── Core / priority pages ─────────────────────────────────────────────── -->
   <url>
     <loc>https://epoxygaragefloorestimate.com/</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-09-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://epoxygaragefloorestimate.com/estimate</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-09-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://epoxygaragefloorestimate.com/funnel</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-09-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://epoxygaragefloorestimate.com/how-it-works</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-09-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://epoxygaragefloorestimate.com/gallery</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-09-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://epoxygaragefloorestimate.com/reviews</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://epoxygaragefloorestimate.com/locations</loc>
+    <lastmod>2026-09-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://epoxygaragefloorestimate.com/color-charts</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://epoxygaragefloorestimate.com/guides</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://epoxygaragefloorestimate.com/about</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-09-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://epoxygaragefloorestimate.com/contact</loc>
-    <lastmod>2026-08-11</lastmod>
+    <lastmod>2026-09-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
-  <url>
-    <loc>https://epoxygaragefloorestimate.com/locations</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://epoxygaragefloorestimate.com/color-charts</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://epoxygaragefloorestimate.com/guides</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
+
+  <!-- ── Cost / pricing guides (high commercial intent) ────────────────────── -->
   <url>
     <loc>https://epoxygaragefloorestimate.com/epoxy-garage-floor-cost</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://epoxygaragefloorestimate.com/2-car-garage-epoxy-cost</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://epoxygaragefloorestimate.com/3-car-garage-epoxy-cost</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://epoxygaragefloorestimate.com/garage-floor-coating-cost</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
-  <url>
-    <loc>https://epoxygaragefloorestimate.com/fl/pompano-beach</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url><loc>https://epoxygaragefloorestimate.com/fl/miami</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/fl/tampa</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/fl/orlando-altamonte-springs</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/fl/pensacola</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/fl/fort-myers</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/fl/orlando-winter-garden</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/fl/naples</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/fl/port-st-lucie</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/fl/jacksonville</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/fl/sarasota</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/fl/daytona-beach</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/tx/austin</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/tx/amarillo</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/tx/dallas-allen</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/tx/dallas-euless</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/tx/houston</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/tx/south-houston</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/tx/san-antonio</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/tx/el-paso</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/tx/mcallen</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/va/portsmouth-tidewater</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/va/chantilly</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/dc/washington-dc</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/ny/marcy</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/ny/westchester</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/ny/long-island</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/nj/garfield</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/pa/greater-philadelphia</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/pa/pottsville</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/sc/charleston</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/sc/greenville</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/ga/atlanta-marietta</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/ga/savannah</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/ga/atlanta-stone-mountain</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/nc/charlotte</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/nc/raleigh</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/ok/oklahoma-city</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/wi/milwaukee</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/tn/nashville</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/tn/chattanooga</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/ky/louisville</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/ia/cedar-rapids</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/il/chicago</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/il/rockford</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/mi/bloomfield</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://epoxygaragefloorestimate.com/co/denver-englewood</loc><lastmod>2026-08-11</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- ── Location pages (programmatic local SEO) ───────────────────────────── -->
+  <!-- Florida -->
+  <url><loc>https://epoxygaragefloorestimate.com/fl/pompano-beach</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/fl/miami</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/fl/tampa</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/fl/orlando-altamonte-springs</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/fl/pensacola</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/fl/fort-myers</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/fl/orlando-winter-garden</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/fl/naples</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/fl/port-st-lucie</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/fl/jacksonville</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/fl/sarasota</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/fl/daytona-beach</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Texas -->
+  <url><loc>https://epoxygaragefloorestimate.com/tx/austin</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/tx/amarillo</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/tx/dallas-allen</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/tx/dallas-euless</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/tx/houston</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/tx/south-houston</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/tx/san-antonio</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/tx/el-paso</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/tx/mcallen</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Virginia / DC -->
+  <url><loc>https://epoxygaragefloorestimate.com/va/portsmouth-tidewater</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/va/chantilly</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/dc/washington-dc</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- New York -->
+  <url><loc>https://epoxygaragefloorestimate.com/ny/marcy</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/ny/westchester</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/ny/long-island</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- New Jersey / Pennsylvania -->
+  <url><loc>https://epoxygaragefloorestimate.com/nj/garfield</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/pa/greater-philadelphia</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/pa/pottsville</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- South Carolina -->
+  <url><loc>https://epoxygaragefloorestimate.com/sc/charleston</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/sc/greenville</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Georgia -->
+  <url><loc>https://epoxygaragefloorestimate.com/ga/atlanta-marietta</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/ga/savannah</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/ga/atlanta-stone-mountain</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- North Carolina -->
+  <url><loc>https://epoxygaragefloorestimate.com/nc/charlotte</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/nc/raleigh</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Oklahoma / Wisconsin -->
+  <url><loc>https://epoxygaragefloorestimate.com/ok/oklahoma-city</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/wi/milwaukee</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Tennessee / Kentucky -->
+  <url><loc>https://epoxygaragefloorestimate.com/tn/nashville</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/tn/chattanooga</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/ky/louisville</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Iowa / Illinois -->
+  <url><loc>https://epoxygaragefloorestimate.com/ia/cedar-rapids</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/il/chicago</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/il/rockford</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Michigan / Colorado -->
+  <url><loc>https://epoxygaragefloorestimate.com/mi/bloomfield</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://epoxygaragefloorestimate.com/co/denver-englewood</loc><lastmod>2026-09-02</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
 </urlset>
