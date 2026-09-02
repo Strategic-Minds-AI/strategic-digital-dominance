@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Loader2, Upload, Wand2, AlertCircle } from "lucide-react";
-import { compositeFloorImage } from "@/lib/floorComposite";
+import { Loader2, Upload, Wand2, AlertCircle, Sparkles } from "lucide-react";
+import { base44 } from "@/api/base44Client";
 import { getSystemColorRecords } from "@/lib/floorColors";
 import { FLOOR_SYSTEM_DATA } from "@/data/colorData";
+import { AI_DISCLOSURE } from "@/lib/brand";
+import Disclosure from "@/components/vq/Disclosure";
 
 // Sample garage photo — a plain concrete garage interior
 const SAMPLE_PHOTO = "https://images.unsplash.com/photo-1605152276897-4296181db00d?w=1200&q=80";
@@ -11,10 +13,18 @@ const SYSTEMS = FLOOR_SYSTEM_DATA
   .filter((s) => s.name !== "Joint Fill & Repair")
   .map((s) => s.name);
 
+const FINISHES = [
+  { key: "Matte", desc: "flat matte sheen with no reflections" },
+  { key: "Satin", desc: "soft satin sheen with gentle subtle reflections" },
+  { key: "High Gloss", desc: "high-gloss wet-look sheen with sharp mirror-like reflections" },
+];
+
 export default function VisualizerTest() {
   const [systemName, setSystemName] = useState("Flake Epoxy");
   const [photoUrl, setPhotoUrl] = useState(SAMPLE_PHOTO);
+  const [uploadedUrl, setUploadedUrl] = useState("");
   const [conceptUrl, setConceptUrl] = useState("");
+  const [finish, setFinish] = useState("High Gloss");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [debugInfo, setDebugInfo] = useState("");
@@ -39,27 +49,44 @@ export default function VisualizerTest() {
       reader.readAsDataURL(file);
     });
     setPhotoUrl(dataUrl);
+    setUploadedUrl("");
     setConceptUrl("");
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setUploadedUrl(file_url);
+    } catch {
+      // data URL fallback — AI gen needs a public URL, so show error if upload fails
+    }
   };
 
   const generate = async () => {
-    if (!photoUrl || !selectedColor?.hex) {
-      setError("Missing photo or color");
+    if (!uploadedUrl) {
+      setError("Upload a photo first (the sample photo can't be used for AI rendering).");
+      return;
+    }
+    if (!selectedColor?.name) {
+      setError("Missing color selection");
       return;
     }
     setLoading(true);
     setError("");
     setConceptUrl("");
-    setDebugInfo(`System: ${systemName} | Hex: ${selectedColor.hex} | Name: ${selectedColor.name}`);
+    setDebugInfo(`System: ${systemName} | Color: ${selectedColor.name} | Finish: ${finish}`);
     try {
-      const dataUrl = await compositeFloorImage(photoUrl, {
-        hex: selectedColor.hex,
-        system: systemName,
-      }, "gloss");
-      setConceptUrl(dataUrl);
+      const sheenDesc = FINISHES.find((f) => f.key === finish)?.desc || FINISHES[2].desc;
+      const prompt =
+        'Photorealistic interior design rendering of the uploaded room with a newly installed ' +
+        systemName + ' floor in the color "' + (selectedColor.name || "") +
+        '" with a ' + sheenDesc +
+        '. Seamless, professional concrete coating finish. Same room geometry, walls, and lighting as the original photo. High-end real-estate photography, wide angle, natural light.';
+      const res = await base44.integrations.Core.GenerateImage({
+        prompt,
+        existing_image_urls: [uploadedUrl],
+      });
+      setConceptUrl(res.url);
     } catch (err) {
       setError(`FAILED: ${err?.message || err}`);
-      console.error("[VisualizerTest] composite failed:", err);
+      console.error("[VisualizerTest] AI generate failed:", err);
     }
     setLoading(false);
   };
@@ -67,10 +94,10 @@ export default function VisualizerTest() {
   return (
     <div className="min-h-screen bg-stone-50 p-4 sm:p-8">
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-2xl font-bold text-stone-900 mb-2">Visualizer Test — Forensic Proof</h1>
+        <h1 className="text-2xl font-bold text-stone-900 mb-2">Visualizer Test — AI Render</h1>
         <p className="text-sm text-stone-500 mb-6">
-          This page proves the canvas composite renders the EXACT color chart hex onto the floor.
-          Pick a system, pick a color, upload or use the sample photo, then press Generate.
+          Upload a photo, pick a system + color + finish, then generate an AI-rendered preview.
+          This uses the same GenerateImage workflow as the package visualizer.
         </p>
 
         {/* System picker */}
@@ -96,7 +123,7 @@ export default function VisualizerTest() {
         {/* Color picker */}
         <div className="mb-4">
           <label className="block text-sm font-semibold text-stone-700 mb-2">
-            Color Chart ({colorRecords.length} colors) — Selected: {selectedColor?.name} ({selectedColor?.code}) — Hex: {selectedColor?.hex}
+            Color Chart ({colorRecords.length} colors) — Selected: {selectedColor?.name} ({selectedColor?.code})
           </label>
           <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 max-h-56 overflow-y-auto p-1">
             {colorRecords.map((c) => (
@@ -126,6 +153,26 @@ export default function VisualizerTest() {
           </div>
         </div>
 
+        {/* Finish picker */}
+        <div className="mb-4">
+          <label className="block text-sm font-semibold text-stone-700 mb-2">Finish</label>
+          <div className="flex flex-wrap gap-2">
+            {FINISHES.map((f) => (
+              <button
+                key={f.key}
+                onClick={() => { setFinish(f.key); setConceptUrl(""); }}
+                className={`px-3 py-2 rounded-lg text-sm font-medium border transition ${
+                  finish === f.key
+                    ? "border-amber-500 bg-amber-50 text-stone-900"
+                    : "border-stone-200 bg-white text-stone-600 hover:border-stone-300"
+                }`}
+              >
+                {f.key}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Photo upload */}
         <div className="mb-4">
           <label className="block text-sm font-semibold text-stone-700 mb-2">Photo</label>
@@ -134,22 +181,31 @@ export default function VisualizerTest() {
               onClick={() => fileInputRef.current?.click()}
               className="relative w-48 h-32 rounded-lg border-2 border-dashed border-stone-300 hover:border-amber-500 transition cursor-pointer overflow-hidden bg-stone-100"
             >
-              <img src={photoUrl} alt="Floor photo" className="w-full h-full object-cover" />
+              {photoUrl ? (
+                <img src={photoUrl} alt="Floor photo" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full grid place-items-center">
+                  <Upload className="h-8 w-8 text-stone-400" />
+                </div>
+              )}
               <input ref={fileInputRef} type="file" accept="image/*" onChange={onFileChange} className="hidden" />
             </div>
-            <button
-              onClick={() => { setPhotoUrl(SAMPLE_PHOTO); setConceptUrl(""); }}
-              className="px-3 py-2 rounded-lg text-sm font-medium border border-stone-200 bg-white hover:border-stone-300"
-            >
-              Use Sample Photo
-            </button>
+            <div className="text-xs text-stone-500 max-w-xs">
+              {uploadedUrl ? (
+                <span className="text-green-600 font-medium">✓ Photo uploaded — ready to render</span>
+              ) : photoUrl === SAMPLE_PHOTO ? (
+                <span>Sample photo shown. Upload your own to render (AI needs a public URL).</span>
+              ) : (
+                <span>Uploading photo…</span>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Generate button */}
         <button
           onClick={generate}
-          disabled={loading}
+          disabled={loading || !uploadedUrl}
           className="w-full h-14 rounded-xl flex items-center justify-center gap-2 text-base font-bold disabled:opacity-60 mb-4"
           style={{
             background: "linear-gradient(180deg, #FFF6D5 0%, #D4AF37 45%, #8B6914 100%)",
@@ -160,8 +216,10 @@ export default function VisualizerTest() {
         >
           {loading ? (
             <><Loader2 className="h-5 w-5 animate-spin" /> Rendering…</>
+          ) : !uploadedUrl ? (
+            <><Upload className="h-5 w-5" /> Upload a photo to render</>
           ) : (
-            <><Wand2 className="h-5 w-5" /> Generate Composite</>
+            <><Wand2 className="h-5 w-5" /> Generate AI Render</>
           )}
         </button>
 
@@ -189,17 +247,20 @@ export default function VisualizerTest() {
               <div className="rounded-xl overflow-hidden border-2 border-amber-400">
                 <img src={conceptUrl} alt="After" className="w-full h-64 object-cover" />
                 <p className="text-xs font-bold tracking-widest text-amber-600 p-2">
-                  AFTER — {selectedColor?.name} ({selectedColor?.hex})
+                  AFTER — {selectedColor?.name} · {finish}
                 </p>
               </div>
             </div>
-            <div className="mt-4 p-4 rounded-lg bg-amber-50 border border-amber-200">
-              <p className="text-sm text-stone-700">
-                <strong>Verification:</strong> The "After" image should show the bottom portion of the
-                floor covered in the selected color ({selectedColor?.hex} — {selectedColor?.name})
-                with a flake texture, while the upper walls/ceiling remain unchanged from the original.
-                If you see the color on the floor, the composite is working correctly.
-              </p>
+            <button
+              onClick={generate}
+              disabled={loading}
+              className="mt-3 w-full h-11 rounded-xl flex items-center justify-center gap-2 text-sm font-bold bg-stone-100 text-stone-700 hover:bg-stone-200 transition disabled:opacity-60"
+            >
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+              {loading ? "Regenerating…" : "Regenerate"}
+            </button>
+            <div className="mt-3">
+              <Disclosure text={AI_DISCLOSURE} />
             </div>
           </div>
         )}
