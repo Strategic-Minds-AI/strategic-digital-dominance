@@ -94,7 +94,9 @@ export function getSystemColorRecords(name: string): { name: string; hex: string
     if (!sys || !sys.colors?.length) return [];
     return sys.colors.map(c => ({ name: c.name, hex: c.hex, code: c.code }));
   }
-  return colors.map(c => ({ name: c.color_name, hex: c.hex, code: c.code, image_url: c.image_url }));
+  // Glitter product photos are round pucks — skip them so swatches render as
+  // full rectangles, consistent with every other system's square swatch.
+  return colors.map(c => ({ name: c.color_name, hex: c.hex, code: c.code, image_url: key === 'glitter' ? undefined : c.image_url }));
 }
 
 // Representative multi-stop gradient built from the actual color chart.
