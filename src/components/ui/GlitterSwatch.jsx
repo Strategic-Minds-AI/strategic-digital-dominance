@@ -38,14 +38,14 @@ export default function GlitterSwatch({ hex, seed, className = "", style }) {
   const bg = useMemo(() => {
     const sparks = fleckLayers(
       s,
-      50,
-      [0.4, 1.8],
-      ["rgba(255,255,255,0.95)", "rgba(255,255,255,0.6)", "rgba(255,255,255,0.3)", "rgba(0,0,0,0.22)"]
+      40,
+      [0.5, 1.6],
+      ["rgba(255,255,255,0.95)", "rgba(255,255,255,0.6)", "rgba(255,255,255,0.35)", "rgba(0,0,0,0.25)"]
     );
     return [
       sparks,
-      `radial-gradient(circle at 50% 35%, rgba(255,255,255,0.22), transparent 65%)`,
-      `linear-gradient(125deg, ${hex}, rgba(255,255,255,0.16) 50%, ${hex})`,
+      `radial-gradient(circle at 50% 40%, rgba(255,255,255,0.25), transparent 60%)`,
+      `linear-gradient(120deg, ${hex}, rgba(255,255,255,0.18) 50%, ${hex})`,
     ].join(", ");
   }, [hex, s]);
 
