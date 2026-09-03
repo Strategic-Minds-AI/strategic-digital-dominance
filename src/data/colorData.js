@@ -181,6 +181,11 @@ export const COLOR_DATA = [
   { system: "glitter", color_name: "Stroke of Midnight", code: "GL-36", hex: "#1A1A2A", collection: "Glitter Additive", sheen: "High Gloss", in_stock: true, rank: 36, image_url: "https://xtremepolishingsystems.com/cdn/shop/files/stroke-of-midnight.jpg" },
   { system: "glitter", color_name: "Cabernet", code: "GL-37", hex: "#5A1A2A", collection: "Glitter Additive", sheen: "High Gloss", in_stock: true, rank: 37, image_url: "https://xtremepolishingsystems.com/cdn/shop/files/cabernet.jpg" },
   { system: "glitter", color_name: "Violet", code: "GL-38", hex: "#7A3A9A", collection: "Glitter Additive", sheen: "High Gloss", in_stock: true, rank: 38, image_url: "https://xtremepolishingsystems.com/cdn/shop/files/violet.jpg" },
+  { system: "glitter", color_name: "Rapunzel's Dream", code: "GL-39", hex: "#5E00B2", collection: "Glitter Additive", sheen: "High Gloss", in_stock: true, rank: 39, image_url: "https://xtremepolishingsystems.com/cdn/shop/files/rapunzels-dream.jpg" },
+  { system: "glitter", color_name: "Aged Rose Petals", code: "GL-40", hex: "#C80080", collection: "Glitter Additive", sheen: "High Gloss", in_stock: true, rank: 40, image_url: "https://xtremepolishingsystems.com/cdn/shop/files/aged-rose-petals.jpg" },
+  { system: "glitter", color_name: "Amethyst Sparkle", code: "GL-41", hex: "#A000A0", collection: "Glitter Additive", sheen: "High Gloss", in_stock: true, rank: 41, image_url: "https://xtremepolishingsystems.com/cdn/shop/files/amethyst-sparkle.jpg" },
+  { system: "glitter", color_name: "Lilac Dawn", code: "GL-42", hex: "#7679D6", collection: "Glitter Additive", sheen: "High Gloss", in_stock: true, rank: 42, image_url: "https://xtremepolishingsystems.com/cdn/shop/files/lilac-dawn.jpg" },
+  { system: "glitter", color_name: "Visions of Lilac", code: "GL-43", hex: "#8A2BE2", collection: "Glitter Additive", sheen: "High Gloss", in_stock: true, rank: 43, image_url: "https://xtremepolishingsystems.com/cdn/shop/files/visions-of-lilac.jpg" },
 
   // ═══════════════════════════════════════════════════════════════
   // DYE & STAIN — Ameripolish® Signature Palette (Classic / SureLock / Dye-N-Seal)
@@ -366,7 +371,7 @@ export const FLOOR_SYSTEM_DATA = [
     name: "Glitter Epoxy",
     slug: "glitter-epoxy",
     category: "epoxy",
-    description: "XPS glitter additive broadcast into a clear epoxy or polyaspartic topcoat for a sparkling, decorative finish. Available in 38+ metallic glitter colors. Often paired with a solid or metallic base color.",
+    description: "XPS glitter additive broadcast into a clear epoxy or polyaspartic topcoat for a sparkling, decorative finish. Available in 43 metallic glitter colors. Often paired with a solid or metallic base color.",
     finishes: ["Light Sparkle", "Medium Broadcast", "Heavy Broadcast"],
     sheen_levels: ["High Gloss"],
     colors: [
