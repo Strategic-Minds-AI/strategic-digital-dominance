@@ -50,8 +50,8 @@ export default function ColorSwatch({ color, system, className = "" }) {
     };
   }, [hex, system, seed]);
 
-  if (color.image_url) {
-    return <img src={color.image_url} alt={color.color_name || ""} className={className} style={{ width: "100%", aspectRatio: "1", objectFit: "fill", borderRadius: 9 }} loading="lazy" />;
+  if (color.image_url && system !== "glitter") {
+    return <img src={color.image_url} alt={color.color_name || ""} className={className} style={{ width: "100%", aspectRatio: "1", objectFit: "cover", borderRadius: 9 }} loading="lazy" />;
   }
   return <div className={className} style={{ ...style, width: "100%", aspectRatio: "1", borderRadius: 9 }} />;
 }

@@ -142,7 +142,7 @@ export default function VisualizerTest() {
                     src={c.image_url}
                     alt={c.name}
                     loading="lazy"
-                    className="h-12 w-full object-fill rounded"
+                    className="h-12 w-full object-cover object-top rounded"
                   />
                 ) : systemName === "Glitter Epoxy" ? (
                   <GlitterSwatch hex={c.hex} seed={c.code} className="h-12 w-full rounded" />
