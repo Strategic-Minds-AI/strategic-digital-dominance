@@ -5,6 +5,7 @@ import { getSystemColorRecords } from "@/lib/floorColors";
 import { FLOOR_SYSTEM_DATA } from "@/data/colorData";
 import { AI_DISCLOSURE } from "@/lib/brand";
 import Disclosure from "@/components/vq/Disclosure";
+import GlitterSwatch from "@/components/ui/GlitterSwatch";
 
 // Sample garage photo — a plain concrete garage interior
 const SAMPLE_PHOTO = "https://images.unsplash.com/photo-1605152276897-4296181db00d?w=1200&q=80";
@@ -143,6 +144,8 @@ export default function VisualizerTest() {
                     loading="lazy"
                     className="h-12 w-full object-cover object-top rounded"
                   />
+                ) : systemName === "Glitter Epoxy" ? (
+                  <GlitterSwatch hex={c.hex} seed={c.code} className="h-12 w-full rounded" />
                 ) : (
                   <span className="h-12 w-full rounded" style={{ background: c.hex }} />
                 )}

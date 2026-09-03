@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { COLOR_DATA } from "@/lib/colorData";
+import GlitterSwatch from "@/components/ui/GlitterSwatch";
 
 const SYSTEMS = [
   { key: "flake", label: "Flake" },
@@ -42,6 +43,8 @@ export default function ColorChartPicker({ selectedColor, onSelect }) {
           >
             {c.image_url ? (
               <img src={c.image_url} alt={c.color_name} loading="lazy" className="h-12 w-full object-cover object-top rounded" />
+            ) : system === "glitter" ? (
+              <GlitterSwatch hex={c.hex} seed={c.code} className="h-12 w-full rounded" />
             ) : (
               <div className="h-12 w-full rounded" style={{ background: c.hex }} />
             )}

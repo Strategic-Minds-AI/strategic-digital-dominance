@@ -5,6 +5,7 @@ import { FLOOR_SYSTEM_DATA } from "@/data/colorData";
 import { base44 } from "@/api/base44Client";
 import Disclosure from "@/components/vq/Disclosure";
 import { AI_DISCLOSURE } from "@/lib/brand";
+import GlitterSwatch from "@/components/ui/GlitterSwatch";
 
 // Systems available in the visualizer (excludes Joint Fill & Repair — not a finish)
 const SYSTEMS = FLOOR_SYSTEM_DATA
@@ -159,6 +160,8 @@ export default function FloorVisualizer({ onPhotoChange, onColorSelected, initia
             >
               {c.image_url ? (
                 <img src={c.image_url} alt={c.name} loading="lazy" className="h-12 w-full object-cover object-top rounded-lg" />
+              ) : systemName === "Glitter Epoxy" ? (
+                <GlitterSwatch hex={c.hex} seed={c.code} className="h-12 w-full rounded-lg" />
               ) : (
                 <span className="h-12 w-full rounded-lg" style={{ background: c.hex }} />
               )}
