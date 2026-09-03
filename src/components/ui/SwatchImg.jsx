@@ -18,8 +18,8 @@ export default function SwatchImg({ src, hex, alt, wrapperClassName = "", system
         className={cn("overflow-hidden bg-stone-100", wrapperClassName)}
         style={{
           backgroundImage: `url(${src})`,
-          backgroundSize: "auto 138%",
-          backgroundPosition: "top center",
+          backgroundSize: "100% 100%",
+          backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
         }}
         role="img"

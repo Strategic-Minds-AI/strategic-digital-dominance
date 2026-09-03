@@ -42,7 +42,7 @@ export default function ColorChartPicker({ selectedColor, onSelect }) {
             className={`xa-gold-hover flex flex-col items-center gap-1 p-1.5 rounded-lg border transition ${selectedColor?.code === c.code ? "border-amber-500 bg-amber-50" : "border-stone-200 bg-white"}`}
           >
             {c.image_url ? (
-              <img src={c.image_url} alt={c.color_name} loading="lazy" className="h-12 w-full object-cover object-top rounded" />
+              <img src={c.image_url} alt={c.color_name} loading="lazy" className="h-12 w-full object-fill rounded" />
             ) : system === "glitter" ? (
               <GlitterSwatch hex={c.hex} seed={c.code} className="h-12 w-full rounded" />
             ) : (
