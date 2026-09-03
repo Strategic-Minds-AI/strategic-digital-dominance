@@ -13,7 +13,7 @@ import { Phone } from "lucide-react";
 import BackButton from "@/components/BackButton";
 import Logo from "@/components/Logo";
 import BidSections from "@/components/results/BidSections";
-import ResultVisualizer from "@/components/funnel/ResultVisualizer";
+import TintedBeforeAfter from "@/components/funnel/TintedBeforeAfter";
 import { COLOR_DATA } from "@/lib/colorData";
 
 // Reconstructs the chosen color chart entry from the lead. Prefers the
@@ -125,7 +125,7 @@ export default function Results() {
         {leadPhoto && leadColor && (
           <div>
             <h2 className="text-2xl font-semibold tracking-tight text-stone-900 mb-4">See your garage transformed</h2>
-            <ResultVisualizer photoUrl={leadPhoto} color={leadColor} />
+            <TintedBeforeAfter photoUrl={leadPhoto} color={leadColor} />
           </div>
         )}
 

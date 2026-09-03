@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { MoveHorizontal } from "lucide-react";
 
 // CSS-overlay before/after visualizer — applies the exact color chart hex
@@ -14,7 +14,7 @@ export default function ResultVisualizer({ photoUrl, color, onAfterReady }) {
 
   // Notify parent that the "after" image is ready (uses the original photo
   // with CSS overlays, so it's immediately ready).
-  React.useEffect(() => {
+  useEffect(() => {
     onAfterReady?.(photoUrl || "");
   }, [photoUrl]);
 

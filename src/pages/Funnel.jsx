@@ -11,7 +11,7 @@ import { ArrowRight, ArrowLeft, CheckCircle2, Phone, Clock, ShieldCheck } from "
 import BackButton from "@/components/BackButton";
 import ScrapeProgress from "@/components/funnel/ScrapeProgress";
 import FloorVisualizer from "@/components/funnel/FloorVisualizer";
-import ResultVisualizer from "@/components/funnel/ResultVisualizer";
+import TintedBeforeAfter from "@/components/funnel/TintedBeforeAfter";
 import Logo, { XTREME_AI_ICON_URL } from "@/components/Logo";
 import { Image } from "@/components/ui/image";
 import { generateBidPdf } from "@/lib/bidPdf";
@@ -41,6 +41,11 @@ export default function Funnel() {
   const lookupPromise = React.useRef(null);
 
   useEffect(() => { trackEvent("funnel_started"); }, []);
+
+  // Set the floor image when we reach the results step — used for the email.
+  useEffect(() => {
+    if (step === 6) setFloorImage((data.photos || [])[0] || "");
+  }, [step]);
 
   // Once the visualizer has produced the floor image (step 7), email the
   // branded estimate to the customer from the connected Gmail account.
@@ -414,10 +419,9 @@ export default function Funnel() {
               {/* Your floor, visualized with your chosen color */}
               <div>
                 <h3 className="text-xl font-semibold text-stone-900 mb-3">See your garage transformed</h3>
-                <ResultVisualizer
+                <TintedBeforeAfter
                   photoUrl={(data.photos || [])[0]}
                   color={{ code: data.flake_color, name: data.flake_color_name, system: data.desired_system, hex: data.flake_color_hex }}
-                  onAfterReady={setFloorImage}
                 />
               </div>
 
