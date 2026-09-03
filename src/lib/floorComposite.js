@@ -88,7 +88,7 @@ function drawFlakes(ctx, x, y, w, h, baseHex) {
 
   // Base epoxy fill — the EXACT selected hex (no darkening) so the floor
   // reads as the chosen color even where flakes are sparse
-  ctx.fillStyle = rgba(base.r, base.g, base.b, 0.97);
+  ctx.fillStyle = rgba(base.r, base.g, base.b, 1);
   ctx.fillRect(x, y, w, h);
 
   // Scale flake size to image resolution so flakes look consistent
@@ -118,7 +118,7 @@ function drawFlakes(ctx, x, y, w, h, baseHex) {
 function drawMetallic(ctx, x, y, w, h, baseHex) {
   const base = hexToRgb(baseHex);
 
-  ctx.fillStyle = rgba(base.r, base.g, base.b, 0.97);
+  ctx.fillStyle = rgba(base.r, base.g, base.b, 1);
   ctx.fillRect(x, y, w, h);
 
   const scale = Math.max(w / 1200, 0.8);
@@ -155,7 +155,7 @@ function drawMetallic(ctx, x, y, w, h, baseHex) {
 // Uses the EXACT selected hex at high opacity for accurate color reproduction.
 function drawSolid(ctx, x, y, w, h, baseHex) {
   const base = hexToRgb(baseHex);
-  ctx.fillStyle = rgba(base.r, base.g, base.b, 0.97);
+  ctx.fillStyle = rgba(base.r, base.g, base.b, 1);
   ctx.fillRect(x, y, w, h);
 }
 
@@ -230,20 +230,23 @@ export async function compositeFloorImage(photoUrl, color, sheen = "gloss") {
   // Gradient alpha mask at the top edge for a smooth wall-to-floor transition.
   // destination-out ERASES pixels where the source is opaque — so a gradient
   // from opaque (top) to transparent (bottom) creates a fade while leaving
-  // the rest of the texture fully intact. (destination-in with two fillRects
-  // would erase everything — each rect wipes content outside its own region.)
+  // the rest of the texture fully intact.
   octx.globalCompositeOperation = "destination-out";
-  const fadeH = h * 0.10;
+  octx.globalAlpha = 1;
+  const fadeH = h * 0.06;
   const mask = octx.createLinearGradient(0, floorTop, 0, floorTop + fadeH);
   mask.addColorStop(0, "rgba(0,0,0,1)");   // fully erase at top edge
   mask.addColorStop(1, "rgba(0,0,0,0)");   // no erasure below fade zone
   octx.fillStyle = mask;
   octx.fillRect(0, floorTop, w, fadeH);
 
+  // Reset composite operation so the overlay draws correctly onto the main canvas.
+  octx.globalCompositeOperation = "source-over";
+
   // Composite the textured floor onto the exact original photo.
-  // 0.93 opacity — the selected color dominates while a small amount of the
+  // 0.95 opacity — the selected color dominates while a small amount of the
   // original floor texture shows through for realistic blending.
-  ctx.globalAlpha = 0.93;
+  ctx.globalAlpha = 0.95;
   ctx.drawImage(overlay, 0, 0);
   ctx.globalAlpha = 1;
 
