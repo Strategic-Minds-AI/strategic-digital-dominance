@@ -9,7 +9,7 @@ import PackageCards from "@/components/results/PackageCards";
 import TrustSection from "@/components/results/TrustSection";
 import Gallery from "@/components/home/Gallery";
 import Reviews from "@/components/home/Reviews";
-import { Phone } from "lucide-react";
+import { Phone, ShieldCheck } from "lucide-react";
 import BackButton from "@/components/BackButton";
 import Logo from "@/components/Logo";
 import BidSections from "@/components/results/BidSections";
@@ -118,6 +118,18 @@ export default function Results() {
             )}
             <p className="mt-5 text-sm text-stone-500 leading-relaxed max-w-xl mx-auto">
               This is a preliminary estimate based on the information provided. Final pricing is confirmed after your project details and concrete condition are reviewed.
+            </p>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border-2 border-amber-400 bg-amber-50 p-5 flex items-center gap-4">
+          <div className="shrink-0 h-12 w-12 rounded-full bg-amber-500 grid place-items-center" style={{ background: "linear-gradient(180deg, #FFF6D5 0%, #D4AF37 45%, #8B6914 100%)" }}>
+            <ShieldCheck className="h-6 w-6 text-stone-900" />
+          </div>
+          <div>
+            <div className="font-bold text-stone-900 text-base">Backed by a Lifetime Warranty</div>
+            <p className="text-sm text-stone-600 leading-relaxed">
+              Every garage floor we install is covered by a lifetime warranty — if it ever peels, bubbles, or fails, we'll fix it. That's how confident we are in our prep and products.
             </p>
           </div>
         </div>
