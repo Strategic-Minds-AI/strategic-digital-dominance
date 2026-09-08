@@ -54,6 +54,8 @@ import ToolHub from '@/pages/ToolHub';
 import WebsiteFactory from '@/pages/admin/WebsiteFactory';
 import AppFactory from '@/pages/admin/AppFactory';
 import NationalLaunch from '@/pages/admin/NationalLaunch';
+import SeoGenerator from '@/pages/admin/SeoGenerator';
+import XtremeComms from '@/pages/admin/XtremeComms';
 import CustomerPortal from '@/pages/CustomerPortal';
 
 
@@ -121,6 +123,8 @@ const AuthenticatedApp = () => {
         <Route path="website-factory" element={<WebsiteFactory />} />
         <Route path="app-factory" element={<AppFactory />} />
         <Route path="national-launch" element={<NationalLaunch />} />
+        <Route path="seo-generator" element={<SeoGenerator />} />
+        <Route path="xtreme-comms" element={<XtremeComms />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
       <Route path="/:state/:citySlug" element={<LocationSeoPage />} />
