@@ -102,6 +102,10 @@
         "type": "string"
       }
     },
+    "concept_image": {
+      "type": "string",
+      "description": "AI-generated concept image URL from the floor visualizer"
+    },
     "estimate_mid": {
       "type": "number"
     },

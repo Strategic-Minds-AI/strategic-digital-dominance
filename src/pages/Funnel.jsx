@@ -207,6 +207,7 @@ export default function Funnel() {
       flake_color_name: data.flake_color_name || "",
       flake_color_hex: data.flake_color_hex || "",
       photos: data.photos || [],
+      concept_image: conceptImage || "",
       estimate_mid: est.mid,
       estimate_low: est.low,
       estimate_high: est.high,
