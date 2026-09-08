@@ -11,7 +11,7 @@ import { ArrowRight, ArrowLeft, CheckCircle2, Phone, Clock, ShieldCheck } from "
 import BackButton from "@/components/BackButton";
 import ScrapeProgress from "@/components/funnel/ScrapeProgress";
 import FloorVisualizer from "@/components/funnel/FloorVisualizer";
-import TintedBeforeAfter from "@/components/funnel/TintedBeforeAfter";
+import ConceptBeforeAfter from "@/components/funnel/ConceptBeforeAfter";
 import Logo, { XTREME_AI_ICON_URL } from "@/components/Logo";
 import { Image } from "@/components/ui/image";
 import { generateBidPdf } from "@/lib/bidPdf";
@@ -37,6 +37,7 @@ export default function Funnel() {
   const [detectedSqft, setDetectedSqft] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [floorImage, setFloorImage] = useState(null);
+  const [conceptImage, setConceptImage] = useState(null);
   const sentRef = React.useRef(false);
   const lookupPromise = React.useRef(null);
 
@@ -44,7 +45,7 @@ export default function Funnel() {
 
   // Set the floor image when we reach the results step — used for the email.
   useEffect(() => {
-    if (step === 6) setFloorImage((data.photos || [])[0] || "");
+    if (step === 6) setFloorImage(conceptImage || (data.photos || [])[0] || "");
   }, [step]);
 
   // Once the visualizer has produced the floor image (step 7), email the
@@ -353,6 +354,7 @@ export default function Funnel() {
                   initialColor={data.flake_color ? { code: data.flake_color, color_name: data.flake_color_name, hex: data.flake_color_hex, system: data.desired_system } : null}
                   onPhotoChange={(url) => update({ photos: url ? [url] : [] })}
                   onColorSelected={(c) => update({ flake_color: c.code, flake_color_name: c.color_name, flake_color_hex: c.hex, desired_system: c.system })}
+                  onConceptGenerated={(url) => setConceptImage(url)}
                 />
               </div>
               <div className="mt-6 space-y-2">
@@ -419,10 +421,21 @@ export default function Funnel() {
               {/* Your floor, visualized with your chosen color */}
               <div>
                 <h3 className="text-xl font-semibold text-stone-900 mb-3">See your garage transformed</h3>
-                <TintedBeforeAfter
-                  photoUrl={(data.photos || [])[0]}
-                  color={{ code: data.flake_color, name: data.flake_color_name, system: data.desired_system, hex: data.flake_color_hex }}
-                />
+                {conceptImage ? (
+                  <ConceptBeforeAfter
+                    beforeUrl={(data.photos || [])[0]}
+                    afterUrl={conceptImage}
+                    colorName={data.flake_color_name}
+                    hex={data.flake_color_hex}
+                  />
+                ) : (
+                  <ConceptBeforeAfter
+                    beforeUrl={(data.photos || [])[0]}
+                    afterUrl={(data.photos || [])[0]}
+                    colorName={data.flake_color_name}
+                    hex={data.flake_color_hex}
+                  />
+                )}
               </div>
 
               {/* Selected color confirmation */}

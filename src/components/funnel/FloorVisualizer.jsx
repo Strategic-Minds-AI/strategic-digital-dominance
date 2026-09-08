@@ -26,7 +26,7 @@ const FINISHES = [
 // 5. Press "Visualize My Floor" — the user's photo is attached to an AI image
 //    generation call with the exact color name + sheen in the prompt,
 //    producing a before/after with the floor in the chosen color.
-export default function FloorVisualizer({ onPhotoChange, onColorSelected, initialPhoto, initialColor }) {
+export default function FloorVisualizer({ onPhotoChange, onColorSelected, onConceptGenerated, initialPhoto, initialColor }) {
   // Normalize initialColor: Funnel passes { code, color_name, hex, system }
   // but color records use { name, hex, code, image_url }
   const normalizedInitial = initialColor
@@ -104,6 +104,7 @@ export default function FloorVisualizer({ onPhotoChange, onColorSelected, initia
         existing_image_urls: uploadedUrl ? [uploadedUrl] : undefined,
       });
       setConceptUrl(res.url);
+      onConceptGenerated?.(res.url);
     } catch (err) {
       setError(`Could not generate preview: ${err?.message || "Unknown error"}`);
       console.error("[FloorVisualizer] generate failed:", err);
