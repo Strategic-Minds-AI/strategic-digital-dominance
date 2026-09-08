@@ -50,6 +50,10 @@ import Questionnaire from '@/pages/Questionnaire';
 import AppSettings from '@/pages/AppSettings';
 import ToolManager from '@/pages/admin/ToolManager';
 import VisualizerTest from '@/pages/VisualizerTest';
+import ToolHub from '@/pages/ToolHub';
+import WebsiteFactory from '@/pages/admin/WebsiteFactory';
+import AppFactory from '@/pages/admin/AppFactory';
+import NationalLaunch from '@/pages/admin/NationalLaunch';
 
 
 const AuthenticatedApp = () => {
@@ -112,11 +116,16 @@ const AuthenticatedApp = () => {
         <Route path="factory" element={<SeoFactory />} />
         <Route path="sop" element={<SopSystem />} />
         <Route path="tools" element={<ToolManager />} />
+        <Route path="tool-hub" element={<ToolHub />} />
+        <Route path="website-factory" element={<WebsiteFactory />} />
+        <Route path="app-factory" element={<AppFactory />} />
+        <Route path="national-launch" element={<NationalLaunch />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
       <Route path="/:state/:citySlug" element={<LocationSeoPage />} />
       <Route path="/:slug" element={<GeneratedPageView />} />
       <Route path="/visualizer-test" element={<VisualizerTest />} />
+      <Route path="/tool-hub" element={<ToolHub />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

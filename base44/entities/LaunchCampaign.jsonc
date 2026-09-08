@@ -1,0 +1,112 @@
+{
+  "name": "LaunchCampaign",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Campaign name (e.g. 'Florida National Launch Q4 2026')"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "planning",
+        "active",
+        "paused",
+        "completed"
+      ],
+      "default": "planning"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "autonomous",
+        "automated"
+      ],
+      "default": "manual"
+    },
+    "target_states": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "target_cities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "template_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "deployed",
+              "failed"
+            ],
+            "default": "pending"
+          }
+        }
+      }
+    },
+    "template_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "WebsiteTemplate IDs to deploy across locations"
+    },
+    "budget": {
+      "type": "number"
+    },
+    "spent": {
+      "type": "number",
+      "default": 0
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "sites_deployed": {
+          "type": "number",
+          "default": 0
+        },
+        "leads_generated": {
+          "type": "number",
+          "default": 0
+        },
+        "appointments_booked": {
+          "type": "number",
+          "default": 0
+        },
+        "revenue": {
+          "type": "number",
+          "default": 0
+        }
+      }
+    },
+    "auto_deploy": {
+      "type": "boolean",
+      "default": false,
+      "description": "When true, new city sites are deployed automatically"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "name": "AppBuild",
+  "type": "object",
+  "properties": {
+    "template_id": {
+      "type": "string",
+      "description": "Reference to WebsiteTemplate"
+    },
+    "app_name": {
+      "type": "string"
+    },
+    "app_slug": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "queued",
+        "building",
+        "built",
+        "published",
+        "failed"
+      ],
+      "default": "queued"
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "pwa",
+        "ios",
+        "android",
+        "both"
+      ],
+      "default": "pwa"
+    },
+    "manifest": {
+      "type": "object",
+      "description": "PWA manifest configuration",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "short_name": {
+          "type": "string"
+        },
+        "theme_color": {
+          "type": "string"
+        },
+        "background_color": {
+          "type": "string"
+        },
+        "display": {
+          "type": "string",
+          "default": "standalone"
+        },
+        "orientation": {
+          "type": "string",
+          "default": "portrait"
+        }
+      }
+    },
+    "nav_config": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "route": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Bottom navigation bar configuration"
+    },
+    "icon_url": {
+      "type": "string"
+    },
+    "splash_url": {
+      "type": "string"
+    },
+    "build_log": {
+      "type": "string"
+    },
+    "published_url": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "app_name",
+    "app_slug"
+  ]
+}

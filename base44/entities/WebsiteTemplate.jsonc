@@ -1,0 +1,99 @@
+{
+  "name": "WebsiteTemplate",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Template variant name (e.g. 'Epoxy Pro - Florida')"
+    },
+    "slug": {
+      "type": "string",
+      "description": "URL-safe slug for the template"
+    },
+    "base_app_id": {
+      "type": "string",
+      "description": "Base44 app ID to clone from"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "configured",
+        "deploying",
+        "live",
+        "archived"
+      ],
+      "default": "draft"
+    },
+    "config": {
+      "type": "object",
+      "properties": {
+        "company_name": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "service_area": {
+          "type": "string"
+        },
+        "primary_city": {
+          "type": "string"
+        },
+        "primary_state": {
+          "type": "string"
+        },
+        "color_scheme": {
+          "type": "string"
+        },
+        "hero_image_url": {
+          "type": "string"
+        },
+        "pricing_tier": {
+          "type": "string",
+          "enum": [
+            "economy",
+            "standard",
+            "premium"
+          ],
+          "default": "standard"
+        }
+      }
+    },
+    "generated_app_id": {
+      "type": "string",
+      "description": "The Base44 app ID of the generated site"
+    },
+    "generated_url": {
+      "type": "string",
+      "description": "The published URL of the generated site"
+    },
+    "pwa_enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "launch_mode": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "autonomous",
+        "automated"
+      ],
+      "default": "manual"
+    },
+    "deploy_log": {
+      "type": "string",
+      "description": "JSON string of deployment steps and results"
+    }
+  },
+  "required": [
+    "name",
+    "slug"
+  ]
+}

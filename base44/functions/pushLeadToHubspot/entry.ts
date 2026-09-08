@@ -70,6 +70,41 @@ export default async function (req: Request): Promise<Response> {
     });
     const deal = await dealRes.json();
 
+    // 3. Create a note with before/after images and lead details
+    if (contactId) {
+      const beforePhoto = (lead.photos || [])[0] || "";
+      const afterConcept = lead.concept_image || "";
+      const noteBody = [
+        `Garage Floor Estimate — ${lead.first_name || ""} ${lead.last_name || ""}`.trim(),
+        ``,
+        `Address: ${lead.address || ""}, ${lead.city || ""}, ${lead.state || ""} ${lead.zip || ""}`,
+        `Garage Size: ${lead.square_footage || "Unknown"} sq ft`,
+        `Floor Condition: ${(lead.floor_condition || []).join(", ") || "Not specified"}`,
+        `Selected System: ${lead.desired_system || "flake"}`,
+        lead.flake_color_name ? `Selected Color: ${lead.flake_color_name} (${lead.flake_color || ""})` : "",
+        `Estimate Range: $${lead.estimate_low || 0} – $${lead.estimate_high || 0}`,
+        ``,
+        beforePhoto ? `BEFORE PHOTO: ${beforePhoto}` : "",
+        afterConcept ? `AFTER CONCEPT: ${afterConcept}` : "",
+      ].filter(Boolean).join("\n");
+
+      try {
+        await fetch("https://api.hubapi.com/crm/v3/objects/notes", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            properties: {
+              hs_note_body: noteBody,
+              hs_timestamp: Date.now().toString(),
+            },
+            associations: [{ to: { id: contactId }, types: [{ associationCategory: "HUBSPOT_DEFINED", associationTypeId: 12 }] }],
+          }),
+        });
+      } catch (noteErr) {
+        console.error("Failed to create note:", noteErr.message);
+      }
+    }
+
     return Response.json({
       ok: true,
       contactId,
