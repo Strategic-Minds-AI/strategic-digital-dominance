@@ -2,45 +2,47 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.48';
 import { secrets } from 'base44:runtime';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// xtremeComms — Multi-channel communication gateway.
-// Integrates with the Xtreme Communications platform (xtreme-communications.com)
-// for SMS, MMS, WhatsApp, voice calls, and campaign management.
+// xtremeComms — Full Xtreme Communications platform integration.
+// Calls the Xtreme Communications CaaS gateway endpoints (gatewayMessages,
+// gatewayCalls, gatewayNumberSearch, managePhoneNumbers, manageCampaignOutreach,
+// scrapeLeads, gatewayEmail, gatewayVerify, generateContent, etc.) using the
+// tenant API key.
 //
 // Actions:
-//   sendSms       — send an SMS message
-//   sendWhatsApp  — send a WhatsApp business message
-//   makeCall      — initiate an AI voice call
-//   buyNumber     — purchase a phone number
-//   listNumbers   — list purchased phone numbers
-//   sendCampaign  — send a multi-channel campaign blast
-//   getStatus     — check API connection status
+//   sendSms, sendMms, sendWhatsApp  — messaging
+//   makeCall, startVoiceSession     — voice
+//   searchNumbers, buyNumber, listNumbers, portNumber — phone numbers
+//   sendCampaign                   — multi-channel campaign blast
+//   scrapeLeads                    — lead scraper
+//   sendEmail                      — transactional email
+//   verifyNumber                   — phone number verification (HLR)
+//   generateContent                — AI content generation
+//   testConnection                 — test provider connection
+//   getStatus                      — check API key validity
 //
-// Invoke: base44.functions.invoke('xtremeComms', { action, to, message, ... })
+// Invoke: base44.functions.invoke('xtremeComms', { action, ...params })
 // ─────────────────────────────────────────────────────────────────────────────
 
-const API_BASE = 'https://xtreme-communications.com/api';
+const API_BASE = 'https://xtreme-communications.com/api/functions';
 
-async function apiCall(endpoint, method, payload) {
+async function gatewayCall(functionName, payload) {
   const apiKey = secrets.get('XTREME_COMMUNICATION_API_KEY');
   if (!apiKey) throw new Error('XTREME_COMMUNICATION_API_KEY not set');
 
-  const url = `${API_BASE}${endpoint}`;
-  const options: any = {
-    method: method || 'GET',
+  const url = `${API_BASE}/${functionName}`;
+  const res = await fetch(url, {
+    method: 'POST',
     headers: {
-      'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
     },
+    body: JSON.stringify({ ...payload, api_key: apiKey }),
     signal: AbortSignal.timeout(30000),
-  };
-  if (payload && method !== 'GET') {
-    options.body = JSON.stringify(payload);
-  }
+  });
 
-  const res = await fetch(url, options);
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    throw new Error(`Xtreme Comms API error (${res.status}): ${data.error || data.message || res.statusText}`);
+    throw new Error(`Xtreme Comms API error (${res.status}): ${data.error || data.detail || data.message || res.statusText}`);
   }
   return data;
 }
@@ -69,80 +71,107 @@ export default async function (req: Request): Promise<Response> {
     let result;
 
     switch (action) {
-      case 'sendSms': {
+      // ── Messaging ──
+      case 'sendSms':
         if (!body.to || !body.message) return Response.json({ error: 'to and message are required' }, { status: 400 });
-        result = await apiCall('/sms/send', 'POST', {
-          to: body.to,
-          message: body.message,
-          from: body.from || undefined,
-          media_urls: body.mediaUrls || undefined,
-        });
+        result = await gatewayCall('gatewayMessages', { channel: 'sms', to: body.to, body: body.message, from: body.from, media_urls: body.mediaUrls });
         await logSop(svc, 'sms_sent', `SMS sent to ${body.to}`, body.message.slice(0, 200));
         break;
-      }
 
-      case 'sendWhatsApp': {
+      case 'sendMms':
         if (!body.to || !body.message) return Response.json({ error: 'to and message are required' }, { status: 400 });
-        result = await apiCall('/whatsapp/send', 'POST', {
-          to: body.to,
-          message: body.message,
-          template: body.template || undefined,
-          media_url: body.mediaUrl || undefined,
-        });
-        await logSop(svc, 'whatsapp_sent', `WhatsApp message sent to ${body.to}`, body.message.slice(0, 200));
+        result = await gatewayCall('gatewayMessages', { channel: 'mms', to: body.to, body: body.message, from: body.from, media_urls: body.mediaUrls, subject: body.subject });
+        await logSop(svc, 'mms_sent', `MMS sent to ${body.to}`, body.message.slice(0, 200));
         break;
-      }
 
-      case 'makeCall': {
-        if (!body.to) return Response.json({ error: 'to is required' }, { status: 400 });
-        result = await apiCall('/voice/call', 'POST', {
-          to: body.to,
-          from: body.from || undefined,
-          agent_id: body.agentId || undefined,
-          system_prompt: body.systemPrompt || undefined,
-          voice: body.voice || undefined,
-        });
-        await logSop(svc, 'voice_call', `Voice call initiated to ${body.to}`, JSON.stringify({ agentId: body.agentId }));
+      case 'sendWhatsApp':
+        if (!body.to || !body.message) return Response.json({ error: 'to and message are required' }, { status: 400 });
+        result = await gatewayCall('gatewayMessages', { channel: 'whatsapp', to: body.to, body: body.message, from: body.from, template: body.template, media_urls: body.mediaUrls });
+        await logSop(svc, 'whatsapp_sent', `WhatsApp sent to ${body.to}`, body.message.slice(0, 200));
         break;
-      }
 
-      case 'buyNumber': {
-        if (!body.areaCode && !body.country) return Response.json({ error: 'areaCode or country is required' }, { status: 400 });
-        result = await apiCall('/numbers/buy', 'POST', {
-          area_code: body.areaCode || undefined,
-          country: body.country || 'US',
-          search_pattern: body.searchPattern || undefined,
-        });
-        await logSop(svc, 'number_purchased', `Purchased phone number`, JSON.stringify(result).slice(0, 500));
+      // ── Voice ──
+      case 'makeCall':
+        if (!body.to || !body.from) return Response.json({ error: 'to and from are required' }, { status: 400 });
+        result = await gatewayCall('gatewayCalls', { to: body.to, from: body.from, agent_id: body.agentId, system_prompt: body.systemPrompt, voice: body.voice });
+        await logSop(svc, 'voice_call', `Voice call to ${body.to}`, JSON.stringify({ agentId: body.agentId }));
         break;
-      }
 
-      case 'listNumbers': {
-        result = await apiCall('/numbers', 'GET', null);
+      case 'startVoiceSession':
+        result = await gatewayCall('orchestrateConversation', { to: body.to, from: body.from, agent_id: body.agentId, system_prompt: body.systemPrompt, context: body.context });
+        await logSop(svc, 'voice_session', `Voice session started for ${body.to}`, JSON.stringify({ agentId: body.agentId }));
         break;
-      }
 
-      case 'sendCampaign': {
+      // ── Phone Numbers (gatewayNumberSearch handles search/buy/list) ──
+      case 'searchNumbers':
+        result = await gatewayCall('gatewayNumberSearch', { action: 'search', country_code: body.country || 'US', area_code: body.areaCode, contains: body.searchPattern, limit: body.limit || 20, features: body.features || 'sms,voice' });
+        break;
+
+      case 'buyNumber':
+        if (!body.phoneNumber) return Response.json({ error: 'phoneNumber (e164) is required' }, { status: 400 });
+        result = await gatewayCall('gatewayNumberSearch', { action: 'buy', e164: body.phoneNumber, country_code: body.country || 'US' });
+        await logSop(svc, 'number_purchased', `Purchased ${body.phoneNumber}`, '');
+        break;
+
+      case 'listNumbers':
+        result = await gatewayCall('gatewayNumberSearch', { action: 'list' });
+        break;
+
+      case 'releaseNumber':
+        if (!body.phoneNumber) return Response.json({ error: 'phoneNumber is required' }, { status: 400 });
+        result = await gatewayCall('managePhoneNumbers', { action: 'release', e164: body.phoneNumber });
+        await logSop(svc, 'number_released', `Released ${body.phoneNumber}`, '');
+        break;
+
+      // ── Campaigns ──
+      case 'sendCampaign':
         if (!body.contacts || !body.message) return Response.json({ error: 'contacts and message are required' }, { status: 400 });
-        result = await apiCall('/campaigns/send', 'POST', {
-          contacts: body.contacts,
-          message: body.message,
-          channels: body.channels || ['sms'],
-          schedule_at: body.scheduleAt || undefined,
-        });
-        await logSop(svc, 'campaign_sent', `Campaign sent to ${body.contacts.length} contacts via ${JSON.stringify(body.channels || ['sms'])}`,
-          body.message.slice(0, 200));
+        result = await gatewayCall('manageCampaignOutreach', { contacts: body.contacts, message: body.message, channels: body.channels || ['sms'], schedule_at: body.scheduleAt, campaign_name: body.campaignName });
+        await logSop(svc, 'campaign_sent', `Campaign sent to ${body.contacts.length} contacts`, body.message.slice(0, 200));
         break;
-      }
 
-      case 'getStatus': {
+      // ── Lead Scraping ──
+      case 'scrapeLeads':
+        if (!body.industry && !body.keyword) return Response.json({ error: 'industry or keyword is required' }, { status: 400 });
+        result = await gatewayCall('scrapeLeads', { industry: body.industry, keyword: body.keyword, location: body.location, radius: body.radius || 25, limit: body.limit || 50 });
+        await logSop(svc, 'leads_scraped', `Scraped leads: ${body.industry || body.keyword} in ${body.location || 'all'}`, '');
+        break;
+
+      // ── Email ──
+      case 'sendEmail':
+        if (!body.to || !body.subject) return Response.json({ error: 'to and subject are required' }, { status: 400 });
+        result = await gatewayCall('gatewayEmail', { to: body.to, subject: body.subject, body: body.body, html: body.html, from: body.from });
+        await logSop(svc, 'email_sent', `Email sent to ${body.to}`, body.subject);
+        break;
+
+      // ── Verification ──
+      case 'verifyNumber':
+        if (!body.phoneNumber) return Response.json({ error: 'phoneNumber is required' }, { status: 400 });
+        result = await gatewayCall('gatewayVerify', { phone_number: body.phoneNumber });
+        break;
+
+      // ── Content Generation ──
+      case 'generateContent':
+        if (!body.prompt) return Response.json({ error: 'prompt is required' }, { status: 400 });
+        result = await gatewayCall('generateContent', { prompt: body.prompt, content_type: body.contentType || 'sms', brand_id: body.brandId, tone: body.tone });
+        await logSop(svc, 'content_generated', `Generated ${body.contentType || 'sms'} content`, body.prompt.slice(0, 200));
+        break;
+
+      // ── Creative Media ──
+      case 'generateMedia':
+        if (!body.prompt) return Response.json({ error: 'prompt is required' }, { status: 400 });
+        result = await gatewayCall('generateCreativeMedia', { prompt: body.prompt, media_type: body.mediaType || 'image', brand_id: body.brandId });
+        await logSop(svc, 'media_generated', `Generated ${body.mediaType || 'image'} media`, body.prompt.slice(0, 200));
+        break;
+
+      // ── Status (search numbers to validate API key) ──
+      case 'getStatus':
         try {
-          result = await apiCall('/account/status', 'GET', null);
+          result = await gatewayCall('gatewayNumberSearch', { action: 'search', country_code: 'US', limit: 1 });
         } catch (e) {
           result = { connected: false, error: e.message };
         }
         break;
-      }
 
       default:
         return Response.json({ error: `Unknown action: ${action}` }, { status: 400 });
