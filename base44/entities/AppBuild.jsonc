@@ -2,6 +2,10 @@
   "name": "AppBuild",
   "type": "object",
   "properties": {
+    "description": {
+      "type": "string",
+      "maxLength": 1000
+    },
     "template_id": {
       "type": "string",
       "description": "Reference to WebsiteTemplate"

@@ -2,6 +2,10 @@
   "name": "LaunchCampaign",
   "type": "object",
   "properties": {
+    "description": {
+      "type": "string",
+      "maxLength": 1000
+    },
     "name": {
       "type": "string",
       "description": "Campaign name (e.g. 'Florida National Launch Q4 2026')"
