@@ -54,6 +54,7 @@ import ToolHub from '@/pages/ToolHub';
 import WebsiteFactory from '@/pages/admin/WebsiteFactory';
 import AppFactory from '@/pages/admin/AppFactory';
 import NationalLaunch from '@/pages/admin/NationalLaunch';
+import CustomerPortal from '@/pages/CustomerPortal';
 
 
 const AuthenticatedApp = () => {
@@ -126,6 +127,7 @@ const AuthenticatedApp = () => {
       <Route path="/:slug" element={<GeneratedPageView />} />
       <Route path="/visualizer-test" element={<VisualizerTest />} />
       <Route path="/tool-hub" element={<ToolHub />} />
+      <Route path="/portal" element={<CustomerPortal />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

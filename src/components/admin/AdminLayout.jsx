@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, Outlet, Link } from "react-router-dom";
-import { LayoutDashboard, Users, KanbanSquare, Settings, ExternalLink, Mail, Radar, Globe, ScrollText, Star, Wrench, Factory, Smartphone, Rocket, Layers } from "lucide-react";
+import { LayoutDashboard, Users, KanbanSquare, Settings, ExternalLink, Mail, Radar, Globe, ScrollText, Star, Wrench, Factory, Smartphone, Rocket, Layers, UserCircle } from "lucide-react";
 import BackButton from "@/components/BackButton";
 import Logo from "@/components/Logo";
 
@@ -18,6 +18,7 @@ const links = [
   { to: "/admin/website-factory", icon: Factory, label: "Website Factory" },
   { to: "/admin/app-factory", icon: Smartphone, label: "App Factory" },
   { to: "/admin/national-launch", icon: Rocket, label: "National Launch" },
+  { to: "/portal", icon: UserCircle, label: "Client Portal" },
   { to: "/admin/settings", icon: Settings, label: "Settings" }
 ];
 
