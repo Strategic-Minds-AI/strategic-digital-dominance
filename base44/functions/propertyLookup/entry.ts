@@ -2,17 +2,24 @@ import { secrets } from "base44:runtime";
 
 // Estimates a residential garage's square footage from a street address.
 //
-// Primary source: Browserbase Fetch against Zillow. Zillow server-renders
-// property facts (garage spaces, interior sqft, parking description) into its
-// homedetails pages, so Fetch's structured-JSON extraction can pull them
-// without executing JavaScript. The lookup is two-step:
-//   1. Fetch the Zillow search page and extract a homedetails URL from it.
-//   2. Fetch that homedetails page and extract garage + interior sqft.
-// Zillow shields its search with PerimeterX bot detection, so this step can be
-// intermittently blocked — when it is, we fall through to the fallbacks below.
+// The EXACT address string the visitor typed is passed through unchanged to
+// every source — no truncation, no normalization — so each source matches
+// against its own records with the full address.
 //
-// Fallback 1: OpenStreetMap Nominatim (geocode) + Overpass (building footprints).
-// Fallback 2: a size-based estimate chosen by the visitor.
+// Source priority (most accurate first):
+//   1. OSM garage footprint takeoff — Overpass returns the actual garage
+//      building polygon; we compute its area in sqft. This is a real geometric
+//      takeoff, not an estimate, so it is always preferred when available.
+//   2. Public-records listing (Realtor.com / Zillow / Estately via Browserbase
+//      Fetch) — gives garage spaces and interior sqft; garage sqft is estimated
+//      from spaces (× 220 sqft/bay) or interior area (× 20%).
+//   3. OSM largest-building estimate — no garage tagged, so estimate from the
+//      largest footprint on the parcel.
+//   4. Size-based fallback chosen by the visitor.
+//
+// The listing lookup and geocode run in parallel so the footprint takeoff is
+// ALWAYS attempted — even when a listing is found — and the footprint sqft is
+// preferred over the listing estimate.
 
 const NOMINATIM_URL = "https://nominatim.openstreetmap.org/search";
 const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
@@ -243,17 +250,43 @@ export default async function(req) {
 
     if (!address) return Response.json({ error: "Address is required" }, { status: 400 });
 
-    // 1. Try the Browserbase cloud browser FIRST across multiple public-records
-    // sources (Realtor.com, Zillow, Estately). This needs only the address string
-    // (no geocoding), so it runs even when Nominatim is rate-limited. Each source
-    // has different coverage, so trying several maximizes the chance of finding
-    // the real garage square footage from public records.
-    const listing = await browserbaseMultiSourceLookup(address);
+    // Run the listing lookup and geocode in parallel so the footprint takeoff
+    // is always attempted — even when a listing is found. The footprint sqft
+    // (a real geometric takeoff) is preferred over the listing estimate.
+    const [listing, geo] = await Promise.all([
+      browserbaseMultiSourceLookup(address).catch(() => null),
+      geocode(address).catch(() => null)
+    ]);
     const listingSqft = garageSqftFromListing(listing);
+
+    // Attempt the OSM building-footprint takeoff whenever we geocoded the address.
+    let buildings = [];
+    if (geo) {
+      try { buildings = await findBuildings(geo.lat, geo.lon); } catch {}
+    }
+    const garages = buildings.filter((b) => b.isGarage);
+
+    // 1. Best: OSM tagged the actual garage polygon — real takeoff.
+    if (garages.length) {
+      const best = garages.reduce((a, b) => (b.areaM2 > a.areaM2 ? b : a));
+      return Response.json({
+        address_valid: true,
+        sqft: clamp(sqMetersToSqFt(best.areaM2), 200, 1200),
+        latitude: geo.lat,
+        longitude: geo.lon,
+        matched_address: geo.displayName,
+        source: "osm_garage_takeoff",
+        garage_spaces: listing?.garage_spaces ?? null,
+        interior_sqft: listing?.interior_sqft ?? null,
+        parking_desc: listing?.parking_desc ?? null,
+        buildings_found: buildings.length,
+        garage_found: true,
+        browserbase_attempted: !!listing
+      });
+    }
+
+    // 2. Listing-based estimate from public records (garage spaces × bay size).
     if (listingSqft) {
-      // Best-effort geocode for lat/lon (don't block the response on it).
-      let geo = null;
-      try { geo = await geocode(address); } catch {}
       return Response.json({
         address_valid: true,
         sqft: listingSqft,
@@ -263,56 +296,40 @@ export default async function(req) {
         source: `browserbase_${listing.source_name}`,
         garage_spaces: listing.garage_spaces ?? null,
         interior_sqft: listing.interior_sqft ?? null,
-        parking_desc: listing.parking_desc ?? null
+        parking_desc: listing.parking_desc ?? null,
+        buildings_found: buildings.length,
+        garage_found: false,
+        browserbase_attempted: true
       });
     }
 
-    // 2. Fall back to OpenStreetMap building footprints (needs geocoding).
-    let geo = null;
-    try { geo = await geocode(address); } catch {}
-
-    if (!geo) {
-      return Response.json({
-        address_valid: false,
-        sqft: fallbackSqft,
-        source: "fallback_size",
-        browserbase_attempted: true,
-        note: "No public-records listing found and address could not be geocoded; using selected garage size estimate."
-      });
-    }
-
-    let buildings = [];
-    try {
-      buildings = await findBuildings(geo.lat, geo.lon);
-    } catch {
-      // Overpass may be unavailable; fall through to estimate
-    }
-
-    let sqft = fallbackSqft;
-    let source = "fallback_size";
-
-    const garages = buildings.filter((b) => b.isGarage);
-    if (garages.length) {
-      const best = garages.reduce((a, b) => (b.areaM2 > a.areaM2 ? b : a));
-      sqft = sqMetersToSqFt(best.areaM2);
-      source = "osm_garage_footprint";
-    } else if (buildings.length) {
+    // 3. OSM found buildings but none tagged as garage — estimate from the largest.
+    if (buildings.length) {
       const largest = buildings.reduce((a, b) => (b.areaM2 > a.areaM2 ? b : a));
       const homeSqft = sqMetersToSqFt(largest.areaM2);
-      sqft = clamp(Math.round(homeSqft * 0.22), 200, 1000);
-      source = "osm_building_estimate";
+      return Response.json({
+        address_valid: true,
+        sqft: clamp(Math.round(homeSqft * 0.22), 200, 1000),
+        latitude: geo.lat,
+        longitude: geo.lon,
+        matched_address: geo.displayName,
+        source: "osm_building_estimate",
+        buildings_found: buildings.length,
+        garage_found: false,
+        browserbase_attempted: !!listing
+      });
     }
 
+    // 4. No data anywhere — use the selected garage size estimate.
     return Response.json({
-      address_valid: true,
-      sqft,
-      latitude: geo.lat,
-      longitude: geo.lon,
-      matched_address: geo.displayName,
-      source,
-      buildings_found: buildings.length,
-      garage_found: garages.length > 0,
-      browserbase_attempted: true
+      address_valid: !!geo,
+      sqft: fallbackSqft,
+      latitude: geo?.lat ?? null,
+      longitude: geo?.lon ?? null,
+      matched_address: geo?.displayName ?? null,
+      source: "fallback_size",
+      browserbase_attempted: !!listing,
+      note: "No public-records listing or building footprint found; using selected garage size estimate."
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
