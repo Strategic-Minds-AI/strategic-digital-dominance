@@ -420,24 +420,17 @@ export default function Funnel() {
               </div>
 
               {/* Your floor, visualized with your chosen color */}
-              <div>
-                <h3 className="text-xl font-semibold text-stone-900 mb-3">See your garage transformed</h3>
-                {conceptImage ? (
+              {(data.photos || [])[0] && conceptImage && (
+                <div>
+                  <h3 className="text-xl font-semibold text-stone-900 mb-3">See your garage transformed</h3>
                   <ConceptBeforeAfter
                     beforeUrl={(data.photos || [])[0]}
                     afterUrl={conceptImage}
                     colorName={data.flake_color_name}
                     hex={data.flake_color_hex}
                   />
-                ) : (
-                  <ConceptBeforeAfter
-                    beforeUrl={(data.photos || [])[0]}
-                    afterUrl={(data.photos || [])[0]}
-                    colorName={data.flake_color_name}
-                    hex={data.flake_color_hex}
-                  />
-                )}
-              </div>
+                </div>
+              )}
 
               {/* Selected color confirmation */}
               {data.flake_color && (

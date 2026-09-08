@@ -31,17 +31,15 @@ export default function ConceptBeforeAfter({ beforeUrl, afterUrl, colorName, hex
       onTouchMove={(e) => move(e.touches[0].clientX)}
     >
       {/* AFTER layer (full container) — AI-generated concept image */}
-      <img src={afterUrl} alt="After" className="absolute inset-0 w-full h-full object-cover" />
+      <img src={afterUrl} alt="After" className="absolute top-0 left-0 w-full h-full object-cover" />
 
-      {/* BEFORE layer (clipped to slider position) — original uploaded photo */}
-      <div className="absolute inset-0 overflow-hidden" style={{ width: `${pos}%` }}>
-        <img
-          src={beforeUrl}
-          alt="Before"
-          className="absolute inset-0 h-full object-cover"
-          style={{ width: `${pos > 0 ? 10000 / pos : 100}%` }}
-        />
-      </div>
+      {/* BEFORE layer (clipped to slider position via clip-path) — original uploaded photo */}
+      <img
+        src={beforeUrl}
+        alt="Before"
+        className="absolute top-0 left-0 w-full h-full object-cover"
+        style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
+      />
 
       <span className="absolute top-3 left-3 text-[10px] font-bold tracking-widest bg-stone-900/80 text-white px-2 py-1 rounded z-10">BEFORE</span>
       <span className="absolute top-3 right-3 text-[10px] font-bold tracking-widest bg-amber-500 text-stone-950 px-2 py-1 rounded z-10">AFTER</span>

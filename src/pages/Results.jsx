@@ -134,12 +134,12 @@ export default function Results() {
           </div>
         </div>
 
-        {leadPhoto && (
+        {leadPhoto && lead.concept_image && (
           <div>
             <h2 className="text-2xl font-semibold tracking-tight text-stone-900 mb-4">See your garage transformed</h2>
             <ConceptBeforeAfter
               beforeUrl={leadPhoto}
-              afterUrl={lead.concept_image || leadPhoto}
+              afterUrl={lead.concept_image}
               colorName={leadColor?.name}
               hex={leadColor?.hex}
             />
