@@ -5,6 +5,7 @@ import {
   Wand2, Loader2, Sparkles, ScanLine, Eye, Save, CheckCircle2, AlertCircle,
   Image as ImageIcon, FileText, Rocket, Globe, Copy
 } from "lucide-react";
+import CityGenerator from "@/components/rebrand-studio/CityGenerator";
 
 const DEFAULT_LOCATIONS = `Pompano Beach, FL
 Fort Lauderdale, FL
@@ -324,6 +325,7 @@ export default function RebrandStudio() {
           <input value={rootDomain} onChange={(e) => setRootDomain(e.target.value)} placeholder="epoxyfloors.com" className={inputCls + " mt-1 max-w-sm"} />
           <p className="text-xs text-stone-400 mt-1">Each city gets <code className="text-amber-600">cityslug.{rootDomain || "yourdomain.com"}</code> as its domain + live URL.</p>
         </div>
+        <CityGenerator brand={brand} onApply={(text) => setCitiesText(text)} />
         <textarea value={citiesText} onChange={(e) => setCitiesText(e.target.value)} rows={8} className="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm font-mono focus:border-amber-500 outline-none" placeholder="City, ST — one per line" />
         <div className="flex items-center gap-3 mt-3">
           <button
