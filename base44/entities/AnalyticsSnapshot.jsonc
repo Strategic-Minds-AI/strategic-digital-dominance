@@ -1,0 +1,82 @@
+{
+  "name": "AnalyticsSnapshot",
+  "type": "object",
+  "properties": {
+    "metric_name": {
+      "type": "string",
+      "description": "e.g. leads, revenue, conversion_rate, traffic, appointments"
+    },
+    "metric_type": {
+      "type": "string",
+      "enum": [
+        "count",
+        "currency",
+        "percentage",
+        "rate"
+      ],
+      "default": "count"
+    },
+    "value": {
+      "type": "number"
+    },
+    "period": {
+      "type": "string",
+      "enum": [
+        "1h",
+        "1d",
+        "3d",
+        "7d",
+        "15d",
+        "30d",
+        "45d",
+        "60d",
+        "90d",
+        "180d",
+        "1y",
+        "2y",
+        "6y"
+      ],
+      "default": "1d"
+    },
+    "recorded_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "city": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "zip": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string",
+      "description": "website, organic, paid, referral, social"
+    },
+    "simulation_data": {
+      "type": "object",
+      "properties": {
+        "projected_value": {
+          "type": "number"
+        },
+        "confidence_interval_low": {
+          "type": "number"
+        },
+        "confidence_interval_high": {
+          "type": "number"
+        },
+        "strategy_basis": {
+          "type": "string",
+          "description": "Which strategy document drove this simulation"
+        }
+      }
+    }
+  },
+  "required": [
+    "metric_name",
+    "value",
+    "period"
+  ]
+}

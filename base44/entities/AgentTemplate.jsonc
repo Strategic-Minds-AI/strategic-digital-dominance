@@ -1,0 +1,110 @@
+{
+  "name": "AgentTemplate",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Agent role name (e.g. CEO, Sales, Marketing)"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "leadership",
+        "sales",
+        "marketing",
+        "operations",
+        "technical",
+        "compliance",
+        "finance",
+        "creative",
+        "support"
+      ],
+      "default": "operations"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "system_prompt": {
+      "type": "string",
+      "description": "System prompt that defines the agent's behavior and expertise",
+      "maxLength": 5000
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of capabilities (e.g. entity_read, entity_write, function_call, web_search)"
+    },
+    "entity_permissions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "entity": {
+            "type": "string"
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "create",
+                "read",
+                "update",
+                "delete"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "function_permissions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "model": {
+      "type": "string",
+      "enum": [
+        "automatic",
+        "gpt_5_mini",
+        "gemini_3_flash",
+        "gpt_5_4",
+        "gpt_5_6_sol",
+        "gpt_5_6_luna",
+        "gemini_3_1_pro",
+        "claude_sonnet_4_6",
+        "claude_opus_4_6",
+        "claude_opus_4_7",
+        "claude_opus_4_8",
+        "claude_opus_5",
+        "claude-sonnet-5"
+      ],
+      "default": "claude-sonnet-5"
+    },
+    "icon": {
+      "type": "string",
+      "description": "lucide-react icon name"
+    },
+    "color": {
+      "type": "string",
+      "description": "Tailwind color class for the agent badge"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "priority": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "name",
+    "category",
+    "system_prompt"
+  ]
+}

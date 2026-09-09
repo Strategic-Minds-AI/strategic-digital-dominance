@@ -56,7 +56,13 @@ import AppFactory from '@/pages/admin/AppFactory';
 import NationalLaunch from '@/pages/admin/NationalLaunch';
 import SeoGenerator from '@/pages/admin/SeoGenerator';
 import XtremeComms from '@/pages/admin/XtremeComms';
+import AdminResults from '@/pages/admin/Results';
+import AgentBuilder from '@/pages/admin/AgentBuilder';
+import VisionStrategy from '@/pages/admin/VisionStrategy';
+import Intelligence from '@/pages/admin/Intelligence';
+import ClientPackages from '@/pages/admin/ClientPackages';
 import CustomerPortal from '@/pages/CustomerPortal';
+import AIAssistBubble from '@/components/ai-assist/AIAssistBubble';
 
 
 const AuthenticatedApp = () => {
@@ -125,6 +131,11 @@ const AuthenticatedApp = () => {
         <Route path="national-launch" element={<NationalLaunch />} />
         <Route path="seo-generator" element={<SeoGenerator />} />
         <Route path="xtreme-comms" element={<XtremeComms />} />
+        <Route path="results" element={<AdminResults />} />
+        <Route path="agent-builder" element={<AgentBuilder />} />
+        <Route path="vision-strategy" element={<VisionStrategy />} />
+        <Route path="intelligence" element={<Intelligence />} />
+        <Route path="client-packages" element={<ClientPackages />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
       <Route path="/:state/:citySlug" element={<LocationSeoPage />} />

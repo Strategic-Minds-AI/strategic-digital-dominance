@@ -1,0 +1,172 @@
+{
+  "name": "IntelligenceReport",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "report_type": {
+      "type": "string",
+      "enum": [
+        "industry_research",
+        "competitor_analysis",
+        "customer_sentiment",
+        "pricing_survey",
+        "market_trends",
+        "company_audit",
+        "social_intelligence",
+        "government_contracting"
+      ],
+      "default": "industry_research"
+    },
+    "sector": {
+      "type": "string",
+      "enum": [
+        "residential",
+        "commercial",
+        "government",
+        "all"
+      ],
+      "default": "all"
+    },
+    "service_category": {
+      "type": "string",
+      "description": "e.g. epoxy_flooring, decorative_concrete, stained_concrete, countertops, patios, pool_decks, driveways, walkways, garage, bathroom_vanity, epoxy_art, training, franchise"
+    },
+    "geography": {
+      "type": "string",
+      "description": "City, State, or National"
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "insight": {
+            "type": "string"
+          },
+          "data_point": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "default": "medium"
+          }
+        }
+      }
+    },
+    "pricing_data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "service": {
+            "type": "string"
+          },
+          "low_price": {
+            "type": "number"
+          },
+          "high_price": {
+            "type": "number"
+          },
+          "avg_price": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string",
+            "description": "per_sqft, per_project, per_linear_ft"
+          },
+          "source": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "sentiment_data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "demographic": {
+            "type": "string",
+            "description": "e.g. men_35_50, women_25_40, high_income, etc"
+          },
+          "positive_themes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "negative_themes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "psychographic": {
+            "type": "string",
+            "description": "Personality type / archetype"
+          },
+          "buying_signal": {
+            "type": "number",
+            "description": "0-100 buying intent score"
+          }
+        }
+      }
+    },
+    "trend_data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "period": {
+            "type": "string"
+          },
+          "metric": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number"
+          },
+          "prediction": {
+            "type": "number",
+            "description": "Predicted future value"
+          }
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "URLs scraped"
+    },
+    "summary": {
+      "type": "string",
+      "maxLength": 3000
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "scraping",
+        "analyzing",
+        "complete",
+        "failed"
+      ],
+      "default": "scraping"
+    }
+  },
+  "required": [
+    "title",
+    "report_type"
+  ]
+}

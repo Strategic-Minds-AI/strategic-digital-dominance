@@ -1,0 +1,77 @@
+{
+  "name": "ClientPackage",
+  "type": "object",
+  "properties": {
+    "package_name": {
+      "type": "string"
+    },
+    "client_email": {
+      "type": "string"
+    },
+    "client_name": {
+      "type": "string"
+    },
+    "assigned_pages": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Exact page routes the client can access (e.g. /portal, /portal/timeline)"
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "project_tracking",
+          "timeline",
+          "photo_gallery",
+          "chat",
+          "maintenance_plan",
+          "warranty",
+          "estimates",
+          "invoices",
+          "documents",
+          "referrals"
+        ]
+      }
+    },
+    "tier": {
+      "type": "string",
+      "enum": [
+        "basic",
+        "standard",
+        "premium",
+        "enterprise"
+      ],
+      "default": "standard"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "active",
+        "suspended",
+        "expired"
+      ],
+      "default": "pending"
+    },
+    "provisioned_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "admin_notes": {
+      "type": "string",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "package_name",
+    "client_email",
+    "assigned_pages"
+  ]
+}

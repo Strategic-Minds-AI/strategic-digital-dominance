@@ -1,0 +1,87 @@
+{
+  "name": "StrategyDocument",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "vision",
+        "mission",
+        "architecture",
+        "automation",
+        "financial",
+        "competition",
+        "pricing",
+        "growth",
+        "technology",
+        "compliance",
+        "go_to_market",
+        "operating_model"
+      ],
+      "default": "vision"
+    },
+    "category": {
+      "type": "string",
+      "description": "Sub-category or focus area"
+    },
+    "content": {
+      "type": "string",
+      "maxLength": 10000,
+      "description": "Full document content (markdown)"
+    },
+    "summary": {
+      "type": "string",
+      "maxLength": 1000
+    },
+    "key_objectives": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "kpis": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string"
+          },
+          "current": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "active",
+        "archived"
+      ],
+      "default": "draft"
+    },
+    "version": {
+      "type": "number",
+      "default": 1
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "title",
+    "type",
+    "content"
+  ]
+}
