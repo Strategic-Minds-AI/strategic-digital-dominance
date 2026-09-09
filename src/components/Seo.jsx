@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { SEO_ROUTES, DEFAULT_SEO, buildJsonLd, SITE_URL } from "@/lib/seoConfig";
+import { SEO_ROUTES, DEFAULT_SEO, buildJsonLd, SITE_URL, BUSINESS, applySeoSettings } from "@/lib/seoConfig";
 import { base44 } from "@/api/base44Client";
 
 // Module-level caches so we fetch once per session.
@@ -91,6 +91,7 @@ export default function RouteSeo() {
 
   useEffect(() => {
     if (!overrides) return;
+    applySeoSettings(settings);
     const path = location.pathname;
     let cfg = SEO_ROUTES[path];
     if (!cfg) {
@@ -119,7 +120,7 @@ export default function RouteSeo() {
     }
 
     setMeta("property", "og:type", cfg.service ? "article" : "website");
-    setMeta("property", "og:site_name", "EpoxyGarageFloorEstimate.com");
+    setMeta("property", "og:site_name", settings?.seo?.site_name || BUSINESS.name);
     setMeta("property", "og:title", title);
     setMeta("property", "og:description", desc);
     setMeta("property", "og:url", url);

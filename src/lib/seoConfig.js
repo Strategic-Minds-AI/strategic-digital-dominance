@@ -4,10 +4,23 @@
 
 import { XPS_LOCATIONS, ALL_WORLDWIDE_LOCATIONS } from "@/lib/xpsLocations";
 
-export const SITE_URL = "https://epoxygaragefloorestimate.com";
+// Canonical origin — defaults to the live serving domain so canonical tags and
+// JSON-LD always match the URL Google actually crawls (eliminates DUPLICATE_ALTERNATE).
+// Overridable at runtime from AppSettings via applySeoSettings().
+export let SITE_URL = typeof window !== "undefined" && window.location?.origin
+  ? window.location.origin
+  : "https://epoxyquotenearme.base44.app";
+
+// Apply live branding/domain from AppSettings so the canonical + JSON-LD match the
+// connected custom domain and brand name without code changes.
+export function applySeoSettings(settings) {
+  if (!settings) return;
+  if (settings.seo?.site_url) SITE_URL = String(settings.seo.site_url).replace(/\/$/, "");
+  if (settings.seo?.site_name) BUSINESS.name = settings.seo.site_name;
+}
 
 export const BUSINESS = {
-  name: "EpoxyGarageFloorEstimate.com",
+  name: "EpoxyQuoteNearMe",
   legalName: "Xtreme Polishing Systems",
   phone: "(877) 958-6408",
   email: "jeremy@xtremepolishingsystems.com",
@@ -62,7 +75,7 @@ export const FAQ_GENERAL = [
   { q: "Can you coat concrete with cracks or damage?", a: "Yes. Surface preparation includes grinding the concrete and repairing cracks, spalling, and pitting with industrial-grade polyurea crack filler. Minor cracking is normal and fully addressed before the coating is applied." },
   { q: "What surfaces can you coat besides garage floors?", a: "Our industrial-grade epoxy, polyaspartic, and polyurea coating systems work on garages, patios, porches, basements, workshops, pool decks, walkways, driveways, and commercial spaces including warehouses, retail stores, offices, and medical facilities." },
   { q: "How many locations does Xtreme Polishing Systems have?", a: "Xtreme Polishing Systems and XPS Xpress operate 70+ locations nationwide, serving homeowners within a 50-mile radius of each store. Enter your ZIP code in our location finder to see your nearest store." },
-  { q: "What areas do you serve?", a: "We service all 50 states. Use our ZIP code locator at epoxygaragefloorestimate.com/locations to find your nearest dealer." },
+  { q: "What areas do you serve?", a: "We service all 50 states. Use our ZIP code locator at /locations to find your nearest dealer." },
   { q: "Do you offer financing?", a: "Yes, we offer financing. Learn more about our flexible payment plans at xtremepolishingsystems.com/pages/equipment-financing." },
 ];
 
@@ -392,9 +405,9 @@ export function locationLocalBusinessLd(loc) {
 
 // ── Per-route SEO config ────────────────────────────────────────────────────
 export const DEFAULT_SEO = {
-  title: "Epoxy Garage Floor Cost & Instant Estimate | EpoxyGarageFloorEstimate.com",
+  title: "Epoxy Garage Floor Cost & Instant Estimate | EpoxyQuoteNearMe",
   description:
-    "Get an instant epoxy garage floor cost estimate from EpoxyGarageFloorEstimate.com in 60 seconds. Serving Pompano Beach and South Florida. Free, no obligation.",
+    "Get an instant epoxy garage floor cost estimate from EpoxyQuoteNearMe in 60 seconds. Serving Pompano Beach and South Florida. Free, no obligation.",
   image: BUSINESS.image,
 };
 
@@ -463,13 +476,13 @@ export const SEO_ROUTES = {
   "/about": {
     title: "About Us | Xtreme Polishing Systems Garage Floor Experts",
     description:
-      "Learn about EpoxyGarageFloorEstimate.com and our parent company Xtreme Polishing Systems — a national leader in concrete and epoxy flooring.",
+      "Learn about EpoxyQuoteNearMe and our parent company Xtreme Polishing Systems — a national leader in concrete and epoxy flooring.",
     image: BUSINESS.image,
   },
   "/contact": {
     title: "Contact Us | Epoxy Garage Floor Estimate",
     description:
-      "Contact EpoxyGarageFloorEstimate.com and Xtreme Polishing Systems for garage floor coating estimates in Pompano Beach and South Florida.",
+      "Contact EpoxyQuoteNearMe and Xtreme Polishing Systems for garage floor coating estimates in Pompano Beach and South Florida.",
     image: BUSINESS.image,
   },
   "/locations": {
@@ -527,13 +540,13 @@ export const SEO_ROUTES = {
   "/guides": {
     title: "Garage Floor Guides | Epoxy Cost, Color & Installation Tips",
     description:
-      "Browse expert guides on epoxy garage floor cost, color selection, installation, and maintenance from EpoxyGarageFloorEstimate.com.",
+      "Browse expert guides on epoxy garage floor cost, color selection, installation, and maintenance from EpoxyQuoteNearMe.",
     image: BUSINESS.image,
   },
   "/epoxy-pro-guide": {
     title: "Epoxy Pro Guide | Floor Visualizer, Estimates & Color Charts",
     description:
-      "EpoxyGarageFloorEstimate.com Pro Guide — visualize your garage floor, get instant estimates, browse colors, and book installation.",
+      "EpoxyQuoteNearMe Pro Guide — visualize your garage floor, get instant estimates, browse colors, and book installation.",
     image: BUSINESS.image,
   },
 };
