@@ -1,0 +1,70 @@
+{
+  "name": "SwarmMessage",
+  "type": "object",
+  "properties": {
+    "from_agent": {
+      "type": "string",
+      "description": "Agent that sent the message"
+    },
+    "to_agent": {
+      "type": "string",
+      "description": "Agent that received the message (or 'broadcast' for all agents)"
+    },
+    "message_type": {
+      "type": "string",
+      "enum": [
+        "directive",
+        "alert",
+        "handoff",
+        "query",
+        "report",
+        "acknowledgment"
+      ],
+      "default": "directive"
+    },
+    "content": {
+      "type": "string",
+      "maxLength": 3000,
+      "description": "The inter-agent message content"
+    },
+    "related_task_id": {
+      "type": "string",
+      "description": "SwarmTask this message relates to (if any)"
+    },
+    "read": {
+      "type": "boolean",
+      "default": false
+    },
+    "read_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "from_agent",
+    "to_agent",
+    "content"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "name": "Swarm Autopilot",
+  "description": "Autonomous swarm heartbeat \u2014 every 30 minutes, runs a platform health check to spawn tasks for anomalies, then dispatches pending tasks to specialized agents.",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "swarm_autopilot",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "health_check": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "swarmOrchestrator",
+            "args": {
+              "action": "healthCheck"
+            }
+          },
+          "then": "run_cycle",
+          "x-base44": {
+            "title": "Platform health check",
+            "description": "Scan for anomalies and spawn tasks"
+          }
+        }
+      },
+      {
+        "run_cycle": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "swarmOrchestrator",
+            "args": {
+              "action": "runCycle",
+              "max_dispatch": 5
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Dispatch pending tasks",
+            "description": "Send tasks to specialized agents"
+          }
+        }
+      }
+    ]
+  },
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 * * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  }
+}

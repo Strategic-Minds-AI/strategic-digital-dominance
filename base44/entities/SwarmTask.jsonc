@@ -1,0 +1,141 @@
+{
+  "name": "SwarmTask",
+  "type": "object",
+  "properties": {
+    "task_type": {
+      "type": "string",
+      "description": "Category of work (lead_followup, seo_optimize, social_publish, reputation_monitor, site_deploy, comms_send, cross_domain, health_check)"
+    },
+    "title": {
+      "type": "string",
+      "description": "Short human-readable task title"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 3000,
+      "description": "Full task details \u2014 what needs to be done, context, constraints"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "normal",
+        "low"
+      ],
+      "default": "normal"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "claimed",
+        "in_progress",
+        "completed",
+        "failed",
+        "superseded"
+      ],
+      "default": "pending"
+    },
+    "assigned_agent": {
+      "type": "string",
+      "description": "Agent name that should handle this task (lead_orchestrator, seo_manager, social_manager, reputation_manager, site_factory_manager, comms_manager, swarm_orchestrator)"
+    },
+    "created_by_agent": {
+      "type": "string",
+      "description": "Agent that created this task (or 'system' for scheduled/sourced tasks)"
+    },
+    "parent_task_id": {
+      "type": "string",
+      "description": "If this task was spawned by another task, the parent's ID (swarm chaining)"
+    },
+    "payload": {
+      "type": "object",
+      "description": "Structured data the agent needs to execute the task (lead_id, page_slug, template_id, etc.)",
+      "properties": {
+        "lead_id": {
+          "type": "string"
+        },
+        "entity_id": {
+          "type": "string"
+        },
+        "entity_type": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        },
+        "params": {
+          "type": "object"
+        }
+      }
+    },
+    "result": {
+      "type": "string",
+      "maxLength": 5000,
+      "description": "Agent's execution result or output"
+    },
+    "result_summary": {
+      "type": "string",
+      "description": "One-line summary of the result for the swarm feed"
+    },
+    "error": {
+      "type": "string",
+      "description": "Error message if the task failed"
+    },
+    "retry_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "max_retries": {
+      "type": "integer",
+      "default": 3
+    },
+    "conversation_id": {
+      "type": "string",
+      "description": "Base44 agent conversation ID used to execute this task"
+    },
+    "claimed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "spawned_tasks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs of tasks this task spawned (swarm propagation tracking)"
+    }
+  },
+  "required": [
+    "task_type",
+    "title",
+    "assigned_agent"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
