@@ -3,6 +3,7 @@ import { NavLink, Outlet, Link } from "react-router-dom";
 import { LayoutDashboard, Users, KanbanSquare, Settings, ExternalLink, Mail, Radar, Globe, ScrollText, Star, Wrench, Factory, Smartphone, Rocket, Layers, UserCircle, TrendingUp, MessageSquare, Brain, Target, BarChart3, Package, Bot } from "lucide-react";
 import BackButton from "@/components/BackButton";
 import Logo from "@/components/Logo";
+import AIAssistBubble from "@/components/ai-assist/AIAssistBubble";
 
 const links = [
   { to: "/admin", end: true, icon: LayoutDashboard, label: "Dashboard" },
@@ -60,6 +61,7 @@ export default function AdminLayout() {
       <div className="max-w-7xl mx-auto px-5 py-8">
         <Outlet />
       </div>
+      <AIAssistBubble />
     </div>
   );
 }
