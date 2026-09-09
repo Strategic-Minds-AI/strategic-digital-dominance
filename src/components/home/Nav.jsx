@@ -70,19 +70,19 @@ export default function Nav({ settings }) {
             ))}
           </nav>
 
-          <div className="hidden md:flex items-center gap-2 mt-4">
-            <a href={`sms:${settings.automation_phone || "+1-833-484-3799"}`} className="h-9 px-4 inline-flex items-center gap-2 rounded-lg bg-stone-900/80 hover:bg-stone-800 text-amber-400 text-sm font-semibold transition border border-amber-500/50">
-              <Smartphone className="h-4 w-4" /> Text Us
-            </a>
-            <div className="flex flex-col items-end gap-1">
+          <div className="hidden md:flex flex-col items-end gap-1 mt-4">
+            <div className="flex items-center gap-2">
+              <a href={`sms:${settings.automation_phone || "+1-833-484-3799"}`} className="h-9 px-4 inline-flex items-center gap-2 rounded-lg bg-stone-900/80 hover:bg-stone-800 text-amber-400 text-sm font-semibold transition border border-amber-500/50">
+                <Smartphone className="h-4 w-4" /> Text Us
+              </a>
               <a href={`tel:${settings.phone}`} className="h-9 px-5 inline-flex items-center gap-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 text-sm font-semibold transition border border-white/80">
                 <Phone className="h-4 w-4" /> Call Now
               </a>
-              <button onClick={testCallLink} className="h-7 px-3 inline-flex items-center gap-1.5 rounded-md bg-stone-900/80 hover:bg-stone-800 text-stone-300 text-xs font-medium transition border border-white/20">
-                Test call link
-              </button>
-              {testMsg && <span className="text-[10px] font-semibold text-amber-400">{testMsg}</span>}
             </div>
+            <button onClick={testCallLink} className="h-7 px-3 inline-flex items-center gap-1.5 rounded-md bg-stone-900/80 hover:bg-stone-800 text-stone-300 text-xs font-medium transition border border-white/20">
+              Test call link
+            </button>
+            {testMsg && <span className="text-[10px] font-semibold text-amber-400">{testMsg}</span>}
           </div>
 
           <div className="flex items-center gap-2 md:hidden">
