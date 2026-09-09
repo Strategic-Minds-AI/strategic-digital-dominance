@@ -6,6 +6,7 @@ import Logo from "@/components/Logo";
 export default function Nav({ settings }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [testMsg, setTestMsg] = useState("");
   const headerRef = useRef(null);
 
   useEffect(() => {
@@ -37,6 +38,16 @@ export default function Nav({ settings }) {
     { label: "FAQ", href: "#faq" }
   ];
 
+  const testCallLink = () => {
+    const phone = settings.phone;
+    if (!phone) { setTestMsg("⚠ No phone number set"); setTimeout(() => setTestMsg(""), 4000); return; }
+    const clean = phone.replace(/[^\d+]/g, "");
+    if (clean.length < 10) { setTestMsg(`⚠ Invalid number: ${phone}`); setTimeout(() => setTestMsg(""), 4000); return; }
+    console.log("[Call Link Test] tel:" + phone, "OK");
+    setTestMsg(`✓ Call link OK → tel:${phone}`);
+    setTimeout(() => setTestMsg(""), 4000);
+  };
+
   return (
     <header ref={headerRef} className="fixed top-0 inset-x-0 z-50">
       {/* 10% OFF promo bar — clickable to the estimate funnel */}
@@ -63,9 +74,15 @@ export default function Nav({ settings }) {
             <a href={`sms:${settings.automation_phone || "+1-833-484-3799"}`} className="h-9 px-4 inline-flex items-center gap-2 rounded-lg bg-stone-900/80 hover:bg-stone-800 text-amber-400 text-sm font-semibold transition border border-amber-500/50">
               <Smartphone className="h-4 w-4" /> Text Us
             </a>
-            <a href={`tel:${settings.phone}`} className="h-9 px-5 inline-flex items-center gap-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 text-sm font-semibold transition border border-white/80">
-              <Phone className="h-4 w-4" /> Call Now
-            </a>
+            <div className="flex flex-col items-end gap-1">
+              <a href={`tel:${settings.phone}`} className="h-9 px-5 inline-flex items-center gap-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 text-sm font-semibold transition border border-white/80">
+                <Phone className="h-4 w-4" /> Call Now
+              </a>
+              <button onClick={testCallLink} className="h-7 px-3 inline-flex items-center gap-1.5 rounded-md bg-stone-900/80 hover:bg-stone-800 text-stone-300 text-xs font-medium transition border border-white/20">
+                Test call link
+              </button>
+              {testMsg && <span className="text-[10px] font-semibold text-amber-400">{testMsg}</span>}
+            </div>
           </div>
 
           <div className="flex items-center gap-2 md:hidden">
