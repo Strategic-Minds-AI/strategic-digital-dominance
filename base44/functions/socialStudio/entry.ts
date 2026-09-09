@@ -61,7 +61,7 @@ REQUIREMENTS:
 COMPANY FACTS (ground truth — do not invent beyond these):
 - Brand: Xtreme Polishing Systems — premium epoxy & polyaspartic garage floor coatings.
 - 15+ years experience, national brand, lifetime warranty on premium systems.
-- Phone: 1-833-700-1239. Website: epoxyquotenearme.base44.app
+- Phone: 1-833-700-1239. Website: epoxyquotenearme.com
 - Services: garage floor coating, patio, commercial floors. Free estimates.
 
 Return ONLY valid JSON.`;

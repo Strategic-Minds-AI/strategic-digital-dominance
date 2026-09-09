@@ -132,7 +132,7 @@ export default function RebrandStudio() {
   const runScan = async () => {
     setScanning(true); setScanError(null); setScan(null);
     try {
-      const res = await base44.functions.invoke("rebrandStudio", { action: "scanSite", url: "https://epoxyquotenearme.base44.app" });
+      const res = await base44.functions.invoke("rebrandStudio", { action: "scanSite", url: "https://epoxyquotenearme.com" });
       setScan(res.data?.scan || null);
     } catch (e) { setScanError(e.response?.data?.error || e.message); }
     finally { setScanning(false); }
@@ -289,7 +289,7 @@ export default function RebrandStudio() {
                 <div className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 text-stone-950 text-xs font-bold">Get Free Estimate</div>
               </div>
             </div>
-            <a href="https://epoxyquotenearme.base44.app" target="_blank" rel="noopener" className="mt-2 inline-flex items-center gap-1 text-xs text-amber-600 hover:underline"><Globe className="h-3.5 w-3.5" /> Open live site reference</a>
+            <a href="https://epoxyquotenearme.com" target="_blank" rel="noopener" className="mt-2 inline-flex items-center gap-1 text-xs text-amber-600 hover:underline"><Globe className="h-3.5 w-3.5" /> Open live site reference</a>
           </div>
 
           {/* Deploy target + save */}
