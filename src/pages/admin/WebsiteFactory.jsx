@@ -163,11 +163,18 @@ export default function WebsiteFactory() {
               </div>
               {t.config?.company_name && <p className="text-sm text-stone-600">{t.config.company_name}</p>}
               {t.config?.primary_city && <p className="text-xs text-stone-400 mt-1">{t.config.primary_city}, {t.config.primary_state}</p>}
-              {t.generated_url && (
-                <a href={t.generated_url} target="_blank" rel="noopener" className="text-xs text-amber-600 hover:underline flex items-center gap-1 mt-2">
-                  <Globe className="h-3 w-3" /> {t.generated_url}
-                </a>
-              )}
+              {(() => {
+                const city = t.config?.primary_city;
+                const state = t.config?.primary_state;
+                if (!city || !state) return null;
+                const slug = (s) => (s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+                const live = `https://epoxyquotenearme.base44.app/${slug(state)}/${slug(city)}`;
+                return (
+                  <a href={live} target="_blank" rel="noopener" className="text-xs text-amber-600 hover:underline flex items-center gap-1 mt-2 truncate">
+                    <Globe className="h-3 w-3 shrink-0" /> <span className="truncate">{live.replace(/^https?:\/\//, "")}</span>
+                  </a>
+                );
+              })()}
               <div className="flex gap-2 mt-4">
                 {t.status !== "live" ? (
                   <button
@@ -179,9 +186,17 @@ export default function WebsiteFactory() {
                     {deploying === t.id ? "Deploying..." : "Deploy"}
                   </button>
                 ) : (
-                  <a href={t.generated_url} target="_blank" rel="noopener" className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-stone-900 text-white text-xs font-bold hover:bg-stone-800">
-                    <Globe className="h-3.5 w-3.5" /> Visit
-                  </a>
+                  (() => {
+                    const city = t.config?.primary_city;
+                    const state = t.config?.primary_state;
+                    const slug = (s) => (s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+                    const live = city && state ? `https://epoxyquotenearme.base44.app/${slug(state)}/${slug(city)}` : t.generated_url;
+                    return (
+                      <a href={live} target="_blank" rel="noopener" className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-stone-900 text-white text-xs font-bold hover:bg-stone-800">
+                        <Globe className="h-3.5 w-3.5" /> Visit
+                      </a>
+                    );
+                  })()
                 )}
                 <button onClick={() => clone(t)} className="px-3 py-2 rounded-lg border border-stone-200 text-stone-600 hover:bg-stone-50" title="Clone">
                   <Copy className="h-3.5 w-3.5" />
