@@ -8,6 +8,17 @@ import {
   Wand2, Smartphone, MessageSquare, BarChart3
 } from "lucide-react";
 
+const PUBLISHED_URL = "https://epoxyquotenearme.base44.app";
+
+const slugify = (s) => (s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+function liveUrlFor(t) {
+  const city = t.config?.primary_city;
+  const state = t.config?.primary_state;
+  if (!city || !state) return null;
+  return `${PUBLISHED_URL}/${slugify(state)}/${slugify(city)}`;
+}
+
 const US_STATES = {
   FL: "Florida", GA: "Georgia", TX: "Texas", AZ: "Arizona", NV: "Nevada",
   CA: "California", TN: "Tennessee", NC: "North Carolina", SC: "South Carolina",
@@ -159,11 +170,16 @@ export default function WebsiteEmpire() {
                 <div className="flex items-center gap-2 text-[11px] text-stone-500">
                   <MapPin className="h-3 w-3" /> {t.config?.primary_city || "—"}, {t.config?.primary_state || "—"}
                 </div>
-                {t.generated_url && (
-                  <a href={t.generated_url} target="_blank" rel="noopener" className="text-[11px] text-amber-600 hover:underline flex items-center gap-1 mt-1 truncate">
-                    <Globe className="h-3 w-3" /> {t.generated_url.replace(/^https?:\/\//, "")}
-                  </a>
-                )}
+                {(() => {
+                  const live = liveUrlFor(t);
+                  return live ? (
+                    <a href={live} target="_blank" rel="noopener" className="text-[11px] text-amber-600 hover:underline flex items-center gap-1 mt-1 truncate">
+                      <Globe className="h-3 w-3 shrink-0" /> <span className="truncate">{live.replace(/^https?:\/\//, "")}</span>
+                    </a>
+                  ) : t.generated_url ? (
+                    <span className="text-[11px] text-stone-400 flex items-center gap-1 mt-1 truncate"><Globe className="h-3 w-3 shrink-0" /> <span className="truncate">{t.generated_url.replace(/^https?:\/\//, "")}</span></span>
+                  ) : null;
+                })()}
               </div>
             ))}
           </div>
