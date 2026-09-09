@@ -158,6 +158,7 @@ function App() {
           <ScrollToTop />
           <RouteSeo />
           <AuthenticatedApp />
+          <AIAssistBubble />
         </Router>
         <Toaster />
       </QueryClientProvider>

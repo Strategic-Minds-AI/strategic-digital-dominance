@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, Outlet, Link } from "react-router-dom";
-import { LayoutDashboard, Users, KanbanSquare, Settings, ExternalLink, Mail, Radar, Globe, ScrollText, Star, Wrench, Factory, Smartphone, Rocket, Layers, UserCircle, TrendingUp, MessageSquare } from "lucide-react";
+import { LayoutDashboard, Users, KanbanSquare, Settings, ExternalLink, Mail, Radar, Globe, ScrollText, Star, Wrench, Factory, Smartphone, Rocket, Layers, UserCircle, TrendingUp, MessageSquare, Brain, Target, BarChart3, Package, Bot } from "lucide-react";
 import BackButton from "@/components/BackButton";
 import Logo from "@/components/Logo";
 
@@ -20,6 +20,11 @@ const links = [
   { to: "/admin/national-launch", icon: Rocket, label: "National Launch" },
   { to: "/admin/seo-generator", icon: TrendingUp, label: "SEO Generator" },
   { to: "/admin/xtreme-comms", icon: MessageSquare, label: "Xtreme Comms" },
+  { to: "/admin/results", icon: BarChart3, label: "Analytics" },
+  { to: "/admin/agent-builder", icon: Bot, label: "Agent Builder" },
+  { to: "/admin/vision-strategy", icon: Target, label: "Strategy" },
+  { to: "/admin/intelligence", icon: Brain, label: "Intelligence" },
+  { to: "/admin/client-packages", icon: Package, label: "Client Pkgs" },
   { to: "/portal", icon: UserCircle, label: "Client Portal" },
   { to: "/admin/settings", icon: Settings, label: "Settings" }
 ];
