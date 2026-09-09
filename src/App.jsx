@@ -62,6 +62,7 @@ import AgentBuilder from '@/pages/admin/AgentBuilder';
 import VisionStrategy from '@/pages/admin/VisionStrategy';
 import Intelligence from '@/pages/admin/Intelligence';
 import ClientPackages from '@/pages/admin/ClientPackages';
+import ApiKeyManager from '@/pages/admin/ApiKeyManager';
 import CustomerPortal from '@/pages/CustomerPortal';
 
 
@@ -137,6 +138,7 @@ const AuthenticatedApp = () => {
         <Route path="vision-strategy" element={<VisionStrategy />} />
         <Route path="intelligence" element={<Intelligence />} />
         <Route path="client-packages" element={<ClientPackages />} />
+        <Route path="api-keys" element={<ApiKeyManager />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
       <Route path="/:state/:citySlug" element={<LocationSeoPage />} />

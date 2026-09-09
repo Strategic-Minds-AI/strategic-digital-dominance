@@ -1,0 +1,81 @@
+{
+  "name": "ApiKey",
+  "type": "object",
+  "properties": {
+    "key_name": {
+      "type": "string",
+      "description": "Human-readable label for the key (e.g. 'Production SEO Bot')"
+    },
+    "key_prefix": {
+      "type": "string",
+      "description": "First 20 chars of the key for identification without exposing the secret (e.g. xps_seo_5f3a9b2c7e1d)"
+    },
+    "key_hash": {
+      "type": "string",
+      "description": "SHA-256 hash of the full key \u2014 the full key is only shown once at generation"
+    },
+    "scope": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "user",
+        "seo"
+      ],
+      "default": "user",
+      "description": "admin = full access, user = lead submission only, seo = SEO system functions"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Optional expiry timestamp; null = never expires"
+    },
+    "last_used_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "usage_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "created_by_name": {
+      "type": "string",
+      "description": "Name/email of the admin who created the key"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 500
+    }
+  },
+  "required": [
+    "key_name",
+    "key_prefix",
+    "key_hash",
+    "scope"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
