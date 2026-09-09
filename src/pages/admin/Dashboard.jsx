@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import StatCard from "@/components/admin/StatCard";
 import FunnelDropoff from "@/components/admin/FunnelDropoff";
 import CwvWidget from "@/components/admin/CwvWidget";
+import LocationLeaderboard from "@/components/admin/LocationLeaderboard";
 import { money } from "@/lib/pricing";
 import { Link } from "react-router-dom";
 import { Bell, Calendar, Phone, Home, FileText, Trophy, DollarSign, Percent, Zap } from "lucide-react";
@@ -74,6 +75,7 @@ export default function Dashboard() {
         <StatCard label="Conversion rate" value={`${convRate}%`} sub="Leads → won" icon={Percent} accent="purple" />
       </div>
 
+      <LocationLeaderboard leads={leads} />
       <FunnelDropoff />
       <CwvWidget />
     </div>

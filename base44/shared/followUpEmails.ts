@@ -14,6 +14,14 @@ function esc(s) {
 }
 
 const STAGES = {
+  immediate: {
+    subject: (lead) => `Your garage floor estimate is ready, ${lead.first_name || "there"}`,
+    heading: "Here's your instant quote range",
+    intro: () =>
+      `Thanks for using our instant estimator! Based on the details you provided, here's your estimated price range. Tap below to schedule your free in-home consultation — we'll come out, measure your space, and give you a firm, no-obligation quote.`,
+    showRange: true,
+    cta: "Schedule my free consultation",
+  },
   reminder: {
     subject: (lead) => `Still thinking about your garage floor, ${lead.first_name || "there"}?`,
     heading: "Your estimate is still waiting",

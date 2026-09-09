@@ -1,0 +1,41 @@
+{
+  "name": "Immediate Lead Follow-Up",
+  "description": "Sends an immediate professional follow-up email with the lead's quote range summary and a scheduling link right after they finish the estimator.",
+  "trigger": {
+    "config": {
+      "trigger_type": "entity",
+      "entity_name": "Lead",
+      "events": [
+        "create"
+      ]
+    },
+    "condition": "${ .trigger.data.email != \"\" and .trigger.data.email != null and .trigger.data.estimate_low != null }"
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "immediate_lead_followup",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "send_immediate": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "sendFollowUpEmail",
+            "args": {
+              "lead_id": "${ .trigger.entity_id }",
+              "stage": "immediate"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Send immediate follow-up",
+            "description": "Quote range summary + scheduling link, sent instantly"
+          }
+        }
+      }
+    ]
+  }
+}
