@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 export const XTREME_AI_ICON_URL =
-  "https://media.base44.com/images/public/6a77f4491f0bf92de9a3ed8b/f2a57721b_ChatGPTImageAug24202605_39_33PM.png";
+  "https://media.base44.com/images/public/6a77f4491f0bf92de9a3ed8b/28db91966_LOGO.png";
 
 export const LOGO_URL =
   "https://media.base44.com/images/public/6a77f4491f0bf92de9a3ed8b/20999222a_Logo_XPS_Color_12-20-24.webp";

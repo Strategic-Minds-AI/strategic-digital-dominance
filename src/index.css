@@ -160,6 +160,36 @@
   }
 }
 
+@layer utilities {
+  /* === Electric silver/gold animated border for admin cards & buttons === */
+  @keyframes xa-electric-flow {
+    0%, 100% {
+      border-color: #C0C0C0;
+      box-shadow: 0 0 0 1px rgba(192, 192, 192, 0.35), 0 0 14px -4px rgba(192, 192, 192, 0.45);
+    }
+    50% {
+      border-color: #FFD700;
+      box-shadow: 0 0 0 1px rgba(255, 215, 0, 0.45), 0 0 18px -4px rgba(255, 215, 0, 0.6);
+    }
+  }
+  .xa-electric-hover {
+    border: 1px solid #e4e4e7;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  }
+  .xa-electric-hover:hover {
+    animation: xa-electric-flow 1.8s ease-in-out infinite;
+    transform: translateY(-2px);
+  }
+  /* Button variant — no lift, just the electric border pulse */
+  .xa-electric-btn {
+    border: 1px solid #d4d4d8;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .xa-electric-btn:hover {
+    animation: xa-electric-flow 1.8s ease-in-out infinite;
+  }
+}
+
 @layer components {
   /* === Xtreme AI design system — shell === */
   .vx-app-shell { min-height: 100vh; background: var(--vx-canvas); }

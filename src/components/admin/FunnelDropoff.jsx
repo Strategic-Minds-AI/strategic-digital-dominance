@@ -59,7 +59,7 @@ export default function FunnelDropoff() {
 
   if (isLoading) {
     return (
-      <div className="rounded-2xl bg-white border border-stone-200 p-6">
+      <div className="xa-electric-hover rounded-2xl bg-white p-6">
         <div className="h-6 w-48 bg-stone-100 rounded animate-pulse mb-4" />
         <div className="space-y-3">
           {[...Array(8)].map((_, i) => (
@@ -74,7 +74,7 @@ export default function FunnelDropoff() {
   const totalConverted = rows[rows.length - 1]?.count || 0;
 
   return (
-    <div className="rounded-2xl bg-white border border-stone-200 p-6">
+    <div className="xa-electric-hover rounded-2xl bg-white p-6">
       <div className="flex items-start justify-between flex-wrap gap-2">
         <div>
           <h2 className="font-semibold text-stone-900 flex items-center gap-2">

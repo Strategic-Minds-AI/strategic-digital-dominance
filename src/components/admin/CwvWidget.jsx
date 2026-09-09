@@ -41,7 +41,7 @@ export default function CwvWidget() {
   };
 
   return (
-    <div className="rounded-2xl bg-white border border-stone-200 p-6">
+    <div className="xa-electric-hover rounded-2xl bg-white p-6">
       <div className="flex items-start justify-between flex-wrap gap-2">
         <div>
           <h2 className="font-semibold text-stone-900 flex items-center gap-2">
@@ -61,7 +61,7 @@ export default function CwvWidget() {
             <option value="mobile">Mobile</option>
             <option value="desktop">Desktop</option>
           </select>
-          <Button onClick={check} disabled={loading} size="sm">
+          <Button onClick={check} disabled={loading} size="sm" className="xa-electric-btn">
             {loading ? <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-1.5" />}
             Check
           </Button>
@@ -120,7 +120,7 @@ export default function CwvWidget() {
 
 function Metric({ label, value, score, hint }) {
   return (
-    <div className={`rounded-lg p-3 ${score !== undefined ? (score >= 0.9 ? "bg-green-50" : score >= 0.5 ? "bg-amber-50" : "bg-red-50") : "bg-stone-50"}`}>
+    <div className={`xa-electric-hover rounded-lg p-3 ${score !== undefined ? (score >= 0.9 ? "bg-green-50" : score >= 0.5 ? "bg-amber-50" : "bg-red-50") : "bg-stone-50"}`}>
       <div className="text-xs text-stone-500">{label}</div>
       <div className="text-lg font-bold text-stone-900 mt-0.5">{value}</div>
       <div className="text-[10px] text-stone-400 mt-0.5">{hint}</div>
