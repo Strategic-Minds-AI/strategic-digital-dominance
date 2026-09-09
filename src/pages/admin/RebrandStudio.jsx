@@ -6,6 +6,76 @@ import {
   Image as ImageIcon, FileText, Rocket, Globe, Copy
 } from "lucide-react";
 
+const DEFAULT_LOCATIONS = `Pompano Beach, FL
+Fort Lauderdale, FL
+Miami, FL
+Orlando, FL
+Tampa, FL
+St. Petersburg, FL
+Jacksonville, FL
+Tallahassee, FL
+Gainesville, FL
+Daytona Beach, FL
+Sarasota, FL
+Naples, FL
+Fort Myers, FL
+West Palm Beach, FL
+Boca Raton, FL
+Hollywood, FL
+Cape Coral, FL
+Clearwater, FL
+Lakeland, FL
+Palm Bay, FL
+Atlanta, GA
+Savannah, GA
+Augusta, GA
+Macon, GA
+Houston, TX
+Dallas, TX
+Austin, TX
+San Antonio, TX
+Phoenix, AZ
+Tucson, AZ
+Mesa, AZ
+Chandler, AZ
+Scottsdale, AZ
+Las Vegas, NV
+Los Angeles, CA
+San Diego, CA
+Sacramento, CA
+Nashville, TN
+Memphis, TN
+Knoxville, TN
+Chattanooga, TN
+Charlotte, NC
+Raleigh, NC
+Greensboro, NC
+Charleston, SC
+Columbia, SC
+Greenville, SC
+Birmingham, AL
+Huntsville, AL
+New Orleans, LA
+Baton Rouge, LA
+Oklahoma City, OK
+Tulsa, OK
+Little Rock, AR
+Louisville, KY
+Lexington, KY
+Indianapolis, IN
+Columbus, OH
+Cincinnati, OH
+Cleveland, OH
+Kansas City, MO
+St. Louis, MO
+Springfield, MO
+Wichita, KS
+Albuquerque, NM
+Denver, CO
+Colorado Springs, CO
+Salt Lake City, UT
+Boise, ID`;
+
 const DEPLOY_TARGETS = [
   { id: "vercel", label: "Vercel", hint: "Frontend hosting (Next/Vite)" },
   { id: "supabase", label: "Supabase", hint: "Backend + DB + storage" },
@@ -30,6 +100,9 @@ export default function RebrandStudio() {
   const [saving, setSaving] = useState(false);
   const [savedTpl, setSavedTpl] = useState(null);
   const [error, setError] = useState(null);
+  const [citiesText, setCitiesText] = useState(DEFAULT_LOCATIONS);
+  const [massProducing, setMassProducing] = useState(false);
+  const [massResult, setMassResult] = useState(null);
 
   const { data: templates } = useQuery({
     queryKey: ["websiteTemplates"],
@@ -238,6 +311,42 @@ export default function RebrandStudio() {
             )}
           </div>
         </div>
+      </div>
+
+      {/* STEP 5 — Mass production */}
+      <div className={stepCls}>
+        <div className="flex items-center gap-2 mb-4"><span className="h-7 w-7 rounded-full bg-amber-500 text-stone-950 grid place-items-center font-bold text-sm">5</span><h3 className="font-bold text-stone-900">Mass Production — 70 Locations</h3></div>
+        <p className="text-sm text-stone-500 mb-3">Generates one rebranded <strong>WebsiteTemplate</strong> per city (city-specific name, slug, subdomain, service area — all sharing your logo + brand) and bundles them into a <strong>LaunchCampaign</strong>. Edit the list below before running.</p>
+        <textarea value={citiesText} onChange={(e) => setCitiesText(e.target.value)} rows={8} className="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm font-mono focus:border-amber-500 outline-none" placeholder="City, ST — one per line" />
+        <div className="flex items-center gap-3 mt-3">
+          <button
+            onClick={async () => {
+              if (!brand.company_name) { setError("Enter a company name in Step 1 first."); return; }
+              setMassProducing(true); setError(null); setMassResult(null);
+              const cities = citiesText.split("\n").map((l) => l.trim()).filter(Boolean).map((l) => {
+                const [city, state] = l.split(",").map((s) => s.trim());
+                return { city, state: state || "" };
+              });
+              try {
+                const res = await base44.functions.invoke("rebrandStudio", { action: "massProduce", brand, logoUrl, cities });
+                setMassResult(res.data);
+                queryClient.invalidateQueries({ queryKey: ["websiteTemplates"] });
+              } catch (e) { setError(e.response?.data?.error || e.message); }
+              finally { setMassProducing(false); }
+            }}
+            disabled={massProducing}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-amber-500 text-stone-950 text-sm font-bold hover:bg-amber-400 disabled:opacity-60"
+          >
+            {massProducing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Rocket className="h-4 w-4" />} {massProducing ? "Producing…" : `Mass Produce ${citiesText.split("\n").filter((l) => l.trim()).length} Sites`}
+          </button>
+          <span className="text-xs text-stone-400">Uses the brand details + logo from Steps 1–2.</span>
+        </div>
+        {massResult && (
+          <div className="mt-3 rounded-lg border border-green-200 bg-green-50 p-3 flex items-start gap-2">
+            <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
+            <div className="text-sm text-green-700">Created <strong>{massResult.templates_created}</strong> city templates and a launch campaign. Manage deploys from the <a href="/admin/website-factory" className="underline font-semibold">Website Factory</a> and <a href="/admin/national-launch" className="underline font-semibold">National Launch</a>.</div>
+          </div>
+        )}
       </div>
 
       {/* Existing templates */}

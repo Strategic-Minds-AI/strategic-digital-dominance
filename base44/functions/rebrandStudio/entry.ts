@@ -109,6 +109,44 @@ export default async function (req: Request): Promise<Response> {
         return Response.json({ ok: true, scan: scanRes, source_url: url });
       }
 
+      case 'massProduce': {
+        const { brand: b, logoUrl: lu, cities } = body;
+        if (!b?.company_name || !cities?.length) return Response.json({ error: 'brand.company_name and cities are required' }, { status: 400 });
+        const baseSlug = (b.company_name || 'epoxy').toLowerCase().replace(/[^a-z0-9]/g, '-');
+        const created = [];
+        for (const c of cities) {
+          const city = String(c.city || '').trim();
+          const state = String(c.state || '').trim();
+          if (!city) continue;
+          const citySlug = city.toLowerCase().replace(/[^a-z0-9]/g, '-');
+          const tpl = await svc.entities.WebsiteTemplate.create({
+            name: `${b.company_name} — ${city}`,
+            slug: `${baseSlug}-${citySlug}`,
+            config: {
+              company_name: b.company_name, phone: b.phone, email: b.email,
+              domain: b.domain ? `${citySlug}.${b.domain}` : '',
+              service_area: `${city}, ${state}`,
+              primary_city: city, primary_state: state,
+              color_scheme: b.color_scheme || 'amber', pricing_tier: 'standard',
+              hero_image_url: lu || '',
+            },
+            status: 'configured', pwa_enabled: true, launch_mode: 'manual',
+          });
+          created.push({ id: tpl.id, city, state });
+        }
+        const campaign = await svc.entities.LaunchCampaign.create({
+          name: `${b.company_name} — Mass Production (${created.length} cities)`,
+          status: 'planning', mode: 'manual',
+          target_states: [...new Set(created.map((t) => t.state))],
+          target_cities: created.map((t) => ({ city: t.city, state: t.state, status: 'pending' })),
+          template_ids: created.map((t) => t.id),
+          auto_deploy: false,
+          metrics: { sites_deployed: 0, leads_generated: 0, appointments_booked: 0, revenue: 0 },
+          spent: 0,
+        });
+        return Response.json({ ok: true, templates_created: created.length, campaign_id: campaign.id });
+      }
+
       default:
         return Response.json({ error: `Unknown action: ${action}` }, { status: 400 });
     }
