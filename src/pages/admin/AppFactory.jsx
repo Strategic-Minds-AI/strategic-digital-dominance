@@ -1,7 +1,53 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
+import JSZip from "jszip";
 import { Smartphone, Plus, Rocket, Check, Loader2, Download } from "lucide-react";
+
+// Generate a real PWA manifest.json from the build config
+function buildManifest(b) {
+  return {
+    name: b.manifest?.name || b.app_name,
+    short_name: b.manifest?.short_name || b.app_name?.substring(0, 12),
+    description: `${b.app_name} — powered by EpoxyQuoteNearMe`,
+    start_url: "/",
+    display: b.manifest?.display || "standalone",
+    orientation: b.manifest?.orientation || "portrait",
+    background_color: b.manifest?.background_color || "#FFFFFF",
+    theme_color: b.manifest?.theme_color || "#D4AF37",
+    icons: [
+      { src: "/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any maskable" },
+      { src: "/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any maskable" },
+    ],
+  };
+}
+
+// Minimal service worker for offline shell caching
+function buildServiceWorker() {
+  return `const CACHE = "epoxy-pwa-v1";
+const ASSETS = ["/", "/index.html", "/manifest.json"];
+self.addEventListener("install", (e) => {
+  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting()));
+});
+self.addEventListener("activate", (e) => {
+  e.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
+});
+self.addEventListener("fetch", (e) => {
+  e.respondWith(caches.match(e.request).then((r) => r || fetch(e.request)));
+});
+`;
+}
+
+// Bottom-nav config the PWA shell reads at runtime
+function buildNavConfig(b) {
+  return {
+    nav: (b.nav_config || []).map((n) => ({
+      label: n.label,
+      icon: n.icon,
+      route: n.route,
+    })),
+  };
+}
 
 const DEFAULT_NAV = [
   { label: "Home", icon: "Home", route: "/" },
@@ -58,27 +104,64 @@ export default function AppFactory() {
   const build = async (appBuild) => {
     setBuilding(appBuild.id);
     try {
-      // Update to building status
       await base44.entities.AppBuild.update(appBuild.id, { status: "building" });
       queryClient.invalidateQueries({ queryKey: ["appBuilds"] });
 
-      // Simulate PWA build — generates manifest.json and configures bottom nav
-      await new Promise((r) => setTimeout(r, 2000));
+      // Actually generate the PWA package files
+      const manifest = buildManifest(appBuild);
+      const sw = buildServiceWorker();
+      const nav = buildNavConfig(appBuild);
+      const zip = new JSZip();
+      zip.file("manifest.json", JSON.stringify(manifest, null, 2));
+      zip.file("sw.js", sw);
+      zip.file("nav-config.json", JSON.stringify(nav, null, 2));
+      zip.file("README.txt", `${appBuild.app_name} PWA package\nGenerated ${new Date().toISOString()}\n\nFiles:\n- manifest.json  → copy to /public/manifest.json\n- sw.js           → copy to /public/sw.js\n- nav-config.json  → bottom nav config consumed by the app shell\n`);
+      const blob = await zip.generateAsync({ type: "blob" });
+      const package_url = URL.createObjectURL(blob);
 
       await base44.entities.AppBuild.update(appBuild.id, {
         status: "built",
         build_log: JSON.stringify({
-          steps: ["manifest_generated", "icons_created", "nav_configured", "service_worker_updated"],
-          manifest: appBuild.manifest,
-          nav: appBuild.nav_config,
+          steps: ["manifest_generated", "service_worker_generated", "nav_configured", "package_zipped"],
+          files: ["manifest.json", "sw.js", "nav-config.json", "README.txt"],
+          generated_at: new Date().toISOString(),
         }),
+        published_url: package_url,
       });
       queryClient.invalidateQueries({ queryKey: ["appBuilds"] });
     } catch (e) {
       console.error("Build failed:", e);
+      await base44.entities.AppBuild.update(appBuild.id, { status: "failed", build_log: String(e?.message || e) });
+      queryClient.invalidateQueries({ queryKey: ["appBuilds"] });
     }
     setBuilding(null);
   };
+
+  const download = (appBuild) => {
+    // Regenerate the zip on demand (object URLs don't survive reloads)
+    const zip = new JSZip();
+    zip.file("manifest.json", JSON.stringify(buildManifest(appBuild), null, 2));
+    zip.file("sw.js", buildServiceWorker());
+    zip.file("nav-config.json", JSON.stringify(buildNavConfig(appBuild), null, 2));
+    zip.generateAsync({ type: "blob" }).then((blob) => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${appBuild.app_slug || "pwa"}-package.zip`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+  };
+
+  // Auto-process the queue: build any queued apps on load
+  useEffect(() => {
+    if (isLoading || building) return;
+    const queued = (builds || []).find((b) => b.status === "queued");
+    if (queued) build(queued);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [builds, isLoading]);
 
   return (
     <div>
@@ -171,7 +254,7 @@ export default function AppFactory() {
                   <h3 className="font-bold text-stone-900">{b.app_name}</h3>
                   <p className="text-xs text-stone-400">{b.app_slug}</p>
                 </div>
-                <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${b.status === "built" || b.status === "published" ? "bg-green-100 text-green-700" : b.status === "building" ? "bg-amber-100 text-amber-700" : "bg-stone-100 text-stone-500"}`}>
+                <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${b.status === "built" || b.status === "published" ? "bg-green-100 text-green-700" : b.status === "building" ? "bg-amber-100 text-amber-700" : b.status === "failed" ? "bg-red-100 text-red-700" : "bg-stone-100 text-stone-500"}`}>
                   {b.status?.toUpperCase()}
                 </span>
               </div>
@@ -192,8 +275,19 @@ export default function AppFactory() {
                   </button>
                 )}
                 {(b.status === "built" || b.status === "published") && (
-                  <button className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-stone-900 text-white text-xs font-bold hover:bg-stone-800">
-                    <Download className="h-3.5 w-3.5" /> Download
+                  <button
+                    onClick={() => download(b)}
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-stone-900 text-white text-xs font-bold hover:bg-stone-800"
+                  >
+                    <Download className="h-3.5 w-3.5" /> Download PWA
+                  </button>
+                )}
+                {b.status === "failed" && (
+                  <button
+                    onClick={() => build(b)}
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-red-500 text-white text-xs font-bold hover:bg-red-600"
+                  >
+                    <Rocket className="h-3.5 w-3.5" /> Retry
                   </button>
                 )}
               </div>
