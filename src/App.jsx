@@ -65,6 +65,7 @@ import ClientPackages from '@/pages/admin/ClientPackages';
 import ApiKeyManager from '@/pages/admin/ApiKeyManager';
 import SocialStudio from '@/pages/admin/SocialStudio';
 import RebrandStudio from '@/pages/admin/RebrandStudio';
+import LocationPerformance from '@/pages/admin/LocationPerformance';
 import CustomerPortal from '@/pages/CustomerPortal';
 
 
@@ -143,6 +144,7 @@ const AuthenticatedApp = () => {
         <Route path="api-keys" element={<ApiKeyManager />} />
         <Route path="social-studio" element={<SocialStudio />} />
         <Route path="rebrand-studio" element={<RebrandStudio />} />
+        <Route path="location-performance" element={<LocationPerformance />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
       <Route path="/:state/:citySlug" element={<LocationSeoPage />} />

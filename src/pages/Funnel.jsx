@@ -225,6 +225,8 @@ export default function Funnel() {
     await trackEvent("lead_created", { lead_id: lead.id });
     // Push to HubSpot CRM immediately (does not block the funnel).
     base44.functions.invoke("pushLeadToHubspot", { lead_id: lead.id }).catch(() => {});
+    // Sync to Google Sheets (auto-creates the sheet on first call, does not block the funnel).
+    base44.functions.invoke("syncLeadToSheet", { action: "appendLead", lead_id: lead.id }).catch(() => {});
     trackEvent("scrape_complete", { lead_id: lead.id, sqft, source: result.source });
     setStep(6);
     window.scrollTo(0, 0);

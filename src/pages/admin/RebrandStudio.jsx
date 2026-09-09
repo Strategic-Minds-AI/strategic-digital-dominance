@@ -6,6 +6,7 @@ import {
   Image as ImageIcon, FileText, Rocket, Globe, Copy
 } from "lucide-react";
 import CityGenerator from "@/components/rebrand-studio/CityGenerator";
+import BulkPublishPanel from "@/components/rebrand-studio/BulkPublishPanel";
 
 const DEFAULT_LOCATIONS = `Pompano Beach, FL
 Fort Lauderdale, FL
@@ -357,6 +358,9 @@ export default function RebrandStudio() {
           </div>
         )}
       </div>
+
+      {/* STEP 6 — Bulk publish & DNS routing */}
+      <BulkPublishPanel brand={brand} logoUrl={logoUrl} templates={templates} rootDomain={rootDomain} />
 
       {/* Existing templates */}
       <div className="border-t border-stone-100 pt-4">

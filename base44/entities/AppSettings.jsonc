@@ -40,6 +40,10 @@
       "type": "string",
       "description": "Encrypted-style storage for the Google OAuth refresh token used by the auto-verifier bridge"
     },
+    "google_sheets_lead_id": {
+      "type": "string",
+      "description": "Google Sheets spreadsheet ID for the auto-created leads sync spreadsheet"
+    },
     "is_test_pricing": {
       "type": "boolean",
       "default": true

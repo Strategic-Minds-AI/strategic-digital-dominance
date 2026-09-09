@@ -149,6 +149,32 @@ export default async function (req: Request): Promise<Response> {
         return Response.json({ ok: true, templates_created: created.length, campaign_id: campaign.id });
       }
 
+      case 'bulkPublish': {
+        // Push shared brand fields (company_name, phone, email, color_scheme,
+        // logo) to ALL WebsiteTemplate records at once. City-specific fields
+        // (slug, primary_city, primary_state, service_area, domain) are preserved.
+        const { brand: b, logoUrl: lu } = body;
+        if (!b?.company_name) return Response.json({ error: 'brand.company_name is required' }, { status: 400 });
+
+        const templates = await svc.entities.WebsiteTemplate.list(500);
+        const updates = templates.map((t) => ({
+          id: t.id,
+          config: {
+            ...t.config,
+            company_name: b.company_name,
+            phone: b.phone,
+            email: b.email,
+            color_scheme: b.color_scheme || t.config?.color_scheme || 'amber',
+            hero_image_url: lu || t.config?.hero_image_url || '',
+          },
+        }));
+
+        if (updates.length > 0) {
+          await svc.entities.WebsiteTemplate.bulkUpdate(updates);
+        }
+        return Response.json({ ok: true, updated: updates.length });
+      }
+
       default:
         return Response.json({ error: `Unknown action: ${action}` }, { status: 400 });
     }

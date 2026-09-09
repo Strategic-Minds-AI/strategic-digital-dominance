@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { SEO_ROUTES, DEFAULT_SEO, buildJsonLd, SITE_URL, BUSINESS, applySeoSettings } from "@/lib/seoConfig";
 import { base44 } from "@/api/base44Client";
+import { trackEvent } from "@/lib/tracking";
 
 // Module-level caches so we fetch once per session.
 let overridesCache = null;
@@ -140,6 +141,12 @@ export default function RouteSeo() {
       s.textContent = JSON.stringify(obj);
       document.head.appendChild(s);
     });
+
+    // Track page views on location routes (/{state}/{city}) for the location performance dashboard
+    const locMatch = path.match(/^\/([a-z]{2})\/([a-z0-9-]+)/i);
+    if (locMatch) {
+      trackEvent("page_view", { path });
+    }
   }, [location.pathname, overrides, settings]);
 
   return null;

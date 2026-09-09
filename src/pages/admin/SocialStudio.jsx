@@ -103,6 +103,31 @@ export default function SocialStudio() {
         </div>
       </div>
 
+      {/* Calendar sync */}
+      <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-center gap-2">
+          <Calendar className="h-5 w-5 text-blue-600 shrink-0" />
+          <div>
+            <div className="text-sm font-bold text-stone-900">Google Calendar Sync</div>
+            <div className="text-xs text-stone-500">Sync scheduled social posts + SEO content dates to your Google Calendar (yellow = social, green = SEO).</div>
+          </div>
+        </div>
+        <button
+          onClick={async () => {
+            setLoading("cal-sync"); setError(null); setResult(null);
+            try {
+              const res = await base44.functions.invoke("syncContentCalendar", { action: "sync" });
+              setResult(res.data);
+            } catch (e) { setError(e.response?.data?.error || e.message); }
+            finally { setLoading(null); }
+          }}
+          disabled={loading !== null}
+          className="h-10 px-4 rounded-lg bg-blue-600 text-white text-sm font-semibold flex items-center gap-2 disabled:opacity-50 hover:bg-blue-700"
+        >
+          {loading === "cal-sync" ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Calendar className="h-4 w-4" />} Sync to Calendar
+        </button>
+      </div>
+
       {/* Page selector */}
       {pages.length > 0 && (
         <div className="rounded-xl border border-stone-200 bg-white p-4">
