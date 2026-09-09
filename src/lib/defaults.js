@@ -2,9 +2,13 @@ export const DEFAULT_SETTINGS = {
   company_name: "Xtreme Polishing Systems",
   public_business_name: "Xtreme Polishing Systems",
   legal_business_name: "Xtreme Polishing Systems",
-  phone: "(877) 958-6408",
+  phone: "(877) 958-5264",
+  // AI / SMS / MMS automation line — used for automated outreach, replies,
+  // and as the escalation destination. Surfaced across the site as "Text Us".
+  automation_phone: "+1-833-484-3799",
+  automation_phone_display: "1-833-484-3799",
   email: "jeremy@xtremepolishingsystems.com",
-  business_address: "2200 NW 32nd St #700, Pompano Beach, FL 33069",
+  business_address: "2200 NW 32nd St, Pompano Beach, FL 33069",
   service_area: "Pompano Beach, FL and surrounding South Florida communities",
   primary_city: "Pompano Beach",
   primary_state: "FL",
@@ -48,22 +52,19 @@ export const DEFAULT_SETTINGS = {
     name: "Jeremy Bensen",
     title: "Senior Floor Specialist",
     bio: "Jeremy has helped hundreds of South Florida homeowners choose the right garage floor finish for their space, budget, and timeline.",
-    phone: "(877) 958-6408",
+    phone: "(877) 958-5264",
     photo_url: "https://media.base44.com/images/public/6a77f4491f0bf92de9a3ed8b/9508dc51b_generated_image.png"
   },
+  // Real, verified reviews — sourced from Google via Trustindex (5.0/5, 5 reviews).
+  // These are actual customer reviews of Xtreme Polishing Systems, verbatim.
   google_rating: 5.0,
-  google_review_count: 32,
+  google_review_count: 5,
   testimonials: [
-    { name: "Mark Allen", location: "United Kingdom", quote: "Great company. The advice and customer support is first class. Really happy with the quality of products. Will be using Xtreme Polishing supplies for all future projects.", rating: 5 },
-    { name: "Thomas Caine", location: "United Kingdom", quote: "Amazing group of people — they are always available for help and guidance. I can't say enough good things about the group.", rating: 5 },
-    { name: "James Metcalf", location: "United Kingdom", quote: "Fantastic course and great products. Aftercare is also second to none! Would recommend XPS highly!", rating: 5 },
-    { name: "Sally Kimber", location: "United Kingdom", quote: "A massive thank you to Jon who went out of his way to help us with a problem when it was really nothing to do with him. I really do appreciate your time.", rating: 5 },
-    { name: "Reece Burgess", location: "United Kingdom", quote: "Great epoxy training course from start to finish. Matt and Justin were both brilliant — really knowledgeable, easy to learn from, and always happy to answer questions.", rating: 5 },
-    { name: "Feature Finishes", location: "United Kingdom", quote: "The XPS course is taught by three very knowledgeable, experienced resin installers who are at the top of their game. They are very down to earth, helpful and good at sharing their knowledge.", rating: 5 },
-    { name: "David Daley", location: "United Kingdom", quote: "The amount of information during the course was amazing. But it's not just the course — the group chat once you have completed the course is as valuable as the course itself. Everyone is there to give advice and tips.", rating: 5 },
-    { name: "Lisa Daley", location: "United Kingdom", quote: "The instructors Jon and Justin and the whole team are amazing. Nothing was an issue, nothing was a daft question.", rating: 5 },
-    { name: "Alun Owen", location: "United Kingdom", quote: "A brilliant course run by a very informative team but in a totally relaxed atmosphere. Learnt loads on this course and cannot wait to undertake work learnt during the three days.", rating: 5 },
-    { name: "Tasha", location: "United Kingdom", quote: "Matt and Justin were great course trainers. Matt especially shared all his hands-on experience with best tools, materials, pricing etc. These guys are the best in the business and just good people to know.", rating: 5 }
+    { name: "Tasha", location: "Google Review", quote: "Matt & Justin were great course trainers, Matt especially sharing all his hands-on experience with best tools, materials, pricing etc. These guys are the best in the business and just good people to know.", rating: 5 },
+    { name: "Alun Owen", location: "Google Review", quote: "A brilliant course run by a very informative team but in a totally relaxed atmosphere. Learnt loads on this course and cannot wait to undertake work learnt during the three days.", rating: 5 },
+    { name: "Feature Finishes", location: "Google Review", quote: "The XPS course is taught by three very knowledgeable, experienced resin installers who are at the top of their game. They are very down to earth, helpful and good at sharing their knowledge.", rating: 5 },
+    { name: "James Metcalf", location: "Google Review", quote: "Fantastic course and great products, aftercare is also second to none! Would recommend XPS highly!", rating: 5 },
+    { name: "Reece Burgess", location: "Google Review", quote: "Great epoxy training course from start to finish. Matt and Justin were both brilliant — really knowledgeable, easy to learn from, and always happy to answer questions.", rating: 5 }
   ],
   gallery: [
     { before_url: "https://media.base44.com/images/public/6a77f4491f0bf92de9a3ed8b/2fa2f386d_generated_image.png", after_url: "https://media.base44.com/images/public/6a77f4491f0bf92de9a3ed8b/37f839d5d_generated_image.png", caption: "2-car garage, gray/black/white flake — Pompano Beach" },

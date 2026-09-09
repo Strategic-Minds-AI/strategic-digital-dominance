@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { secrets } from 'base44:runtime';
+import { COMPANY_FACTS, COMMS_TEMPLATES, TEMPLATE_CATEGORIES } from '../../shared/companyIntel.ts';
 
 const BROWSERBASE_API_KEY = () => secrets.get('BROWSERBASE_API_KEY');
 
@@ -30,18 +31,24 @@ export default async function (req) {
     const { action } = body;
 
     switch (action) {
+      case 'getCompanyIntel': {
+        return Response.json({ ok: true, company: COMPANY_FACTS, templates: COMMS_TEMPLATES, categories: TEMPLATE_CATEGORIES });
+      }
+
       case 'chat': {
         const { message, conversation, context } = body;
         if (!message) return Response.json({ error: 'message is required' }, { status: 400 });
 
-        const [leads, projects, templates, strategies, agents] = await Promise.all([
+        const [leads, projects, templates, strategies, agents, intelReports] = await Promise.all([
           base44.asServiceRole.entities.Lead.list('-created_date', 20).catch(() => []),
           base44.asServiceRole.entities.ClientProject.list('-created_date', 10).catch(() => []),
           base44.asServiceRole.entities.WebsiteTemplate.list().catch(() => []),
           base44.asServiceRole.entities.StrategyDocument.filter({ status: 'active' }).catch(() => []),
           base44.asServiceRole.entities.AgentTemplate.filter({ is_active: true }).catch(() => []),
+          base44.asServiceRole.entities.IntelligenceReport.filter({ report_type: 'company_audit' }, '-created_date', 1).catch(() => []),
         ]);
 
+        const latestIntel = intelReports[0];
         const appContext = {
           totalLeads: leads.length,
           activeProjects: projects.length,
@@ -65,7 +72,15 @@ STRATEGY DOCUMENTS: ${JSON.stringify(appContext.strategies)}
 ACTIVE AGENTS: ${JSON.stringify(appContext.agents)}
 RECENT LEADS: ${JSON.stringify(appContext.recentLeads)}
 
-Your capabilities: full entity access, AI floor visualizer, cloud browser research, SEO generation, multi-channel comms (SMS/WhatsApp/Voice/Email), website factory, agent management, analytics and predictive modeling. Respond with actionable, specific guidance.`;
+CANONICAL COMPANY FACTS (ground truth — never invent beyond these):
+${JSON.stringify(COMPANY_FACTS, null, 2)}
+
+${latestIntel ? `LATEST SCRAPED COMPANY INTELLIGENCE REPORT (summary): ${latestIntel.summary || ''}` : 'No scraped intelligence report yet — suggest running the companyIntel scraper.'}
+
+APPROVED COMMUNICATION TEMPLATES — when a homeowner asks about appointments, colors, pricing, process, ratings, rebuttals, or escalation, recommend the matching template by id rather than improvising. This eliminates hallucination and ambiguity:
+${JSON.stringify(COMMS_TEMPLATES.map((t) => ({ id: t.id, category: t.category, channel: t.channel, label: t.label, body: t.body })), null, 2)}
+
+Your capabilities: full entity access, AI floor visualizer, cloud browser research, SEO generation, multi-channel comms (SMS/WhatsApp/Voice/Email), website factory, agent management, analytics and predictive modeling. When a homeowner asks a question that maps to a template, cite the template id and fill its variables. When a question needs a human (complex pricing dispute, complaint, scheduling conflict), recommend the escalate_to_human template. Respond with actionable, specific guidance.`;
 
         const fullPrompt = `${systemPrompt}\n\nConversation:\n${(conversation || []).map((m) => `${m.role}: ${m.content}`).join('\n')}\n\nuser: ${message}`;
 

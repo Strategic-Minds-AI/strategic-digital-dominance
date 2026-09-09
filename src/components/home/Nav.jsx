@@ -59,15 +59,21 @@ export default function Nav({ settings }) {
             ))}
           </nav>
 
-          <div className="hidden md:flex flex-col items-start gap-0.5 mt-4">
+          <div className="hidden md:flex items-center gap-2 mt-4">
+            <a href={`sms:${settings.automation_phone || "+1-833-484-3799"}`} className="h-9 px-4 inline-flex items-center gap-2 rounded-lg bg-stone-900/80 hover:bg-stone-800 text-amber-400 text-sm font-semibold transition border border-amber-500/50">
+              <Smartphone className="h-4 w-4" /> Text Us
+            </a>
             <a href={`tel:${settings.phone}`} className="h-9 px-5 inline-flex items-center gap-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 text-sm font-semibold transition border border-white/80">
               <Phone className="h-4 w-4" /> Call Now
             </a>
           </div>
 
           <div className="flex items-center gap-2 md:hidden">
+            <a href={`sms:${settings.automation_phone || "+1-833-484-3799"}`} className="flex h-9 items-center gap-1.5 px-3 rounded-lg text-xs font-bold transition bg-stone-900/80 border border-amber-500/50 text-amber-400">
+              <Smartphone className="h-4 w-4" /> Text
+            </a>
             <a href={`tel:${settings.phone}`} className="flex h-9 items-center gap-1.5 px-3 rounded-lg text-xs font-bold transition" style={{ background: 'linear-gradient(180deg, #FFE25A 0%, #FFD700 45%, #C8A300 100%)', border: '2px solid #000', color: '#1a1a1a', boxShadow: '0 3px 8px rgba(255,215,0,.35), inset 0 1px rgba(255,255,255,.4)' }}>
-              <Phone className="h-4 w-4" /> Call Now
+              <Phone className="h-4 w-4" /> Call
             </a>
             <button onClick={() => setOpen(!open)} className="text-white">
               {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -84,7 +90,8 @@ export default function Nav({ settings }) {
               ? <Link key={l.label} to={l.to} onClick={() => setOpen(false)} className="block text-sm font-medium text-stone-200 hover:text-amber-500">{l.label}</Link>
               : <a key={l.label} href={l.href} onClick={() => setOpen(false)} className="block text-sm font-medium text-stone-200 hover:text-amber-500">{l.label}</a>
           ))}
-          <a href={`tel:${settings.phone}`} className="block text-sm font-medium text-stone-200">{settings.phone}</a>
+          <a href={`tel:${settings.phone}`} className="block text-sm font-medium text-stone-200">Call: {settings.phone}</a>
+          <a href={`sms:${settings.automation_phone || "+1-833-484-3799"}`} className="block text-sm font-medium text-amber-400">Text our AI: {settings.automation_phone_display || "1-833-484-3799"}</a>
           <div className="pt-2 border-t border-white/10 space-y-2.5">
             <Link to="/funnel" onClick={() => setOpen(false)} className="flex h-11 items-center justify-end gap-2 rounded-xl text-sm font-bold transition pr-4" style={{ background: 'linear-gradient(180deg, #FFE25A 0%, #FFD700 45%, #C8A300 100%)', border: '2px solid #000', color: '#1a1a1a', boxShadow: '0 4px 12px rgba(255,215,0,.4), inset 0 1px rgba(255,255,255,.4)' }}>
               Get Free Estimate <ArrowRight className="h-4 w-4" />
