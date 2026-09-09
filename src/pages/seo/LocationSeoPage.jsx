@@ -35,21 +35,36 @@ function deslugCity(slug) {
     .join(" ");
 }
 
+const slugify = (s) => (s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+// Resolve a state URL segment — accepts either a 2-letter code ("nc") or a
+// slugified full name ("north-carolina") — to { code, name }.
+function resolveState(segment) {
+  const s = (segment || "").toLowerCase();
+  for (const [code, name] of Object.entries(STATE_NAMES)) {
+    if (code.toLowerCase() === s) return { code, name };
+  }
+  for (const [code, name] of Object.entries(STATE_NAMES)) {
+    if (slugify(name) === s) return { code, name };
+  }
+  return null;
+}
+
 export default function LocationSeoPage() {
   const { state, citySlug: slug } = useParams();
-  const stateUpper = (state || "").toUpperCase();
-  const stateName = STATE_NAMES[stateUpper];
+  const resolved = resolveState(state);
 
-  // Invalid state code → 404
-  if (!stateName) return <PageNotFound />;
+  // Unrecognized state → 404
+  if (!resolved) return <PageNotFound />;
+  const { code: stateCode, name: stateName } = resolved;
 
   // 1. Real XPS store location → full page with nearby communities
   const loc = SEO_LOCATIONS.find(
-    (l) => l.state === stateUpper && citySlug(l.city) === slug
+    (l) => l.state === stateCode && citySlug(l.city) === slug
   );
 
   // 2. Any other city → same rich page, synthetic location (no lat/lng)
-  const synthetic = !loc ? { city: deslugCity(slug), state: stateUpper } : null;
+  const synthetic = !loc ? { city: deslugCity(slug), state: stateCode } : null;
 
   if (!loc && !synthetic) return <PageNotFound />;
 
@@ -119,7 +134,7 @@ export default function LocationSeoPage() {
 
   return (
     <SeoPage
-      slug={`${useLoc.state.toLowerCase()}/${citySlug(useLoc.city)}`}
+      slug={`${state}/${citySlug(useLoc.city)}`}
       title={cfg.title}
       metaDescription={cfg.description}
       h1={`Epoxy Garage Floors in ${useLoc.city}, ${useLoc.state}`}
