@@ -1,0 +1,157 @@
+{
+  "name": "SocialPost",
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "string",
+      "description": "Post text / caption"
+    },
+    "hashtags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "seo_keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Google SEO keywords"
+    },
+    "aeo_keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Answer Engine Optimization phrases for AI search (ChatGPT, Perplexity, Google AI Overviews)"
+    },
+    "content_theme": {
+      "type": "string",
+      "enum": [
+        "before_after",
+        "testimonial",
+        "educational",
+        "promotion",
+        "faq",
+        "tip",
+        "behind_scenes",
+        "trend"
+      ],
+      "default": "educational"
+    },
+    "media_type": {
+      "type": "string",
+      "enum": [
+        "none",
+        "image",
+        "video",
+        "flyer"
+      ],
+      "default": "image"
+    },
+    "media_url": {
+      "type": "string"
+    },
+    "media_prompt": {
+      "type": "string",
+      "description": "AI prompt used to generate the media"
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "facebook"
+      ],
+      "default": "facebook"
+    },
+    "page_id": {
+      "type": "string",
+      "description": "Facebook Page ID"
+    },
+    "page_name": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "scheduled",
+        "publishing",
+        "published",
+        "failed"
+      ],
+      "default": "draft"
+    },
+    "scheduled_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "published_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "fb_post_id": {
+      "type": "string"
+    },
+    "fb_permalink": {
+      "type": "string"
+    },
+    "engagement": {
+      "type": "object",
+      "properties": {
+        "likes": {
+          "type": "integer",
+          "default": 0
+        },
+        "comments": {
+          "type": "integer",
+          "default": 0
+        },
+        "shares": {
+          "type": "integer",
+          "default": 0
+        },
+        "reach": {
+          "type": "integer",
+          "default": 0
+        }
+      }
+    },
+    "error": {
+      "type": "string"
+    },
+    "auto_generated": {
+      "type": "boolean",
+      "default": false
+    },
+    "created_by_name": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "content",
+    "platform"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
