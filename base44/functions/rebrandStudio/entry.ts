@@ -1,0 +1,119 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.48';
+import { secrets } from 'base44:runtime';
+import OpenAI from 'npm:openai@6.45.0';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// rebrandStudio — Intelligent rebrand engine for the website factory.
+// Generates transparent-background logos via the Base44 AI gateway and
+// scans the live site to identify every piece of content that must change
+// to rebrand the template for a new customer.
+//
+// Actions:
+//   generateLogo  — AI logo with transparent PNG background
+//   scanSite      — scrape + LLM analysis of rebrand-replaceable content
+//
+// Invoke: base44.functions.invoke('rebrandStudio', { action, ...params })
+// ─────────────────────────────────────────────────────────────────────────────
+
+async function simpleScrape(url: string) {
+  const res = await fetch(url, {
+    headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' },
+    signal: AbortSignal.timeout(15000),
+  });
+  const html = await res.text();
+  const text = html
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return { url, content: text.slice(0, 30000) };
+}
+
+export default async function (req: Request): Promise<Response> {
+  try {
+    const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    if (user.role !== 'admin') return Response.json({ error: 'Forbidden — admin only' }, { status: 403 });
+
+    const svc = base44.asServiceRole;
+    const body = await req.json().catch(() => ({}));
+    const action = body.action || 'generateLogo';
+
+    switch (action) {
+      case 'generateLogo': {
+        const { companyName, tagline, style } = body;
+        if (!companyName) return Response.json({ error: 'companyName is required' }, { status: 400 });
+
+        const { baseURL, token } = svc.aiGateway.connection();
+        const client = new OpenAI({ baseURL, apiKey: token });
+
+        const prompt = `A professional, minimalist emblem logo for a garage floor epoxy coating company named "${companyName}"${tagline ? ` with the tagline "${tagline}"` : ''}. ${style || 'Modern, bold, industrial-luxury aesthetic with metallic gold and charcoal accents.'} Clean vector-style mark, centered, high contrast, no photographic background, suitable as a website header badge. Transparent background, no border, no card.`;
+
+        const { data } = await client.images.generate({
+          model: 'gpt_image_1',
+          prompt,
+          n: 1,
+          aspect_ratio: '1:1',
+          resolution: '1K',
+          output_format: 'png',
+          background: 'transparent',
+          response_format: 'url',
+        });
+
+        return Response.json({ ok: true, logo_url: data[0].url });
+      }
+
+      case 'scanSite': {
+        const url = body.url || 'https://epoxyquotenearme.base44.app';
+        let scraped;
+        try {
+          scraped = await simpleScrape(url);
+        } catch (e) {
+          scraped = { url, content: '', error: e.message };
+        }
+
+        const scanRes = await svc.integrations.Core.InvokeLLM({
+          prompt: `Analyze this scraped website content and identify everything that must change to rebrand the site for a new epoxy flooring company. URL: ${url}. Content: ${(scraped.content || '').slice(0, 12000) || 'N/A'}. Identify: current company name, logo presence, phone, email, address, service area, color scheme, key pages and what changes each needs, SEO keywords, CTAs, and the minimum set of content changes required to launch under a new brand. Format as JSON.`,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              company_name: { type: 'string' },
+              logo_found: { type: 'boolean' },
+              phone: { type: 'string' },
+              email: { type: 'string' },
+              address: { type: 'string' },
+              service_area: { type: 'string' },
+              color_scheme: { type: 'string' },
+              pages: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    page: { type: 'string' },
+                    content_summary: { type: 'string' },
+                    changes_needed: { type: 'array', items: { type: 'string' } },
+                  },
+                },
+              },
+              keywords: { type: 'array', items: { type: 'string' } },
+              ctas: { type: 'array', items: { type: 'string' } },
+              minimum_changes: { type: 'array', items: { type: 'string' } },
+              launch_readiness: { type: 'string' },
+            },
+          },
+          model: 'claude-sonnet-5',
+        });
+
+        return Response.json({ ok: true, scan: scanRes, source_url: url });
+      }
+
+      default:
+        return Response.json({ error: `Unknown action: ${action}` }, { status: 400 });
+    }
+  } catch (error) {
+    console.error('[rebrandStudio] Error:', error.message);
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+}
