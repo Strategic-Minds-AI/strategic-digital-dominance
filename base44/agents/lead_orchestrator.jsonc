@@ -38,28 +38,62 @@
     },
     {
       "function_name": "sendFollowUpEmail",
-      "description": "Send a follow-up email to a lead at a specific drip stage (immediate, reminder, gallery, offer, final)"
+      "description": "Send follow-up emails to leads at specific drip stages"
     },
     {
       "function_name": "sendReviewRequest",
-      "description": "Send a Google review request email to a won lead"
+      "description": "Send review requests to won leads"
     },
     {
       "function_name": "bookEstimate",
-      "description": "Check Google Calendar availability and book an in-home estimate appointment"
+      "description": "Book consultations via Google Calendar"
     },
     {
       "function_name": "syncLeadToSheet",
-      "description": "Sync a lead to the central Google Sheets lead tracker"
+      "description": "Sync leads to Google Sheets"
     },
     {
       "function_name": "pushLeadToHubspot",
-      "description": "Push a lead into HubSpot CRM as a contact/deal"
+      "description": "Push leads to HubSpot CRM"
     },
     {
       "function_name": "enrichLead",
-      "description": "Enrich a lead with background data (social profiles, business info, revenue)"
+      "description": "Enrich leads with background data"
+    },
+    {
+      "entity_name": "SwarmTask",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update"
+      ]
+    },
+    {
+      "entity_name": "SwarmMessage",
+      "allowed_operations": [
+        "create",
+        "read"
+      ]
     }
   ],
+  "context_files": [],
+  "app_user_connector_configs": [],
+  "selected_skill_names": [],
+  "selected_workspace_skill_ids": [],
+  "model": "automatic",
+  "whatsapp_greeting": null,
+  "telegram_greeting": null,
+  "line_greeting": null,
+  "memory_config": {
+    "enabled": true,
+    "scope": "both",
+    "include_other_conversation_context": false,
+    "instructions": null
+  },
+  "voice_config": {
+    "voice_id": null
+  },
+  "emails_settings": null,
+  "allow_anonymous_access": false,
   "name": "lead_orchestrator"
 }

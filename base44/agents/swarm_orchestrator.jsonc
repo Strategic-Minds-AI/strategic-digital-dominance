@@ -119,39 +119,39 @@
     },
     {
       "function_name": "sendFollowUpEmail",
-      "description": "Trigger a follow-up email for a lead"
+      "description": "Trigger follow-up emails for leads"
     },
     {
       "function_name": "sendReviewRequest",
-      "description": "Trigger a review request for a won lead"
+      "description": "Trigger review requests for won leads"
     },
     {
       "function_name": "bookEstimate",
-      "description": "Book a consultation via Google Calendar"
+      "description": "Book consultations via Google Calendar"
     },
     {
       "function_name": "syncLeadToSheet",
-      "description": "Sync a lead to Google Sheets"
+      "description": "Sync leads to Google Sheets"
     },
     {
       "function_name": "pushLeadToHubspot",
-      "description": "Push a lead to HubSpot CRM"
+      "description": "Push leads to HubSpot CRM"
     },
     {
       "function_name": "enrichLead",
-      "description": "Enrich a lead with background data"
+      "description": "Enrich leads with background data"
     },
     {
       "function_name": "generateSeoPage",
-      "description": "Generate a new SEO location page"
+      "description": "Generate SEO location pages"
     },
     {
       "function_name": "optimizeSeo",
-      "description": "Optimize an existing page for better rankings"
+      "description": "Optimize pages for rankings"
     },
     {
       "function_name": "notifySeoUpdates",
-      "description": "Notify search engines of page updates"
+      "description": "Notify search engines of updates"
     },
     {
       "function_name": "submitToIndexers",
@@ -159,15 +159,15 @@
     },
     {
       "function_name": "generateSitemap",
-      "description": "Regenerate the sitemap"
+      "description": "Regenerate sitemap"
     },
     {
       "function_name": "pullSearchConsoleData",
-      "description": "Pull Google Search Console performance data"
+      "description": "Pull Search Console performance data"
     },
     {
       "function_name": "fetchCoreWebVitals",
-      "description": "Fetch Core Web Vitals metrics"
+      "description": "Fetch Core Web Vitals"
     },
     {
       "function_name": "scanCompetitors",
@@ -175,28 +175,66 @@
     },
     {
       "function_name": "socialStudio",
-      "description": "Generate or publish social media posts"
+      "description": "Generate or publish social posts"
     },
     {
       "function_name": "syncContentCalendar",
-      "description": "Sync content schedule to Google Calendar"
+      "description": "Sync content to Google Calendar"
     },
     {
       "function_name": "rebrandStudio",
-      "description": "Generate logos and mass-produce website templates"
+      "description": "Generate logos and mass-produce templates"
     },
     {
       "function_name": "xtremeComms",
-      "description": "Send SMS, WhatsApp, or voice messages"
+      "description": "Send SMS, WhatsApp, voice messages"
     },
     {
       "function_name": "companyIntel",
-      "description": "Get company intelligence and approved templates"
+      "description": "Get company intelligence and templates"
     },
     {
       "function_name": "aiAssist",
-      "description": "AI assistant for company intelligence queries"
+      "description": "AI assistant for company intelligence"
+    },
+    {
+      "entity_name": "SwarmTask",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update"
+      ]
+    },
+    {
+      "entity_name": "SwarmMessage",
+      "allowed_operations": [
+        "create",
+        "read"
+      ]
+    },
+    {
+      "function_name": "swarmOrchestrator",
+      "description": "Run swarm cycles and health checks"
     }
   ],
+  "context_files": [],
+  "app_user_connector_configs": [],
+  "selected_skill_names": [],
+  "selected_workspace_skill_ids": [],
+  "model": "automatic",
+  "whatsapp_greeting": null,
+  "telegram_greeting": null,
+  "line_greeting": null,
+  "memory_config": {
+    "enabled": true,
+    "scope": "both",
+    "include_other_conversation_context": false,
+    "instructions": null
+  },
+  "voice_config": {
+    "voice_id": null
+  },
+  "emails_settings": null,
+  "allow_anonymous_access": false,
   "name": "swarm_orchestrator"
 }

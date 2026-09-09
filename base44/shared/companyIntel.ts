@@ -15,8 +15,8 @@ export const COMPANY_FACTS = {
   sales_phone: "(877) 958-5264",
   // AI / SMS / MMS automation line — used for automated outreach, replies,
   // and as the escalation destination when a lead needs a human.
-  automation_phone: "+1-833-484-3799",
-  automation_phone_display: "1-833-484-3799",
+  automation_phone: "+1-833-700-1239",
+  automation_phone_display: "1-833-700-1239",
   email: "jeremy@xtremepolishingsystems.com",
   website: "https://xtremepolishingsystems.com",
   locations_count: "40+",

@@ -235,7 +235,7 @@ export default function XtremeComms() {
                   setLoading("escalate-lead");
                   setError(null);
                   try {
-                    const leadMsg = `Hi ${forms.escalation.leadName || "there"}, I want to make sure you get the best answer on that. I'm bringing in a senior XPS flooring specialist — they'll text or call you from ${companyFacts?.automation_phone_display || "1-833-484-3799"} within the next ${forms.escalation.responseWindow}. Is that okay? — XPS AI Assistant`;
+                    const leadMsg = `Hi ${forms.escalation.leadName || "there"}, I want to make sure you get the best answer on that. I'm bringing in a senior XPS flooring specialist — they'll text or call you from ${companyFacts?.automation_phone_display || "1-833-700-1239"} within the next ${forms.escalation.responseWindow}. Is that okay? — XPS AI Assistant`;
                     const res = await base44.functions.invoke("xtremeComms", { action: "sendSms", to: forms.escalation.leadPhone, message: leadMsg, from: companyFacts?.automation_phone });
                     setResults(res.data);
                     queryClient.invalidateQueries({ queryKey: ["comms-sop-logs"] });
@@ -252,7 +252,7 @@ export default function XtremeComms() {
                   setLoading("escalate-notify");
                   setError(null);
                   try {
-                    const notifyMsg = `⚠️ ESCALATION: Lead ${forms.escalation.leadName || "Unknown"} (${forms.escalation.leadPhone}) needs a human. Reason: ${forms.escalation.reason || "not specified"}. Last message: "${forms.escalation.lastMessage || "—"}". Please reach out from ${companyFacts?.automation_phone_display || "1-833-484-3799"} within ${forms.escalation.responseWindow}. — XPS AI`;
+                    const notifyMsg = `⚠️ ESCALATION: Lead ${forms.escalation.leadName || "Unknown"} (${forms.escalation.leadPhone}) needs a human. Reason: ${forms.escalation.reason || "not specified"}. Last message: "${forms.escalation.lastMessage || "—"}". Please reach out from ${companyFacts?.automation_phone_display || "1-833-700-1239"} within ${forms.escalation.responseWindow}. — XPS AI`;
                     const res = await base44.functions.invoke("xtremeComms", { action: "sendSms", to: companyFacts?.sales_phone, message: notifyMsg, from: companyFacts?.automation_phone });
                     setResults(res.data);
                     queryClient.invalidateQueries({ queryKey: ["comms-sop-logs"] });
@@ -265,7 +265,7 @@ export default function XtremeComms() {
                 {loading === "escalate-notify" ? <RefreshCw className="h-4 w-4 animate-spin" /> : <UserCheck className="h-4 w-4" />} Notify specialist
               </button>
             </div>
-            <p className="text-xs text-stone-400">Both messages send from the automation line {companyFacts?.automation_phone_display || "1-833-484-3799"} via Xtreme Communications.</p>
+            <p className="text-xs text-stone-400">Both messages send from the automation line {companyFacts?.automation_phone_display || "1-833-700-1239"} via Xtreme Communications.</p>
           </div>
         )}
 

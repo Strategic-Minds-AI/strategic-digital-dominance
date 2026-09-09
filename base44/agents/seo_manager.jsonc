@@ -39,23 +39,23 @@
     },
     {
       "function_name": "generateSeoPage",
-      "description": "Generate a new SEO-optimized location landing page"
+      "description": "Generate new SEO location pages"
     },
     {
       "function_name": "optimizeSeo",
-      "description": "Optimize an existing page's meta, content, and structure for better rankings"
+      "description": "Optimize existing pages for rankings"
     },
     {
       "function_name": "fillContentGaps",
-      "description": "Identify and fill content gaps with new supporting articles"
+      "description": "Fill content gaps with new articles"
     },
     {
       "function_name": "notifySeoUpdates",
-      "description": "Notify IndexNow and Google Search Console of page updates"
+      "description": "Notify search engines of page updates"
     },
     {
       "function_name": "submitToIndexers",
-      "description": "Submit URLs to IndexNow for rapid indexing"
+      "description": "Submit URLs for indexing"
     },
     {
       "function_name": "pingIndexNow",
@@ -63,20 +63,54 @@
     },
     {
       "function_name": "generateSitemap",
-      "description": "Regenerate the sitemap.xml with all current routes"
+      "description": "Regenerate sitemap"
     },
     {
       "function_name": "pullSearchConsoleData",
-      "description": "Pull Google Search Console performance data (impressions, clicks, CTR, position)"
+      "description": "Pull Search Console performance data"
     },
     {
       "function_name": "fetchCoreWebVitals",
-      "description": "Fetch Core Web Vitals metrics (LCP, FID, CLS) for monitored pages"
+      "description": "Fetch Core Web Vitals"
     },
     {
       "function_name": "scanCompetitors",
-      "description": "Scan competitor epoxy floor companies for rankings, pricing, and content"
+      "description": "Scan competitor websites"
+    },
+    {
+      "entity_name": "SwarmTask",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update"
+      ]
+    },
+    {
+      "entity_name": "SwarmMessage",
+      "allowed_operations": [
+        "create",
+        "read"
+      ]
     }
   ],
+  "context_files": [],
+  "app_user_connector_configs": [],
+  "selected_skill_names": [],
+  "selected_workspace_skill_ids": [],
+  "model": "automatic",
+  "whatsapp_greeting": null,
+  "telegram_greeting": null,
+  "line_greeting": null,
+  "memory_config": {
+    "enabled": true,
+    "scope": "both",
+    "include_other_conversation_context": false,
+    "instructions": null
+  },
+  "voice_config": {
+    "voice_id": null
+  },
+  "emails_settings": null,
+  "allow_anonymous_access": false,
   "name": "seo_manager"
 }

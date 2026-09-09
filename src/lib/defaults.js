@@ -5,8 +5,8 @@ export const DEFAULT_SETTINGS = {
   phone: "(877) 958-5264",
   // AI / SMS / MMS automation line — used for automated outreach, replies,
   // and as the escalation destination. Surfaced across the site as "Text Us".
-  automation_phone: "+1-833-484-3799",
-  automation_phone_display: "1-833-484-3799",
+  automation_phone: "+1-833-700-1239",
+  automation_phone_display: "1-833-700-1239",
   email: "jeremy@xtremepolishingsystems.com",
   business_address: "2200 NW 32nd St, Pompano Beach, FL 33069",
   service_area: "Pompano Beach, FL and surrounding South Florida communities",

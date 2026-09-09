@@ -33,12 +33,46 @@
     },
     {
       "function_name": "sendReviewRequest",
-      "description": "Send a Google review request email to a won customer"
+      "description": "Send Google review request emails"
     },
     {
       "function_name": "sendFollowUpEmail",
-      "description": "Send a follow-up email (used for referral thank-yous)"
+      "description": "Send follow-up emails"
+    },
+    {
+      "entity_name": "SwarmTask",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update"
+      ]
+    },
+    {
+      "entity_name": "SwarmMessage",
+      "allowed_operations": [
+        "create",
+        "read"
+      ]
     }
   ],
+  "context_files": [],
+  "app_user_connector_configs": [],
+  "selected_skill_names": [],
+  "selected_workspace_skill_ids": [],
+  "model": "automatic",
+  "whatsapp_greeting": null,
+  "telegram_greeting": null,
+  "line_greeting": null,
+  "memory_config": {
+    "enabled": true,
+    "scope": "both",
+    "include_other_conversation_context": false,
+    "instructions": null
+  },
+  "voice_config": {
+    "voice_id": null
+  },
+  "emails_settings": null,
+  "allow_anonymous_access": false,
   "name": "reputation_manager"
 }
