@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, Outlet, Link } from "react-router-dom";
-import { LayoutDashboard, Users, KanbanSquare, Settings, ExternalLink, Mail, Radar, Globe, ScrollText, Star, Wrench, Factory, Smartphone, Rocket, Layers, UserCircle, TrendingUp, MessageSquare, Brain, Target, BarChart3, Package, Bot, KeyRound, Share2, Wand2, MapPin, Network } from "lucide-react";
+import { LayoutDashboard, Users, KanbanSquare, Settings, ExternalLink, Mail, Radar, Globe, ScrollText, Star, Wrench, Factory, Smartphone, Rocket, Layers, UserCircle,   TrendingUp, MessageSquare, Brain, Target, BarChart3, Package, Bot, KeyRound, Share2, Wand2, MapPin, Network, Crown } from "lucide-react";
 import BackButton from "@/components/BackButton";
 import Logo from "@/components/Logo";
 import { XTREME_AI_ICON_URL } from "@/components/Logo";
@@ -17,6 +17,7 @@ const links = [
   { to: "/admin/sop", icon: ScrollText, label: "SOP & Memory" },
   { to: "/admin/tools", icon: Wrench, label: "App Tools" },
   { to: "/admin/tool-hub", icon: Layers, label: "Tool Hub" },
+  { to: "/admin/empire", icon: Crown, label: "Website Empire" },
   { to: "/admin/website-factory", icon: Factory, label: "Website Factory" },
   { to: "/admin/app-factory", icon: Smartphone, label: "App Factory" },
   { to: "/admin/national-launch", icon: Rocket, label: "National Launch" },
