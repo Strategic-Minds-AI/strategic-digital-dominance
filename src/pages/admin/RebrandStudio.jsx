@@ -101,6 +101,7 @@ export default function RebrandStudio() {
   const [savedTpl, setSavedTpl] = useState(null);
   const [error, setError] = useState(null);
   const [citiesText, setCitiesText] = useState(DEFAULT_LOCATIONS);
+  const [rootDomain, setRootDomain] = useState("");
   const [massProducing, setMassProducing] = useState(false);
   const [massResult, setMassResult] = useState(null);
 
@@ -153,7 +154,8 @@ export default function RebrandStudio() {
         status: "configured",
         pwa_enabled: true,
         launch_mode: "manual",
-        deploy_log: JSON.stringify({ deploy_target: deployTarget, rebrand_scan: scan ? "attached" : "none" }),
+        generated_url: rootDomain ? `https://${slug}.${rootDomain}` : "",
+        deploy_log: JSON.stringify({ deploy_target: deployTarget, rebrand_scan: scan ? "attached" : "none", root_domain: rootDomain }),
       });
       setSavedTpl(tpl);
       queryClient.invalidateQueries({ queryKey: ["websiteTemplates"] });
@@ -317,6 +319,11 @@ export default function RebrandStudio() {
       <div className={stepCls}>
         <div className="flex items-center gap-2 mb-4"><span className="h-7 w-7 rounded-full bg-amber-500 text-stone-950 grid place-items-center font-bold text-sm">5</span><h3 className="font-bold text-stone-900">Mass Production — 70 Locations</h3></div>
         <p className="text-sm text-stone-500 mb-3">Generates one rebranded <strong>WebsiteTemplate</strong> per city (city-specific name, slug, subdomain, service area — all sharing your logo + brand) and bundles them into a <strong>LaunchCampaign</strong>. Edit the list below before running.</p>
+        <div className="mb-3">
+          <label className={labelCls}>Root Domain (for auto subdomains)</label>
+          <input value={rootDomain} onChange={(e) => setRootDomain(e.target.value)} placeholder="epoxyfloors.com" className={inputCls + " mt-1 max-w-sm"} />
+          <p className="text-xs text-stone-400 mt-1">Each city gets <code className="text-amber-600">cityslug.{rootDomain || "yourdomain.com"}</code> as its domain + live URL.</p>
+        </div>
         <textarea value={citiesText} onChange={(e) => setCitiesText(e.target.value)} rows={8} className="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm font-mono focus:border-amber-500 outline-none" placeholder="City, ST — one per line" />
         <div className="flex items-center gap-3 mt-3">
           <button
@@ -328,7 +335,7 @@ export default function RebrandStudio() {
                 return { city, state: state || "" };
               });
               try {
-                const res = await base44.functions.invoke("rebrandStudio", { action: "massProduce", brand, logoUrl, cities });
+                const res = await base44.functions.invoke("rebrandStudio", { action: "massProduce", brand, logoUrl, cities, rootDomain });
                 setMassResult(res.data);
                 queryClient.invalidateQueries({ queryKey: ["websiteTemplates"] });
               } catch (e) { setError(e.response?.data?.error || e.message); }

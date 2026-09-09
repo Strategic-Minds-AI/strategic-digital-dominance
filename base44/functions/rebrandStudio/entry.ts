@@ -110,8 +110,9 @@ export default async function (req: Request): Promise<Response> {
       }
 
       case 'massProduce': {
-        const { brand: b, logoUrl: lu, cities } = body;
+        const { brand: b, logoUrl: lu, cities, rootDomain } = body;
         if (!b?.company_name || !cities?.length) return Response.json({ error: 'brand.company_name and cities are required' }, { status: 400 });
+        const root = (rootDomain || b.domain || '').replace(/^https?:\/\//, '').replace(/\/$/, '').toLowerCase();
         const baseSlug = (b.company_name || 'epoxy').toLowerCase().replace(/[^a-z0-9]/g, '-');
         const created = [];
         for (const c of cities) {
@@ -124,12 +125,13 @@ export default async function (req: Request): Promise<Response> {
             slug: `${baseSlug}-${citySlug}`,
             config: {
               company_name: b.company_name, phone: b.phone, email: b.email,
-              domain: b.domain ? `${citySlug}.${b.domain}` : '',
+              domain: root ? `${citySlug}.${root}` : (b.domain || ''),
               service_area: `${city}, ${state}`,
               primary_city: city, primary_state: state,
               color_scheme: b.color_scheme || 'amber', pricing_tier: 'standard',
               hero_image_url: lu || '',
             },
+            generated_url: root ? `https://${citySlug}.${root}` : '',
             status: 'configured', pwa_enabled: true, launch_mode: 'manual',
           });
           created.push({ id: tpl.id, city, state });
