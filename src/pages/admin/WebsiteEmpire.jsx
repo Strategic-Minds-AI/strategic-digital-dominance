@@ -8,7 +8,7 @@ import {
   Wand2, Smartphone, MessageSquare, BarChart3
 } from "lucide-react";
 
-const PUBLISHED_URL = "https://epoxyquotenearme.base44.app";
+const PUBLISHED_URL = "https://epoxyquotenearme.com";
 
 const slugify = (s) => (s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 

@@ -49,9 +49,13 @@ export default function WebsiteFactory() {
       // Simulate deployment — in production this would clone the Base44 app
       // and configure it with the template's settings.
       await new Promise((r) => setTimeout(r, 2000));
+      const city = template.config?.primary_city;
+      const state = template.config?.primary_state;
+      const slugify = (s) => (s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      const liveUrl = city && state ? `https://epoxyquotenearme.com/${slugify(state)}/${slugify(city)}` : `https://epoxyquotenearme.com`;
       await base44.entities.WebsiteTemplate.update(template.id, {
         status: "live",
-        generated_url: `https://${template.slug}.base44.app`,
+        generated_url: liveUrl,
         deploy_log: JSON.stringify({ steps: ["clone", "configure", "deploy", "verify"], completed: true }),
       });
       queryClient.invalidateQueries({ queryKey: ["websiteTemplates"] });
