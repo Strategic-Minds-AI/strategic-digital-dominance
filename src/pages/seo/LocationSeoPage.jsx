@@ -25,23 +25,43 @@ function nearbyLocations(loc, limit = 6) {
   return [...sameState, ...others].slice(0, limit);
 }
 
+// Turn a kebab-case slug back into a title-cased city name.
+// "fort-lauderdale" → "Fort Lauderdale", "st-petersburg" → "St Petersburg"
+function deslugCity(slug) {
+  return (slug || "")
+    .split("-")
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
 export default function LocationSeoPage() {
   const { state, citySlug: slug } = useParams();
-  const stateLower = (state || "").toLowerCase();
-  const loc = SEO_LOCATIONS.find(
-    (l) => l.state.toLowerCase() === stateLower && citySlug(l.city) === slug
-  );
-  if (!loc) return <PageNotFound />;
+  const stateUpper = (state || "").toUpperCase();
+  const stateName = STATE_NAMES[stateUpper];
 
-  const cfg = locationSeoConfig(loc);
-  const stateName = STATE_NAMES[loc.state] || loc.state;
-  const nearby = nearbyLocations(loc);
+  // Invalid state code → 404
+  if (!stateName) return <PageNotFound />;
+
+  // 1. Real XPS store location → full page with nearby communities
+  const loc = SEO_LOCATIONS.find(
+    (l) => l.state === stateUpper && citySlug(l.city) === slug
+  );
+
+  // 2. Any other city → same rich page, synthetic location (no lat/lng)
+  const synthetic = !loc ? { city: deslugCity(slug), state: stateUpper } : null;
+
+  if (!loc && !synthetic) return <PageNotFound />;
+
+  const useLoc = loc || synthetic;
+  const cfg = locationSeoConfig(useLoc);
+  const nearby = loc ? nearbyLocations(loc) : [];
 
   const sections = [
     {
-      h2: `How much does an epoxy garage floor cost in ${loc.city}, ${loc.state}?`,
+      h2: `How much does an epoxy garage floor cost in ${useLoc.city}, ${useLoc.state}?`,
       body: [
-        <p key="1">Garage floor coating pricing in {loc.city} depends on your garage size, the finish you choose, and the condition of your concrete. Most 2-car garages in the {stateName} area fall into a predictable range, but every floor is different.</p>,
+        <p key="1">Garage floor coating pricing in {useLoc.city} depends on your garage size, the finish you choose, and the condition of your concrete. Most 2-car garages in the {stateName} area fall into a predictable range, but every floor is different.</p>,
         <p key="2">Instead of calling multiple contractors for quotes, get a preliminary range instantly with our estimator, then schedule a free consultation to confirm the details.</p>,
       ],
     },
@@ -99,12 +119,12 @@ export default function LocationSeoPage() {
 
   return (
     <SeoPage
-      slug={`${loc.state.toLowerCase()}/${citySlug(loc.city)}`}
+      slug={`${useLoc.state.toLowerCase()}/${citySlug(useLoc.city)}`}
       title={cfg.title}
       metaDescription={cfg.description}
-      h1={`Epoxy Garage Floors in ${loc.city}, ${loc.state}`}
-      breadcrumbs={[{ label: `${loc.city}, ${loc.state}` }]}
-      intro={`Researching garage floor coating in ${loc.city}, ${loc.state}? Get a personalized price range in about 60 seconds — before you talk to anyone.`}
+      h1={`Epoxy Garage Floors in ${useLoc.city}, ${useLoc.state}`}
+      breadcrumbs={[{ label: `${useLoc.city}, ${useLoc.state}` }]}
+      intro={`Researching garage floor coating in ${useLoc.city}, ${useLoc.state}? Get a personalized price range in about 60 seconds — before you talk to anyone.`}
       sections={sections}
     />
   );

@@ -1,27 +1,25 @@
-import React, { useMemo, useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import React, { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import {
   Globe, Rocket, MapPin, Factory, TrendingUp, Zap, Target, Sparkles,
   CheckCircle2, Clock, AlertCircle, Layers, DollarSign, Users, Search,
   ArrowRight, Crown, Building2, Network, Brain, LineChart, Lightbulb,
-  Wand2, Smartphone, MessageSquare, BarChart3, Loader2, ExternalLink
+  Wand2, Smartphone, MessageSquare, BarChart3
 } from "lucide-react";
 
 const PUBLISHED_URL = "https://epoxyquotenearme.base44.app";
 
 const slugify = (s) => (s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
-// A template's URL is "live" if generated_url is a bare slug (not a full http URL).
-// Dead subdomain URLs (http://...) are ignored — those never resolved.
-function pageSlugFor(t) {
-  const u = t.generated_url || "";
-  if (!u || u.startsWith("http")) return null;
-  return u;
-}
+// Every template gets a real city page at /{state}/{city} — rendered by the
+// actual site design with city-specific SEO + AEO content. No subdomains, no
+// thin AI pages.
 function liveUrlFor(t) {
-  const slug = pageSlugFor(t);
-  return slug ? `${PUBLISHED_URL}/${slug}` : null;
+  const city = t.config?.primary_city;
+  const state = t.config?.primary_state;
+  if (!city || !state) return null;
+  return `${PUBLISHED_URL}/${slugify(state)}/${slugify(city)}`;
 }
 
 const US_STATES = {
@@ -33,34 +31,10 @@ const US_STATES = {
 };
 
 export default function WebsiteEmpire() {
-  const queryClient = useQueryClient();
-  const [generating, setGenerating] = useState(null);
   const { data: templates, isLoading } = useQuery({
     queryKey: ["websiteEmpire-templates"],
     queryFn: () => base44.entities.WebsiteTemplate.list("-created_date", 500),
   });
-
-  const generatePage = async (t) => {
-    setGenerating(t.id);
-    try {
-      const res = await base44.functions.invoke("generateSeoPage", {
-        keyword: "epoxy garage floor cost",
-        city: `${t.config.primary_city}, ${t.config.primary_state}`,
-        intent: "local homeowners researching garage floor coating cost",
-      });
-      const slug = res.data?.page?.slug;
-      if (slug) {
-        await base44.entities.WebsiteTemplate.update(t.id, { generated_url: slug });
-        queryClient.invalidateQueries({ queryKey: ["websiteEmpire-templates"] });
-        window.open(`${PUBLISHED_URL}/${slug}`, "_blank");
-      }
-    } catch (e) {
-      console.error("Generate failed:", e);
-      alert("Failed to generate page: " + (e.message || "unknown error"));
-    } finally {
-      setGenerating(null);
-    }
-  };
   const { data: campaigns } = useQuery({
     queryKey: ["websiteEmpire-campaigns"],
     queryFn: () => base44.entities.LaunchCampaign.list("-created_date", 50),
@@ -205,16 +179,7 @@ export default function WebsiteEmpire() {
                     <a href={live} target="_blank" rel="noopener" className="text-[11px] text-amber-600 hover:underline flex items-center gap-1 mt-1 truncate">
                       <Globe className="h-3 w-3 shrink-0" /> <span className="truncate">{live.replace(/^https?:\/\//, "")}</span>
                     </a>
-                  ) : (
-                    <button
-                      onClick={() => generatePage(t)}
-                      disabled={generating !== null}
-                      className="mt-1 w-full inline-flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg bg-stone-900 text-white text-[11px] font-semibold hover:bg-stone-800 disabled:opacity-50"
-                    >
-                      {generating === t.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
-                      {generating === t.id ? "Generating…" : "Generate Page"}
-                    </button>
-                  );
+                  ) : null;
                 })()}
               </div>
             ))}
