@@ -1,0 +1,51 @@
+{
+  "description": "Daily scrape of homeowner + B2B contractor leads via the Railway cloud-browser engine, push to HubSpot CRM, then automated email + SMS/MMS/voice outreach follow-up.",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "daily_lead_engine",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_engine": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "dailyLeadEngine",
+            "args": {
+              "presets": [
+                "homeowner_leads",
+                "b2b_contractors"
+              ],
+              "from_number": ""
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Run daily lead engine",
+            "description": "Scrape \u2192 HubSpot CRM \u2192 email + SMS/MMS/voice"
+          }
+        }
+      }
+    ]
+  },
+  "name": "Daily Lead Engine",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 8 * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  }
+}
