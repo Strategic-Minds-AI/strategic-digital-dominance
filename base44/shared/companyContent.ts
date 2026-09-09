@@ -49,7 +49,7 @@ export const COMPANY_CONTENT = {
 };
 
 export const WARRANTY_TEXT =
-  "The company warrants its workmanship for a period of two (2) years from the date of installation. This warranty covers peeling, delamination, or failure of the installed flooring system attributable to improper installation. It does not cover damage caused by moisture intrusion from below the slab, hydrostatic pressure, acts of God, abuse, neglect, improper maintenance, chemical exposure beyond normal residential use, or modifications by others. Manufacturer product warranties apply separately and are passed through to the customer.";
+  "The company warrants its workmanship for the lifetime of the installation. This warranty covers peeling, delamination, or failure of the installed flooring system attributable to improper installation. It does not cover damage caused by moisture intrusion from below the slab, hydrostatic pressure, acts of God, abuse, neglect, improper maintenance, chemical exposure beyond normal residential use, or modifications by others. Manufacturer product warranties apply separately and are passed through to the customer.";
 
 export const TERMS_TEXT =
   "1. This proposal is valid for 30 days from the date above. 2. A 50% deposit is required to schedule the work; the balance is due upon completion. 3. The customer is responsible for clearing the workspace of all furniture, vehicles, and personal belongings prior to the crew's arrival. 4. Pricing is based on the stated square footage and condition; any variance discovered on site may result in a change order. 5. The company is fully licensed and insured. 6. A change order must be approved in writing by both parties before additional work is performed. 7. Payment terms are net upon completion; late payments may incur a 1.5% monthly finance charge. 8. The company is not responsible for damage caused by pre-existing latent defects, moisture conditions not disclosed, or work performed by others. 9. This proposal, once signed, constitutes the agreement between the parties.";
@@ -60,7 +60,7 @@ export const FAQS = [
   { q: "Do I have to move everything out of the garage?", a: "The floor needs to be clear to be prepared and coated. We'll walk you through exactly what's needed before the install date." },
   { q: "What if I already have an old coating?", a: "Existing coatings usually need to be removed before a new system goes down. We factor that into your estimate and scope of work." },
   { q: "Is the estimate a contract?", a: "No. It is an initial estimate only and is not a proposal or a guaranteed final price." },
-  { q: "What's covered under your warranty?", a: "Our installation is backed by a 2-year workmanship warranty covering peeling, delamination, or failure attributable to improper installation. Manufacturer product warranties apply separately." },
+  { q: "What's covered under your warranty?", a: "Our installation is backed by a lifetime workmanship warranty covering peeling, delamination, or failure attributable to improper installation. Manufacturer product warranties apply separately." },
   { q: "What are the payment terms?", a: "A 50% deposit schedules the work; the balance is due upon completion. This proposal is valid for 30 days." },
 ];
 

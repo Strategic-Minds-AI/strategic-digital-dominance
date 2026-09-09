@@ -2,7 +2,7 @@
 // Kept in sync so the in-app results page and the PDF proposal match the email.
 
 export const WARRANTY_TEXT =
-  "The company warrants its workmanship for a period of two (2) years from the date of installation. This warranty covers peeling, delamination, or failure of the installed flooring system attributable to improper installation. It does not cover damage caused by moisture intrusion from below the slab, hydrostatic pressure, acts of God, abuse, neglect, improper maintenance, chemical exposure beyond normal residential use, or modifications by others. Manufacturer product warranties apply separately and are passed through to the customer.";
+  "The company warrants its workmanship for the lifetime of the installation. This warranty covers peeling, delamination, or failure of the installed flooring system attributable to improper installation. It does not cover damage caused by moisture intrusion from below the slab, hydrostatic pressure, acts of God, abuse, neglect, improper maintenance, chemical exposure beyond normal residential use, or modifications by others. Manufacturer product warranties apply separately and are passed through to the customer.";
 
 export const FAQS = [
   { q: "How accurate is the instant estimate?", a: "It is a preliminary range based on the information you provide. Your final price is confirmed after speaking with a specialist and, when necessary, inspecting your concrete." },
@@ -10,7 +10,7 @@ export const FAQS = [
   { q: "Do I have to move everything out of the garage?", a: "The floor needs to be clear to be prepared and coated. We'll walk you through exactly what's needed before the install date." },
   { q: "What if I already have an old coating?", a: "Existing coatings usually need to be removed before a new system goes down. We factor that into your estimate and scope of work." },
   { q: "Is the estimate a contract?", a: "No. It is an initial estimate only and is not a proposal or a guaranteed final price." },
-  { q: "What's covered under your warranty?", a: "Our installation is backed by a 2-year workmanship warranty covering peeling, delamination, or failure attributable to improper installation. Manufacturer product warranties apply separately." },
+  { q: "What's covered under your warranty?", a: "Our installation is backed by a lifetime workmanship warranty covering peeling, delamination, or failure attributable to improper installation. Manufacturer product warranties apply separately." },
   { q: "What are the payment terms?", a: "A 50% deposit schedules the work; the balance is due upon completion. This proposal is valid for 30 days." },
 ];
 
