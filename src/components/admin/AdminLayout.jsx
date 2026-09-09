@@ -21,6 +21,7 @@ const links = [
   { to: "/admin/app-factory", icon: Smartphone, label: "App Factory" },
   { to: "/admin/national-launch", icon: Rocket, label: "National Launch" },
   { to: "/admin/seo-generator", icon: TrendingUp, label: "SEO Generator" },
+  { to: "/admin/lead-scraper", icon: Radar, label: "Lead Scraper" },
   { to: "/admin/xtreme-comms", icon: MessageSquare, label: "Xtreme Comms" },
   { to: "/admin/results", icon: BarChart3, label: "Analytics" },
   { to: "/admin/agent-builder", icon: Bot, label: "Agent Builder" },

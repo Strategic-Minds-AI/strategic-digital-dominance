@@ -36,6 +36,17 @@
       "type": "string",
       "default": "website"
     },
+    "lead_type": {
+      "type": "string",
+      "enum": [
+        "homeowner",
+        "contractor",
+        "business",
+        "b2b",
+        "social"
+      ],
+      "description": "Category of lead for routing and outreach"
+    },
     "referrer": {
       "type": "string"
     },
@@ -145,9 +156,18 @@
     "assigned_salesperson": {
       "type": "string"
     },
+    "assigned_agent_id": {
+      "type": "string",
+      "description": "AgentPersona assigned for automated outreach"
+    },
     "appointment_status": {
       "type": "string",
       "default": "none"
+    },
+    "enrichment": {
+      "type": "string",
+      "maxLength": 3000,
+      "description": "AI-enriched background data (business info, social profiles, revenue, reviews)"
     },
     "status": {
       "type": "string",
