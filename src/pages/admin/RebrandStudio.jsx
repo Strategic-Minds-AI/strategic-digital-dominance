@@ -156,7 +156,7 @@ export default function RebrandStudio() {
         status: "configured",
         pwa_enabled: true,
         launch_mode: "manual",
-        generated_url: rootDomain ? `https://${slug}.${rootDomain}` : "",
+        generated_url: brand.primary_city && brand.primary_state ? `https://epoxyquotenearme.com/${brand.primary_state.toLowerCase().replace(/[^a-z0-9]+/g, "-")}/${brand.primary_city.toLowerCase().replace(/[^a-z0-9]+/g, "-")}` : "",
         deploy_log: JSON.stringify({ deploy_target: deployTarget, rebrand_scan: scan ? "attached" : "none", root_domain: rootDomain }),
       });
       setSavedTpl(tpl);

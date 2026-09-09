@@ -120,18 +120,20 @@ export default async function (req: Request): Promise<Response> {
           const state = String(c.state || '').trim();
           if (!city) continue;
           const citySlug = city.toLowerCase().replace(/[^a-z0-9]/g, '-');
+          const stateSlug = state.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+          const pathUrl = state ? `https://epoxyquotenearme.com/${stateSlug}/${citySlug}` : '';
           const tpl = await svc.entities.WebsiteTemplate.create({
             name: `${b.company_name} — ${city}`,
             slug: `${baseSlug}-${citySlug}`,
             config: {
               company_name: b.company_name, phone: b.phone, email: b.email,
-              domain: root ? `${citySlug}.${root}` : (b.domain || ''),
+              domain: 'epoxyquotenearme.com',
               service_area: `${city}, ${state}`,
               primary_city: city, primary_state: state,
               color_scheme: b.color_scheme || 'amber', pricing_tier: 'standard',
               hero_image_url: lu || '',
             },
-            generated_url: root ? `https://${citySlug}.${root}` : '',
+            generated_url: pathUrl,
             status: 'configured', pwa_enabled: true, launch_mode: 'manual',
           });
           created.push({ id: tpl.id, city, state });

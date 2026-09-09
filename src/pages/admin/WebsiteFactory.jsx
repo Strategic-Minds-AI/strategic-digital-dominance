@@ -49,10 +49,7 @@ export default function WebsiteFactory() {
       // Simulate deployment — in production this would clone the Base44 app
       // and configure it with the template's settings.
       await new Promise((r) => setTimeout(r, 2000));
-      const city = template.config?.primary_city;
-      const state = template.config?.primary_state;
-      const slugify = (s) => (s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-      const liveUrl = city && state ? `https://epoxyquotenearme.com/${slugify(state)}/${slugify(city)}` : `https://epoxyquotenearme.com`;
+      const liveUrl = liveUrlFor(template) || PUBLISHED_URL;
       await base44.entities.WebsiteTemplate.update(template.id, {
         status: "live",
         generated_url: liveUrl,
@@ -167,11 +164,14 @@ export default function WebsiteFactory() {
               </div>
               {t.config?.company_name && <p className="text-sm text-stone-600">{t.config.company_name}</p>}
               {t.config?.primary_city && <p className="text-xs text-stone-400 mt-1">{t.config.primary_city}, {t.config.primary_state}</p>}
-              {t.generated_url && (
-                <a href={t.generated_url} target="_blank" rel="noopener" className="text-xs text-amber-600 hover:underline flex items-center gap-1 mt-2">
-                  <Globe className="h-3 w-3" /> {t.generated_url}
-                </a>
-              )}
+              {(() => {
+                const live = liveUrlFor(t);
+                return live ? (
+                  <a href={live} target="_blank" rel="noopener" className="text-xs text-amber-600 hover:underline flex items-center gap-1 mt-2">
+                    <Globe className="h-3 w-3" /> {live.replace(/^https?:\/\//, "")}
+                  </a>
+                ) : null;
+              })()}
               <div className="flex gap-2 mt-4">
                 {t.status !== "live" ? (
                   <button
@@ -183,7 +183,7 @@ export default function WebsiteFactory() {
                     {deploying === t.id ? "Deploying..." : "Deploy"}
                   </button>
                 ) : (
-                  <a href={t.generated_url} target="_blank" rel="noopener" className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-stone-900 text-white text-xs font-bold hover:bg-stone-800">
+                  <a href={liveUrlFor(t) || PUBLISHED_URL} target="_blank" rel="noopener" className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-stone-900 text-white text-xs font-bold hover:bg-stone-800">
                     <Globe className="h-3.5 w-3.5" /> Visit
                   </a>
                 )}
