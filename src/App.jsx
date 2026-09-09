@@ -62,7 +62,6 @@ import VisionStrategy from '@/pages/admin/VisionStrategy';
 import Intelligence from '@/pages/admin/Intelligence';
 import ClientPackages from '@/pages/admin/ClientPackages';
 import CustomerPortal from '@/pages/CustomerPortal';
-import AIAssistBubble from '@/components/ai-assist/AIAssistBubble';
 
 
 const AuthenticatedApp = () => {
@@ -158,7 +157,6 @@ function App() {
           <ScrollToTop />
           <RouteSeo />
           <AuthenticatedApp />
-          <AIAssistBubble />
         </Router>
         <Toaster />
       </QueryClientProvider>
