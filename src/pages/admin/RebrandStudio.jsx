@@ -320,11 +320,13 @@ export default function RebrandStudio() {
       {/* STEP 5 — Mass production */}
       <div className={stepCls}>
         <div className="flex items-center gap-2 mb-4"><span className="h-7 w-7 rounded-full bg-amber-500 text-stone-950 grid place-items-center font-bold text-sm">5</span><h3 className="font-bold text-stone-900">Mass Production — 70 Locations</h3></div>
-        <p className="text-sm text-stone-500 mb-3">Generates one rebranded <strong>WebsiteTemplate</strong> per city (city-specific name, slug, subdomain, service area — all sharing your logo + brand) and bundles them into a <strong>LaunchCampaign</strong>. Edit the list below before running.</p>
+        <p className="text-sm text-stone-500 mb-3">Generates one rebranded <strong>WebsiteTemplate</strong> per city (city-specific name, slug, path-based live URL, service area — all sharing your logo + brand) and bundles them into a <strong>LaunchCampaign</strong>. Edit the list below before running.</p>
         <div className="mb-3">
-          <label className={labelCls}>Root Domain (for auto subdomains)</label>
-          <input value={rootDomain} onChange={(e) => setRootDomain(e.target.value)} placeholder="epoxyfloors.com" className={inputCls + " mt-1 max-w-sm"} />
-          <p className="text-xs text-stone-400 mt-1">Each city gets <code className="text-amber-600">cityslug.{rootDomain || "yourdomain.com"}</code> as its domain + live URL.</p>
+          <label className={labelCls}>Live URL Pattern (path-based — no subdomains)</label>
+          <div className="mt-1 max-w-sm h-10 px-3 flex items-center rounded-lg border border-stone-200 bg-stone-50 text-sm text-stone-600 font-mono">
+            epoxyquotenearme.com/<span className="text-amber-600">{"{state}"}</span>/<span className="text-amber-600">{"{city}"}</span>
+          </div>
+          <p className="text-xs text-stone-400 mt-1">Each city publishes to <code className="text-amber-600">epoxyquotenearme.com/state/city</code> — served by the full contractor template. No DNS setup required.</p>
         </div>
         <CityGenerator brand={brand} onApply={(text) => setCitiesText(text)} />
         <textarea value={citiesText} onChange={(e) => setCitiesText(e.target.value)} rows={8} className="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm font-mono focus:border-amber-500 outline-none" placeholder="City, ST — one per line" />

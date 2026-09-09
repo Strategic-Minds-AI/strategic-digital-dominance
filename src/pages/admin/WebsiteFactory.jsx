@@ -3,6 +3,18 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Factory, Plus, Rocket, Settings, Copy, Check, Loader2, Globe } from "lucide-react";
 
+const PUBLISHED_URL = "https://epoxyquotenearme.com";
+const slugify = (s) => (s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+// Every template maps to a real city page at /{state}/{city} on the primary
+// domain — rendered by the full contractor template. No subdomains.
+function liveUrlFor(t) {
+  const city = t.config?.primary_city;
+  const state = t.config?.primary_state;
+  if (!city || !state) return null;
+  return `${PUBLISHED_URL}/${slugify(state)}/${slugify(city)}`;
+}
+
 export default function WebsiteFactory() {
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);

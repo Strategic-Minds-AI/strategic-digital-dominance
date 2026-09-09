@@ -2,7 +2,27 @@ import React, { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Rocket, Globe, Loader2, CheckCircle2, AlertCircle, Copy } from "lucide-react";
-import { dnsInstructions, buildSubdomainMappings } from "@/lib/subdomainRouter";
+
+const PUBLISHED_URL = "https://epoxyquotenearme.com";
+const slugify = (s) => (s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+// Path-based city page mappings — each template resolves to /{state}/{city}
+// on the primary domain (rendered by the full contractor template). No subdomains.
+function buildPathMappings(templates) {
+  return (templates || [])
+    .filter((t) => t.config?.primary_city && t.config?.primary_state)
+    .map((t) => {
+      const city = t.config.primary_city;
+      const state = t.config.primary_state;
+      return {
+        templateId: t.id,
+        url: `${PUBLISHED_URL}/${slugify(state)}/${slugify(city)}`,
+        city,
+        state,
+        status: t.status,
+      };
+    });
+}
 
 export default function BulkPublishPanel({ brand, logoUrl, templates, rootDomain }) {
   const queryClient = useQueryClient();
@@ -10,8 +30,7 @@ export default function BulkPublishPanel({ brand, logoUrl, templates, rootDomain
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
 
-  const mappings = buildSubdomainMappings(templates, rootDomain);
-  const dnsRecords = rootDomain ? dnsInstructions(rootDomain) : [];
+  const mappings = buildPathMappings(templates);
 
   const bulkPublish = async () => {
     if (!brand.company_name) { setError("Enter a company name in Step 1 first."); return; }
@@ -51,39 +70,23 @@ export default function BulkPublishPanel({ brand, logoUrl, templates, rootDomain
         )}
       </div>
 
-      {/* DNS routing */}
+      {/* Live URL routing */}
       <div className="rounded-xl border border-stone-200 p-4">
-        <h4 className="font-semibold text-stone-800 text-sm mb-2 flex items-center gap-1.5"><Globe className="h-4 w-4 text-blue-500" /> DNS Routing — Wildcard Subdomain Setup</h4>
-        {rootDomain ? (
-          <>
-            <div className="rounded-lg bg-stone-50 p-3 mb-3 text-xs space-y-1.5">
-              <div className="font-bold text-stone-700 mb-1">DNS Records (add in GoDaddy / Cloudflare):</div>
-              {dnsRecords.map((r, i) => (
-                <div key={i} className="flex items-center gap-2 flex-wrap">
-                  <span className="font-mono font-bold text-amber-600">{r.type}</span>
-                  <span className="font-mono bg-white px-1.5 py-0.5 rounded border border-stone-200">{r.name}</span>
-                  <span className="text-stone-400">→</span>
-                  <span className="font-mono bg-white px-1.5 py-0.5 rounded border border-stone-200">{r.value}</span>
-                  <span className="text-stone-400">({r.note})</span>
-                </div>
-              ))}
+        <h4 className="font-semibold text-stone-800 text-sm mb-2 flex items-center gap-1.5"><Globe className="h-4 w-4 text-blue-500" /> Live URL Routing — Path-Based City Pages</h4>
+        <p className="text-sm text-stone-500 mb-3">Each template publishes to a path-based city page on <code className="bg-stone-100 px-1 rounded">epoxyquotenearme.com</code> — no subdomains or DNS setup required. Pages are served by the full contractor template at <code className="bg-stone-100 px-1 rounded">/{`{state}`}/{`{city}`}</code>.</p>
+        <div className="text-xs text-stone-500 mb-2">
+          <strong>{mappings.length}</strong> city pages will be live:
+        </div>
+        <div className="max-h-48 overflow-y-auto rounded-lg border border-stone-100 divide-y divide-stone-50">
+          {mappings.slice(0, 80).map((m) => (
+            <div key={m.templateId} className="px-3 py-2 text-xs flex items-center justify-between gap-2">
+              <a href={m.url} target="_blank" rel="noopener" className="font-mono text-amber-600 hover:underline truncate">{m.url.replace(/^https?:\/\//, "")}</a>
+              <span className="text-stone-400 shrink-0">→ {m.city}, {m.state}</span>
             </div>
-            <div className="text-xs text-stone-500 mb-2">
-              <strong>{mappings.length}</strong> subdomains will map to location pages:
-            </div>
-            <div className="max-h-48 overflow-y-auto rounded-lg border border-stone-100 divide-y divide-stone-50">
-              {mappings.slice(0, 80).map((m) => (
-                <div key={m.templateId} className="px-3 py-2 text-xs flex items-center justify-between gap-2">
-                  <span className="font-mono text-stone-600 truncate">{m.subdomain}</span>
-                  <span className="text-stone-400 shrink-0">→ {m.city}, {m.state}</span>
-                </div>
-              ))}
-            </div>
-            {mappings.length > 80 && <p className="text-xs text-stone-400 mt-1">+ {mappings.length - 80} more…</p>}
-          </>
-        ) : (
-          <p className="text-sm text-stone-400">Enter a root domain in Step 5 to see DNS routing instructions and subdomain mappings.</p>
-        )}
+          ))}
+        </div>
+        {mappings.length > 80 && <p className="text-xs text-stone-400 mt-1">+ {mappings.length - 80} more…</p>}
+        {mappings.length === 0 && <p className="text-sm text-stone-400">Add a primary city and state to each template to generate its live URL.</p>}
       </div>
     </div>
   );
