@@ -1,9 +1,9 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.40";
 import { logStep } from "../../shared/sopLog.ts";
 
-const SITE = "https://epoxygaragefloorestimate.com";
+const SITE = "https://epoxyquotenearme.base44.app";
 const INDEXNOW_KEY = "a3e6350908f1c2d4e6b8a0123456789a";
-const HOST = "epoxygaragefloorestimate.com";
+const HOST = "epoxyquotenearme.base44.app";
 
 // Lightweight IndexNow ping — accepts a single URL or array of URLs and
 // submits them to IndexNow (the protocol Bing, Yandex, Seznam & Naver use

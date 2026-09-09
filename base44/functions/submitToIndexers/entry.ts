@@ -1,7 +1,7 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.40";
 import { logStep } from "../../shared/sopLog.ts";
 
-const SITE = "https://epoxygaragefloorestimate.com";
+const SITE = "https://epoxyquotenearme.base44.app";
 const SITEMAP = `${SITE}/sitemap.xml`;
 // IndexNow key — the matching key file is hosted at /a3e6350908f1c2d4e6b8a0123456789a.txt
 const INDEXNOW_KEY = "a3e6350908f1c2d4e6b8a0123456789a";
@@ -48,7 +48,7 @@ async function indexNowPost(endpoint) {
       method: "POST",
       headers: { "Content-Type": "application/json; charset=utf-8" },
       body: JSON.stringify({
-        host: "epoxygaragefloorestimate.com",
+        host: "epoxyquotenearme.base44.app",
         key: INDEXNOW_KEY,
         keyLocation: `${SITE}/${INDEXNOW_KEY}.txt`,
         urlList: URLS,

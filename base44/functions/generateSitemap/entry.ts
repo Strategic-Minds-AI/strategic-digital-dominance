@@ -1,7 +1,7 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.40";
 import { logStep } from "../../shared/sopLog.ts";
 
-const SITE = "https://epoxygaragefloorestimate.com";
+const SITE = "https://epoxyquotenearme.base44.app";
 
 // Static priority pages with their SEO config.
 const STATIC_PATHS = [

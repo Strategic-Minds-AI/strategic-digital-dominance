@@ -1,0 +1,47 @@
+{
+  "description": "Every 30 minutes, checks for SeoContent title/description updates and notifies Google via IndexNow + Google Search Console sitemap resubmission for faster re-indexing.",
+  "name": "SEO Update Notifier",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "seo_update_notifier",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "notify": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "notifySeoUpdates",
+            "args": {
+              "window_minutes": 35
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Notify Google of SEO updates",
+            "description": "IndexNow + GSC sitemap ping for changed titles/meta"
+          }
+        }
+      }
+    ]
+  },
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "*/30 * * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  }
+}
