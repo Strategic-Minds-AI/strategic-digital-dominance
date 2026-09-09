@@ -4,8 +4,12 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   MessageSquare, Phone, MessageCircle, Smartphone, Megaphone, Play, RefreshCw,
   AlertCircle, CheckCircle2, Activity, Mail, Search, Users, Sparkles, Image,
-  ShieldCheck, Zap, Send, TrendingUp, Palette, UserCheck, Copy, BookOpen
+  ShieldCheck, Zap, Send, TrendingUp, Palette, UserCheck, Copy, BookOpen,
+  FlaskConical, Bot, PhoneCall
 } from "lucide-react";
+import TestLabTab from "@/components/xtreme-comms/TestLabTab";
+import AgentsTab from "@/components/xtreme-comms/AgentsTab";
+import VoiceSessionsTab from "@/components/xtreme-comms/VoiceSessionsTab";
 
 const TABS = [
   { id: "sms", label: "SMS & MMS", icon: Smartphone },
@@ -19,6 +23,9 @@ const TABS = [
   { id: "content", label: "AI Content", icon: Sparkles },
   { id: "email", label: "Email", icon: Mail },
   { id: "verify", label: "Verify", icon: ShieldCheck },
+  { id: "testlab", label: "Test Lab", icon: FlaskConical },
+  { id: "agents", label: "AI Agents", icon: Bot },
+  { id: "voicesessions", label: "Voice Sessions", icon: PhoneCall },
   { id: "status", label: "Status", icon: Activity },
 ];
 
@@ -468,6 +475,15 @@ export default function XtremeComms() {
             </div>
           </div>
         )}
+
+        {/* Test Lab — closed-loop testing chamber */}
+        {tab === "testlab" && <TestLabTab companyFacts={companyFacts} />}
+
+        {/* AI Agents — persona management */}
+        {tab === "agents" && <AgentsTab />}
+
+        {/* Voice Sessions — AI voice session log + launcher */}
+        {tab === "voicesessions" && <VoiceSessionsTab companyFacts={companyFacts} />}
       </div>
 
       {/* Error */}

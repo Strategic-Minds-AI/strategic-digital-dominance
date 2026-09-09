@@ -1,0 +1,68 @@
+{
+  "name": "TestRun",
+  "type": "object",
+  "properties": {
+    "loop_label": {
+      "type": "string",
+      "description": "Optional label to group a loop of test sends"
+    },
+    "channel": {
+      "type": "string",
+      "enum": [
+        "sms",
+        "mms",
+        "whatsapp",
+        "voice"
+      ],
+      "default": "sms"
+    },
+    "to_number": {
+      "type": "string",
+      "description": "The extra number added to test the loop"
+    },
+    "from_number": {
+      "type": "string"
+    },
+    "persona_id": {
+      "type": "string",
+      "description": "AgentPersona used (for voice tests)"
+    },
+    "persona_name": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "media_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "sent",
+        "failed"
+      ],
+      "default": "pending"
+    },
+    "provider_response": {
+      "type": "string",
+      "description": "Raw provider response JSON"
+    },
+    "error": {
+      "type": "string"
+    },
+    "duration_ms": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "channel",
+    "to_number"
+  ]
+}

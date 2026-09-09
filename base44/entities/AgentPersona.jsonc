@@ -1,0 +1,60 @@
+{
+  "name": "AgentPersona",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Persona display name (e.g. 'Eden Skye \u2014 Sales')"
+    },
+    "persona_type": {
+      "type": "string",
+      "enum": [
+        "voice",
+        "email",
+        "phone",
+        "social_media"
+      ],
+      "default": "voice"
+    },
+    "voice_id": {
+      "type": "string",
+      "description": "Telnyx Ultra voice UUID for voice personas"
+    },
+    "system_prompt": {
+      "type": "string",
+      "description": "System prompt that defines the persona's behavior and expertise",
+      "maxLength": 5000
+    },
+    "personality_traits": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "tone": {
+      "type": "string",
+      "description": "e.g. warm, authoritative, upbeat"
+    },
+    "assigned_context": {
+      "type": "string",
+      "description": "Situation this persona is assigned to (sales calls, support emails, etc.)"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    },
+    "is_default": {
+      "type": "boolean",
+      "default": false
+    },
+    "avatar_color": {
+      "type": "string",
+      "default": "#ff6b00"
+    }
+  },
+  "required": [
+    "name",
+    "persona_type"
+  ]
+}
