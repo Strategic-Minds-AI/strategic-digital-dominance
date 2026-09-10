@@ -38,6 +38,7 @@ export default function FloorVisualizer({ onPhotoChange, onColorSelected, onConc
   const [selectedColor, setSelectedColor] = useState(normalizedInitial);
   const [finish, setFinish] = useState("gloss");
   const [generating, setGenerating] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [conceptUrl, setConceptUrl] = useState("");
   const [error, setError] = useState("");
   const fileInputRef = useRef(null);
@@ -70,6 +71,8 @@ export default function FloorVisualizer({ onPhotoChange, onColorSelected, onConc
     setPhotoUrl(dataUrl);
     setUploadedUrl("");
     setConceptUrl("");
+    setError("");
+    setUploading(true);
 
     // Upload for storage — the uploaded URL is publicly fetchable and is what
     // GenerateImage needs as existing_image_urls (data URLs won't work server-side).
@@ -77,8 +80,12 @@ export default function FloorVisualizer({ onPhotoChange, onColorSelected, onConc
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       setUploadedUrl(file_url);
       onPhotoChange?.(file_url);
-    } catch {
-      onPhotoChange?.(dataUrl);
+    } catch (err) {
+      setError("Photo upload failed. Please try again or pick a different photo.");
+      console.error("[FloorVisualizer] upload failed:", err);
+      setPhotoUrl("");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -225,7 +232,7 @@ export default function FloorVisualizer({ onPhotoChange, onColorSelected, onConc
         <div>
           <button
             onClick={generate}
-            disabled={generating || !uploadedUrl}
+            disabled={generating || uploading || !uploadedUrl}
             className="w-full h-14 rounded-xl flex items-center justify-center gap-2 text-base font-bold disabled:opacity-60 transition"
             style={{
               background: "linear-gradient(180deg, #FFF6D5 0%, #D4AF37 45%, #8B6914 100%)",
@@ -234,13 +241,13 @@ export default function FloorVisualizer({ onPhotoChange, onColorSelected, onConc
               boxShadow: "0 4px 12px rgba(212,175,55,.4), inset 0 1px rgba(255,255,255,.4)",
             }}
           >
-            {generating ? (
-              <>
-                <Loader2 className="h-5 w-5 animate-spin" /> Rendering your floor…
-              </>
-            ) : !uploadedUrl ? (
+            {uploading ? (
               <>
                 <Loader2 className="h-5 w-5 animate-spin" /> Uploading your photo…
+              </>
+            ) : generating ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" /> Rendering your floor…
               </>
             ) : (
               <>
