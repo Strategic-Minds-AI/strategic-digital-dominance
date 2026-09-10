@@ -1,0 +1,190 @@
+{
+  "name": "SystemHealthAudit",
+  "type": "object",
+  "properties": {
+    "audit_type": {
+      "type": "string",
+      "enum": [
+        "full",
+        "data",
+        "ai",
+        "automation",
+        "website_factory",
+        "lead_engine",
+        "business_intelligence",
+        "security",
+        "performance"
+      ],
+      "default": "full",
+      "description": "Scope of this audit snapshot"
+    },
+    "overall_score": {
+      "type": "number",
+      "description": "System Optimality Score 0-100 \u2014 weighted average of all subsystem scores"
+    },
+    "subsystem_scores": {
+      "type": "object",
+      "description": "Per-subsystem scores 0-100",
+      "properties": {
+        "data_quality": {
+          "type": "number"
+        },
+        "rag_quality": {
+          "type": "number"
+        },
+        "graph_quality": {
+          "type": "number"
+        },
+        "agents": {
+          "type": "number"
+        },
+        "automation": {
+          "type": "number"
+        },
+        "lead_generation": {
+          "type": "number"
+        },
+        "website_factory": {
+          "type": "number"
+        },
+        "observability": {
+          "type": "number"
+        },
+        "cost_efficiency": {
+          "type": "number"
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low",
+              "info"
+            ]
+          },
+          "finding": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "auto_fixable",
+              "fixed",
+              "escalated"
+            ]
+          },
+          "recommendation": {
+            "type": "string"
+          },
+          "impact": {
+            "type": "string",
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low"
+            ]
+          }
+        }
+      },
+      "default": []
+    },
+    "metrics": {
+      "type": "object",
+      "description": "Raw metrics snapshot at audit time \u2014 entity counts, function status, graph/RAG/swarm stats"
+    },
+    "bottleneck": {
+      "type": "string",
+      "description": "Current #1 bottleneck limiting system performance"
+    },
+    "next_best_action": {
+      "type": "string",
+      "description": "Single highest-value next action recommended by the optimization engine"
+    },
+    "next_improvements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "impact": {
+            "type": "string",
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "effort": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "score_delta": {
+            "type": "number"
+          }
+        }
+      },
+      "default": []
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "running",
+        "completed",
+        "failed"
+      ],
+      "default": "running"
+    },
+    "duration_ms": {
+      "type": "number"
+    },
+    "triggered_by": {
+      "type": "string",
+      "description": "manual, scheduled, workflow, agent"
+    }
+  },
+  "required": [
+    "audit_type"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
