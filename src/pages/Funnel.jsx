@@ -106,9 +106,11 @@ export default function Funnel() {
       return result;
     };
 
-    let result = { sqft: 440, source: "fallback_size" };
+    let result = { sqft: 440, source: "fallback_size", confidence: "low" };
 
-    // Primary — deterministic property records lookup
+    // Primary — deterministic property records lookup (RentCast + OSM + Estately
+    // cross-validation, server-side cached so the same address always returns
+    // the same sqft across all users and devices).
     try {
       const res = await base44.functions.invoke("propertyLookup", { address: fullAddress, fallback_sqft: 440 });
       const sqft = Number(res?.sqft);
@@ -116,6 +118,8 @@ export default function Funnel() {
         return cache({
           sqft: Math.min(Math.max(Math.round(sqft), 200), 1200),
           source: res.source,
+          confidence: res.confidence || "medium",
+          consensus_method: res.consensus_method || null,
           garage_spaces: res.garage_spaces ?? null,
           interior_sqft: res.interior_sqft ?? null
         });
@@ -146,7 +150,8 @@ export default function Funnel() {
       if (res?.found && sqft > 0) {
         return cache({
           sqft: Math.min(Math.max(Math.round(sqft), 200), 1200),
-          source: "property_records",
+          source: "ai_property_records",
+          confidence: "low",
           garage_spaces: res.garage_spaces ?? null,
           interior_sqft: res.interior_sqft ?? null
         });
@@ -200,6 +205,8 @@ export default function Funnel() {
       state: data.state,
       zip: data.zip,
       square_footage: sqft,
+      sqft_source: result.source || null,
+      sqft_confidence: result.confidence || null,
       floor_condition: data.floor_condition,
       timeline: data.timeline || "AS SOON AS POSSIBLE",
       desired_system: data.desired_system || "flake",
@@ -227,7 +234,7 @@ export default function Funnel() {
     base44.functions.invoke("pushLeadToHubspot", { lead_id: lead.id }).catch(() => {});
     // Sync to Google Sheets (auto-creates the sheet on first call, does not block the funnel).
     base44.functions.invoke("syncLeadToSheet", { action: "appendLead", lead_id: lead.id }).catch(() => {});
-    trackEvent("scrape_complete", { lead_id: lead.id, sqft, source: result.source });
+    trackEvent("scrape_complete", { lead_id: lead.id, sqft, source: result.source, confidence: result.confidence });
     setStep(6);
     window.scrollTo(0, 0);
   };

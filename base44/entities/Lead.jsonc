@@ -83,6 +83,19 @@
     "square_footage": {
       "type": "number"
     },
+    "sqft_source": {
+      "type": "string",
+      "description": "Which source provided the garage sqft (rentcast, osm_garage_takeoff, consensus, fallback_size, etc.)"
+    },
+    "sqft_confidence": {
+      "type": "string",
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ],
+      "description": "Confidence level of the sqft determination: high = 2+ sources agree, medium = 1 source, low = fallback"
+    },
     "floor_condition": {
       "type": "array",
       "items": {
