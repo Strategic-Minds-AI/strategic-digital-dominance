@@ -19,17 +19,20 @@
         "technology",
         "compliance",
         "go_to_market",
-        "operating_model"
+        "operating_model",
+        "master_prompt",
+        "rag_ml_analysis",
+        "target_market",
+        "vercel_enhancements"
       ],
       "default": "vision"
     },
     "category": {
-      "type": "string",
-      "description": "Sub-category or focus area"
+      "type": "string"
     },
     "content": {
       "type": "string",
-      "maxLength": 10000,
+      "maxLength": 50000,
       "description": "Full document content (markdown)"
     },
     "summary": {
@@ -83,5 +86,27 @@
     "title",
     "type",
     "content"
-  ]
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
 }
