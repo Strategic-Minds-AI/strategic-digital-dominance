@@ -493,6 +493,24 @@
     {
       "function_name": "xtremeComms",
       "description": "Send SMS, WhatsApp, voice, and email communications"
+    },
+    {
+      "entity_name": "DynamicPage",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "CodeBlock",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
     }
   ],
   "context_files": [],
