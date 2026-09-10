@@ -73,6 +73,9 @@ import WebsiteEmpire from '@/pages/admin/WebsiteEmpire';
 import CustomerPortal from '@/pages/CustomerPortal';
 import ContractorApp from '@/pages/ContractorApp';
 import ContractorBid from '@/pages/ContractorBid';
+import CodeStudio from '@/pages/admin/CodeStudio';
+import DynamicPageView from '@/pages/DynamicPageView';
+import CodeInjector from '@/components/codestudio/CodeInjector';
 
 
 const AuthenticatedApp = () => {
@@ -97,6 +100,8 @@ const AuthenticatedApp = () => {
   }
 
   return (
+    <>
+    <CodeInjector />
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/estimate" element={<Estimator />} />
@@ -154,6 +159,7 @@ const AuthenticatedApp = () => {
         <Route path="swarm" element={<SwarmCommand />} />
         <Route path="blueprint" element={<SystemBlueprint />} />
         <Route path="operator" element={<SystemOperator />} />
+        <Route path="code-studio" element={<CodeStudio />} />
         <Route path="empire" element={<WebsiteEmpire />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
@@ -164,8 +170,10 @@ const AuthenticatedApp = () => {
       <Route path="/portal" element={<CustomerPortal />} />
       <Route path="/contractor" element={<ContractorApp />} />
       <Route path="/contractor/bid" element={<ContractorBid />} />
+      <Route path="/p/:slug" element={<DynamicPageView />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
+    </>
   );
 };
 

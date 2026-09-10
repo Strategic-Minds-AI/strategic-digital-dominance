@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, Outlet, Link } from "react-router-dom";
-import { LayoutDashboard, Users, KanbanSquare, Settings, ExternalLink, Mail, Radar, Globe, ScrollText, Star, Wrench, Factory, Smartphone, Rocket, Layers, UserCircle,   TrendingUp, MessageSquare, Brain, Target, BarChart3, Package, Bot, KeyRound, Share2, Wand2, MapPin, Network, Crown, Building2 } from "lucide-react";
+import { LayoutDashboard, Users, KanbanSquare, Settings, ExternalLink, Mail, Radar, Globe, ScrollText, Star, Wrench, Factory, Smartphone, Rocket, Layers, UserCircle,   TrendingUp, MessageSquare, Brain, Target, BarChart3, Package, Bot, KeyRound, Share2, Wand2, MapPin, Network, Crown, Building2, Code2 } from "lucide-react";
 import BackButton from "@/components/BackButton";
 import Logo from "@/components/Logo";
 import { XTREME_AI_ICON_URL } from "@/components/Logo";
@@ -36,6 +36,7 @@ const links = [
   { to: "/admin/swarm", icon: Network, label: "Swarm Command" },
   { to: "/admin/blueprint", icon: Building2, label: "Blueprint" },
   { to: "/admin/operator", icon: Bot, label: "AI Operator" },
+  { to: "/admin/code-studio", icon: Code2, label: "Code Studio" },
   { to: "/portal", icon: UserCircle, label: "Client Portal" },
   { to: "/admin/settings", icon: Settings, label: "Settings" }
 ];

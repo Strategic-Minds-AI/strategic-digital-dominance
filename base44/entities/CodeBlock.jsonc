@@ -1,0 +1,78 @@
+{
+  "name": "CodeBlock",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "css",
+        "js",
+        "html",
+        "meta"
+      ],
+      "description": "css = stylesheet injected into head, js = script injected into body, html = raw HTML rendered on page, meta = head meta tags"
+    },
+    "content": {
+      "type": "string",
+      "maxLength": 10000,
+      "description": "The code content"
+    },
+    "scope": {
+      "type": "string",
+      "enum": [
+        "global",
+        "page",
+        "admin"
+      ],
+      "default": "global",
+      "description": "global = all pages, page = specific route, admin = admin pages only"
+    },
+    "page_path": {
+      "type": "string",
+      "description": "If scope=page, the route path to inject on (e.g. /, /about, /p/my-page)"
+    },
+    "position": {
+      "type": "string",
+      "enum": [
+        "head",
+        "body_start",
+        "body_end"
+      ],
+      "default": "head"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 500
+    }
+  },
+  "required": [
+    "name",
+    "type",
+    "content"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
