@@ -17,6 +17,7 @@ const links = [
   { to: "/admin/sop", icon: ScrollText, label: "SOP & Memory" },
   { to: "/admin/tools", icon: Wrench, label: "App Tools" },
   { to: "/admin/tool-hub", icon: Layers, label: "Tool Hub" },
+  { to: "/admin/url-strategy", icon: Globe, label: "URL Strategy" },
   { to: "/admin/empire", icon: Crown, label: "Website Empire" },
   { to: "/admin/site-health", icon: Heart, label: "Site Health" },
   { to: "/admin/website-factory", icon: Factory, label: "Website Factory" },

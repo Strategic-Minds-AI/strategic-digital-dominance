@@ -71,6 +71,7 @@ import SystemBlueprint from '@/pages/admin/SystemBlueprint';
 import SystemOperator from '@/pages/admin/SystemOperator';
 import WebsiteEmpire from '@/pages/admin/WebsiteEmpire';
 import SiteHealthMonitor from '@/pages/admin/SiteHealthMonitor';
+import UrlStrategy from '@/pages/admin/UrlStrategy';
 import CustomerPortal from '@/pages/CustomerPortal';
 import ContractorApp from '@/pages/ContractorApp';
 import ContractorBid from '@/pages/ContractorBid';
@@ -163,6 +164,7 @@ const AuthenticatedApp = () => {
         <Route path="code-studio" element={<CodeStudio />} />
         <Route path="empire" element={<WebsiteEmpire />} />
         <Route path="site-health" element={<SiteHealthMonitor />} />
+        <Route path="url-strategy" element={<UrlStrategy />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
       <Route path="/:state/:citySlug" element={<LocationSeoPage />} />
