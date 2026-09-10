@@ -1,18 +1,26 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Image } from "@/components/ui/image";
-import { ArrowRight, Phone, Mail, MapPin, Calendar, ShieldCheck, MessageSquare, Send, CheckCircle2, Clock, Wrench, Sparkles, Award, Loader2 } from "lucide-react";
+import {
+  ArrowRight, Loader2, LayoutDashboard, Calendar, Wrench, MessageSquare,
+  Sparkles, Palette, Gift, Phone, ChevronRight, Tag
+} from "lucide-react";
 import Logo, { XTREME_AI_ICON_URL } from "@/components/Logo";
+import PortalDashboard from "@/components/portal/PortalDashboard";
+import PortalTimeline from "@/components/portal/PortalTimeline";
+import PortalMaintenance from "@/components/portal/PortalMaintenance";
+import PortalMessages from "@/components/portal/PortalMessages";
+import PortalSchedule from "@/components/portal/PortalSchedule";
+import PortalAIChat from "@/components/portal/PortalAIChat";
 
-const STAGES = [
-  { key: "scheduled", label: "Scheduled", icon: Calendar, desc: "Your installation date is set" },
-  { key: "prep", label: "Preparation", icon: Wrench, desc: "Surface prep and crack repair" },
-  { key: "installation", label: "Installation", icon: Sparkles, desc: "Applying your floor system" },
-  { key: "curing", label: "Curing", icon: Clock, desc: "Floor is curing — stay off it" },
-  { key: "complete", label: "Complete", icon: CheckCircle2, desc: "Your new floor is ready!" }
+const TABS = [
+  { key: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { key: "timeline", label: "Timeline", icon: Calendar },
+  { key: "maintenance", label: "Maintenance", icon: Wrench },
+  { key: "messages", label: "Messages", icon: MessageSquare },
+  { key: "schedule", label: "Schedule", icon: Sparkles },
 ];
 
 export default function CustomerPortal() {
@@ -21,12 +29,21 @@ export default function CustomerPortal() {
   const [phone, setPhone] = useState("");
   const [project, setProject] = useState(null);
   const [updates, setUpdates] = useState([]);
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState("");
+  const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [view, setView] = useState("lookup"); // lookup | project
-  const chatEndRef = useRef(null);
+  const [view, setView] = useState("lookup"); // lookup | project | guest
+  const [activeTab, setActiveTab] = useState("dashboard");
+
+  // Load app settings for salesperson info
+  useEffect(() => {
+    (async () => {
+      try {
+        const settingsList = await base44.entities.AppSettings.list("-created_date", 1);
+        setSettings(settingsList?.[0] || null);
+      } catch {}
+    })();
+  }, []);
 
   const findProject = async () => {
     setLoading(true);
@@ -38,9 +55,8 @@ export default function CustomerPortal() {
         setProject(results[0]);
         setView("project");
         loadUpdates(results[0].id);
-        loadMessages(results[0].id);
       } else {
-        setError("No project found. Check your email or phone number, or contact us to get set up.");
+        setError("No project found with those details.");
       }
     } catch (e) {
       setError("Could not find your project. Please try again or contact us.");
@@ -55,31 +71,7 @@ export default function CustomerPortal() {
     } catch {}
   };
 
-  const loadMessages = async (projectId) => {
-    try {
-      const msgs = await base44.entities.ChatMessage.filter({ project_id: projectId }, "created_date", 100);
-      setMessages(msgs || []);
-      setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
-    } catch {}
-  };
-
-  const sendMessage = async () => {
-    if (!newMessage.trim() || !project) return;
-    const text = newMessage.trim();
-    setNewMessage("");
-    try {
-      const msg = await base44.entities.ChatMessage.create({
-        project_id: project.id,
-        sender_name: project.client_name || "Homeowner",
-        sender_role: "client",
-        text,
-      });
-      setMessages((m) => [...m, msg]);
-      setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
-    } catch {}
-  };
-
-  // Lookup view
+  // ── Lookup view ──
   if (view === "lookup") {
     return (
       <div className="min-h-screen bg-stone-50 flex flex-col">
@@ -93,10 +85,12 @@ export default function CustomerPortal() {
           <div className="w-full max-w-md">
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center mb-6" style={{ width: 96, height: 96 }}>
-                <Image src={XTREME_AI_ICON_URL} alt="Xtreme AI" className="w-full h-full" fittingType="fit" />
+                <img src={XTREME_AI_ICON_URL} alt="Xtreme AI" className="w-full h-full object-contain" />
               </div>
               <h1 className="text-3xl font-semibold tracking-tight text-stone-900">Client Portal</h1>
-              <p className="mt-3 text-stone-600">Track your garage floor project — timeline, photos, warranty, and direct chat with your installation team.</p>
+              <p className="mt-3 text-stone-600">
+                Track your garage floor project — timeline, photos, warranty, maintenance, and direct chat with your team.
+              </p>
             </div>
 
             <div className="rounded-2xl bg-white border border-stone-200 p-6 space-y-4">
@@ -133,23 +127,137 @@ export default function CustomerPortal() {
               </Button>
             </div>
 
-            <p className="mt-6 text-center text-sm text-stone-500">
-              Don't have a project yet?{" "}
-              <button onClick={() => navigate("/funnel")} className="font-semibold text-amber-600 hover:text-amber-700">
-                Get your estimate →
+            <div className="mt-6 text-center space-y-3">
+              <p className="text-sm text-stone-500">
+                Don't have a project yet?{" "}
+                <button onClick={() => navigate("/funnel")} className="font-semibold text-amber-600 hover:text-amber-700">
+                  Get your estimate →
+                </button>
+              </p>
+              <button
+                onClick={() => setView("guest")}
+                className="text-sm text-stone-400 hover:text-amber-600 font-semibold"
+              >
+                Browse as guest — see colors, promos & company info
               </button>
-            </p>
+            </div>
           </div>
         </div>
       </div>
     );
   }
 
-  // Project view
-  const currentStageIdx = STAGES.findIndex((s) => s.key === project?.status);
-  const beforePhotos = project?.before_photos || [];
-  const afterPhotos = project?.after_photos || [];
+  // ── Guest view (no project found) ──
+  if (view === "guest") {
+    return (
+      <div className="min-h-screen bg-stone-50">
+        <header className="bg-stone-950 text-white sticky top-0 z-30">
+          <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
+            <Logo />
+            <button onClick={() => setView("lookup")} className="text-sm text-stone-400 hover:text-white">
+              Sign in
+            </button>
+          </div>
+        </header>
+        <div className="max-w-3xl mx-auto px-6 py-8 space-y-8">
+          {/* Welcome */}
+          <div className="rounded-2xl bg-stone-950 p-6 text-white text-center">
+            <h1 className="text-2xl font-semibold">Welcome to Xtreme Polishing Systems</h1>
+            <p className="mt-2 text-stone-400">Explore our color charts, special offers, and company highlights.</p>
+            <button
+              onClick={() => navigate("/funnel")}
+              className="mt-4 inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-amber-500 text-stone-950 font-bold hover:bg-amber-400"
+            >
+              Get Your Free Estimate <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
 
+          {/* Color charts */}
+          <div className="rounded-2xl border border-stone-200 bg-white p-6">
+            <h2 className="text-lg font-semibold text-stone-900 mb-4 flex items-center gap-2">
+              <Palette className="h-5 w-5 text-amber-500" /> Floor Color Charts
+            </h2>
+            <p className="text-sm text-stone-500 mb-4">Browse our full selection of epoxy flake colors, metallic finishes, and polished concrete options.</p>
+            <button
+              onClick={() => navigate("/color-charts")}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-stone-900 text-white text-sm font-bold hover:bg-stone-800"
+            >
+              View Color Charts <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+
+          {/* Promo codes */}
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6">
+            <h2 className="text-lg font-semibold text-stone-900 mb-4 flex items-center gap-2">
+              <Gift className="h-5 w-5 text-amber-500" /> Special Offers
+            </h2>
+            <div className="space-y-3">
+              <div className="rounded-xl bg-white border border-amber-200 p-4 flex items-center gap-3">
+                <Tag className="h-5 w-5 text-amber-500 shrink-0" />
+                <div className="flex-1">
+                  <div className="font-bold text-stone-900">SPRING25 — 10% Off Installation</div>
+                  <div className="text-sm text-stone-500">Mention this code when booking your estimate</div>
+                </div>
+              </div>
+              <div className="rounded-xl bg-white border border-amber-200 p-4 flex items-center gap-3">
+                <Tag className="h-5 w-5 text-amber-500 shrink-0" />
+                <div className="flex-1">
+                  <div className="font-bold text-stone-900">MILITARY — 15% Off for Veterans</div>
+                  <div className="text-sm text-stone-500">Thank you for your service</div>
+                </div>
+              </div>
+              <div className="rounded-xl bg-white border border-amber-200 p-4 flex items-center gap-3">
+                <Tag className="h-5 w-5 text-amber-500 shrink-0" />
+                <div className="flex-1">
+                  <div className="font-bold text-stone-900">REFER50 — $50 Gift Card for Referrals</div>
+                  <div className="text-sm text-stone-500">Refer a friend who books and you both get $50</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Company highlights */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="rounded-2xl border border-stone-200 bg-white p-5 text-center">
+              <div className="text-3xl font-bold text-amber-500">25+</div>
+              <div className="text-sm text-stone-500 mt-1">Years in Business</div>
+            </div>
+            <div className="rounded-2xl border border-stone-200 bg-white p-5 text-center">
+              <div className="text-3xl font-bold text-amber-500">10K+</div>
+              <div className="text-sm text-stone-500 mt-1">Floors Coated</div>
+            </div>
+            <div className="rounded-2xl border border-stone-200 bg-white p-5 text-center">
+              <div className="text-3xl font-bold text-amber-500">4.9★</div>
+              <div className="text-sm text-stone-500 mt-1">Google Rating</div>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div className="rounded-2xl border border-stone-200 bg-white p-6 text-center">
+            <h3 className="font-semibold text-stone-900 mb-2">Ready to Transform Your Garage?</h3>
+            <p className="text-sm text-stone-500 mb-4">Get a free AI-powered estimate with before/after visualization in minutes.</p>
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={() => navigate("/funnel")}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-amber-500 text-stone-950 font-bold hover:bg-amber-400"
+              >
+                Start Estimate <ArrowRight className="h-4 w-4" />
+              </button>
+              <a
+                href="tel:18334843799"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-stone-200 text-stone-700 font-bold hover:bg-stone-50"
+              >
+                <Phone className="h-4 w-4" /> Call Us
+              </a>
+            </div>
+          </div>
+        </div>
+        <PortalAIChat project={null} />
+      </div>
+    );
+  }
+
+  // ── Project view ──
   return (
     <div className="min-h-screen bg-stone-50">
       {/* Header */}
@@ -165,176 +273,48 @@ export default function CustomerPortal() {
         </div>
       </header>
 
-      <div className="max-w-3xl mx-auto px-6 py-8 space-y-8">
-        {/* Project header */}
-        <div className="rounded-2xl bg-stone-950 p-6 text-white">
-          <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold">Welcome, {project?.client_name?.split(" ")[0]}</h1>
-              <p className="mt-1 text-stone-400 flex items-center gap-1.5 text-sm">
-                <MapPin className="h-4 w-4" /> {project?.address}, {project?.city}, {project?.state}
-              </p>
-            </div>
-            <div className="text-right">
-              <div className="text-xs font-bold tracking-widest text-amber-500">PROJECT</div>
-              <div className="text-sm text-stone-400">#{project?.id?.slice(-8).toUpperCase()}</div>
-            </div>
-          </div>
-          <div className="mt-4 pt-4 border-t border-stone-800 grid grid-cols-3 gap-4 text-sm">
-            <div>
-              <div className="text-stone-500 text-xs">Floor System</div>
-              <div className="font-semibold capitalize">{project?.floor_system || "Epoxy Flake"}</div>
-            </div>
-            <div>
-              <div className="text-stone-500 text-xs">Square Feet</div>
-              <div className="font-semibold">{project?.square_footage || "—"} sq ft</div>
-            </div>
-            <div>
-              <div className="text-stone-500 text-xs">Status</div>
-              <div className="font-semibold capitalize">{project?.status || "scheduled"}</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Timeline */}
-        <div>
-          <h2 className="text-lg font-semibold text-stone-900 mb-4">Project Timeline</h2>
-          <div className="space-y-3">
-            {STAGES.map((stage, idx) => {
-              const Icon = stage.icon;
-              const isDone = idx < currentStageIdx;
-              const isCurrent = idx === currentStageIdx;
-              const isFuture = idx > currentStageIdx;
-              return (
-                <div
-                  key={stage.key}
-                  className={`flex items-start gap-4 rounded-xl border p-4 transition ${
-                    isCurrent ? "border-amber-500 bg-amber-50" : isDone ? "border-green-200 bg-green-50/50" : "border-stone-200 bg-white"
-                  }`}
-                >
-                  <div
-                    className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
-                      isDone ? "bg-green-500 text-white" : isCurrent ? "bg-amber-500 text-stone-950" : "bg-stone-100 text-stone-400"
-                    }`}
-                  >
-                    {isDone ? <CheckCircle2 className="h-5 w-5" /> : <Icon className="h-5 w-5" />}
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-semibold text-stone-900">{stage.label}</div>
-                    <div className="text-sm text-stone-500">{stage.desc}</div>
-                    {isCurrent && updates.find((u) => u.stage === stage.key) && (
-                      <div className="mt-2 text-sm text-stone-700 bg-white rounded-lg p-3 border border-stone-200">
-                        {updates.find((u) => u.stage === stage.key)?.description}
-                      </div>
-                    )}
-                  </div>
-                  {isFuture && <Clock className="h-4 w-4 text-stone-300" />}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Before/After Photos */}
-        {(beforePhotos.length > 0 || afterPhotos.length > 0) && (
-          <div>
-            <h2 className="text-lg font-semibold text-stone-900 mb-4">Project Photos</h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <div className="text-xs font-bold tracking-widest text-stone-500 mb-2">BEFORE</div>
-                {beforePhotos.length > 0 ? (
-                  <div className="space-y-2">
-                    {beforePhotos.map((url, i) => (
-                      <Image key={i} src={url} alt={`Before ${i + 1}`} className="w-full aspect-[4/3] rounded-xl object-cover" fittingType="fill" />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="w-full aspect-[4/3] rounded-xl bg-stone-100 flex items-center justify-center text-stone-400 text-sm">
-                    No photos yet
-                  </div>
-                )}
-              </div>
-              <div>
-                <div className="text-xs font-bold tracking-widest text-amber-500 mb-2">AFTER</div>
-                {afterPhotos.length > 0 ? (
-                  <div className="space-y-2">
-                    {afterPhotos.map((url, i) => (
-                      <Image key={i} src={url} alt={`After ${i + 1}`} className="w-full aspect-[4/3] rounded-xl object-cover" fittingType="fill" />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="w-full aspect-[4/3] rounded-xl bg-stone-100 flex items-center justify-center text-stone-400 text-sm">
-                    Coming soon
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Warranty */}
-        {project?.warranty_expiration && (
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center">
-                <ShieldCheck className="h-5 w-5 text-stone-950" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-stone-900">Lifetime Warranty</h3>
-                <p className="text-sm text-stone-600">Your floor is covered</p>
-              </div>
-            </div>
-            <div className="text-sm text-stone-700">
-              Warranty expires: <strong>{new Date(project.warranty_expiration).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</strong>
-            </div>
-          </div>
-        )}
-
-        {/* Chat */}
-        <div>
-          <h2 className="text-lg font-semibold text-stone-900 mb-4 flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-amber-500" /> Message Your Team
-          </h2>
-          <div className="rounded-2xl border border-stone-200 bg-white flex flex-col" style={{ maxHeight: 400 }}>
-            <div className="flex-1 overflow-y-auto p-4 space-y-3">
-              {messages.length === 0 && (
-                <div className="text-center text-stone-400 py-8 text-sm">
-                  No messages yet. Send a message to your installation team below.
-                </div>
-              )}
-              {messages.map((msg) => (
-                <div key={msg.id} className={`flex ${msg.sender_role === "client" ? "justify-end" : "justify-start"}`}>
-                  <div
-                    className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-sm ${
-                      msg.sender_role === "client"
-                        ? "bg-amber-500 text-stone-950"
-                        : "bg-stone-100 text-stone-900"
-                    }`}
-                  >
-                    {msg.sender_role !== "client" && (
-                      <div className="text-xs font-semibold mb-0.5 capitalize">{msg.sender_name || msg.sender_role}</div>
-                    )}
-                    {msg.text}
-                  </div>
-                </div>
-              ))}
-              <div ref={chatEndRef} />
-            </div>
-            <div className="border-t border-stone-200 p-3 flex gap-2">
-              <Input
-                placeholder="Type a message..."
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                className="h-11"
-              />
-              <Button onClick={sendMessage} disabled={!newMessage.trim()} className="h-11 px-4 bg-stone-950 hover:bg-stone-800">
-                <Send className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
+      {/* Tab navigation */}
+      <div className="max-w-3xl mx-auto px-6 pt-6">
+        <div className="flex gap-1 overflow-x-auto rounded-xl bg-white border border-stone-200 p-1">
+          {TABS.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.key;
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`flex-1 min-w-[80px] flex flex-col items-center gap-1 py-2.5 px-2 rounded-lg text-xs font-bold transition-all ${
+                  isActive
+                    ? "bg-amber-500 text-stone-950"
+                    : "text-stone-500 hover:bg-stone-50"
+                }`}
+              >
+                <Icon className="h-4 w-4" />
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
       </div>
+
+      {/* Tab content */}
+      <div className="max-w-3xl mx-auto px-6 py-6 pb-24">
+        {activeTab === "dashboard" && (
+          <PortalDashboard project={project} settings={settings} onTabChange={setActiveTab} />
+        )}
+        {activeTab === "timeline" && (
+          <div>
+            <h2 className="text-lg font-semibold text-stone-900 mb-4">Project Timeline</h2>
+            <PortalTimeline project={project} updates={updates} />
+          </div>
+        )}
+        {activeTab === "maintenance" && <PortalMaintenance project={project} />}
+        {activeTab === "messages" && <PortalMessages project={project} />}
+        {activeTab === "schedule" && <PortalSchedule project={project} />}
+      </div>
+
+      {/* AI chat floating bubble */}
+      <PortalAIChat project={project} />
     </div>
   );
 }
