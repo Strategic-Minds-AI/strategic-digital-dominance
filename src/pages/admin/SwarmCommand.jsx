@@ -112,7 +112,7 @@ export default function SwarmCommand() {
         <div>
           <div className="text-[10px] font-bold tracking-[0.2em] text-purple-400 uppercase">AGI Swarm System</div>
           <h1 className="text-2xl font-bold text-white tracking-tight mt-0.5">Swarm Command Center</h1>
-          <p className="text-sm text-stone-400 mt-1">7 autonomous agents · self-organizing task board · 30-min health check cycle</p>
+          <p className="text-sm text-stone-400 mt-1">7 agents · auto-audit → fix → heal → harden → optimize AEO/SEO · 30-min autonomous cycle</p>
         </div>
         <div className="ml-auto flex items-center gap-2">
           <span className="flex items-center gap-1.5 text-xs text-stone-400">
@@ -124,20 +124,62 @@ export default function SwarmCommand() {
       {/* Control bar */}
       <div className="flex flex-wrap gap-2">
         <button
+          onClick={() => runAction("autoCycle", "autocycle")}
+          disabled={running !== null}
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-purple-600 to-purple-800 text-white text-sm font-bold disabled:opacity-50 hover:from-purple-700 hover:to-purple-900 shadow-lg shadow-purple-500/30"
+        >
+          {running === "autocycle" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+          Full Auto-Cycle
+        </button>
+        <div className="w-px bg-stone-200 mx-1" />
+        <button
+          onClick={() => runAction("autoAudit", "audit")}
+          disabled={running !== null}
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-bold disabled:opacity-50 hover:bg-blue-700"
+        >
+          {running === "audit" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+          Auto-Audit
+        </button>
+        <button
+          onClick={() => runAction("autoFix", "fix")}
+          disabled={running !== null}
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-green-600 text-white text-sm font-bold disabled:opacity-50 hover:bg-green-700"
+        >
+          {running === "fix" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wrench className="h-4 w-4" />}
+          Auto-Fix
+        </button>
+        <button
+          onClick={() => runAction("autoHeal", "heal")}
+          disabled={running !== null}
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-teal-600 text-white text-sm font-bold disabled:opacity-50 hover:bg-teal-700"
+        >
+          {running === "heal" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Stethoscope className="h-4 w-4" />}
+          Auto-Heal
+        </button>
+        <button
+          onClick={() => runAction("autoHarden", "harden")}
+          disabled={running !== null}
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-stone-700 text-white text-sm font-bold disabled:opacity-50 hover:bg-stone-800"
+        >
+          {running === "harden" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Shield className="h-4 w-4" />}
+          Auto-Harden
+        </button>
+        <button
+          onClick={() => runAction("autoOptimizeAEO", "aeo")}
+          disabled={running !== null}
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-bold disabled:opacity-50 hover:bg-indigo-700"
+        >
+          {running === "aeo" ? <Loader2 className="h-4 w-4 animate-spin" /> : <TrendingUp className="h-4 w-4" />}
+          Auto-Optimize AEO
+        </button>
+        <div className="w-px bg-stone-200 mx-1" />
+        <button
           onClick={() => runAction("runCycle", "cycle")}
           disabled={running !== null}
           className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-purple-600 text-white text-sm font-bold disabled:opacity-50 hover:bg-purple-700"
         >
           {running === "cycle" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
-          Run Swarm Cycle
-        </button>
-        <button
-          onClick={() => runAction("healthCheck", "health")}
-          disabled={running !== null}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-amber-600 text-white text-sm font-bold disabled:opacity-50 hover:bg-amber-700"
-        >
-          {running === "health" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Activity className="h-4 w-4" />}
-          Health Check
+          Dispatch Tasks
         </button>
         <button
           onClick={spawnTask}
@@ -147,7 +189,7 @@ export default function SwarmCommand() {
           <Zap className="h-4 w-4" /> Spawn Task
         </button>
         <button
-          onClick={() => queryClient.invalidateQueries({ queryKey: ["swarm-status"] })}
+          onClick={() => { queryClient.invalidateQueries({ queryKey: ["swarm-status"] }); queryClient.invalidateQueries({ queryKey: ["swarm-audit-log"] }); }}
           className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-stone-200 text-stone-600 text-sm font-bold hover:bg-stone-50"
         >
           <RefreshCw className="h-4 w-4" /> Refresh
@@ -196,6 +238,69 @@ export default function SwarmCommand() {
           <div className="text-xs text-stone-500">Unread Messages</div>
         </div>
       </div>
+
+      {/* Autonomous cycle audit log */}
+      {auditData && (
+        <div className="rounded-xl border border-stone-200 bg-white p-4">
+          <h2 className="text-lg font-bold text-stone-900 mb-3 flex items-center gap-2">
+            <FileSearch className="h-5 w-5 text-blue-500" /> Autonomous Audit Log
+            <span className="ml-auto text-xs text-stone-400">Auto-cycles every 30 min</span>
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-2 mb-4">
+            <div className="rounded-lg bg-stone-50 p-2.5 text-center">
+              <div className="text-xl font-bold text-stone-900">{auditData.stats?.total || 0}</div>
+              <div className="text-[10px] text-stone-500 uppercase">Total</div>
+            </div>
+            <div className="rounded-lg bg-amber-50 p-2.5 text-center">
+              <div className="text-xl font-bold text-amber-600">{auditData.stats?.open || 0}</div>
+              <div className="text-[10px] text-stone-500 uppercase">Open</div>
+            </div>
+            <div className="rounded-lg bg-blue-50 p-2.5 text-center">
+              <div className="text-xl font-bold text-blue-600">{auditData.stats?.auto_fixing || 0}</div>
+              <div className="text-[10px] text-stone-500 uppercase">Fixing</div>
+            </div>
+            <div className="rounded-lg bg-green-50 p-2.5 text-center">
+              <div className="text-xl font-bold text-green-600">{auditData.stats?.fixed || 0}</div>
+              <div className="text-[10px] text-stone-500 uppercase">Fixed</div>
+            </div>
+            <div className="rounded-lg bg-red-50 p-2.5 text-center">
+              <div className="text-xl font-bold text-red-600">{auditData.stats?.escalated || 0}</div>
+              <div className="text-[10px] text-stone-500 uppercase">Escalated</div>
+            </div>
+            <div className="rounded-lg bg-stone-50 p-2.5 text-center">
+              <div className="text-xl font-bold text-stone-400">{auditData.stats?.wont_fix || 0}</div>
+              <div className="text-[10px] text-stone-500 uppercase">Wont Fix</div>
+            </div>
+          </div>
+          <div className="space-y-1.5 max-h-64 overflow-y-auto">
+            {(auditData.audits || []).slice(0, 20).map((a) => (
+              <div key={a.id} className="rounded-lg border border-stone-100 p-2.5 flex items-start gap-2 text-xs">
+                <span className={`shrink-0 px-1.5 py-0.5 rounded font-bold uppercase text-[9px] ${
+                  a.severity === "critical" ? "bg-red-500 text-white" :
+                  a.severity === "high" ? "bg-orange-500 text-white" :
+                  a.severity === "medium" ? "bg-amber-100 text-amber-700" :
+                  "bg-stone-100 text-stone-500"
+                }`}>{a.severity}</span>
+                <span className="shrink-0 px-1.5 py-0.5 rounded bg-stone-100 text-stone-600 font-medium text-[9px] uppercase">{a.audit_type}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="text-stone-800 font-medium">{a.finding}</div>
+                  {a.fix_result && <div className="text-green-600 mt-0.5 truncate">✓ {a.fix_result}</div>}
+                </div>
+                <span className={`shrink-0 px-1.5 py-0.5 rounded font-medium text-[9px] uppercase ${
+                  a.status === "fixed" ? "bg-green-100 text-green-700" :
+                  a.status === "auto_fixing" ? "bg-blue-100 text-blue-700" :
+                  a.status === "escalated" ? "bg-red-100 text-red-700" :
+                  a.status === "wont_fix" ? "bg-stone-100 text-stone-400" :
+                  "bg-amber-100 text-amber-700"
+                }`}>{a.status}</span>
+              </div>
+            ))}
+            {(!auditData.audits || auditData.audits.length === 0) && (
+              <p className="text-sm text-stone-400 text-center py-4">No audit findings yet. Run Auto-Audit to scan the platform.</p>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Agent grid */}
       <div>

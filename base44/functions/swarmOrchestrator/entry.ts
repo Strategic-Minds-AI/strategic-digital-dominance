@@ -646,10 +646,10 @@ export default async function (req: Request): Promise<Response> {
     if (action === 'autoHarden') {
       const checks: any[] = [];
 
-      // Check 1: API key validity — verify keys are set
-      const requiredSecrets = ['WIX_CHECKOUT_API_KEY', 'WIX_CHECKOUT_SITE_ID', 'BROWSERBASE_API_KEY'];
+      // Check 1: API key validity — verify keys are set in environment
+      const requiredSecrets = ['WIX_CHECKOUT_API_KEY', 'WIX_CHECKOUT_SITE_ID', 'BROWSERBASE_API_KEY', 'RENTCAST_API_KEY', 'TELNYX_API_KEY'];
       for (const secret of requiredSecrets) {
-        const val = (secrets as any)[secret];
+        const val = (process.env as any)[secret];
         if (!val) {
           checks.push({ check: `Secret ${secret}`, status: 'missing', severity: 'critical' });
         } else {
