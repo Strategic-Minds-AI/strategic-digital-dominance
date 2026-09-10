@@ -29,8 +29,8 @@ export default async function(req: Request): Promise<Response> {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const apiKey = secrets.get('VERCEL_API_TOKEN');
-    if (!apiKey) return Response.json({ error: 'VERCEL_API_TOKEN secret not set' }, { status: 500 });
+    const apiKey = secrets.get('VERCEL_AI_GATEWAY_API_KEY') || secrets.get('VERCEL_API_TOKEN');
+    if (!apiKey) return Response.json({ error: 'VERCEL_AI_GATEWAY_API_KEY secret not set' }, { status: 500 });
 
     const body = await req.json();
     const { action } = body;
@@ -207,6 +207,33 @@ export default async function(req: Request): Promise<Response> {
         model: editModel,
         text: typeof message?.content === 'string' ? message.content.slice(0, 200) : '',
       });
+    }
+
+    // ── generateEmbedding: Text embeddings for RAG / vector search ──
+    if (action === 'generateEmbedding') {
+      const { text, model } = body;
+      if (!text) return Response.json({ error: 'text required' }, { status: 400 });
+
+      const res = await fetch(`${GATEWAY_BASE}/embeddings`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: model || 'text-embedding-3-small',
+          input: text,
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.text();
+        return Response.json({ error: `AI Gateway embedding error: ${err}`, status: res.status }, { status: 500 });
+      }
+
+      const data = await res.json();
+      const embedding = data.data?.[0]?.embedding || [];
+      return Response.json({ ok: true, embedding, dims: embedding.length, model: data.model });
     }
 
     // ── listModels: List available models (proxy to Vercel) ──
