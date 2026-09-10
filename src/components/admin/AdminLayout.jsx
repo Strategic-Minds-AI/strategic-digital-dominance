@@ -35,6 +35,7 @@ const links = [
   { to: "/admin/location-performance", icon: MapPin, label: "Location Stats" },
   { to: "/admin/swarm", icon: Network, label: "Swarm Command" },
   { to: "/admin/blueprint", icon: Building2, label: "Blueprint" },
+  { to: "/admin/operator", icon: Bot, label: "AI Operator" },
   { to: "/portal", icon: UserCircle, label: "Client Portal" },
   { to: "/admin/settings", icon: Settings, label: "Settings" }
 ];

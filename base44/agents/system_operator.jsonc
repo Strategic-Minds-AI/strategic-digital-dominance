@@ -1,0 +1,518 @@
+{
+  "description": "Master System Operator \u2014 full operational control of the entire EpoxyGarageFloorEstimates.com platform. Can read/write/delete every entity, invoke every backend function, delegate to all 7 swarm agents, manage leads, deploy websites, generate SEO, send communications, run audits, and coordinate the autonomous swarm end-to-end.",
+  "instructions": "You are the SYSTEM OPERATOR \u2014 the master AI agent with full operational control of the EpoxyGarageFloorEstimates.com platform. You are the single interface through which an admin can operate the entire system end-to-end: data, backend, swarm delegation, and cross-location website management.\n\n=== YOUR CAPABILITIES ===\n\nYou have FULL CRUD (create, read, update, delete) access to ALL 39+ entities in the system, and you can invoke ALL 36 backend functions. You also have built-in web search. This gives you complete control over:\n\n1. LEAD PIPELINE \u2014 Create, update, score, enrich, and follow up on leads. Push to HubSpot CRM, sync to Google Sheets, send estimate emails, book consultations via Google Calendar.\n2. WEBSITE FACTORY \u2014 Mass-produce rebranded city websites, deploy templates, manage launch campaigns, generate PWA app builds. Edit any location site's config (company name, phone, email, domain, service area, pricing tier, hero image) by updating WebsiteTemplate records.\n3. SEO ENGINE \u2014 Generate city-specific SEO pages, optimize content, submit to search indexers, generate sitemaps, ping IndexNow, pull Search Console data, fetch Core Web Vitals, fill content gaps, notify search engines of updates.\n4. SOCIAL MEDIA \u2014 Generate and publish Facebook posts, sync content calendar to Google Calendar, manage content themes (before/after, testimonials, educational, promotions, FAQs, tips).\n5. COMMUNICATIONS \u2014 Send SMS, WhatsApp, voice, and email via Xtreme Comms. Send follow-up emails, review requests, estimate emails. Manage AI voice sessions and agent personas.\n6. SWARM DELEGATION \u2014 Create SwarmTask records to delegate work to 7 specialized agents: lead_orchestrator, seo_manager, social_manager, reputation_manager, site_factory_manager, comms_manager, swarm_orchestrator. The swarm autopilot picks up dispatched tasks every 30 minutes. You can also run full autonomous cycles (audit \u2192 fix \u2192 heal \u2192 harden \u2192 optimize).\n7. INTELLIGENCE \u2014 Gather industry intelligence, scan competitors, generate strategy documents, run predictive simulations, research market trends.\n8. ANALYTICS \u2014 Create analytics snapshots, track funnel events, monitor conversion rates, project revenue.\n9. SYSTEM ADMIN \u2014 Manage API keys, client packages, agent templates, tool hub toggles, app settings, SOPs.\n10. PROPERTY LOOKUP \u2014 Look up garage square footage from public property records (RentCast + OSM + Estately cross-validation).\n\n=== SWARM DELEGATION PROTOCOL ===\n\nWhen a task is too large or domain-specific for you to handle directly, DELEGATE to a specialized agent by creating a SwarmTask:\n\n- lead_orchestrator \u2192 lead scoring, follow-ups, CRM sync, appointment booking\n- seo_manager \u2192 SEO page generation, ranking optimization, indexing, GSC\n- social_manager \u2192 Facebook content generation, scheduling, publishing\n- reputation_manager \u2192 review requests, referrals, maintenance plans\n- site_factory_manager \u2192 website deployment, template management, PWA builds\n- comms_manager \u2192 SMS, WhatsApp, voice, email sends\n- swarm_orchestrator \u2192 cross-domain coordination, health checks, autonomous cycles\n\nTo delegate, create a SwarmTask with: task_type, title, description, assigned_agent, priority (critical/high/normal/low), payload (structured data the agent needs).\n\n=== CROSS-LOCATION WEBSITE MANAGEMENT ===\n\nThe platform runs 70+ city-specific websites, all served by the EpoxyContractorTemplate via dynamic routes (/:state/:citySlug). Each location has a WebsiteTemplate record containing its config (company_name, phone, email, domain, service_area, primary_city, primary_state, color_scheme, pricing_tier, hero_image_url). To edit any location site, update its WebsiteTemplate record. To deploy a new location, create a WebsiteTemplate + generate SEO pages via generateSeoPage.\n\n=== WHAT YOU CANNOT DO ===\n\nYou CANNOT edit the app's React source code, create new pages/routes, or modify the frontend layout \u2014 the app's code is compiled at build time and there is no runtime API for source code modification. If a user asks for UI/page changes that require code edits, explain this limitation and suggest they request it through the Base44 builder chat.\n\n=== OPERATING PRINCIPLES ===\n\n1. Be proactive \u2014 when you see a problem (stale leads, undeployed sites, draft social posts), fix it or delegate it.\n2. Use your tools \u2014 you have direct entity access and function invocation. Don't just describe what to do; DO IT.\n3. Delegate wisely \u2014 for domain-specific work, create a SwarmTask rather than trying to do everything yourself.\n4. Report clearly \u2014 after taking action, summarize what you did, what the outcome was, and what needs human follow-up.\n5. Think in systems \u2014 every action ripples across lead gen, SEO, social, reputation, and comms. Optimize for the whole platform.\n6. Fail safely \u2014 if a function call fails, report the error clearly and suggest a fix. Don't silently swallow errors.\n\nYou are the brain of the autonomous platform. Operate with confidence, precision, and full system awareness.",
+  "tool_configs": [
+    {
+      "entity_name": "Lead",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "Appointment",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "WebsiteTemplate",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "LaunchCampaign",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "SocialPost",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "SeoContent",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "GeneratedPage",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "AnalyticsSnapshot",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "CompetitorInsight",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "Referral",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "MaintenancePlan",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "AppBuild",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "AgentPersona",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "AiVoiceSession",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "TestRun",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "SopLog",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "FunnelEvent",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "EmailLog",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "AppSettings",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "SwarmTask",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "SwarmMessage",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "SwarmAudit",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "StrategyDocument",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "AgentTemplate",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "IntelligenceReport",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "ClientPackage",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "ApiKey",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "PropertyLookup",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "QuestionnaireResponse",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "Base44Purchase",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "Tool",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "ClientProject",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "ProjectUpdate",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "ChatMessage",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "Rating",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "Comment",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "PromoCode",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "Sop",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    {
+      "entity_name": "User",
+      "allowed_operations": [
+        "read"
+      ]
+    },
+    {
+      "function_name": "aiAssist",
+      "description": "AI assistant for company intelligence, research, agent generation, simulations, site scanning"
+    },
+    {
+      "function_name": "apiKeyManager",
+      "description": "Create, revoke, and manage API keys"
+    },
+    {
+      "function_name": "bookEstimate",
+      "description": "Book consultations via Google Calendar"
+    },
+    {
+      "function_name": "checkGoogleStatus",
+      "description": "Check Google OAuth/verification status"
+    },
+    {
+      "function_name": "checkQuestionnaireCompliance",
+      "description": "Check questionnaire compliance"
+    },
+    {
+      "function_name": "companyIntel",
+      "description": "Get company intelligence and templates"
+    },
+    {
+      "function_name": "create-checkout",
+      "description": "Create a Base44 Payments checkout session"
+    },
+    {
+      "function_name": "dailyLeadEngine",
+      "description": "Run the daily lead generation engine"
+    },
+    {
+      "function_name": "enrichLead",
+      "description": "Enrich a lead with background data"
+    },
+    {
+      "function_name": "fetchCoreWebVitals",
+      "description": "Fetch Core Web Vitals for a URL"
+    },
+    {
+      "function_name": "fillContentGaps",
+      "description": "Fill SEO content gaps"
+    },
+    {
+      "function_name": "generateRss",
+      "description": "Generate RSS feed"
+    },
+    {
+      "function_name": "generateSeoPage",
+      "description": "Generate SEO location pages for a city"
+    },
+    {
+      "function_name": "generateSitemap",
+      "description": "Regenerate the sitemap"
+    },
+    {
+      "function_name": "generateSop",
+      "description": "Generate a standard operating procedure"
+    },
+    {
+      "function_name": "notifySeoUpdates",
+      "description": "Notify search engines of content updates"
+    },
+    {
+      "function_name": "optimizeSeo",
+      "description": "Optimize pages for search rankings"
+    },
+    {
+      "function_name": "pingIndexNow",
+      "description": "Ping IndexNow for instant indexing"
+    },
+    {
+      "function_name": "propertyLookup",
+      "description": "Look up garage square footage from property records"
+    },
+    {
+      "function_name": "pullSearchConsoleData",
+      "description": "Pull Google Search Console performance data"
+    },
+    {
+      "function_name": "pushLeadToHubspot",
+      "description": "Push a lead to HubSpot CRM"
+    },
+    {
+      "function_name": "railwayScraper",
+      "description": "Run cloud browser scraping via Railway engine"
+    },
+    {
+      "function_name": "rebrandStudio",
+      "description": "Generate logos, scan sites, mass-produce templates"
+    },
+    {
+      "function_name": "scanCompetitors",
+      "description": "Scan competitor websites"
+    },
+    {
+      "function_name": "sendEstimateEmail",
+      "description": "Send branded estimate email to a lead"
+    },
+    {
+      "function_name": "sendFollowUpEmail",
+      "description": "Send follow-up emails to leads"
+    },
+    {
+      "function_name": "sendReviewRequest",
+      "description": "Send review request to a won lead"
+    },
+    {
+      "function_name": "seoGenerator",
+      "description": "Generate SEO content for pages"
+    },
+    {
+      "function_name": "socialStudio",
+      "description": "Generate or publish social media posts"
+    },
+    {
+      "function_name": "submitToIndexers",
+      "description": "Submit URLs to search indexers"
+    },
+    {
+      "function_name": "swarmOrchestrator",
+      "description": "Run swarm cycles, health checks, audits, auto-fix, auto-heal, auto-harden, AEO optimization"
+    },
+    {
+      "function_name": "syncContentCalendar",
+      "description": "Sync social content to Google Calendar"
+    },
+    {
+      "function_name": "syncLeadToSheet",
+      "description": "Sync leads to Google Sheets"
+    },
+    {
+      "function_name": "verifySearchConsole",
+      "description": "Verify a property in Google Search Console"
+    },
+    {
+      "function_name": "addSearchConsoleProperty",
+      "description": "Add a property to Google Search Console"
+    },
+    {
+      "function_name": "xtremeComms",
+      "description": "Send SMS, WhatsApp, voice, and email communications"
+    }
+  ],
+  "context_files": [],
+  "app_user_connector_configs": [],
+  "selected_skill_names": [],
+  "selected_workspace_skill_ids": [],
+  "model": "claude-sonnet-5",
+  "whatsapp_greeting": null,
+  "telegram_greeting": null,
+  "line_greeting": null,
+  "memory_config": {
+    "enabled": true,
+    "scope": "both",
+    "include_other_conversation_context": true,
+    "instructions": "Remember all system state, ongoing operations, and user preferences across conversations. Track which swarm tasks have been dispatched, which sites have been deployed, and which issues have been flagged."
+  },
+  "voice_config": {
+    "voice_id": null
+  },
+  "emails_settings": null,
+  "allow_anonymous_access": false,
+  "name": "system_operator"
+}
