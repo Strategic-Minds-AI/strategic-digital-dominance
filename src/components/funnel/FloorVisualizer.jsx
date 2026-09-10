@@ -74,10 +74,15 @@ export default function FloorVisualizer({ onPhotoChange, onColorSelected, onConc
     setError("");
     setUploading(true);
 
-    // Upload for storage — the uploaded URL is publicly fetchable and is what
-    // GenerateImage needs as existing_image_urls (data URLs won't work server-side).
+    // Upload to Supabase Storage (free — no integration credits needed).
+    // The uploaded URL is publicly fetchable and is what the AI image edit needs.
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const uploadRes = await base44.functions.invoke("supabaseUpload", {
+        file_data: dataUrl,
+        filename: file.name || `photo-${Date.now()}.jpg`,
+      });
+      const file_url = uploadRes.data?.file_url;
+      if (!file_url) throw new Error("No URL returned from upload");
       setUploadedUrl(file_url);
       onPhotoChange?.(file_url);
     } catch (err) {
@@ -106,12 +111,18 @@ export default function FloorVisualizer({ onPhotoChange, onColorSelected, onConc
         systemName + ' floor in the color "' + (selectedColor.name || "") +
         '" with a ' + sheenDesc +
         '. Seamless, professional concrete coating finish. Same room geometry, walls, and lighting as the original photo. High-end real-estate photography, wide angle, natural light.';
-      const res = await base44.integrations.Core.GenerateImage({
+      // Generate via Vercel AI Gateway (free/cheap — billed through Vercel, not Base44 credits).
+      // Uses Gemini Flash Image (Nano Banana) for image editing with the user's photo as reference.
+      const res = await base44.functions.invoke("vercelAiGateway", {
+        action: "editImage",
         prompt,
-        existing_image_urls: uploadedUrl ? [uploadedUrl] : undefined,
+        reference_image_url: uploadedUrl,
+        model: "google/gemini-3.1-flash-image-preview",
       });
-      setConceptUrl(res.url);
-      onConceptGenerated?.(res.url);
+      const conceptUrl = res.data?.url;
+      if (!conceptUrl) throw new Error("No image returned from AI Gateway");
+      setConceptUrl(conceptUrl);
+      onConceptGenerated?.(conceptUrl);
     } catch (err) {
       setError(`Could not generate preview: ${err?.message || "Unknown error"}`);
       console.error("[FloorVisualizer] generate failed:", err);
