@@ -61,6 +61,7 @@ export default function BuilderChat({ onFileAttached }) {
   const [sending, setSending] = useState(false);
   const [attachments, setAttachments] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -79,8 +80,12 @@ export default function BuilderChat({ onFileAttached }) {
   useEffect(() => {
     if (!activeConv) { setMessages([]); return; }
     setMessages(activeConv.messages || []);
-    const unsub = base44.agents.subscribeToConversation(activeConv.id, (data) => setMessages(data.messages || []));
-    return unsub;
+    try {
+      const unsub = base44.agents.subscribeToConversation(activeConv.id, (data) => setMessages(data.messages || []));
+      return () => { try { unsub?.(); } catch {} };
+    } catch (e) {
+      console.error("subscribeToConversation error:", e);
+    }
   }, [activeConv?.id]);
 
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
@@ -102,27 +107,35 @@ export default function BuilderChat({ onFileAttached }) {
     const content = text || input.trim();
     if (!content || sending) return;
     let conv = activeConv;
-    if (!conv) {
-      conv = await base44.agents.createConversation({ agent_name: AGENT_NAME, metadata: { name: content.slice(0, 50), description: "Code Studio session" } });
-      setConversations([conv, ...conversations]);
-      setActiveConv(conv);
-    }
-    const fullContent = attachments.length > 0 ? `${content}\n\nAttached files:\n${attachments.map(a => `- [${a.name}](${a.url})`).join('\n')}` : content;
-    setSending(true);
-    setInput("");
-    setAttachments([]);
     try {
+      if (!conv) {
+        conv = await base44.agents.createConversation({ agent_name: AGENT_NAME, metadata: { name: content.slice(0, 50), description: "Code Studio session" } });
+        setConversations([conv, ...conversations]);
+        setActiveConv(conv);
+      }
+      const fullContent = attachments.length > 0 ? `${content}\n\nAttached files:\n${attachments.map(a => `- [${a.name}](${a.url})`).join('\n')}` : content;
+      setSending(true);
+      setInput("");
+      setAttachments([]);
       await base44.agents.addMessage(conv, { role: "user", content: fullContent });
-    } catch (e) { console.error(e); }
+    } catch (e) {
+      console.error("sendMessage error:", e);
+      setError(e.message || "Failed to send message");
+    }
     setSending(false);
   };
 
   const newConversation = async () => {
-    const conv = await base44.agents.createConversation({ agent_name: AGENT_NAME, metadata: { name: `Code Studio — ${new Date().toLocaleTimeString()}`, description: "Code Studio session" } });
-    setConversations([conv, ...conversations]);
-    setActiveConv(conv);
-    setMessages([]);
-    inputRef.current?.focus();
+    try {
+      const conv = await base44.agents.createConversation({ agent_name: AGENT_NAME, metadata: { name: `Code Studio — ${new Date().toLocaleTimeString()}`, description: "Code Studio session" } });
+      setConversations([conv, ...conversations]);
+      setActiveConv(conv);
+      setMessages([]);
+      inputRef.current?.focus();
+    } catch (e) {
+      console.error("newConversation error:", e);
+      setError(e.message || "Failed to create conversation");
+    }
   };
 
   return (
@@ -136,6 +149,14 @@ export default function BuilderChat({ onFileAttached }) {
         </div>
         <button onClick={newConversation} className="text-xs font-bold text-amber-600 hover:text-amber-700 shrink-0">+ New</button>
       </div>
+
+      {/* Error banner */}
+      {error && (
+        <div className="mx-3 mt-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600 flex items-center justify-between shrink-0">
+          <span>{error}</span>
+          <button onClick={() => setError(null)} className="text-red-400 hover:text-red-600">×</button>
+        </div>
+      )}
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-3 py-4">
