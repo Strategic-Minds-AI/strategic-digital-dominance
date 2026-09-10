@@ -13,9 +13,9 @@ import { secrets } from 'base44:runtime';
 //   generateImage — Text-to-image generation (replaces GenerateImage)
 //   editImage     — Image editing with a reference image (for floor visualizer)
 //
-// Models:
-//   Text:  openai/gpt-5.4-mini (cheap), openai/gpt-6-astra (powerful)
-//   Image: openai/gpt-image-2, bfl/flux-2-pro, google/gemini-3.1-flash-image-preview
+// Models (defaults set to the absolute best available):
+//   Text:  anthropic/claude-opus-4.7 (best — most capable), openai/gpt-5.4 (fast + smart), openai/gpt-5.4-mini (cheapest)
+//   Image: openai/gpt-image-2 (best for generation), google/gemini-3.1-flash-image-preview (best for editing — Nano Banana)
 //
 // Generated images are uploaded to Supabase Storage and returned as public URLs.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -53,7 +53,7 @@ export default async function(req: Request): Promise<Response> {
       messages.push({ role: 'user', content });
 
       const payload: any = {
-        model: model || 'openai/gpt-5.4-mini',
+        model: model || 'anthropic/claude-opus-4.7',
         messages,
       };
 

@@ -1,0 +1,106 @@
+{
+  "name": "VoiceAssistant",
+  "type": "object",
+  "properties": {
+    "assistant_name": {
+      "type": "string",
+      "description": "Display name for the AI voice assistant"
+    },
+    "assistant_id": {
+      "type": "string",
+      "description": "Telnyx AI Assistant ID (returned by Telnyx on creation)"
+    },
+    "phone_number": {
+      "type": "string",
+      "description": "Telnyx phone number in E.164 format (e.g. +1234567890)"
+    },
+    "connection_id": {
+      "type": "string",
+      "description": "Telnyx Call Control Application connection ID"
+    },
+    "system_prompt": {
+      "type": "string",
+      "maxLength": 5000,
+      "description": "Instructions that define the assistant's behavior and knowledge"
+    },
+    "greeting": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Initial greeting spoken when the call is answered"
+    },
+    "voice": {
+      "type": "string",
+      "default": "female",
+      "description": "TTS voice setting (female, male, or specific voice ID)"
+    },
+    "model": {
+      "type": "string",
+      "default": "anthropic/claude-opus-4.7",
+      "description": "LLM model for the assistant's brain"
+    },
+    "language": {
+      "type": "string",
+      "default": "en-US"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "not_setup",
+        "assistant_created",
+        "number_purchased",
+        "configured",
+        "active",
+        "error"
+      ],
+      "default": "not_setup"
+    },
+    "forwarding_number": {
+      "type": "string",
+      "description": "User's personal phone number that will forward calls to the Telnyx number"
+    },
+    "carrier": {
+      "type": "string",
+      "description": "User's cell carrier (for forwarding instructions)"
+    },
+    "total_calls": {
+      "type": "integer",
+      "default": 0
+    },
+    "last_call_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "error_message": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "assistant_name"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
