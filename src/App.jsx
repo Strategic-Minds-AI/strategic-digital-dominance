@@ -69,6 +69,7 @@ import LocationPerformance from '@/pages/admin/LocationPerformance';
 import SwarmCommand from '@/pages/admin/SwarmCommand';
 import WebsiteEmpire from '@/pages/admin/WebsiteEmpire';
 import CustomerPortal from '@/pages/CustomerPortal';
+import ContractorApp from '@/pages/ContractorApp';
 
 
 const AuthenticatedApp = () => {
@@ -156,6 +157,7 @@ const AuthenticatedApp = () => {
       <Route path="/visualizer-test" element={<VisualizerTest />} />
       <Route path="/tool-hub" element={<ToolHub />} />
       <Route path="/portal" element={<CustomerPortal />} />
+      <Route path="/contractor" element={<ContractorApp />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
