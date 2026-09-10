@@ -1,41 +1,78 @@
 import React, { useState } from "react";
-import { Code2, FileText, Info } from "lucide-react";
-import PageBuilder from "@/components/codestudio/PageBuilder";
-import CodeBlockManager from "@/components/codestudio/CodeBlockManager";
+import { base44 } from "@/api/base44Client";
+import BuilderToolbar from "@/components/codestudio/BuilderToolbar";
+import BuilderChat from "@/components/codestudio/BuilderChat";
+import BuilderEditor from "@/components/codestudio/BuilderEditor";
+import { Loader2, Paperclip } from "lucide-react";
 
 export default function CodeStudio() {
-  const [tab, setTab] = useState("pages");
+  const [view, setView] = useState("code"); // code | preview | split
+  const [chatWidth, setChatWidth] = useState(40); // percentage
+  const [resizing, setResizing] = useState(false);
+  const [uploadedFileUrl, setUploadedFileUrl] = useState(null);
+  const [uploading, setUploading] = useState(false);
+
+  const handleUpload = async (file) => {
+    setUploading(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setUploadedFileUrl(file_url);
+    } catch (e) { console.error(e); }
+    setUploading(false);
+  };
+
+  const startResize = (e) => {
+    e.preventDefault();
+    setResizing(true);
+    const startX = e.clientX;
+    const startWidth = chatWidth;
+    const container = e.currentTarget.parentElement;
+    const containerWidth = container.offsetWidth;
+
+    const onMouseMove = (e) => {
+      const delta = ((e.clientX - startX) / containerWidth) * 100;
+      const newWidth = Math.min(Math.max(startWidth + delta, 25), 60);
+      setChatWidth(newWidth);
+    };
+    const onMouseUp = () => {
+      setResizing(false);
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
+    };
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
+  };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-stone-900 flex items-center gap-2">
-          <Code2 className="h-6 w-6 text-amber-500" /> Code Studio
-        </h1>
-        <p className="text-sm text-stone-500 mt-1">Build pages and inject custom code — no builder required. Pages render at <code className="text-amber-600">/p/&#123;slug&#125;</code>, code blocks inject into the DOM automatically.</p>
-      </div>
+    <div className="flex flex-col" style={{ height: "calc(100vh - 64px)" }}>
+      <BuilderToolbar view={view} onViewChange={setView} onUpload={handleUpload} />
 
-      {/* Tabs */}
-      <div className="flex gap-1 border-b border-stone-200">
-        <button onClick={() => setTab("pages")} className={`flex items-center gap-2 px-4 py-2.5 text-sm font-bold border-b-2 transition ${tab === "pages" ? "border-amber-500 text-amber-600" : "border-transparent text-stone-500 hover:text-stone-700"}`}>
-          <FileText className="h-4 w-4" /> Page Builder
-        </button>
-        <button onClick={() => setTab("code")} className={`flex items-center gap-2 px-4 py-2.5 text-sm font-bold border-b-2 transition ${tab === "code" ? "border-amber-500 text-amber-600" : "border-transparent text-stone-500 hover:text-stone-700"}`}>
-          <Code2 className="h-4 w-4" /> Code Blocks
-        </button>
-      </div>
+      {uploading && (
+        <div className="flex items-center gap-2 px-4 py-1.5 bg-amber-50 border-b border-amber-200 text-xs text-amber-700">
+          <Loader2 className="h-3 w-3 animate-spin" /> Uploading file...
+        </div>
+      )}
+      {uploadedFileUrl && (
+        <div className="flex items-center gap-2 px-4 py-1.5 bg-emerald-50 border-b border-emerald-200 text-xs text-emerald-700">
+          <Paperclip className="h-3 w-3" /> Uploaded: <a href={uploadedFileUrl} target="_blank" className="underline font-semibold truncate">{uploadedFileUrl}</a>
+          <button onClick={() => setUploadedFileUrl(null)} className="ml-auto text-emerald-600 hover:text-emerald-800">×</button>
+        </div>
+      )}
 
-      {/* Info banner */}
-      <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 flex items-start gap-2">
-        <Info className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
-        <p className="text-xs text-amber-700">
-          {tab === "pages"
-            ? "Build full pages from sections (hero, text, gallery, CTA, FAQ, testimonials, custom HTML, forms). Published pages are live at /p/{slug}. The System Operator AI can also create and edit these pages for you."
-            : "Inject custom CSS, JavaScript, HTML, or meta tags into any page. Global blocks run everywhere, page-scoped blocks only on the matching route. Great for analytics pixels, custom styling, or third-party widgets."}
-        </p>
-      </div>
+      <div className="flex flex-1 overflow-hidden">
+        {/* Chat panel — left */}
+        <div style={{ width: `${chatWidth}%` }} className="border-r border-stone-200 min-w-0 shrink-0">
+          <BuilderChat onFileAttached={setUploadedFileUrl} />
+        </div>
 
-      {tab === "pages" ? <PageBuilder /> : <CodeBlockManager />}
+        {/* Resize handle */}
+        <div onMouseDown={startResize} className={`w-1 bg-stone-200 hover:bg-amber-400 cursor-col-resize shrink-0 transition-colors ${resizing ? "bg-amber-400" : ""}`} />
+
+        {/* Editor panel — right */}
+        <div className="flex-1 min-w-0 overflow-hidden">
+          <BuilderEditor view={view} uploadedFileUrl={uploadedFileUrl} />
+        </div>
+      </div>
     </div>
   );
 }
