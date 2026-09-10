@@ -1,0 +1,177 @@
+{
+  "name": "WebsiteQueue",
+  "type": "object",
+  "properties": {
+    "keyword": {
+      "type": "string",
+      "description": "Target search keyword (e.g. 'epoxy garage floors near me')"
+    },
+    "niche": {
+      "type": "string",
+      "enum": [
+        "epoxy_garage",
+        "decorative_concrete",
+        "polished_concrete",
+        "epoxy_flooring",
+        "garage_coating",
+        "concrete_resurfacing"
+      ],
+      "description": "Contractor niche this site targets"
+    },
+    "keyword_pattern": {
+      "type": "string",
+      "enum": [
+        "near_me",
+        "near_you",
+        "near_me_city",
+        "city_state",
+        "cost",
+        "best",
+        "affordable",
+        "local",
+        "pro"
+      ],
+      "default": "near_me"
+    },
+    "target_city": {
+      "type": "string"
+    },
+    "target_state": {
+      "type": "string"
+    },
+    "domain": {
+      "type": "string",
+      "description": "Domain to deploy this site on"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "queued",
+        "researching",
+        "generating",
+        "deploying",
+        "live",
+        "monitoring",
+        "optimizing",
+        "archived"
+      ],
+      "default": "queued"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "normal",
+        "low"
+      ],
+      "default": "normal"
+    },
+    "search_volume": {
+      "type": "number",
+      "description": "Estimated monthly search volume for this keyword"
+    },
+    "competition_level": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "medium"
+    },
+    "estimated_cpc": {
+      "type": "number"
+    },
+    "lead_value_estimate": {
+      "type": "number",
+      "description": "Estimated value per lead (dollars)"
+    },
+    "template_id": {
+      "type": "string",
+      "description": "WebsiteTemplate ID once generated"
+    },
+    "generated_url": {
+      "type": "string",
+      "description": "Live URL once deployed"
+    },
+    "seo_score": {
+      "type": "number",
+      "default": 0,
+      "description": "Current SEO score (0-100)"
+    },
+    "aeo_score": {
+      "type": "number",
+      "default": 0,
+      "description": "AI search optimization score (0-100)"
+    },
+    "traffic_score": {
+      "type": "number",
+      "default": 0,
+      "description": "Overall traffic health score (0-100)"
+    },
+    "monthly_visitors": {
+      "type": "number",
+      "default": 0
+    },
+    "leads_generated": {
+      "type": "number",
+      "default": 0
+    },
+    "revenue": {
+      "type": "number",
+      "default": 0
+    },
+    "social_accounts_setup": {
+      "type": "boolean",
+      "default": false
+    },
+    "videos_generated": {
+      "type": "number",
+      "default": 0
+    },
+    "assigned_agent": {
+      "type": "string",
+      "description": "Swarm agent assigned to monitor this site"
+    },
+    "deployed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_audit_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 2000
+    }
+  },
+  "required": [
+    "keyword",
+    "niche",
+    "keyword_pattern"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

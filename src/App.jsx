@@ -73,6 +73,8 @@ import WebsiteEmpire from '@/pages/admin/WebsiteEmpire';
 import SiteHealthMonitor from '@/pages/admin/SiteHealthMonitor';
 import UrlStrategy from '@/pages/admin/UrlStrategy';
 import VoiceAssistant from '@/pages/admin/VoiceAssistant';
+import AnalyticsDashboard from '@/pages/admin/AnalyticsDashboard';
+import WebsiteQueue from '@/pages/admin/WebsiteQueue';
 import CustomerPortal from '@/pages/CustomerPortal';
 import ContractorApp from '@/pages/ContractorApp';
 import ContractorBid from '@/pages/ContractorBid';
@@ -167,6 +169,8 @@ const AuthenticatedApp = () => {
         <Route path="site-health" element={<SiteHealthMonitor />} />
         <Route path="url-strategy" element={<UrlStrategy />} />
         <Route path="voice-assistant" element={<VoiceAssistant />} />
+        <Route path="analytics" element={<AnalyticsDashboard />} />
+        <Route path="queue" element={<WebsiteQueue />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
       <Route path="/:state/:citySlug" element={<LocationSeoPage />} />

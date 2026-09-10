@@ -6,6 +6,7 @@ import { base44 } from "@/api/base44Client";
 import Disclosure from "@/components/vq/Disclosure";
 import { AI_DISCLOSURE } from "@/lib/brand";
 import GlitterSwatch from "@/components/ui/GlitterSwatch";
+import { compressImage } from "@/lib/imageUtils";
 
 // Systems available in the visualizer (excludes Joint Fill & Repair — not a finish)
 const SYSTEMS = FLOOR_SYSTEM_DATA
@@ -61,24 +62,27 @@ export default function FloorVisualizer({ onPhotoChange, onColorSelected, onConc
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Always create a data URL for the composite — same-origin, so the
-    // canvas is never tainted and toDataURL always works.
-    const dataUrl = await new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.readAsDataURL(file);
-    });
-    setPhotoUrl(dataUrl);
-    setUploadedUrl("");
-    setConceptUrl("");
+    // Reject oversized files early (before any processing).
+    if (file.size > 15 * 1024 * 1024) {
+      setError("Photo is too large. Please use an image under 15MB.");
+      return;
+    }
+
     setError("");
     setUploading(true);
+    setConceptUrl("");
 
-    // Upload to Supabase Storage (free — no integration credits needed).
-    // The uploaded URL is publicly fetchable and is what the AI image edit needs.
     try {
+      // Compress and resize the image before upload — ensures reliable
+      // uploads and consistent AI processing regardless of source camera.
+      // The compressed data URL is same-origin so the canvas is never tainted.
+      const compressedDataUrl = await compressImage(file, 1600, 0.85);
+      setPhotoUrl(compressedDataUrl);
+      setUploadedUrl("");
+
+      // Upload the compressed image to Supabase Storage (free — no credits).
       const uploadRes = await base44.functions.invoke("supabaseUpload", {
-        file_data: dataUrl,
+        file_data: compressedDataUrl,
         filename: file.name || `photo-${Date.now()}.jpg`,
       });
       const file_url = uploadRes.data?.file_url;

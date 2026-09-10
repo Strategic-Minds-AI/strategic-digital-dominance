@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, Outlet, Link } from "react-router-dom";
-import { LayoutDashboard, Users, KanbanSquare, Settings, ExternalLink, Mail, Radar, Globe, ScrollText, Star, Wrench, Factory, Smartphone, Rocket, Layers, UserCircle,   TrendingUp, MessageSquare, Brain, Target, BarChart3, Package, Bot, KeyRound, Share2, Wand2, MapPin, Network, Crown, Building2, Code2, Heart, PhoneCall } from "lucide-react";
+import { LayoutDashboard, Users, KanbanSquare, Settings, ExternalLink, Mail, Radar, Globe, ScrollText, Star, Wrench, Factory, Smartphone, Rocket, Layers, UserCircle,   TrendingUp, MessageSquare, Brain, Target, BarChart3, Package, Bot, KeyRound, Share2, Wand2, MapPin, Network, Crown, Building2, Code2, Heart, PhoneCall, Activity, ListOrdered } from "lucide-react";
 import BackButton from "@/components/BackButton";
 import Logo from "@/components/Logo";
 import { XTREME_AI_ICON_URL } from "@/components/Logo";
@@ -20,6 +20,7 @@ const links = [
   { to: "/admin/url-strategy", icon: Globe, label: "URL Strategy" },
   { to: "/admin/voice-assistant", icon: PhoneCall, label: "AI Voice" },
   { to: "/admin/empire", icon: Crown, label: "Website Empire" },
+  { to: "/admin/queue", icon: ListOrdered, label: "Site Queue" },
   { to: "/admin/site-health", icon: Heart, label: "Site Health" },
   { to: "/admin/website-factory", icon: Factory, label: "Website Factory" },
   { to: "/admin/app-factory", icon: Smartphone, label: "App Factory" },
@@ -28,6 +29,7 @@ const links = [
   { to: "/admin/lead-scraper", icon: Radar, label: "Lead Scraper" },
   { to: "/admin/xtreme-comms", icon: MessageSquare, label: "Xtreme Comms" },
   { to: "/admin/results", icon: BarChart3, label: "Analytics" },
+  { to: "/admin/analytics", icon: Activity, label: "GA Traffic" },
   { to: "/admin/agent-builder", icon: Bot, label: "Agent Builder" },
   { to: "/admin/vision-strategy", icon: Target, label: "Strategy" },
   { to: "/admin/intelligence", icon: Brain, label: "Intelligence" },
