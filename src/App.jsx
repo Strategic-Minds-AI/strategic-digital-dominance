@@ -76,6 +76,7 @@ import VoiceAssistant from '@/pages/admin/VoiceAssistant';
 import AnalyticsDashboard from '@/pages/admin/AnalyticsDashboard';
 import WebsiteQueue from '@/pages/admin/WebsiteQueue';
 import RagConsole from '@/pages/admin/RagConsole';
+import GraphConsole from '@/pages/admin/GraphConsole';
 import CustomerPortal from '@/pages/CustomerPortal';
 import ContractorApp from '@/pages/ContractorApp';
 import ContractorBid from '@/pages/ContractorBid';
@@ -173,6 +174,7 @@ const AuthenticatedApp = () => {
         <Route path="analytics" element={<AnalyticsDashboard />} />
         <Route path="queue" element={<WebsiteQueue />} />
         <Route path="rag" element={<RagConsole />} />
+        <Route path="graph" element={<GraphConsole />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
       <Route path="/:state/:citySlug" element={<LocationSeoPage />} />

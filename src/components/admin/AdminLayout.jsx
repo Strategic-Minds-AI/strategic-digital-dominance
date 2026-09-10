@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, Outlet, Link } from "react-router-dom";
-import { LayoutDashboard, Users, KanbanSquare, Settings, ExternalLink, Mail, Radar, Globe, ScrollText, Star, Wrench, Factory, Smartphone, Rocket, Layers, UserCircle,   TrendingUp, MessageSquare, Brain, Target, BarChart3, Package, Bot, KeyRound, Share2, Wand2, MapPin, Network, Crown, Building2, Code2, Heart, PhoneCall, Activity, ListOrdered, Database } from "lucide-react";
+import { LayoutDashboard, Users, KanbanSquare, Settings, ExternalLink, Mail, Radar, Globe, ScrollText, Star, Wrench, Factory, Smartphone, Rocket, Layers, UserCircle,   TrendingUp, MessageSquare, Brain, Target, BarChart3, Package, Bot, KeyRound, Share2, Wand2, MapPin, Network, Crown, Building2, Code2, Heart, PhoneCall, Activity, ListOrdered, Database, Workflow } from "lucide-react";
 import BackButton from "@/components/BackButton";
 import Logo from "@/components/Logo";
 import { XTREME_AI_ICON_URL } from "@/components/Logo";
@@ -22,6 +22,7 @@ const links = [
   { to: "/admin/empire", icon: Crown, label: "Website Empire" },
   { to: "/admin/queue", icon: ListOrdered, label: "Site Queue" },
   { to: "/admin/rag", icon: Database, label: "RAG Engine" },
+  { to: "/admin/graph", icon: Workflow, label: "Knowledge Graph" },
   { to: "/admin/site-health", icon: Heart, label: "Site Health" },
   { to: "/admin/website-factory", icon: Factory, label: "Website Factory" },
   { to: "/admin/app-factory", icon: Smartphone, label: "App Factory" },
