@@ -1,0 +1,150 @@
+{
+  "name": "DomainStrategy",
+  "type": "object",
+  "properties": {
+    "domain": {
+      "type": "string",
+      "description": "The full domain name (e.g. epoxygaragefloorsnearme.com)"
+    },
+    "niche": {
+      "type": "string",
+      "enum": [
+        "epoxy_garage",
+        "decorative_concrete",
+        "polished_concrete",
+        "epoxy_flooring",
+        "garage_coating",
+        "concrete_resurfacing"
+      ],
+      "description": "The contractor niche this domain targets"
+    },
+    "keyword_pattern": {
+      "type": "string",
+      "enum": [
+        "near_me",
+        "near_you",
+        "near_me_city",
+        "city_state",
+        "cost",
+        "best",
+        "affordable",
+        "local",
+        "pro"
+      ],
+      "description": "The high-value keyword pattern used (near me, near you, city+state, etc.)"
+    },
+    "target_city": {
+      "type": "string",
+      "description": "City this domain targets (null for national near-me domains)"
+    },
+    "target_state": {
+      "type": "string",
+      "description": "State abbreviation this domain targets"
+    },
+    "search_intent": {
+      "type": "string",
+      "enum": [
+        "transactional",
+        "informational",
+        "navigational",
+        "comparison"
+      ],
+      "default": "transactional",
+      "description": "What kind of searcher this domain captures"
+    },
+    "estimated_monthly_searches": {
+      "type": "number",
+      "description": "Estimated monthly search volume for the primary keyword"
+    },
+    "estimated_cpc": {
+      "type": "number",
+      "description": "Estimated cost-per-click if buying ads on this keyword (dollars)"
+    },
+    "lead_value_estimate": {
+      "type": "number",
+      "description": "Estimated value per lead from this domain (dollars)"
+    },
+    "competition_level": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "medium"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "idea",
+        "researching",
+        "available",
+        "purchased",
+        "provisioning",
+        "provisioned",
+        "live",
+        "archived"
+      ],
+      "default": "idea"
+    },
+    "registrar": {
+      "type": "string",
+      "description": "Domain registrar used (godaddy, namecheap, cloudflare, etc.)"
+    },
+    "purchase_price": {
+      "type": "number",
+      "description": "Price paid for the domain (dollars)"
+    },
+    "purchased_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "gsc_property_id": {
+      "type": "string",
+      "description": "Google Search Console property ID once synced"
+    },
+    "gsc_synced": {
+      "type": "boolean",
+      "default": false
+    },
+    "template_id": {
+      "type": "string",
+      "description": "WebsiteTemplate ID once a site is provisioned for this domain"
+    },
+    "live_url": {
+      "type": "string",
+      "description": "The live URL once the site is deployed"
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 2000
+    }
+  },
+  "required": [
+    "domain",
+    "niche",
+    "keyword_pattern"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
