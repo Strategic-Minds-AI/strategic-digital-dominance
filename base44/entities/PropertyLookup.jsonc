@@ -1,0 +1,100 @@
+{
+  "name": "PropertyLookup",
+  "type": "object",
+  "properties": {
+    "address": {
+      "type": "string",
+      "description": "Normalized address (lowercase, no punctuation, single spaces) \u2014 the deterministic cache key. Same address always maps to the same record."
+    },
+    "sqft": {
+      "type": "number",
+      "description": "Final determined garage square footage after cross-validation"
+    },
+    "source": {
+      "type": "string",
+      "description": "Primary source that drove the result: rentcast, osm_garage_takeoff, osm_building_estimate, browserbase_estately, consensus, or fallback_size"
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ],
+      "default": "low",
+      "description": "high = 2+ sources agree within 15%; medium = 1 source or sources disagree; low = fallback"
+    },
+    "consensus_method": {
+      "type": "string",
+      "description": "How the final sqft was determined, e.g. 'consensus_median:3_sources', 'single_source:rentcast', 'geometric_preferred', 'fallback_size'"
+    },
+    "source_results": {
+      "type": "object",
+      "description": "Full per-source breakdown for auditability: which sources were queried, what each returned, and the consensus logic",
+      "properties": {
+        "sources_queried": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rentcast": {
+          "type": "object"
+        },
+        "osm": {
+          "type": "object"
+        },
+        "browserbase": {
+          "type": "object"
+        },
+        "estimates_count": {
+          "type": "number"
+        },
+        "consensus": {
+          "type": "object"
+        }
+      }
+    },
+    "latitude": {
+      "type": "number"
+    },
+    "longitude": {
+      "type": "number"
+    },
+    "matched_address": {
+      "type": "string"
+    },
+    "garage_spaces": {
+      "type": "number"
+    },
+    "interior_sqft": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "address",
+    "sqft"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
