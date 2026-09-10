@@ -70,6 +70,7 @@ import SwarmCommand from '@/pages/admin/SwarmCommand';
 import WebsiteEmpire from '@/pages/admin/WebsiteEmpire';
 import CustomerPortal from '@/pages/CustomerPortal';
 import ContractorApp from '@/pages/ContractorApp';
+import ContractorBid from '@/pages/ContractorBid';
 
 
 const AuthenticatedApp = () => {
@@ -158,6 +159,7 @@ const AuthenticatedApp = () => {
       <Route path="/tool-hub" element={<ToolHub />} />
       <Route path="/portal" element={<CustomerPortal />} />
       <Route path="/contractor" element={<ContractorApp />} />
+      <Route path="/contractor/bid" element={<ContractorBid />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
