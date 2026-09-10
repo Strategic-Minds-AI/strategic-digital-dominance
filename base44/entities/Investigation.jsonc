@@ -1,0 +1,220 @@
+{
+  "name": "Investigation",
+  "type": "object",
+  "properties": {
+    "objective": {
+      "type": "string",
+      "description": "The question or goal this investigation aims to answer"
+    },
+    "requester": {
+      "type": "string",
+      "description": "Agent or user that initiated the investigation"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "normal",
+        "low"
+      ],
+      "default": "normal"
+    },
+    "target_type": {
+      "type": "string",
+      "enum": [
+        "contractor",
+        "market",
+        "competitor",
+        "lead",
+        "website",
+        "system",
+        "general"
+      ],
+      "default": "general"
+    },
+    "target_id": {
+      "type": "string",
+      "description": "Entity ID if investigating a specific record"
+    },
+    "target_label": {
+      "type": "string",
+      "description": "Human-readable label for the target"
+    },
+    "playbook": {
+      "type": "string",
+      "description": "Name of the playbook used to structure this investigation"
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Decomposed sub-questions the investigation aims to answer"
+    },
+    "hypotheses": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "retrieval_type": {
+            "type": "string",
+            "enum": [
+              "vector",
+              "graph",
+              "web",
+              "database",
+              "external"
+            ]
+          }
+        }
+      },
+      "default": []
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "finding": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "category": {
+            "type": "string"
+          }
+        }
+      },
+      "default": []
+    },
+    "contradictions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "unknowns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Information gaps detected \u2014 what the system could not determine",
+      "default": []
+    },
+    "unresolved_questions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "confidence": {
+      "type": "number",
+      "default": 0,
+      "description": "Overall confidence in the investigation conclusion (0-1)"
+    },
+    "cost_credits": {
+      "type": "number",
+      "default": 0,
+      "description": "Estimated AI credits consumed"
+    },
+    "duration_ms": {
+      "type": "number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "planning",
+        "investigating",
+        "synthesizing",
+        "completed",
+        "failed"
+      ],
+      "default": "pending"
+    },
+    "final_conclusion": {
+      "type": "string",
+      "maxLength": 5000
+    },
+    "recommended_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "verification_status": {
+      "type": "string",
+      "enum": [
+        "unverified",
+        "verified",
+        "contradicted"
+      ],
+      "default": "unverified"
+    },
+    "learning_generated": {
+      "type": "string",
+      "maxLength": 3000,
+      "description": "What the system learned that can improve future investigations"
+    },
+    "agents_involved": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "retrievals_performed": {
+      "type": "number",
+      "default": 0
+    },
+    "graph_traversals": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "objective"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
