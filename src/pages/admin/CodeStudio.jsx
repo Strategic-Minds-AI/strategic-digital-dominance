@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import BuilderToolbar from "@/components/codestudio/BuilderToolbar";
 import BuilderChat from "@/components/codestudio/BuilderChat";
 import BuilderEditor from "@/components/codestudio/BuilderEditor";
+import ErrorBoundary from "@/components/codestudio/ErrorBoundary";
 import { Loader2, Paperclip } from "lucide-react";
 
 export default function CodeStudio() {
@@ -65,7 +66,7 @@ export default function CodeStudio() {
   };
 
   return (
-    <div className="flex flex-col" style={{ height: "calc(100vh - 64px)" }}>
+    <div className="flex flex-col" style={{ height: "calc(100vh - 128px)" }}>
       <BuilderToolbar view={view} onViewChange={setView} onUpload={handleUpload} autoSync={autoSync} onToggleAutoSync={() => setAutoSync(!autoSync)} />
 
       {uploading && (
@@ -83,7 +84,9 @@ export default function CodeStudio() {
       <div className="flex flex-1 overflow-hidden">
         {/* Chat panel — left */}
         <div style={{ width: `${chatWidth}%` }} className="border-r border-stone-200 min-w-0 shrink-0">
-          <BuilderChat onFileAttached={setUploadedFileUrl} />
+          <ErrorBoundary>
+            <BuilderChat onFileAttached={setUploadedFileUrl} />
+          </ErrorBoundary>
         </div>
 
         {/* Resize handle */}
@@ -91,7 +94,9 @@ export default function CodeStudio() {
 
         {/* Editor panel — right */}
         <div className="flex-1 min-w-0 overflow-hidden">
-          <BuilderEditor view={view} uploadedFileUrl={uploadedFileUrl} />
+          <ErrorBoundary>
+            <BuilderEditor view={view} uploadedFileUrl={uploadedFileUrl} />
+          </ErrorBoundary>
         </div>
       </div>
     </div>
