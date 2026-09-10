@@ -1,9 +1,9 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.40";
 import { logStep } from "../../shared/sopLog.ts";
 
-const SITE = "https://epoxyquotenearme.base44.app";
+const SITES = ["https://epoxyquotenearme.com", "https://epoxyquotenearme.base44.app"];
 const INDEXNOW_KEY = "a3e6350908f1c2d4e6b8a0123456789a";
-const HOST = "epoxyquotenearme.base44.app";
+const HOST = "epoxyquotenearme.com";
 
 // Lightweight IndexNow ping — accepts a single URL or array of URLs and
 // submits them to IndexNow (the protocol Bing, Yandex, Seznam & Naver use
@@ -22,14 +22,14 @@ export default async function (req: Request): Promise<Response> {
     else if (body.urls && Array.isArray(body.urls)) urls = body.urls;
     else return Response.json({ error: "Provide 'url' or 'urls'" }, { status: 400 });
 
-    // Only allow URLs from our own domain (prevent abuse)
-    urls = urls.filter((u) => u && u.startsWith(SITE));
+    // Only allow URLs from our own domains (prevent abuse)
+    urls = urls.filter((u) => u && SITES.some((s) => u && u.startsWith(s)));
     if (!urls.length) return Response.json({ error: "No valid site URLs" }, { status: 400 });
 
     const payload = {
       host: HOST,
       key: INDEXNOW_KEY,
-      keyLocation: `${SITE}/${INDEXNOW_KEY}.txt`,
+      keyLocation: `https://epoxyquotenearme.com/${INDEXNOW_KEY}.txt`,
       urlList: urls,
     };
 
