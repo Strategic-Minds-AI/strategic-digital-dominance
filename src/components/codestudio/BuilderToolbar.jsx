@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { Code2, Eye, Columns2, GitBranch, Rocket, Upload, Loader2, CheckCircle2, AlertCircle, ChevronDown, Terminal } from "lucide-react";
 
-export default function BuilderToolbar({ view, onViewChange, onUpload }) {
+export default function BuilderToolbar({ view, onViewChange, onUpload, autoSync, onToggleAutoSync }) {
   const [deploying, setDeploying] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [result, setResult] = useState(null);
@@ -97,6 +97,12 @@ export default function BuilderToolbar({ view, onViewChange, onUpload }) {
           <AlertCircle className="h-3.5 w-3.5 shrink-0" /> <span className="truncate">{error}</span>
         </div>
       )}
+
+      {/* Auto-Sync toggle */}
+      <button onClick={onToggleAutoSync} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-sm font-semibold transition shrink-0 ${autoSync ? "border-emerald-400 bg-emerald-50 text-emerald-600" : "border-stone-200 text-stone-700 hover:border-stone-300"}`}>
+        <div className={`w-2 h-2 rounded-full ${autoSync ? "bg-emerald-500 animate-pulse" : "bg-stone-300"}`} />
+        Auto-Sync
+      </button>
 
       {/* GitHub Sync */}
       <button onClick={sync} disabled={syncing} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-stone-200 text-sm font-semibold text-stone-700 hover:border-stone-300 transition disabled:opacity-50 shrink-0">

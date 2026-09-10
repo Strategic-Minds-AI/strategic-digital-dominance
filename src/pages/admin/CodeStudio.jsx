@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import BuilderToolbar from "@/components/codestudio/BuilderToolbar";
 import BuilderChat from "@/components/codestudio/BuilderChat";
@@ -11,6 +11,27 @@ export default function CodeStudio() {
   const [resizing, setResizing] = useState(false);
   const [uploadedFileUrl, setUploadedFileUrl] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [autoSync, setAutoSync] = useState(false);
+  const syncTimeoutRef = useRef(null);
+
+  // Auto-sync: when enabled, any change to DynamicPage or CodeBlock triggers
+  // a debounced GitHub sync — content pushes automatically, no manual button needed.
+  useEffect(() => {
+    if (!autoSync) return;
+    const triggerSync = () => {
+      if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
+      syncTimeoutRef.current = setTimeout(async () => {
+        try { await base44.functions.invoke("githubSync", {}); } catch (e) { console.error(e); }
+      }, 3000);
+    };
+    const unsubPages = base44.entities.DynamicPage.subscribe(() => triggerSync());
+    const unsubBlocks = base44.entities.CodeBlock.subscribe(() => triggerSync());
+    return () => {
+      unsubPages();
+      unsubBlocks();
+      if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
+    };
+  }, [autoSync]);
 
   const handleUpload = async (file) => {
     setUploading(true);
@@ -45,7 +66,7 @@ export default function CodeStudio() {
 
   return (
     <div className="flex flex-col" style={{ height: "calc(100vh - 64px)" }}>
-      <BuilderToolbar view={view} onViewChange={setView} onUpload={handleUpload} />
+      <BuilderToolbar view={view} onViewChange={setView} onUpload={handleUpload} autoSync={autoSync} onToggleAutoSync={() => setAutoSync(!autoSync)} />
 
       {uploading && (
         <div className="flex items-center gap-2 px-4 py-1.5 bg-amber-50 border-b border-amber-200 text-xs text-amber-700">
