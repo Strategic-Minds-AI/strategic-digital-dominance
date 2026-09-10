@@ -41,32 +41,32 @@ export default function ContractorPipeline() {
   }
 
   return (
-    <div className="p-4 space-y-4">
-      <h1 className="text-lg font-bold text-white">Pipeline</h1>
+    <div className="p-4 space-y-4 max-w-2xl mx-auto">
+      <h1 className="text-lg font-extrabold text-stone-900">Pipeline</h1>
 
       {/* Kanban columns */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         {COLUMNS.map((col) => {
           const colLeads = leads.filter((l) => l.status === col.key);
           return (
-            <div key={col.key} className={`rounded-xl border-l-4 ${col.color} bg-stone-900/50 overflow-hidden`}>
-              <div className="px-3 py-2 flex items-center justify-between bg-stone-900">
-                <span className="text-sm font-bold text-white">{col.label}</span>
-                <span className="text-xs text-stone-500 bg-stone-800 px-2 py-0.5 rounded-full">{colLeads.length}</span>
+            <div key={col.key} className={`rounded-xl border-l-4 ${col.color} bg-white border border-stone-200 overflow-hidden`}>
+              <div className="px-3 py-2 flex items-center justify-between bg-stone-50">
+                <span className="text-sm font-bold text-stone-900">{col.label}</span>
+                <span className="text-xs text-stone-500 bg-stone-200 px-2 py-0.5 rounded-full font-semibold">{colLeads.length}</span>
               </div>
               <div className="p-2 space-y-2 min-h-[40px]">
                 {colLeads.map((lead) => (
                   <button
                     key={lead.id}
                     onClick={() => setSelected(lead)}
-                    className="w-full text-left rounded-lg bg-stone-800 p-3 hover:bg-stone-700 transition border border-stone-700"
+                    className="w-full text-left rounded-lg bg-stone-50 p-3 hover:bg-amber-50 transition border border-stone-200"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold text-white truncate">
+                      <span className="text-sm font-bold text-stone-900 truncate">
                         {lead.first_name} {lead.last_name || ""}
                       </span>
                       {lead.estimate_mid && (
-                        <span className="text-xs font-bold text-amber-400 shrink-0">
+                        <span className="text-xs font-bold text-amber-600 shrink-0">
                           ${Math.round(lead.estimate_mid / 1000)}k
                         </span>
                       )}
@@ -77,7 +77,7 @@ export default function ContractorPipeline() {
                   </button>
                 ))}
                 {colLeads.length === 0 && (
-                  <div className="text-center text-xs text-stone-700 py-2">Empty</div>
+                  <div className="text-center text-xs text-stone-400 py-2">Empty</div>
                 )}
               </div>
             </div>
@@ -87,25 +87,25 @@ export default function ContractorPipeline() {
 
       {/* Lead detail drawer */}
       {selected && (
-        <div className="fixed inset-0 z-50 bg-black/70 flex items-end" onClick={() => setSelected(null)}>
-          <div className="w-full bg-stone-950 rounded-t-2xl border-t border-stone-700 max-h-[80%] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="sticky top-0 bg-stone-950 border-b border-stone-800 px-4 py-3 flex items-center justify-between">
-              <h3 className="text-sm font-bold text-white">
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-end" onClick={() => setSelected(null)}>
+          <div className="w-full bg-white rounded-t-2xl border-t border-stone-200 max-h-[80%] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="sticky top-0 bg-white border-b border-stone-100 px-4 py-3 flex items-center justify-between">
+              <h3 className="text-sm font-bold text-stone-900">
                 {selected.first_name} {selected.last_name || ""}
               </h3>
-              <button onClick={() => setSelected(null)} className="text-stone-500 hover:text-white text-xs">Close</button>
+              <button onClick={() => setSelected(null)} className="text-stone-500 hover:text-stone-900 text-xs">Close</button>
             </div>
             <div className="p-4 space-y-4">
               {/* Contact */}
               <div className="flex gap-2">
                 {selected.phone && (
-                  <a href={`tel:${selected.phone}`} className="flex-1 rounded-lg bg-stone-800 py-2.5 flex items-center justify-center gap-2 text-sm text-white">
-                    <Phone className="h-4 w-4 text-amber-400" /> Call
+                  <a href={`tel:${selected.phone}`} className="flex-1 rounded-lg bg-stone-100 py-2.5 flex items-center justify-center gap-2 text-sm font-bold text-stone-700 hover:bg-stone-200">
+                    <Phone className="h-4 w-4 text-amber-500" /> Call
                   </a>
                 )}
                 {selected.email && (
-                  <a href={`mailto:${selected.email}`} className="flex-1 rounded-lg bg-stone-800 py-2.5 flex items-center justify-center gap-2 text-sm text-white">
-                    <Mail className="h-4 w-4 text-amber-400" /> Email
+                  <a href={`mailto:${selected.email}`} className="flex-1 rounded-lg bg-stone-100 py-2.5 flex items-center justify-center gap-2 text-sm font-bold text-stone-700 hover:bg-stone-200">
+                    <Mail className="h-4 w-4 text-amber-500" /> Email
                   </a>
                 )}
               </div>
@@ -120,7 +120,7 @@ export default function ContractorPipeline() {
               </div>
               {/* Move to */}
               <div>
-                <label className="xa-label block mb-2">Move to Stage</label>
+                <label className="text-[10px] font-bold text-stone-500 uppercase tracking-wide block mb-2">Move to Stage</label>
                 <div className="flex flex-wrap gap-2">
                   {COLUMNS.map((col) => (
                     <button
@@ -128,8 +128,8 @@ export default function ContractorPipeline() {
                       onClick={() => { moveLead(selected.id, col.key); setSelected({ ...selected, status: col.key }); }}
                       className={`px-3 py-1.5 rounded-full text-xs border transition ${
                         selected.status === col.key
-                          ? "bg-amber-400 text-stone-950 border-amber-400 font-bold"
-                          : "border-stone-700 text-stone-400 hover:border-amber-500"
+                          ? "bg-amber-500 text-white border-amber-500 font-bold"
+                          : "border-stone-300 text-stone-600 hover:border-amber-500"
                       }`}
                     >
                       {col.label}
@@ -149,7 +149,7 @@ function Detail({ label, value }) {
   return (
     <div className="flex items-start justify-between gap-3">
       <span className="text-xs text-stone-500 shrink-0">{label}</span>
-      <span className="text-sm text-white text-right">{value}</span>
+      <span className="text-sm text-stone-900 text-right font-semibold">{value}</span>
     </div>
   );
 }
