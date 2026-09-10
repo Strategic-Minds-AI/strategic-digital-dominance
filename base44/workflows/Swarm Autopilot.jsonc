@@ -1,44 +1,27 @@
 {
   "name": "Swarm Autopilot",
-  "description": "Autonomous swarm heartbeat \u2014 every 30 minutes, runs a platform health check to spawn tasks for anomalies, then dispatches pending tasks to specialized agents.",
+  "description": "Autonomous AGI swarm heartbeat \u2014 every 30 minutes, runs the full auto-cycle: audit \u2192 fix \u2192 heal \u2192 harden \u2192 optimize AEO/SEO \u2192 health check \u2192 dispatch. This is the brain that keeps the platform self-optimizing and growing.",
   "definition": {
     "document": {
       "dsl": "1.0.0",
       "name": "swarm_autopilot",
-      "version": "1.0",
+      "version": "2.0",
       "namespace": "base44"
     },
     "do": [
       {
-        "health_check": {
+        "auto_cycle": {
           "call": "invoke_backend_function",
           "with": {
             "function_name": "swarmOrchestrator",
             "args": {
-              "action": "healthCheck"
-            }
-          },
-          "then": "run_cycle",
-          "x-base44": {
-            "title": "Platform health check",
-            "description": "Scan for anomalies and spawn tasks"
-          }
-        }
-      },
-      {
-        "run_cycle": {
-          "call": "invoke_backend_function",
-          "with": {
-            "function_name": "swarmOrchestrator",
-            "args": {
-              "action": "runCycle",
-              "max_dispatch": 5
+              "action": "autoCycle"
             }
           },
           "then": "end",
           "x-base44": {
-            "title": "Dispatch pending tasks",
-            "description": "Send tasks to specialized agents"
+            "title": "Full autonomous AGI cycle",
+            "description": "Audit \u2192 Fix \u2192 Heal \u2192 Harden \u2192 Optimize AEO \u2192 Dispatch"
           }
         }
       }
@@ -50,7 +33,7 @@
       "trigger_type": "scheduled",
       "events": [],
       "schedule_mode": "recurring",
-      "cron_expression": "0 * * * *",
+      "cron_expression": "*/30 * * * *",
       "one_time_date": null,
       "timezone": "America/New_York",
       "interval_value": null,

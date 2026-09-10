@@ -4,7 +4,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Bot, Zap, Activity, CheckCircle2, AlertCircle, Clock, RefreshCw, Play,
   Brain, Users, TrendingUp, Globe, Share2, Star, Factory, MessageSquare,
-  ChevronRight, Loader2, Radio
+  ChevronRight, Loader2, Radio, Shield, Wrench, Stethoscope, Search, Sparkles,
+  Bug, ShieldCheck, FileSearch
 } from "lucide-react";
 
 const AGENT_META = [
@@ -65,6 +66,12 @@ export default function SwarmCommand() {
     queryKey: ["swarm-messages"],
     queryFn: () => base44.entities.SwarmMessage.list("-created_date", 30),
     refetchInterval: 15000,
+  });
+
+  const { data: auditData } = useQuery({
+    queryKey: ["swarm-audit-log"],
+    queryFn: () => base44.functions.invoke("swarmOrchestrator", { action: "getAuditLog" }).then((r) => r.data),
+    refetchInterval: 30000,
   });
 
   const runAction = async (action, label, payload = {}) => {

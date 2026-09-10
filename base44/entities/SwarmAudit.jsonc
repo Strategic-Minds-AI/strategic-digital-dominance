@@ -1,0 +1,121 @@
+{
+  "name": "SwarmAudit",
+  "type": "object",
+  "properties": {
+    "audit_type": {
+      "type": "string",
+      "enum": [
+        "seo",
+        "aeo",
+        "performance",
+        "security",
+        "content",
+        "integration",
+        "lead_pipeline",
+        "site_health"
+      ],
+      "description": "Category of audit finding"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low",
+        "info"
+      ],
+      "default": "medium"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "auto_fixing",
+        "fixed",
+        "escalated",
+        "wont_fix"
+      ],
+      "default": "open"
+    },
+    "finding": {
+      "type": "string",
+      "description": "What was found during the audit"
+    },
+    "details": {
+      "type": "string",
+      "maxLength": 3000,
+      "description": "Full audit context \u2014 URLs, metrics, affected entities"
+    },
+    "affected_entity_type": {
+      "type": "string",
+      "description": "Entity type impacted (Lead, WebsiteTemplate, GeneratedPage, etc.)"
+    },
+    "affected_entity_id": {
+      "type": "string"
+    },
+    "affected_url": {
+      "type": "string"
+    },
+    "fix_action": {
+      "type": "string",
+      "description": "What action was taken to fix the issue"
+    },
+    "fix_result": {
+      "type": "string",
+      "maxLength": 3000,
+      "description": "Outcome of the auto-fix attempt"
+    },
+    "auto_fixable": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this finding can be auto-fixed by the swarm"
+    },
+    "audited_by": {
+      "type": "string",
+      "description": "Agent or system that performed the audit"
+    },
+    "fixed_by": {
+      "type": "string",
+      "description": "Agent or system that applied the fix"
+    },
+    "audited_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "fixed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "cycle_id": {
+      "type": "string",
+      "description": "Swarm cycle ID this audit belongs to"
+    }
+  },
+  "required": [
+    "audit_type",
+    "finding"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
