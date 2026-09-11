@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import {
   Camera, Palette, Sparkles, ArrowRight, Eye, Layers,
-  Wand2, CheckCircle2, MoveHorizontal,
+  Wand2, CheckCircle2, MoveHorizontal, LogIn,
 } from "lucide-react";
 import { LOGO_URL } from "@/components/Logo";
 import { Image } from "@/components/ui/image";
@@ -89,7 +89,13 @@ export default function MobileSection() {
         </div>
 
         {/* Right: phone mockup showing the visualizer in action */}
-        <div className="flex justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Link
+            to="/login?returnTo=/portal"
+            className="inline-flex h-12 px-8 items-center justify-center gap-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold transition animate-pop-bounce"
+          >
+            <LogIn className="h-5 w-5" /> Client Portal Sign In
+          </Link>
           <div className="relative w-[300px] h-[620px] rounded-[2.75rem] border-[10px] border-stone-800 bg-white overflow-hidden shadow-2xl">
             {/* Notch */}
             <div className="absolute top-0 inset-x-0 h-7 bg-white flex items-center justify-center z-20">

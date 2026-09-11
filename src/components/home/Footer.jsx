@@ -13,7 +13,6 @@ const QUICK_LINKS = [
   { label: "About Us", path: "/about" },
   { label: "Contact", path: "/contact" },
   { label: "All Locations", path: "/locations" },
-  { label: "Client Portal", path: "/portal" },
 ];
 
 const SEO_LINKS = [
