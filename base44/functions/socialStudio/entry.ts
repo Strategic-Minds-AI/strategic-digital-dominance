@@ -26,6 +26,8 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.48';
 // Invoke: base44.functions.invoke('socialStudio', { action, ...params })
 // ─────────────────────────────────────────────────────────────────────────────
 
+import { generateText } from '../../shared/aiGateway.ts';
+
 const FB_GRAPH = 'https://graph.facebook.com/v25.0';
 
 const CONTENT_THEMES: Record<string, { label: string; desc: string }> = {
@@ -68,7 +70,7 @@ Return ONLY valid JSON.`;
 }
 
 async function generateContentInternal(svc: any, theme: string, model?: string): Promise<any> {
-  const llmRes = await svc.integrations.Core.InvokeLLM({
+  const { parsed: llmRes } = await generateText({
     prompt: buildContentPrompt(theme),
     model: model || 'claude-sonnet-5',
     response_json_schema: {
@@ -100,16 +102,18 @@ async function generateMediaInternal(svc: any, mediaType: string, prompt: string
       return { url: res.url, type: 'video' };
     }
     if (mediaType === 'flyer') {
-      const res = await svc.integrations.Core.GenerateImage({
+      const res = await base44.functions.invoke('vercelAiGateway', {
+        action: 'generateImage',
         prompt: `Professional promotional social media flyer design. ${prompt}. Bold headline text area at top, brand colors black and metallic gold, high contrast, 4:5 vertical format, scroll-stopping graphic.`,
       });
-      return { url: res.url, type: 'flyer' };
+      return { url: res?.data?.urls?.[0] || null, type: 'flyer' };
     }
     // image (default)
-    const res = await svc.integrations.Core.GenerateImage({
+    const res = await base44.functions.invoke('vercelAiGateway', {
+      action: 'generateImage',
       prompt: `${prompt}. Photorealistic, dramatic lighting, premium aesthetic, high detail, scroll-stopping.`,
     });
-    return { url: res.url, type: 'image' };
+    return { url: res?.data?.urls?.[0] || null, type: 'image' };
   } catch (e) {
     return { url: null, type: 'none' };
   }

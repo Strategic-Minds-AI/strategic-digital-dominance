@@ -1,5 +1,6 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.40";
 import { logStep } from "../../shared/sopLog.ts";
+import { generateText } from "../../shared/aiGateway.ts";
 
 // Autonomous SOP synthesizer — pulls recent SopLog entries (the system's
 // memory), asks the LLM to turn them into a reusable Standard Operating
@@ -36,7 +37,7 @@ Produce:
 - An ordered list of steps, each with a short imperative title and a detail sentence explaining what to do.
 Return only JSON.`;
 
-    const res = await base44.integrations.Core.InvokeLLM({
+    const { parsed: res } = await generateText({
       prompt,
       response_json_schema: {
         type: "object",

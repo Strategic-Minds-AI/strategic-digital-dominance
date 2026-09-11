@@ -1,5 +1,6 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.40";
 import { logStep } from "../../shared/sopLog.ts";
+import { generateText } from "../../shared/aiGateway.ts";
 
 const SITE = "https://epoxygaragefloorestimate.com";
 const INDEXNOW_KEY = "a3e6350908f1c2d4e6b8a0123456789a";
@@ -37,7 +38,7 @@ Pricing facts (do not invent prices outside these ranges): epoxy garage floors c
 
 Return only JSON matching the schema.`;
 
-    const res = await base44.integrations.Core.InvokeLLM({
+    const { parsed: res } = await generateText({
       prompt,
       response_json_schema: {
         type: "object",

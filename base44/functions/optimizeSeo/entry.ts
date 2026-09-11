@@ -1,5 +1,6 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.40";
 import { logStep } from "../../shared/sopLog.ts";
+import { generateText } from "../../shared/aiGateway.ts";
 
 // AI-driven persistent SEO optimizer.
 // For each SeoContent record that has Search Console performance data,
@@ -38,7 +39,7 @@ Write an improved, click-optimized, keyword-rich title tag (max 60 characters) a
 
       let out;
       try {
-        const res = await base44.integrations.Core.InvokeLLM({
+        const { parsed: res } = await generateText({
           prompt,
           response_json_schema: {
             type: "object",

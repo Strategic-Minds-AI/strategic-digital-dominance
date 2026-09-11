@@ -24,7 +24,8 @@ export default function PlaybookLibrary() {
   // AI Assist mutation — expands the user's words strategically
   const aiAssist = useMutation({
     mutationFn: async (input) => {
-      const res = await base44.integrations.Core.InvokeLLM({
+      const res = await base44.functions.invoke('vercelAiGateway', {
+        action: 'generateText',
         prompt: `You are the Xtreme Intelligence Architect — a world-class business strategist and autonomous systems designer. The user has written a rough vision statement for their epoxy/concrete coating contractor SaaS platform. Your job is to take their words and expand them into a highly strategic, detailed, wealth-producing vision statement that is unique, scalable, and designed for autonomous 24/7 operation.
 
 USER'S INPUT:
@@ -39,9 +40,9 @@ Expand this into a comprehensive vision statement that includes:
 6. The ultimate wealth and growth outcome
 
 Write it as a powerful, specific, actionable vision statement — not a list, but a compelling paragraph that reads like a mission. Use deterministic language (no "maybe" or "try to"). Make it ambitious but grounded in the real capabilities of the platform. Keep it under 300 words.`,
-        model: "claude-opus-4.7",
+        model: "anthropic/claude-opus-4.7",
       });
-      return res;
+      return res?.data?.text || '';
     },
     onSuccess: (data) => {
       const text = typeof data === "string" ? data : data.response || data.text || JSON.stringify(data);

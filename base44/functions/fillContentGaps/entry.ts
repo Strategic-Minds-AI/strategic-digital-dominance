@@ -1,5 +1,6 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.40";
 import { logStep } from "../../shared/sopLog.ts";
+import { generateText } from "../../shared/aiGateway.ts";
 
 // Closed-loop SEO engine: reads competitor insights that have content_gaps
 // filled in, uses AI to extract actionable topic keywords from those gaps,
@@ -32,7 +33,7 @@ export default async function (req: Request): Promise<Response> {
       .map((i) => `Competitor ${i.competitor_name}: ${i.content_gaps}`)
       .join("\n");
 
-    const res = await base44.asServiceRole.integrations.Core.InvokeLLM({
+    const { parsed: res } = await generateText({
       prompt: `You are an SEO strategist for a garage floor coating company. Based on these content gaps identified in competitor analysis, extract 5-10 specific, high-intent topic keywords that we should create content pages for. Each keyword should be something a homeowner would search for (e.g. "polyaspartic vs epoxy durability", "garage floor coating for hot climates"). Return only the keywords as a JSON array of strings.
 
 Content gaps:

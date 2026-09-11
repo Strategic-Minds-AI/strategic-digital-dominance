@@ -70,7 +70,8 @@ export default function SeoFactory() {
     if (!faqTopic.trim()) { setError("Enter a topic for the FAQ."); return; }
     setFaqBusy(true); setError(""); setMsg("");
     try {
-      const res = await base44.integrations.Core.InvokeLLM({
+      const res = await base44.functions.invoke('vercelAiGateway', {
+        action: 'generateText',
         prompt: `Generate 6 concise FAQ Q&As about "${faqTopic}" for a garage floor coating company (EpoxyGarageFloorEstimate.com). Each answer must be factual, specific, and under 60 words. Pricing facts: $4-$12/sq ft installed; 2-car ~$2,400-$5,300; 3-car ~$3,600-$6,600; lasts 10-20 years; 1-2 day install. Return only JSON.`,
         response_json_schema: {
           type: "object",
@@ -79,7 +80,7 @@ export default function SeoFactory() {
           },
         },
       });
-      const faq = (res.data || res).faq || [];
+      const faq = (res?.data?.parsed || {}).faq || [];
       const rows = await base44.entities.SeoContent.filter({ route: faqRoute });
       if (rows.length) {
         await base44.entities.SeoContent.update(rows[0].id, { faq });

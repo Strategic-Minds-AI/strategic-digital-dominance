@@ -129,10 +129,9 @@ export default function Funnel() {
     }
     // Secondary — AI web search for wider coverage
     try {
-      const res = await base44.integrations.Core.InvokeLLM({
+      const gwRes = await base44.functions.invoke('vercelAiGateway', {
+        action: 'generateText',
         prompt: `Look up the residential property at "${fullAddress}" using public property records and real estate listings such as Zillow, Realtor.com, Redfin, and the county property appraiser. I need the GARAGE square footage. If the garage square footage is not directly stated, estimate it from the number of garage spaces (1 car ≈ 220 sqft, 2 car ≈ 440 sqft, 3 car ≈ 660 sqft, 4 car ≈ 880 sqft) or from the interior living area (garage ≈ 20% of interior sqft). Return the best garage square footage estimate, the number of garage spaces, the interior living sqft, and your confidence level.`,
-        add_context_from_internet: true,
-        model: "gemini_3_flash",
         response_json_schema: {
           type: "object",
           properties: {
@@ -146,6 +145,7 @@ export default function Funnel() {
           required: ["found"]
         }
       });
+      const res = gwRes?.data?.parsed || {};
       const sqft = Number(res?.garage_sqft);
       if (res?.found && sqft > 0) {
         return cache({

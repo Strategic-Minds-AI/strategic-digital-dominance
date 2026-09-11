@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.48';
 import { secrets } from 'base44:runtime';
 import { COMPANY_FACTS } from '../../shared/companyIntel.ts';
+import { generateText } from '../../shared/aiGateway.ts';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // companyIntel — Exhaustive company & industry intelligence scraper.
@@ -88,7 +89,7 @@ export default async function (req: Request): Promise<Response> {
 
     // 2. Synthesize a structured intelligence report with the LLM, grounded in
     //    the canonical COMPANY_FACTS + the freshly scraped site content.
-    const synthesis = await svc.integrations.Core.InvokeLLM({
+    const { parsed: synthesis } = await generateText({
       prompt: `You are a senior business intelligence analyst preparing a grounded knowledge base for an AI customer-service agent at Xtreme Polishing Systems (XPS). The agent will use ONLY this report to answer homeowner questions about epoxy garage floors, decorative concrete, pricing, process, warranties, locations, and company reputation — so every fact must be specific, accurate, and sourced. Eliminate ambiguity and hallucination.
 
 CANONICAL COMPANY FACTS (verified, authoritative — use these as ground truth):

@@ -38,11 +38,12 @@ export default function VisionWorkflow({ onClose }) {
     setComposites([]);
     try {
       const results = await Promise.all(photos.map(async (p) => {
-        const res = await base44.integrations.Core.GenerateImage({
+        const res = await base44.functions.invoke('vercelAiGateway', {
+          action: 'editImage',
           prompt: `Photorealistic interior of the same space, but the concrete floor has been resurfaced with a ${selectedColor.color_name} ${selectedColor.system || "flake"} epoxy floor coating. The floor color is ${selectedColor.hex} (${selectedColor.color_name}, color code ${selectedColor.code}). The finish is ${sheen}. Keep the walls, ceiling, and all objects identical to the original photo. Only the floor surface changes — it now has a smooth, professional epoxy coating in ${selectedColor.color_name}.`,
-          existing_image_urls: [p.url],
+          reference_image_url: p.url,
         });
-        return res?.url || p.url;
+        return res?.data?.url || p.url;
       }));
       setComposites(results);
     } catch (err) {

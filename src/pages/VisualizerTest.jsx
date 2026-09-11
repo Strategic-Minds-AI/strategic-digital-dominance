@@ -80,11 +80,12 @@ export default function VisualizerTest() {
         systemName + ' floor in the color "' + (selectedColor.name || "") +
         '" with a ' + sheenDesc +
         '. Seamless, professional concrete coating finish. Same room geometry, walls, and lighting as the original photo. High-end real-estate photography, wide angle, natural light.';
-      const res = await base44.integrations.Core.GenerateImage({
+      const res = await base44.functions.invoke('vercelAiGateway', {
+        action: 'editImage',
         prompt,
-        existing_image_urls: [uploadedUrl],
+        reference_image_url: uploadedUrl,
       });
-      setConceptUrl(res.url);
+      setConceptUrl(res?.data?.url || "");
     } catch (err) {
       setError(`FAILED: ${err?.message || err}`);
       console.error("[VisualizerTest] AI generate failed:", err);

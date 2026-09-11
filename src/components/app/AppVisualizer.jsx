@@ -34,11 +34,12 @@ export default function AppVisualizer({ appData }) {
       setProcessing(true);
       setAfterUrl("");
       try {
-        const res = await base44.integrations.Core.GenerateImage({
+        const res = await base44.functions.invoke('vercelAiGateway', {
+          action: 'editImage',
           prompt: `Photorealistic interior of the same garage, but the concrete floor has been resurfaced with a ${selectedColor.color_name} ${system} epoxy floor coating. The floor color is ${selectedColor.hex} (${selectedColor.color_name}, color code ${selectedColor.code}). The finish is high gloss. Keep the walls, ceiling, garage door, and all objects identical to the original photo. Only the floor surface changes — it now has a smooth, professional epoxy coating in ${selectedColor.color_name}.`,
-          existing_image_urls: [photoUrl],
+          reference_image_url: photoUrl,
         });
-        if (!cancelled) setAfterUrl(res?.url || photoUrl);
+        if (!cancelled) setAfterUrl(res?.data?.url || photoUrl);
       } catch {
         if (!cancelled) setAfterUrl(photoUrl);
       } finally {
@@ -84,11 +85,12 @@ export default function AppVisualizer({ appData }) {
     setViewing(floor);
     setProcessing(true);
     try {
-      const res = await base44.integrations.Core.GenerateImage({
+      const res = await base44.functions.invoke('vercelAiGateway', {
+        action: 'editImage',
         prompt: `Photorealistic interior of the same garage, but the concrete floor has been resurfaced with a ${floor.colorName} ${floor.system} epoxy floor coating. The floor color is ${floor.colorHex} (${floor.colorName}). The finish is high gloss. Keep the walls, ceiling, garage door, and all objects identical to the original photo. Only the floor surface changes — it now has a smooth, professional epoxy coating in ${floor.colorName}.`,
-        existing_image_urls: [floor.photoUrl],
+        reference_image_url: floor.photoUrl,
       });
-      setAfterUrl(res?.url || floor.photoUrl);
+      setAfterUrl(res?.data?.url || floor.photoUrl);
     } catch {
       setAfterUrl(floor.photoUrl);
     } finally {

@@ -17,6 +17,8 @@ import { secrets } from 'base44:runtime';
 // Invoke: base44.functions.invoke('seoGenerator', { action, url?, keyword?, competitorUrls? })
 // ─────────────────────────────────────────────────────────────────────────────
 
+import { generateText } from '../../shared/aiGateway.ts';
+
 function extractMeta(html, regex) {
   const m = html.match(regex);
   return m ? m[1].trim() : null;
@@ -127,7 +129,7 @@ async function technicalAudit(svc, base44, url) {
 
 // ── Content Generator ──
 async function generateContent(svc, base44, keyword, pageType, industry) {
-  const res = await base44.integrations.Core.InvokeLLM({
+  const { parsed: res } = await generateText({
     prompt: `You are an expert SEO content generator for a garage floor coating company. Generate optimized on-page content for this target:
 
 Target Keyword: ${keyword}
@@ -191,7 +193,7 @@ async function monitorCompetitors(svc, base44, competitorUrls) {
     let contentSummary;
     if ('error' in fetched) {
       // Fallback: LLM with web search
-      const llmRes = await base44.integrations.Core.InvokeLLM({
+      const { parsed: llmRes } = await generateText({
         prompt: `Analyze this competitor page: ${compUrl}. What's the page title, meta description, H1, word count, and schema markup? What SEO strategies are they using?`,
         add_context_from_internet: true,
         model: 'gemini_3_flash',
@@ -216,7 +218,7 @@ async function monitorCompetitors(svc, base44, competitorUrls) {
     }
 
     // Generate counter-strategy
-    const analysis = await base44.integrations.Core.InvokeLLM({
+    const { parsed: analysis } = await generateText({
       prompt: `A competitor's page was analyzed. Suggest counter-strategies for our garage floor coating business.
 
 Competitor URL: ${compUrl}

@@ -88,11 +88,12 @@ export default function BidGenerator({ onTabChange }) {
     setError("");
     try {
       const prompt = `Photorealistic interior design rendering of the uploaded garage with a newly installed ${data.systemName} floor in the color "${color.color_name || color.name}". Professional concrete coating finish. Same room geometry and lighting. High-end real-estate photography.`;
-      const res = await base44.integrations.Core.GenerateImage({
+      const res = await base44.functions.invoke('vercelAiGateway', {
+        action: 'editImage',
         prompt,
-        existing_image_urls: data.photos,
+        reference_image_url: data.photos[0],
       });
-      update({ conceptImage: res.url });
+      update({ conceptImage: res?.data?.url || "" });
     } catch (e) {
       setError("Could not generate preview. Continuing without.");
     }

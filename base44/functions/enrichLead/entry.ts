@@ -1,4 +1,5 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.48";
+import { generateText } from "../../shared/aiGateway.ts";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // enrichLead — AI-enriches a scraped lead with background data using web search.
@@ -19,7 +20,7 @@ export default async function (req: Request): Promise<Response> {
     const query = [lead.first_name, lead.last_name, lead.city, lead.state, lead.notes?.replace("Website: ", "")]
       .filter(Boolean).join(" ");
 
-    const res = await base44.asServiceRole.integrations.Core.InvokeLLM({
+    const { parsed: res } = await generateText({
       prompt: `Research this lead for a garage floor epoxy / decorative concrete coating company (Xtreme Polishing Systems) and return enriched background data. Lead: ${query}. Phone: ${lead.phone || "n/a"}. Email: ${lead.email || "n/a"}. If this is a business, find: business description, years in business, services offered, Google rating + review count, social media profiles (Facebook, Instagram, LinkedIn), estimated revenue range, and a personalized outreach hook. If this is a homeowner, find: property details, neighborhood, and a personalized outreach hook about garage floor coating. Be factual; if you can't find something, say "Not found".`,
       add_context_from_internet: true,
       model: "gemini_3_flash",

@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { secrets } from 'base44:runtime';
 import { COMPANY_FACTS, COMMS_TEMPLATES, TEMPLATE_CATEGORIES } from '../../shared/companyIntel.ts';
+import { generateText } from '../../shared/aiGateway.ts';
 
 const BROWSERBASE_API_KEY = () => secrets.get('BROWSERBASE_API_KEY');
 
@@ -84,7 +85,7 @@ Your capabilities: full entity access, AI floor visualizer, cloud browser resear
 
         const fullPrompt = `${systemPrompt}\n\nConversation:\n${(conversation || []).map((m) => `${m.role}: ${m.content}`).join('\n')}\n\nuser: ${message}`;
 
-        const llmRes = await base44.asServiceRole.integrations.Core.InvokeLLM({
+        const { parsed: llmRes } = await generateText({
           prompt: fullPrompt,
           model: 'claude-sonnet-5',
           response_json_schema: {
@@ -125,7 +126,7 @@ Your capabilities: full entity access, AI floor visualizer, cloud browser resear
           }
         }
 
-        const analysisRes = await base44.asServiceRole.integrations.Core.InvokeLLM({
+        const { parsed: analysisRes } = await generateText({
           prompt: `You are a world-renowned trend analyst, statistician, and economist specializing in the decorative concrete and epoxy flooring industry.
 
 Research Query: ${query}
@@ -216,7 +217,7 @@ Provide a comprehensive analysis: key findings, pricing data, market trends, cus
         const { role, description } = body;
         if (!role) return Response.json({ error: 'role is required' }, { status: 400 });
 
-        const agentRes = await base44.asServiceRole.integrations.Core.InvokeLLM({
+        const { parsed: agentRes } = await generateText({
           prompt: `Create a comprehensive AI agent template for the role: ${role}. Description: ${description || 'General purpose agent for epoxy flooring business'}. This is for EpoxyGarageFloorEstimates.com — a scalable website factory and SaaS platform for garage floor coating contractors. Generate a detailed system prompt, recommended capabilities, recommended model, key responsibilities. Format as JSON.`,
           response_json_schema: {
             type: 'object',
@@ -251,7 +252,7 @@ Provide a comprehensive analysis: key findings, pricing data, market trends, cus
           key_objectives: s.key_objectives,
         }));
 
-        const simRes = await base44.asServiceRole.integrations.Core.InvokeLLM({
+        const { parsed: simRes } = await generateText({
           prompt: `You are a predictive analytics engine for EpoxyGarageFloorEstimates.com. SCENARIO: ${scenario}. TIMEFRAME: ${timeframe || '90 days'}. ACTIVE STRATEGIES: ${JSON.stringify(strategyContext)}. Based on the active strategy documents, simulate the outcome. Include projected metrics (leads, revenue, conversion rate, ROI), confidence intervals (low, mid, high), key assumptions, risk factors, and which strategies most influence this outcome. Format as JSON.`,
           response_json_schema: {
             type: 'object',
@@ -297,7 +298,7 @@ Provide a comprehensive analysis: key findings, pricing data, market trends, cus
       case 'gatherIntelligence': {
         const { serviceCategory, sector } = body;
 
-        const intelRes = await base44.asServiceRole.integrations.Core.InvokeLLM({
+        const { parsed: intelRes } = await generateText({
           prompt: `You are a world-renowned construction industry analyst and economist. Conduct exhaustive intelligence gathering for: Service Category: ${serviceCategory || 'epoxy flooring, decorative concrete, stained concrete, countertops, patios, pool decks, driveways, walkways, garages, bathroom vanity, epoxy art, installation training, franchise ownership'}. Sector: ${sector || 'residential, commercial, government'}. Research: current market state, pricing analysis, customer sentiment, demographic analysis, competitive landscape, trend forecast, government contracting, technology trends, seasonal patterns, opportunities. Format as structured JSON.`,
           response_json_schema: {
             type: 'object',
@@ -397,7 +398,7 @@ Provide a comprehensive analysis: key findings, pricing data, market trends, cus
           scraped = { url, content: '', error: e.message };
         }
 
-        const scanRes = await base44.asServiceRole.integrations.Core.InvokeLLM({
+        const { parsed: scanRes } = await generateText({
           prompt: `Analyze this scraped website content and identify what needs to change to rebrand it for a new epoxy flooring company. URL: ${url}. Content: ${(scraped.content || '').slice(0, 10000) || 'N/A'}. Identify: company name, logo, phone, email, address that need replacing, service area, color scheme, key pages, SEO keywords, CTAs, minimum content changes needed to launch. Format as JSON.`,
           response_json_schema: {
             type: 'object',

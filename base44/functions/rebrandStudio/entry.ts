@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.48';
 import { secrets } from 'base44:runtime';
 import OpenAI from 'npm:openai@6.45.0';
+import { generateText } from '../../shared/aiGateway.ts';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // rebrandStudio — Intelligent rebrand engine for the website factory.
@@ -74,7 +75,7 @@ export default async function (req: Request): Promise<Response> {
           scraped = { url, content: '', error: e.message };
         }
 
-        const scanRes = await svc.integrations.Core.InvokeLLM({
+        const { parsed: scanRes } = await generateText({
           prompt: `Analyze this scraped website content and identify everything that must change to rebrand the site for a new epoxy flooring company. URL: ${url}. Content: ${(scraped.content || '').slice(0, 12000) || 'N/A'}. Identify: current company name, logo presence, phone, email, address, service area, color scheme, key pages and what changes each needs, SEO keywords, CTAs, and the minimum set of content changes required to launch under a new brand. Format as JSON.`,
           response_json_schema: {
             type: 'object',

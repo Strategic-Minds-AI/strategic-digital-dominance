@@ -30,10 +30,11 @@ export default function PortalAIChat({ project }) {
       const context = project
         ? `Customer portal chat. Project: ${project.floor_system || "Epoxy"}, ${project.square_footage || ""} sq ft, status: ${project.status || "scheduled"}, color: ${project.flake_color_name || "N/A"}. `
         : `Customer portal chat (no project found). `;
-      const res = await base44.integrations.Core.InvokeLLM({
+      const res = await base44.functions.invoke('vercelAiGateway', {
+        action: 'generateText',
         prompt: `${context}Customer question: ${userMsg}\n\nProvide a helpful, concise answer about epoxy garage floors, decorative concrete, polished concrete, maintenance, warranties, or scheduling. Keep it under 150 words and friendly.`,
       });
-      const reply = typeof res === "string" ? res : res?.response || res?.content || "I'm here to help! Could you rephrase that?";
+      const reply = res?.data?.text || "I'm here to help! Could you rephrase that?";
       setMessages((m) => [...m, { role: "assistant", content: reply }]);
     } catch (e) {
       setMessages((m) => [...m, { role: "assistant", content: "Sorry, I couldn't process that right now. Please call us at 1-833-484-3799." }]);

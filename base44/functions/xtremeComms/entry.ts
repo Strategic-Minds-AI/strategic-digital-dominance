@@ -23,6 +23,8 @@ import { secrets } from 'base44:runtime';
 // Invoke: base44.functions.invoke('xtremeComms', { action, ...params })
 // ─────────────────────────────────────────────────────────────────────────────
 
+import { generateText } from '../../shared/aiGateway.ts';
+
 const API_BASE = 'https://xtreme-communications.com/api/functions';
 
 async function gatewayCall(functionName, payload) {
@@ -151,11 +153,16 @@ export default async function (req: Request): Promise<Response> {
         break;
 
       // ── Content Generation ──
-      case 'generateContent':
+      case 'generateContent': {
         if (!body.prompt) return Response.json({ error: 'prompt is required' }, { status: 400 });
-        result = await gatewayCall('generateContent', { prompt: body.prompt, content_type: body.contentType || 'sms', brand_id: body.brandId, tone: body.tone });
-        await logSop(svc, 'content_generated', `Generated ${body.contentType || 'sms'} content`, body.prompt.slice(0, 200));
+        const { text: genContent } = await generateText({
+          prompt: body.prompt,
+          system_prompt: `You are a content generator for Xtreme Polishing Systems, a premium garage floor coating company. Generate ${body.contentType || 'sms'} content${body.tone ? ` with a ${body.tone} tone` : ''}. Brand: Xtreme Polishing Systems. Phone: 1-833-700-1239. Website: epoxyquotenearme.com. Keep it concise, compelling, and actionable.`,
+        });
+        result = { content: genContent, content_type: body.contentType || 'sms' };
+        await logSop(svc, 'content_generated', `Generated ${body.contentType || 'sms'} content via AI Gateway`, body.prompt.slice(0, 200));
         break;
+      }
 
       // ── Creative Media ──
       case 'generateMedia':

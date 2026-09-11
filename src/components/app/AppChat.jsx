@@ -24,11 +24,12 @@ export default function AppChat({ onClose }) {
     setLoading(true);
     try {
       const history = messages.map((m) => `${m.role === "user" ? "User" : "Assistant"}: ${m.text}`).join("\n");
-      const res = await base44.integrations.Core.InvokeLLM({
+      const res = await base44.functions.invoke('vercelAiGateway', {
+        action: 'generateText',
         prompt: `${SYSTEM_PROMPT}\n\nConversation so far:\n${history}\n\nUser: ${userMsg.text}\n\nAssistant:`,
-        model: "gemini_3_flash"
       });
-      setMessages((m) => [...m, { role: "assistant", text: typeof res === "string" ? res : res.text || "I'm here to help with any flooring questions!" }]);
+      const reply = res?.data?.text || "I'm here to help with any flooring questions!";
+      setMessages((m) => [...m, { role: "assistant", text: reply }]);
     } catch {
       setMessages((m) => [...m, { role: "assistant", text: "I'm having trouble connecting right now. Please try again in a moment." }]);
     } finally {
