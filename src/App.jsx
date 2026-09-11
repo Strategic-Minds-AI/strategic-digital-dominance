@@ -77,7 +77,7 @@ import AnalyticsDashboard from '@/pages/admin/AnalyticsDashboard';
 import WebsiteQueue from '@/pages/admin/WebsiteQueue';
 import RagConsole from '@/pages/admin/RagConsole';
 import SystemHealth from '@/pages/admin/SystemHealth';
-import Platform from '@/pages/Platform';
+import Platform from '@/pages/admin/Platform';
 import GraphConsole from '@/pages/admin/GraphConsole';
 import CustomerPortal from '@/pages/CustomerPortal';
 import ContractorApp from '@/pages/ContractorApp';
@@ -113,7 +113,6 @@ const AuthenticatedApp = () => {
     <CodeInjector />
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/platform" element={<Platform />} />
       <Route path="/estimate" element={<Estimator />} />
       <Route path="/funnel" element={<Funnel />} />
       <Route path="/results/:id" element={<Results />} />
@@ -179,6 +178,7 @@ const AuthenticatedApp = () => {
         <Route path="rag" element={<RagConsole />} />
         <Route path="graph" element={<GraphConsole />} />
         <Route path="system-health" element={<SystemHealth />} />
+        <Route path="platform" element={<Platform />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
       <Route path="/:state/:citySlug" element={<LocationSeoPage />} />

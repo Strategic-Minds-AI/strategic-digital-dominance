@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, Outlet, Link } from "react-router-dom";
-import { LayoutDashboard, Users, KanbanSquare, Settings, ExternalLink, Mail, Radar, Globe, ScrollText, Star, Wrench, Factory, Smartphone, Rocket, Layers, UserCircle,   TrendingUp, MessageSquare, Brain, Target, BarChart3, Package, Bot, KeyRound, Share2, Wand2, MapPin, Network, Crown, Building2, Code2, Heart, PhoneCall, Activity, ListOrdered, Database, Workflow, Gauge } from "lucide-react";
+import { LayoutDashboard, Users, KanbanSquare, Settings, ExternalLink, Mail, Radar, Globe, ScrollText, Star, Wrench, Factory, Smartphone, Rocket, Layers, UserCircle,   TrendingUp, MessageSquare, Brain, Target, BarChart3, Package, Bot, KeyRound, Share2, Wand2, MapPin, Network, Crown, Building2, Code2, Heart, PhoneCall, Activity,   ListOrdered, Database, Workflow, Gauge, Cpu } from "lucide-react";
 import BackButton from "@/components/BackButton";
 import Logo from "@/components/Logo";
 import { XTREME_AI_ICON_URL } from "@/components/Logo";
@@ -9,6 +9,7 @@ import AIAssistBubble from "@/components/ai-assist/AIAssistBubble";
 const links = [
   { to: "/admin", end: true, icon: LayoutDashboard, label: "Dashboard" },
   { to: "/admin/system-health", icon: Gauge, label: "System Health" },
+  { to: "/admin/platform", icon: Cpu, label: "Platform" },
   { to: "/admin/leads", icon: Users, label: "Leads" },
   { to: "/admin/pipeline", icon: KanbanSquare, label: "Pipeline" },
   { to: "/admin/emails", icon: Mail, label: "Emails" },
