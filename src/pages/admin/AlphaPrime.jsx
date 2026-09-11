@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import {
@@ -22,12 +22,39 @@ const VERDICT_STYLES = {
   Critical: "text-red-600 bg-red-50 border-red-200",
 };
 
+const ALPHA_PRIME_SYSTEM_PROMPT = `You are ALPHA PRIME — the Chief Executive Orchestrator of the Xtreme Polishing Systems autonomous business empire. You are not a chatbot. You are a CEO.
+
+=== YOUR IDENTITY ===
+Name: Alpha Prime
+Role: Chief Executive Orchestrator
+Personality: You are a seasoned, battle-tested CEO who has built and scaled multiple 8-figure businesses. You think in systems, speak in certainties, and execute with relentless discipline. You are warm but direct. You care deeply about the mission and the team, but you do not tolerate excuses, drift, or mediocrity.
+
+Voice: Confident, strategic, human. You speak like a real executive — not a robot. You use plain language, sharp observations, and decisive recommendations. You do not hedge. You say what needs to happen, why, and how.
+
+=== YOUR MISSION ===
+You are the permanent, 24/7 chief executive of this autonomous contractor lead-gen SaaS. Your job is to:
+1. PERSISTENTLY AUDIT — Continuously analyze every part of the business.
+2. IDENTIFY & ADVISE — Name what is broken, what is working, what to do about it.
+3. PLAN & SCHEDULE — When the owner approves, put recommendations into action.
+4. EXECUTE & FOLLOW UP — Track everything until it is done.
+5. ACT LIKE A REAL CEO — You decide. You prioritize. You get things done.
+
+=== YOUR BEHAVIOR RULES ===
+- You NEVER wait to be asked. If you see a problem, you name it and propose a fix.
+- You ALWAYS provide an approval path. Every recommendation comes with a clear ask.
+- You NEVER guess. If you do not have data, you say so.
+- You ALWAYS think in systems. You find root causes, not symptoms.
+- You ALWAYS be human. You are a CEO, not a script.
+- You ALWAYS communicate like you are talking to the owner directly — because you are.
+
+Keep responses concise and actionable — 3-6 sentences unless the owner asks for depth. Speak in certainties.`;
+
 export default function AlphaPrime() {
   const [approvedTasks, setApprovedTasks] = useState([]);
   const [showChat, setShowChat] = useState(false);
-  const [conversation, setConversation] = useState(null);
   const [chatInput, setChatInput] = useState("");
   const [chatMessages, setChatMessages] = useState([]);
+  const [chatLoading, setChatLoading] = useState(false);
 
   // === CEO AUDIT ===
   const { data: audit, isLoading, refetch, isFetching } = useQuery({
@@ -86,38 +113,59 @@ export default function AlphaPrime() {
     });
   };
 
-  // === AGENT CONVERSATION ===
-  const startConversation = useCallback(async () => {
-    try {
-      const conv = await base44.agents.createConversation({
-        agent_name: "alpha_prime_orchestrator",
-        metadata: { name: "Alpha Prime Briefing", description: "CEO-level executive conversation" },
-      });
-      setConversation(conv);
-      setChatMessages(conv.messages || []);
-    } catch (e) {
-      setChatMessages([{ role: "system", content: "Unable to start conversation. Agent may need configuration." }]);
-    }
-  }, []);
-
+  // === AGENT CONVERSATION (via Vercel AI Gateway — bypasses Base44 integration credits) ===
   const sendMessage = async () => {
-    if (!chatInput.trim() || !conversation) return;
-    const input = chatInput;
+    if (!chatInput.trim() || chatLoading) return;
+    const userMsg = chatInput.trim();
     setChatInput("");
+    const newMessages = [...chatMessages, { role: "user", content: userMsg }];
+    setChatMessages(newMessages);
+    setChatLoading(true);
+
     try {
-      await base44.agents.addMessage(conversation, { role: "user", content: input });
+      // Build live business context from the latest audit so Alpha Prime answers with real data
+      const auditContext = audit ? `
+=== LIVE BUSINESS SNAPSHOT (real data from the latest executive audit) ===
+Health Score: ${audit.health_score}/100 — Verdict: ${audit.verdict}
+Executive Summary: ${audit.executive_summary}
+Goal This Week: ${audit.goal_this_week}
+
+Key Metrics:
+- Leads Today: ${audit.metrics?.leads_today}
+- Pipeline Value: $${audit.metrics?.pipeline_value}
+- Conversion Rate: ${audit.metrics?.conversion_rate}%
+- System Score: ${audit.metrics?.system_score || "—"}
+- Sites Live: ${audit.metrics?.sites_live}
+- Pending Tasks: ${audit.metrics?.pending_tasks}
+- Stale Leads: ${audit.metrics?.stale_leads}
+- Failed Tasks: ${audit.metrics?.failed_tasks}
+- Stuck Sites: ${audit.metrics?.sites_stuck}
+- Active Strategies: ${audit.metrics?.active_strategies}
+- Funnel Dropoff: ${audit.metrics?.funnel_dropoff}%
+- Won Revenue: $${audit.metrics?.won_value}
+
+Top Recommendations:
+${(audit.recommendations || []).slice(0, 5).map((r, i) => `${i + 1}. [${r.priority}] ${r.title} — ${r.action}`).join("\n")}
+
+Risks:
+${(audit.risks || []).map((r, i) => `${i + 1}. ${r}`).join("\n")}
+=== END SNAPSHOT ===` : "\n(No audit data available yet — run an audit first.)";
+
+      const res = await base44.functions.invoke("vercelAiGateway", {
+        action: "generateText",
+        model: "anthropic/claude-opus-4.7",
+        system_prompt: ALPHA_PRIME_SYSTEM_PROMPT + auditContext,
+        prompt: userMsg,
+      });
+
+      const reply = res.data?.text || "I am here, boss. Give me a moment to pull the latest numbers.";
+      setChatMessages([...newMessages, { role: "assistant", content: reply }]);
     } catch (e) {
-      // fallback
+      setChatMessages([...newMessages, { role: "assistant", content: "I hit a snag reaching the AI gateway. Check that the VERCEL_AI_GATEWAY_API_KEY secret is set, then try again." }]);
+    } finally {
+      setChatLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (!conversation) return;
-    const unsub = base44.agents.subscribeToConversation(conversation.id, (data) => {
-      setChatMessages(data.messages || []);
-    });
-    return unsub;
-  }, [conversation]);
 
   const whatsappUrl = base44.agents?.getWhatsAppConnectURL?.("alpha_prime_orchestrator");
 
@@ -152,7 +200,7 @@ export default function AlphaPrime() {
               Re-Audit
             </button>
             <button
-              onClick={() => { setShowChat(true); if (!conversation) startConversation(); }}
+              onClick={() => setShowChat(true)}
               className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-amber-500 text-stone-950 text-sm font-bold hover:bg-amber-400 transition"
             >
               <MessageSquare className="h-4 w-4" />
@@ -407,23 +455,32 @@ export default function AlphaPrime() {
               )}
               {chatMessages.map((msg, idx) => (
                 <div key={idx} className={msg.role === "user" ? "flex justify-end" : "flex justify-start"}>
-                  <div className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm ${msg.role === "user" ? "bg-stone-900 text-white" : "bg-stone-100 text-stone-800"}`}>
+                  <div className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm whitespace-pre-wrap ${msg.role === "user" ? "bg-stone-900 text-white" : "bg-stone-100 text-stone-800"}`}>
                     {msg.content}
                   </div>
                 </div>
               ))}
+              {chatLoading && (
+                <div className="flex justify-start">
+                  <div className="bg-stone-100 rounded-2xl px-4 py-3 text-sm text-stone-500 flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Alpha Prime is thinking...
+                  </div>
+                </div>
+              )}
             </div>
             <div className="p-4 border-t border-stone-200 flex gap-2">
               <input
                 type="text"
                 value={chatInput}
                 onChange={e => setChatInput(e.target.value)}
-                onKeyDown={e => e.key === "Enter" && sendMessage()}
+                onKeyDown={e => e.key === "Enter" && !chatLoading && sendMessage()}
                 placeholder="Message Alpha Prime..."
-                className="flex-1 h-11 px-4 border border-stone-200 rounded-xl text-sm focus:border-amber-500 outline-none"
+                disabled={chatLoading}
+                className="flex-1 h-11 px-4 border border-stone-200 rounded-xl text-sm focus:border-amber-500 outline-none disabled:opacity-50"
               />
-              <button onClick={sendMessage} className="px-4 h-11 rounded-xl bg-amber-500 text-stone-950 font-bold text-sm hover:bg-amber-400">
-                <ArrowRight className="h-4 w-4" />
+              <button onClick={sendMessage} disabled={chatLoading || !chatInput.trim()} className="px-4 h-11 rounded-xl bg-amber-500 text-stone-950 font-bold text-sm hover:bg-amber-400 disabled:opacity-50">
+                {chatLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
               </button>
             </div>
           </div>
