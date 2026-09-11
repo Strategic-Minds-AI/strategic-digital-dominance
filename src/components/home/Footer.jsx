@@ -23,7 +23,7 @@ const SEO_LINKS = [
   { label: "Garage Floor Coating Cost", path: "/garage-floor-coating-cost" },
   { label: "Pompano Beach, FL", path: "/fl/pompano-beach" },
   { label: "Garage Floor Guides", path: "/guides" },
-  { label: "Epoxy Pro Guide", path: "/epoxy-pro-guide" },
+  { label: "Epoxy Pro Guide", path: "/elite" },
 ];
 
 const SOCIAL_LINKS = [

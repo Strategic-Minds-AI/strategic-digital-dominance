@@ -27,15 +27,14 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const { request } = event;
 
-  // Only handle GET
   if (request.method !== "GET") return;
 
   const url = new URL(request.url);
 
-  // Skip cross-origin requests (APIs, media, etc.)
+  // Skip cross-origin requests
   if (url.origin !== self.location.origin) return;
 
-  // Navigation requests — network first, fall back to cached index.html
+  // Navigation — network first, fall back to cached index
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request)

@@ -93,10 +93,10 @@ export default function Nav({ settings }) {
             <Link to="/funnel" onClick={() => setOpen(false)} className="flex h-11 items-center justify-end gap-2 rounded-xl text-sm font-bold transition pr-4" style={{ background: 'linear-gradient(180deg, #FFE25A 0%, #FFD700 45%, #C8A300 100%)', border: '2px solid #000', color: '#1a1a1a', boxShadow: '0 4px 12px rgba(255,215,0,.4), inset 0 1px rgba(255,255,255,.4)' }}>
               Get Free Estimate <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link to="/epoxy-pro-guide" onClick={() => setOpen(false)} className="flex h-11 items-center justify-end gap-2 rounded-xl bg-white/10 hover:bg-white/20 text-sm font-bold transition pr-4" style={{ border: '2px solid #FFD700', color: '#FFD700' }}>
+            <Link to="/elite" onClick={() => setOpen(false)} className="flex h-11 items-center justify-end gap-2 rounded-xl bg-white/10 hover:bg-white/20 text-sm font-bold transition pr-4" style={{ border: '2px solid #FFD700', color: '#FFD700' }}>
               Open Epoxy Pro App <Smartphone className="h-4 w-4" />
             </Link>
-            <Link to="/epoxy-pro-guide" onClick={() => setOpen(false)} className="flex h-11 items-center justify-end gap-2 rounded-xl bg-white/10 hover:bg-white/20 text-sm font-bold transition pr-4" style={{ border: '2px solid #D9B835', color: '#D9B835' }}>
+            <Link to="/funnel" onClick={() => setOpen(false)} className="flex h-11 items-center justify-end gap-2 rounded-xl bg-white/10 hover:bg-white/20 text-sm font-bold transition pr-4" style={{ border: '2px solid #D9B835', color: '#D9B835' }}>
               Use Floor Visualizer <Palette className="h-4 w-4" />
             </Link>
           </div>

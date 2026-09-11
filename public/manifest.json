@@ -1,14 +1,14 @@
 {
   "name": "Epoxy Garage Floor Estimates",
   "short_name": "Epoxy Floors",
-  "description": "Get an instant epoxy garage floor cost estimate, visualize your floor with real colors, and book your installation — all from your phone.",
+  "description": "Get an instant epoxy garage floor cost estimate. Visualize your floor with real manufacturer colors, then book your installation.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0c0a09",
   "theme_color": "#0c0a09",
-  "categories": ["business", "lifestyle", "utilities"],
+  "categories": ["business", "lifestyle", "productivity"],
   "icons": [
     {
       "src": "https://media.base44.com/images/public/6a77f4491f0bf92de9a3ed8b/20999222a_Logo_XPS_Color_12-20-24.webp",
@@ -24,12 +24,6 @@
     },
     {
       "src": "https://media.base44.com/images/public/6a77f4491f0bf92de9a3ed8b/20999222a_Logo_XPS_Color_12-20-24.webp",
-      "sizes": "192x192",
-      "type": "image/webp",
-      "purpose": "maskable"
-    },
-    {
-      "src": "https://media.base44.com/images/public/6a77f4491f0bf92de9a3ed8b/20999222a_Logo_XPS_Color_12-20-24.webp",
       "sizes": "512x512",
       "type": "image/webp",
       "purpose": "maskable"
@@ -37,22 +31,22 @@
   ],
   "shortcuts": [
     {
-      "name": "Get Estimate",
+      "name": "Get Free Estimate",
       "short_name": "Estimate",
       "url": "/funnel",
-      "description": "Start your instant garage floor estimate"
+      "description": "Get your instant epoxy garage floor cost estimate"
     },
     {
       "name": "Color Charts",
       "short_name": "Colors",
       "url": "/color-charts",
-      "description": "Browse real manufacturer color charts"
+      "description": "Browse manufacturer color charts"
     },
     {
-      "name": "Client Portal",
-      "short_name": "Portal",
-      "url": "/portal",
-      "description": "Sign in to your client portal"
+      "name": "Epoxy Pro App",
+      "short_name": "Pro App",
+      "url": "/elite",
+      "description": "Open the Epoxy Pro Assistant app"
     }
   ]
 }
