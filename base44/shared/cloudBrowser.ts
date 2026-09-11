@@ -2,7 +2,11 @@ import { secrets } from 'base44:runtime';
 
 // Cloud Browser engine — drives an isolated browser session for covert browsing,
 // scraping, and live site auditing. Uses the CLOUD_BROWSER_ENGINE_URL + ENGINE_API_KEY secrets.
-const cbUrl = () => (secrets.get('CLOUD_BROWSER_ENGINE_URL') || '').replace(/\/$/, '');
+const cbUrl = () => {
+  let u = (secrets.get('CLOUD_BROWSER_ENGINE_URL') || '').trim().replace(/\/$/, '');
+  if (u && !/^https?:\/\//i.test(u)) u = `https://${u}`;
+  return u;
+};
 const cbKey = () => secrets.get('ENGINE_API_KEY') || '';
 
 export async function engine(path: string, method: string, payload?: any) {

@@ -289,91 +289,91 @@
     },
     {
       "function_name": "shadowBrowse",
-      "description": "Covertly browse a URL via the cloud browser and return content only to the caller \u2014 nothing persisted, no trace"
+      "description": "Covert cloud browser \u2014 traceless web browsing"
     },
     {
       "function_name": "vercelAiGateway",
-      "description": "LLM text generation, image generation, and embeddings via Vercel AI Gateway \u2014 bypasses Base44 credit limits"
+      "description": "LLM/image/embedding via Vercel AI Gateway"
     },
     {
       "function_name": "alphaPrimeAudit",
-      "description": "Run a full executive business audit \u2014 health score, metrics, recommendations, risks"
+      "description": "Executive business audit"
     },
     {
       "function_name": "systemAuditor",
-      "description": "Deep system health audit \u2014 subsystem scores, findings, bottleneck analysis"
+      "description": "Deep system health audit"
     },
     {
       "function_name": "siteHealthChecker",
-      "description": "Audit any deployed site for SEO, performance, and content issues"
+      "description": "Audit deployed sites"
     },
     {
       "function_name": "domainGoldRush",
-      "description": "Find available high-value domains via RDAP with SEO value scoring"
+      "description": "Find available high-value domains"
     },
     {
       "function_name": "tradeCrystalBall",
-      "description": "Real BLS employment data + deterministic CAGR projections for trade industries"
+      "description": "BLS industry growth data"
     },
     {
       "function_name": "seoAeoSimulator",
-      "description": "Model SEO/AEO ranking factors and calculate performance scores"
+      "description": "SEO/AEO ranking simulator"
     },
     {
       "function_name": "generateSeoPage",
-      "description": "Generate a full SEO-optimized page for a target keyword and city"
+      "description": "Generate SEO page"
     },
     {
       "function_name": "generateSitemap",
-      "description": "Generate a dynamic sitemap reflecting all live pages"
+      "description": "Generate sitemap"
     },
     {
       "function_name": "githubSync",
-      "description": "Sync app code changes to GitHub"
+      "description": "Sync code to GitHub"
     },
     {
       "function_name": "vercelDeploy",
-      "description": "Deploy the app to Vercel"
+      "description": "Deploy to Vercel"
     },
     {
       "function_name": "enrichLead",
-      "description": "AI-enrich a lead with background data"
+      "description": "AI-enrich a lead"
     },
     {
       "function_name": "scanCompetitors",
-      "description": "Scan competitor sites for SEO and content intelligence"
+      "description": "Scan competitor sites"
     },
     {
       "function_name": "optimizeSeo",
-      "description": "Run SEO optimization on a page or site"
+      "description": "Run SEO optimization"
     },
     {
       "function_name": "fillContentGaps",
-      "description": "Identify and fill content gaps for SEO"
+      "description": "Fill content gaps"
     },
     {
       "function_name": "socialStudio",
-      "description": "Generate and manage social media content"
+      "description": "Social media content"
     },
     {
       "function_name": "swarmOrchestrator",
-      "description": "Orchestrate the agent swarm \u2014 create, claim, and complete tasks"
+      "description": "Orchestrate agent swarm"
     },
     {
       "function_name": "dailyLeadEngine",
-      "description": "Run the daily lead generation engine"
+      "description": "Daily lead generation"
     },
     {
       "function_name": "propertyLookup",
-      "description": "Deterministic property sqft lookup via RentCast + OSM + Browserbase"
+      "description": "Property sqft lookup"
     },
     {
       "function_name": "ragPipeline",
-      "description": "RAG pipeline \u2014 embed and retrieve leads and content"
+      "description": "RAG pipeline"
     },
     {
       "function_name": "graphEngine",
-      "description": "Knowledge graph engine \u2014 entity relationships and traversal"
+      "description": "Knowledge graph"
     },
     {
       "function_name": "intelligenceSync",
@@ -381,11 +381,11 @@
     },
     {
       "function_name": "rebrandStudio",
-      "description": "Generate logos and rebrand sites in bulk"
+      "description": "Rebrand sites in bulk"
     },
     {
       "function_name": "seoGenerator",
-      "description": "Generate SEO content at scale"
+      "description": "Generate SEO content"
     }
   ],
   "context_files": [],
