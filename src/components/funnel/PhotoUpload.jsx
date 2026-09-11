@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
+import { uploadFile } from "@/lib/gateway";
 import { Camera, Loader2, X } from "lucide-react";
 
 // Photo uploader used inside the funnel questionnaire. `photos` is an array of
@@ -14,7 +15,7 @@ export default function PhotoUpload({ photos = [], onChange }) {
     try {
       const urls = [];
       for (const file of files) {
-        const { file_url } = await base44.integrations.Core.UploadFile({ file });
+        const { file_url } = await uploadFile(file);
         urls.push(file_url);
       }
       onChange([...photos, ...urls]);

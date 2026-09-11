@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { base44 } from "@/api/base44Client";
+import { uploadFile } from "@/lib/gateway";
 import { ArrowRight, ArrowLeft, Upload, CheckCircle2, Loader2, Send, MapPin, Sparkles, PenTool } from "lucide-react";
 import { getSystemColorRecords } from "@/lib/floorColors";
 import { FLOOR_SYSTEM_DATA } from "@/data/colorData";
@@ -65,7 +66,7 @@ export default function BidGenerator({ onTabChange }) {
     if (!file) return;
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await uploadFile(file);
       update({ photos: [file_url] });
     } catch {}
     setUploading(false);
@@ -131,9 +132,7 @@ export default function BidGenerator({ onTabChange }) {
       if (data.email) {
         try {
           const pdfBytes = generateBidPdf(lead, null, window.location.origin);
-          const { file_url } = await base44.integrations.Core.UploadFile({
-            file: new File([pdfBytes], "Proposal.pdf", { type: "application/pdf" }),
-          });
+          const { file_url } = await uploadFile(new File([pdfBytes], "Proposal.pdf", { type: "application/pdf" }));
           await base44.functions.invoke("sendEstimateEmail", {
             lead_id: lead.id,
             floor_image_url: data.conceptImage || undefined,

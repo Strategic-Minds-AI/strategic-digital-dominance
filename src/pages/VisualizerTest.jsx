@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Loader2, Upload, Wand2, AlertCircle, Sparkles } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { uploadFile } from "@/lib/gateway";
 import { getSystemColorRecords } from "@/lib/floorColors";
 import { FLOOR_SYSTEM_DATA } from "@/data/colorData";
 import { AI_DISCLOSURE } from "@/lib/brand";
@@ -53,7 +54,7 @@ export default function VisualizerTest() {
     setUploadedUrl("");
     setConceptUrl("");
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await uploadFile(file);
       setUploadedUrl(file_url);
     } catch {
       // data URL fallback — AI gen needs a public URL, so show error if upload fails

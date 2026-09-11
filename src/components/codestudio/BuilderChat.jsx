@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
+import { uploadFile } from "@/lib/gateway";
 import ReactMarkdown from "react-markdown";
 import { Bot, Send, Plus, Loader2, Paperclip, X } from "lucide-react";
 
@@ -95,7 +96,7 @@ export default function BuilderChat({ onFileAttached }) {
     if (!file) return;
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await uploadFile(file);
       setAttachments([...attachments, { name: file.name, url: file_url }]);
       onFileAttached?.(file_url);
     } catch (e) { console.error(e); }

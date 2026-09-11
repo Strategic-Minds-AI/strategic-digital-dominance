@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
+import { uploadFile } from "@/lib/gateway";
 import { useSettings } from "@/lib/useSettings";
 import { calcEstimate, calcLeadScore, money } from "@/lib/pricing";
 import { trackEvent, getDeviceType } from "@/lib/tracking";
@@ -57,9 +58,7 @@ export default function Funnel() {
         try {
           const lead = await base44.entities.Lead.get(leadId);
           const pdfBytes = generateBidPdf(lead, settings, window.location.origin);
-          const { file_url } = await base44.integrations.Core.UploadFile({
-            file: new File([pdfBytes], "Garage-Floor-Estimate.pdf", { type: "application/pdf" }),
-          });
+          const { file_url } = await uploadFile(new File([pdfBytes], "Garage-Floor-Estimate.pdf", { type: "application/pdf" }));
           await base44.functions.invoke("sendEstimateEmail", {
             lead_id: leadId,
             floor_image_url: floorImage || undefined,

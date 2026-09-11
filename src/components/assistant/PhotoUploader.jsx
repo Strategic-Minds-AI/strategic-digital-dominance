@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Upload, X, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { uploadFile } from "@/lib/gateway";
 
 const MAX = 10;
 
@@ -15,7 +16,7 @@ export default function PhotoUploader({ photos, setPhotos }) {
     try {
       const uploaded = await Promise.all(
         toUpload.map(async (file) => {
-          const { file_url } = await base44.integrations.Core.UploadFile({ file });
+          const { file_url } = await uploadFile(file);
           return { url: file_url };
         })
       );

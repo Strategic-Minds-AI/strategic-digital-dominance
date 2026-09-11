@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
+import { sendEmail } from "@/lib/gateway";
 import { Loader2, MessageSquare, Phone, Mail, Send } from "lucide-react";
 
 export default function ContractorInbox() {
@@ -23,7 +24,7 @@ export default function ContractorInbox() {
     if (!message.trim() || !selected?.email) return;
     setSending(true);
     try {
-      await base44.integrations.Core.SendEmail({
+      await sendEmail({
         to: selected.email,
         subject: `Update on your garage floor project — ${selected.first_name}`,
         body: message,

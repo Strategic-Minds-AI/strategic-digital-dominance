@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
+import { uploadFile } from "@/lib/gateway";
 import BuilderToolbar from "@/components/codestudio/BuilderToolbar";
 import BuilderChat from "@/components/codestudio/BuilderChat";
 import BuilderEditor from "@/components/codestudio/BuilderEditor";
@@ -37,7 +38,7 @@ export default function CodeStudio() {
   const handleUpload = async (file) => {
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await uploadFile(file);
       setUploadedFileUrl(file_url);
     } catch (e) { console.error(e); }
     setUploading(false);

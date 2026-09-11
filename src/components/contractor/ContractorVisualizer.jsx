@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { useSettings } from "@/lib/useSettings";
 import { calcEstimate, money } from "@/lib/pricing";
 import { COLOR_DATA } from "@/lib/colorData";
+import { uploadFile } from "@/lib/gateway";
 
 const GOLD_GRADIENT = "linear-gradient(180deg, #FFF6D5 0%, #D4AF37 45%, #8B6914 100%)";
 
@@ -111,8 +112,8 @@ export default function ContractorVisualizer({ onClose }) {
       let uploadedPhotoUrl = "";
       if (photoFile) {
         try {
-          const res = await base44.integrations.Core.UploadPublicFile({ file: photoFile });
-          uploadedPhotoUrl = res?.file_url || "";
+          const uploadRes = await uploadFile(photoFile);
+          uploadedPhotoUrl = uploadRes?.file_url || "";
         } catch (uploadErr) {
           console.error("Photo upload failed (credits may be exhausted):", uploadErr);
         }

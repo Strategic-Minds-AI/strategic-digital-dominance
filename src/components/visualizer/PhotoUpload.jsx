@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { base44 } from "@/api/base44Client";
+import { uploadFile } from "@/lib/gateway";
 import { Upload, Loader2, Trash2 } from "lucide-react";
 import { Image } from "@/components/ui/image";
 
@@ -25,7 +26,7 @@ export default function PhotoUpload({ photoUrls = [], onUploaded }) {
     setBusy(true);
     try {
       const uploaded = await Promise.all(
-        list.map((file) => base44.integrations.Core.UploadFile({ file }))
+        list.map((file) => uploadFile(file))
       );
       const newUrls = uploaded.map((r) => r.file_url);
       onUploaded([...photoUrls, ...newUrls]);

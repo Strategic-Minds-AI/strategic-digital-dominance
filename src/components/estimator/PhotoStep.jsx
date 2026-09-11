@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import StepShell, { PrimaryButton } from "./StepShell";
 import { base44 } from "@/api/base44Client";
+import { uploadFile } from "@/lib/gateway";
 import { Camera, Loader2, X } from "lucide-react";
 
 export default function PhotoStep({ data, update, onNext, onBack }) {
@@ -13,7 +14,7 @@ export default function PhotoStep({ data, update, onNext, onBack }) {
     setUploading(true);
     const urls = [];
     for (const file of files) {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await uploadFile(file);
       urls.push(file_url);
     }
     update({ photos: [...photos, ...urls] });

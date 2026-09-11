@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Upload, Loader2, Save, Trash2, X, Sparkles } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { uploadFile } from "@/lib/gateway";
 import { COLOR_DATA } from "@/lib/colorData";
 import { Image } from "@/components/ui/image";
 import BeforeAfter from "@/components/funnel/BeforeAfter";
@@ -54,7 +55,7 @@ export default function AppVisualizer({ appData }) {
     if (!file) return;
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await uploadFile(file);
       setPhotoUrl(file_url);
       setSelectedColor(null);
       setAfterUrl("");
