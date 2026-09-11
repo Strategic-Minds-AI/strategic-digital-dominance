@@ -48,7 +48,7 @@ export default function InstallAppButton({ variant = "light" }) {
       }`}
     >
       <Download className="h-5 w-5" />
-      Download the App
+      Download the App and Save
     </button>
   );
 }
