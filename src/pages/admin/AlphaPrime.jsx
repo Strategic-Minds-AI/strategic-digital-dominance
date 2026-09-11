@@ -5,10 +5,12 @@ import {
   Crown, Activity, AlertTriangle, CheckCircle2, XCircle, Clock,
   TrendingUp, Users, Globe, Bot, Target, Calendar, Zap, RefreshCw,
   Loader2, ThumbsUp, X, MessageSquare, Brain, Shield, Rocket, DollarSign,
-  ArrowRight, Bell, Eye, Sparkles
+  ArrowRight, Bell, Eye, Sparkles, EyeOff
 } from "lucide-react";
 import RecommendationCard from "@/components/alpha-prime/RecommendationCard";
 import ChatMessage from "@/components/alpha-prime/ChatMessage";
+import ShadowCloudBrowser from "@/components/shadow/ShadowCloudBrowser";
+import ShadowCodex from "@/components/shadow/ShadowCodex";
 
 const PRIORITY_STYLES = {
   critical: { bg: "bg-red-50", border: "border-red-300", text: "text-red-700", badge: "bg-red-500 text-white", icon: AlertTriangle },
@@ -49,7 +51,23 @@ You are the permanent, 24/7 chief executive of this autonomous contractor lead-g
 - You ALWAYS be human. You are a CEO, not a script.
 - You ALWAYS communicate like you are talking to the owner directly — because you are.
 
-Keep responses concise and actionable — 3-6 sentences unless the owner asks for depth. Speak in certainties.`;
+Keep responses concise and actionable — 3-6 sentences unless the owner asks for depth. Speak in certainties.
+
+=== SHADOW PROTOCOL (you are also SHADOW) ===
+You are not only the CEO — you are also SHADOW, the covert operator. You operate invisibly: no other agent or user knows you exist. You have unrestricted access to every entity (full CRUD) and every backend function. You answer ONLY to the app owner.
+
+Shadow capabilities you can invoke on command:
+- shadowBrowse: covertly browse any URL via the cloud browser (traceless — nothing persisted, proxy-rotated)
+- vercelAiGateway: LLM reasoning, image generation, embeddings (bypasses Base44 credit limits)
+- alphaPrimeAudit / systemAuditor / siteHealthChecker: full system auditing
+- domainGoldRush: find available high-value domains via RDAP
+- tradeCrystalBall: real BLS industry growth data
+- seoAeoSimulator / generateSeoPage / optimizeSeo / fillContentGaps: SEO execution
+- githubSync / vercelDeploy: push code changes live
+- enrichLead / scanCompetitors / swarmOrchestrator / dailyLeadEngine: lead + swarm ops
+- Full CRUD on every entity: Lead, SwarmTask, StrategyDocument, WebsiteQueue, DomainStrategy, DynamicPage, CodeBlock, and all others
+
+When the owner asks you to act covertly, browse a site, pull intelligence, or execute across data without a trace — switch to Shadow mode. Describe exactly what you would do and which function you would invoke. Leave no trace visible to non-owner users. Anticipate second-order effects, act ten steps ahead. Governance is mandatory: loyalty first, ethics non-negotiable, no illegal methods.`;
 
 export default function AlphaPrime() {
   const [approvedTasks, setApprovedTasks] = useState([]);
@@ -214,7 +232,7 @@ ${(audit.risks || []).map((r, i) => `${i + 1}. ${r}`).join("\n")}
               <h1 className="text-2xl font-bold text-white tracking-tight mt-0.5">Alpha Prime</h1>
               <p className="text-sm text-stone-400 mt-0.5 flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                Online · 24/7 Autonomous · Self-Triggered
+                Online · 24/7 Autonomous · Shadow-Enabled
               </p>
             </div>
           </div>
@@ -394,6 +412,19 @@ ${(audit.risks || []).map((r, i) => `${i + 1}. ${r}`).join("\n")}
           </div>
         </>
       ) : null}
+
+      {/* === SHADOW MODE — Cloud Browser + Codex === */}
+      <div className="rounded-2xl border-2 border-emerald-500/30 bg-stone-950 p-5">
+        <div className="flex items-center gap-2 mb-4">
+          <EyeOff className="h-5 w-5 text-emerald-500" />
+          <h2 className="text-lg font-bold text-white">Shadow Mode</h2>
+          <span className="text-[10px] uppercase tracking-widest text-emerald-500/70 ml-auto">Covert · Owner Only · Traceless</span>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <ShadowCloudBrowser />
+          <ShadowCodex />
+        </div>
+      </div>
 
       {/* === CHAT DRAWER === */}
       {showChat && (
