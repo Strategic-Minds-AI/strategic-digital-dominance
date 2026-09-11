@@ -172,11 +172,9 @@ export default function MobileSection() {
                 </div>
               </div>
 
-              {/* Visualize button */}
+              {/* Download button — inside the phone mockup */}
               <div className="px-3 pt-3">
-                <button className="w-full h-9 rounded-xl flex items-center justify-center gap-1.5 text-[11px] font-extrabold" style={{ background: "linear-gradient(180deg, #FFF6D5 0%, #D4AF37 45%, #8B6914 100%)", border: "2px solid #000", color: "#1a1a1a", boxShadow: "0 4px 12px rgba(212,175,55,.4), inset 0 1px rgba(255,255,255,.4)" }}>
-                  <Wand2 className="h-3.5 w-3.5" /> Visualize My Floor <ArrowRight className="h-3.5 w-3.5" />
-                </button>
+                <InstallAppButton compact label="Download this app and save" />
               </div>
             </div>
 

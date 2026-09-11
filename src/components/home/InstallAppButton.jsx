@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Download, Smartphone, X, Share } from "lucide-react";
 import { usePwaInstall } from "@/lib/usePwaInstall";
 
-export default function InstallAppButton({ variant = "light" }) {
+export default function InstallAppButton({ variant = "light", compact = false, label = "Download the App and Save" }) {
   const { canInstall, isInstalled, promptInstall } = usePwaInstall();
   const [showInstructions, setShowInstructions] = useState(false);
-  const [dismissed, setDismissed] = useState(false);
   const [platform, setPlatform] = useState("other");
 
   useEffect(() => {
@@ -28,9 +27,7 @@ export default function InstallAppButton({ variant = "light" }) {
     else setPlatform("other");
   }, []);
 
-  if (isInstalled || dismissed) return null;
-
-  const dark = variant === "dark";
+  if (isInstalled) return null;
 
   const handleInstall = async () => {
     if (canInstall) {
@@ -40,11 +37,17 @@ export default function InstallAppButton({ variant = "light" }) {
     }
   };
 
-  const buttonClass = `inline-flex h-12 px-6 w-full items-center justify-center gap-2 rounded-xl font-bold transition animate-pop-bounce ${
-    dark
-      ? "bg-amber-500 hover:bg-amber-400 text-stone-950"
-      : "bg-amber-500 hover:bg-amber-400 text-stone-950"
-  }`;
+  const buttonClass = compact
+    ? "w-full h-9 rounded-xl flex items-center justify-center gap-1.5 text-[11px] font-extrabold"
+    : `inline-flex h-12 px-6 w-full items-center justify-center gap-2 rounded-xl font-bold transition animate-pop-bounce ${
+        variant === "dark"
+          ? "bg-amber-500 hover:bg-amber-400 text-stone-950"
+          : "bg-amber-500 hover:bg-amber-400 text-stone-950"
+      }`;
+
+  const compactStyle = compact
+    ? { background: "linear-gradient(180deg, #FFF6D5 0%, #D4AF37 45%, #8B6914 100%)", border: "2px solid #000", color: "#1a1a1a", boxShadow: "0 4px 12px rgba(212,175,55,.4), inset 0 1px rgba(255,255,255,.4)" }
+    : {};
 
   const renderInstructions = () => {
     const steps = {
@@ -122,10 +125,7 @@ export default function InstallAppButton({ variant = "light" }) {
             ))}
           </div>
           <button
-            onClick={() => {
-              setShowInstructions(false);
-              setDismissed(true);
-            }}
+            onClick={() => setShowInstructions(false)}
             className="mt-5 w-full h-11 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-sm transition"
           >
             Got it
@@ -137,9 +137,9 @@ export default function InstallAppButton({ variant = "light" }) {
 
   return (
     <>
-      <button onClick={handleInstall} className={buttonClass}>
-        <Download className="h-5 w-5" />
-        Download the App and Save
+      <button onClick={handleInstall} className={buttonClass} style={compactStyle}>
+        <Download className={compact ? "h-3.5 w-3.5" : "h-5 w-5"} />
+        {label}
       </button>
       {showInstructions && renderInstructions()}
     </>
