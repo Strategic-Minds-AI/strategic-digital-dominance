@@ -83,6 +83,7 @@ import DomainGoldRush from '@/pages/admin/DomainGoldRush';
 import CrystalBall from '@/pages/admin/CrystalBall';
 import SystemMap from '@/pages/admin/SystemMap';
 import AutonomousWorkflows from '@/pages/admin/AutonomousWorkflows';
+import PlaybookLibrary from '@/pages/admin/PlaybookLibrary';
 import Acquire from '@/pages/Acquire';
 import GraphConsole from '@/pages/admin/GraphConsole';
 import CustomerPortal from '@/pages/CustomerPortal';
@@ -147,6 +148,7 @@ const AuthenticatedApp = () => {
         <Route index element={<Dashboard />} />
         <Route path="system-map" element={<SystemMap />} />
         <Route path="workflows" element={<AutonomousWorkflows />} />
+        <Route path="playbooks" element={<PlaybookLibrary />} />
         <Route path="leads" element={<Leads />} />
         <Route path="leads/:id" element={<LeadDetail />} />
         <Route path="pipeline" element={<Pipeline />} />
