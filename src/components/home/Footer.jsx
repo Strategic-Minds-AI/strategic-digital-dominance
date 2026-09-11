@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Phone, Mail, MapPin, Facebook, Instagram, Youtube, Linkedin, Send } from "lucide-react";
 import FooterLocations from "@/components/home/FooterLocations";
+import InstallAppButton from "@/components/home/InstallAppButton";
 import { useSettings } from "@/lib/useSettings";
 
 const QUICK_LINKS = [
@@ -135,6 +136,9 @@ export default function Footer() {
             )}
             <div className="mt-3 text-xs text-stone-600">SUBSCRIBE + LIKE + SHARE</div>
             <div className="mt-1 text-xs text-stone-500">Follow us @xtremepolishingsystems</div>
+            <div className="mt-4">
+              <InstallAppButton variant="dark" />
+            </div>
           </div>
         </div>
 
