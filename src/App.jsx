@@ -77,6 +77,7 @@ import AnalyticsDashboard from '@/pages/admin/AnalyticsDashboard';
 import WebsiteQueue from '@/pages/admin/WebsiteQueue';
 import RagConsole from '@/pages/admin/RagConsole';
 import SystemHealth from '@/pages/admin/SystemHealth';
+import Platform from '@/pages/Platform';
 import GraphConsole from '@/pages/admin/GraphConsole';
 import CustomerPortal from '@/pages/CustomerPortal';
 import ContractorApp from '@/pages/ContractorApp';
@@ -112,6 +113,7 @@ const AuthenticatedApp = () => {
     <CodeInjector />
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/platform" element={<Platform />} />
       <Route path="/estimate" element={<Estimator />} />
       <Route path="/funnel" element={<Funnel />} />
       <Route path="/results/:id" element={<Results />} />
