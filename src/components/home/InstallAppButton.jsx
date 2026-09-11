@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Download, Smartphone, X, Share } from "lucide-react";
 import { usePwaInstall } from "@/lib/usePwaInstall";
 
-export default function InstallAppButton({ variant = "light", compact = false, label = "Download the App and Save" }) {
+export default function InstallAppButton({ variant = "light", compact = false, label = "Download the App and Save", className = "" }) {
   const { canInstall, isInstalled, promptInstall } = usePwaInstall();
   const [showInstructions, setShowInstructions] = useState(false);
   const [platform, setPlatform] = useState("other");
@@ -37,13 +37,15 @@ export default function InstallAppButton({ variant = "light", compact = false, l
     }
   };
 
-  const buttonClass = compact
-    ? "w-full h-9 rounded-xl flex items-center justify-center gap-1.5 text-[11px] font-extrabold"
-    : `inline-flex h-12 px-6 w-full items-center justify-center gap-2 rounded-xl font-bold transition animate-pop-bounce ${
-        variant === "dark"
-          ? "bg-amber-500 hover:bg-amber-400 text-stone-950"
-          : "bg-amber-500 hover:bg-amber-400 text-stone-950"
-      }`;
+  const buttonClass = className
+    ? className
+    : compact
+      ? "w-full h-9 rounded-xl flex items-center justify-center gap-1.5 text-[11px] font-extrabold"
+      : `inline-flex h-12 px-6 w-full items-center justify-center gap-2 rounded-xl font-bold transition animate-pop-bounce ${
+          variant === "dark"
+            ? "bg-amber-500 hover:bg-amber-400 text-stone-950"
+            : "bg-amber-500 hover:bg-amber-400 text-stone-950"
+        }`;
 
   const compactStyle = compact
     ? { background: "linear-gradient(180deg, #FFF6D5 0%, #D4AF37 45%, #8B6914 100%)", border: "2px solid #000", color: "#1a1a1a", boxShadow: "0 4px 12px rgba(212,175,55,.4), inset 0 1px rgba(255,255,255,.4)" }
