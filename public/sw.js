@@ -1,6 +1,3 @@
-// Epoxy Garage Floor Estimates — Service Worker
-// Caches the app shell for offline use and fast loading after install.
-
 const CACHE_NAME = "epoxy-floors-v1";
 const APP_SHELL = [
   "/",
@@ -8,6 +5,7 @@ const APP_SHELL = [
   "/manifest.json",
 ];
 
+// Install — pre-cache the app shell
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)).catch(() => {})
@@ -15,6 +13,7 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
+// Activate — clean up old caches
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -24,47 +23,43 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
+// Fetch — network-first for navigation, cache-first for static assets
 self.addEventListener("fetch", (event) => {
   const { request } = event;
 
-  // Only handle GET requests
+  // Only handle GET
   if (request.method !== "GET") return;
 
   const url = new URL(request.url);
 
-  // Network-first for navigation requests (HTML pages) — always get fresh content
+  // Skip cross-origin requests (APIs, media, etc.)
+  if (url.origin !== self.location.origin) return;
+
+  // Navigation requests — network first, fall back to cached index.html
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request)
         .then((response) => {
           const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy)).catch(() => {});
+          caches.open(CACHE_NAME).then((cache) => cache.put("/index.html", copy));
           return response;
         })
-        .catch(() => caches.match(request).then((cached) => cached || caches.match("/index.html")))
+        .catch(() => caches.match("/index.html").then((r) => r || caches.match("/")))
     );
     return;
   }
 
-  // Cache-first for static assets (JS, CSS, images, fonts)
-  if (url.origin === self.location.origin || url.hostname.includes("base44.com") || url.hostname.includes("wixstatic.com")) {
-    event.respondWith(
-      caches.match(request).then((cached) => {
-        if (cached) return cached;
-        return fetch(request)
-          .then((response) => {
-            if (response && response.status === 200) {
-              const copy = response.clone();
-              caches.open(CACHE_NAME).then((cache) => cache.put(request, copy)).catch(() => {});
-            }
-            return response;
-          })
-          .catch(() => cached);
-      })
-    );
-    return;
-  }
-
-  // Default — try network, fall back to cache
-  event.respondWith(fetch(request).catch(() => caches.match(request)));
+  // Static assets — cache first, fall back to network
+  event.respondWith(
+    caches.match(request).then((cached) => {
+      if (cached) return cached;
+      return fetch(request).then((response) => {
+        if (response && response.status === 200) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+        }
+        return response;
+      });
+    })
+  );
 });
