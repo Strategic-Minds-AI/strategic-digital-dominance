@@ -281,14 +281,27 @@ export default async function(req: Request): Promise<Response> {
     }
 
     // ── ingestContractors: Batch ingest ContractorRecord records into the vector store ──
+    // Auto-skips already-ingested records by checking rag_documents for existing source_ids.
+    // This lets a scheduled workflow call it repeatedly without tracking offsets.
     if (action === 'ingestContractors') {
-      const batchSize = Math.min(parseInt(body.batch_size) || 50, 100);
+      const batchSize = Math.min(parseInt(body.batch_size) || 100, 200);
       const offset = parseInt(body.offset) || 0;
-      const contractors = await base44.asServiceRole.entities.ContractorRecord.list('-created_date', batchSize, offset);
       const { projectUrl, serviceRoleKey } = await getSupabaseConfig(base44);
+
+      // Fetch existing contractor source_ids from rag_documents to skip re-ingesting
+      const existingRes = await fetch(`${projectUrl}/rest/v1/rag_documents?source_type=eq.contractor&select=source_id`, {
+        headers: { 'Authorization': `Bearer ${serviceRoleKey}`, 'apikey': serviceRoleKey },
+      });
+      const existingRows = existingRes.ok ? await existingRes.json() : [];
+      const existingIds = new Set((existingRows || []).map((r: any) => r.source_id));
+
+      // Fetch a larger window than batchSize so we can skip already-ingested records and still fill the batch
+      const fetchLimit = Math.min(batchSize * 4, 800);
+      const contractors = await base44.asServiceRole.entities.ContractorRecord.list('-created_date', fetchLimit, offset);
+      const toIngest = contractors.filter((c: any) => !existingIds.has(c.id)).slice(0, batchSize);
       let ingested = 0, skipped = 0;
 
-      for (const c of contractors) {
+      for (const c of toIngest) {
         const content = [
           `Contractor: ${c.first_name || ''} ${c.last_name || ''}`,
           `Company: ${c.company_name || 'Independent'}`,
@@ -327,13 +340,14 @@ export default async function(req: Request): Promise<Response> {
         }
       }
 
+      const remainingUningested = contractors.filter((c: any) => !existingIds.has(c.id)).length - toIngest.length;
       return Response.json({
         ok: true,
         ingested,
         skipped,
-        processed: contractors.length,
+        processed: toIngest.length,
         next_offset: offset + contractors.length,
-        has_more: contractors.length === batchSize,
+        has_more: remainingUningested > 0 || contractors.length === fetchLimit,
       });
     }
 

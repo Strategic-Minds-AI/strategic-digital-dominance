@@ -1,0 +1,48 @@
+{
+  "description": "Auto-ingests ContractorRecord data into the RAG vector store in batches of 100 every 5 minutes until all records are embedded. Skips already-ingested records automatically.",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "rag_contractor_ingestion",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "ingest_batch": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "ragPipeline",
+            "args": {
+              "action": "ingestContractors",
+              "batch_size": 100
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Ingest contractor batch",
+            "description": "100 records into RAG vector store"
+          }
+        }
+      }
+    ]
+  },
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "interval",
+      "cron_expression": null,
+      "one_time_date": null,
+      "timezone": "UTC",
+      "interval_value": 5,
+      "interval_unit": "minutes",
+      "interval_anchor": null,
+      "ends_type": "after_count",
+      "ends_on_date": null,
+      "ends_after_count": 30
+    }
+  },
+  "name": "RAG Contractor Ingestion"
+}
