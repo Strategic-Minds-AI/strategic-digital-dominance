@@ -1,0 +1,92 @@
+{
+  "name": "ContractorRecord",
+  "type": "object",
+  "properties": {
+    "company_name": {
+      "type": "string"
+    },
+    "first_name": {
+      "type": "string"
+    },
+    "last_name": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "apt_suite": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "zip": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string"
+    },
+    "salesman": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "pcu": {
+      "type": "string"
+    },
+    "etc": {
+      "type": "string"
+    },
+    "countertops": {
+      "type": "string"
+    },
+    "other": {
+      "type": "string"
+    },
+    "year": {
+      "type": "string"
+    },
+    "raw_data": {
+      "type": "string",
+      "maxLength": 5000
+    }
+  },
+  "required": [
+    "first_name"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

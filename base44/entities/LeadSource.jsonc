@@ -1,0 +1,128 @@
+{
+  "name": "LeadSource",
+  "type": "object",
+  "properties": {
+    "source_id": {
+      "type": "string"
+    },
+    "source_name": {
+      "type": "string"
+    },
+    "canonical_domain": {
+      "type": "string"
+    },
+    "exact_entry_url": {
+      "type": "string"
+    },
+    "parent_company": {
+      "type": "string"
+    },
+    "source_family": {
+      "type": "string"
+    },
+    "audience": {
+      "type": "string"
+    },
+    "residential_or_small_commercial": {
+      "type": "string"
+    },
+    "countries": {
+      "type": "string"
+    },
+    "states_or_markets": {
+      "type": "string"
+    },
+    "project_submission_mechanism": {
+      "type": "string"
+    },
+    "relevant_service_categories": {
+      "type": "string"
+    },
+    "example_relevant_request": {
+      "type": "string"
+    },
+    "current_operating_status": {
+      "type": "string"
+    },
+    "authentication_required": {
+      "type": "string"
+    },
+    "paid_account_required": {
+      "type": "string"
+    },
+    "official_api": {
+      "type": "string"
+    },
+    "permitted_collection_method": {
+      "type": "string"
+    },
+    "pricing_or_cost_model": {
+      "type": "string"
+    },
+    "shared_or_exclusive_lead": {
+      "type": "string"
+    },
+    "geographic_precision": {
+      "type": "string"
+    },
+    "opportunity_score": {
+      "type": "number"
+    },
+    "compliance_grade": {
+      "type": "string"
+    },
+    "priority": {
+      "type": "string"
+    },
+    "duplicate_source_family": {
+      "type": "string"
+    },
+    "evidence_url": {
+      "type": "string"
+    },
+    "verified_date": {
+      "type": "string"
+    },
+    "evidence_status": {
+      "type": "string"
+    },
+    "blocker": {
+      "type": "string"
+    },
+    "recommended_next_action": {
+      "type": "string"
+    },
+    "decision_mode": {
+      "type": "string"
+    },
+    "raw_data": {
+      "type": "string",
+      "maxLength": 15000
+    }
+  },
+  "required": [
+    "source_name"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

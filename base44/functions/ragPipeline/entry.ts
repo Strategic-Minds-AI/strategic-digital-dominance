@@ -27,7 +27,7 @@ import { getSupabaseConfig, runSupabaseSQL } from '../../shared/supabaseClient.t
 // ─────────────────────────────────────────────────────────────────────────────
 
 const EMBEDDING_DIMS = 1536;
-const ALLOWED_SOURCE_TYPES = ['lead', 'strategy', 'competitor', 'market', 'general', 'swarm_audit'];
+const ALLOWED_SOURCE_TYPES = ['lead', 'strategy', 'competitor', 'market', 'general', 'swarm_audit', 'lead_source', 'contractor'];
 
 export default async function(req: Request): Promise<Response> {
   try {
@@ -211,6 +211,129 @@ export default async function(req: Request): Promise<Response> {
         processed: docs.length,
         next_offset: offset + docs.length,
         has_more: docs.length === batchSize,
+      });
+    }
+
+    // ── ingestLeadSources: Batch ingest LeadSource records into the vector store ──
+    if (action === 'ingestLeadSources') {
+      const batchSize = Math.min(parseInt(body.batch_size) || 50, 100);
+      const offset = parseInt(body.offset) || 0;
+      const sources = await base44.asServiceRole.entities.LeadSource.list('-created_date', batchSize, offset);
+      const { projectUrl, serviceRoleKey } = await getSupabaseConfig(base44);
+      let ingested = 0, skipped = 0;
+
+      for (const src of sources) {
+        const content = [
+          `Source: ${src.source_name || ''} (${src.source_id || ''})`,
+          `Domain: ${src.canonical_domain || ''}`,
+          `Family: ${src.source_family || ''}`,
+          `Audience: ${src.audience || ''}`,
+          `Type: ${src.residential_or_small_commercial || ''}`,
+          `Geography: ${src.countries || ''} — ${src.states_or_markets || ''}`,
+          `Submission: ${src.project_submission_mechanism || ''}`,
+          `Categories: ${src.relevant_service_categories || ''}`,
+          `Status: ${src.current_operating_status || ''}`,
+          `Paid: ${src.paid_account_required || ''}  API: ${src.official_api || ''}`,
+          `Collection: ${src.permitted_collection_method || ''}`,
+          `Pricing: ${src.pricing_or_cost_model || ''}`,
+          `Exclusivity: ${src.shared_or_exclusive_lead || ''}`,
+          `Opportunity Score: ${src.opportunity_score || 0}  Grade: ${src.compliance_grade || ''}  Priority: ${src.priority || ''}`,
+          `Blocker: ${src.blocker || 'None'}`,
+          `Next Action: ${src.recommended_next_action || ''}`,
+          `Decision: ${src.decision_mode || ''}`,
+        ].join('\n');
+
+        try {
+          const embRes = await base44.functions.invoke('vercelAiGateway', { action: 'generateEmbedding', text: content.slice(0, 8000) });
+          const embedding = embRes.data?.embedding;
+          if (!embedding) { skipped++; continue; }
+
+          await fetch(`${projectUrl}/rest/v1/rag_documents`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${serviceRoleKey}`,
+              'apikey': serviceRoleKey,
+              'Content-Type': 'application/json',
+              'Prefer': 'resolution=merge-duplicates',
+            },
+            body: JSON.stringify({
+              source_type: 'lead_source',
+              source_id: src.id,
+              content,
+              metadata: { source_name: src.source_name, opportunity_score: src.opportunity_score, priority: src.priority },
+              embedding: `[${embedding.join(',')}]`,
+            }),
+          });
+          ingested++;
+        } catch {
+          skipped++;
+        }
+      }
+
+      return Response.json({
+        ok: true,
+        ingested,
+        skipped,
+        processed: sources.length,
+        next_offset: offset + sources.length,
+        has_more: sources.length === batchSize,
+      });
+    }
+
+    // ── ingestContractors: Batch ingest ContractorRecord records into the vector store ──
+    if (action === 'ingestContractors') {
+      const batchSize = Math.min(parseInt(body.batch_size) || 50, 100);
+      const offset = parseInt(body.offset) || 0;
+      const contractors = await base44.asServiceRole.entities.ContractorRecord.list('-created_date', batchSize, offset);
+      const { projectUrl, serviceRoleKey } = await getSupabaseConfig(base44);
+      let ingested = 0, skipped = 0;
+
+      for (const c of contractors) {
+        const content = [
+          `Contractor: ${c.first_name || ''} ${c.last_name || ''}`,
+          `Company: ${c.company_name || 'Independent'}`,
+          `Location: ${c.city || ''}, ${c.state || ''} ${c.zip || ''}`,
+          `Address: ${c.address || ''}`,
+          `Phone: ${c.phone || ''}  Email: ${c.email || ''}`,
+          `Status: ${c.status || ''}  Year: ${c.year || ''}`,
+          `Salesman: ${c.salesman || ''}  Location: ${c.location || ''}`,
+          `Training: PCU=${c.pcu || ''} ETC=${c.etc || ''} Countertops=${c.countertops || ''}`,
+        ].join('\n');
+
+        try {
+          const embRes = await base44.functions.invoke('vercelAiGateway', { action: 'generateEmbedding', text: content.slice(0, 8000) });
+          const embedding = embRes.data?.embedding;
+          if (!embedding) { skipped++; continue; }
+
+          await fetch(`${projectUrl}/rest/v1/rag_documents`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${serviceRoleKey}`,
+              'apikey': serviceRoleKey,
+              'Content-Type': 'application/json',
+              'Prefer': 'resolution=merge-duplicates',
+            },
+            body: JSON.stringify({
+              source_type: 'contractor',
+              source_id: c.id,
+              content,
+              metadata: { company: c.company_name, state: c.state, city: c.city, status: c.status },
+              embedding: `[${embedding.join(',')}]`,
+            }),
+          });
+          ingested++;
+        } catch {
+          skipped++;
+        }
+      }
+
+      return Response.json({
+        ok: true,
+        ingested,
+        skipped,
+        processed: contractors.length,
+        next_offset: offset + contractors.length,
+        has_more: contractors.length === batchSize,
       });
     }
 
