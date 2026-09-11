@@ -10,6 +10,11 @@ import RouteSeo from '@/components/Seo';
 import { LOGO_URL } from '@/components/Logo';
 // Add page imports here
 import Home from '@/pages/Home';
+import Login from '@/pages/Login';
+import Register from '@/pages/Register';
+import ForgotPassword from '@/pages/ForgotPassword';
+import ResetPassword from '@/pages/ResetPassword';
+import OAuthConsent from '@/pages/OAuthConsent';
 import Estimator from '@/pages/Estimator';
 import Funnel from '@/pages/Funnel';
 import Results from '@/pages/Results';
@@ -121,6 +126,11 @@ const AuthenticatedApp = () => {
     <>
     <CodeInjector />
     <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/oauth/consent" element={<OAuthConsent />} />
       <Route path="/" element={<Home />} />
       <Route path="/estimate" element={<Estimator />} />
       <Route path="/funnel" element={<Funnel />} />
