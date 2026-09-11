@@ -98,6 +98,14 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
       setIsLoadingAuth(false);
       setAuthChecked(true);
+
+      // Redirect to the stored destination after Google OAuth (the SDK's
+      // fromUrl param doesn't always survive the OAuth round-trip)
+      const postOAuthRedirect = sessionStorage.getItem("postOAuthRedirect");
+      if (postOAuthRedirect && postOAuthRedirect !== window.location.pathname) {
+        sessionStorage.removeItem("postOAuthRedirect");
+        window.location.href = postOAuthRedirect;
+      }
     } catch (error) {
       console.error('User auth check failed:', error);
       setIsLoadingAuth(false);

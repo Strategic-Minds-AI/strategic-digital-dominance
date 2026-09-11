@@ -68,7 +68,11 @@ export default function Register() {
   };
 
   const handleGoogle = () => {
-    base44.auth.loginWithProvider("google", safeReturnTo());
+    const dest = safeReturnTo();
+    if (dest && dest !== "/") {
+      sessionStorage.setItem("postOAuthRedirect", dest);
+    }
+    base44.auth.loginWithProvider("google", dest);
   };
 
   if (showOtp) {

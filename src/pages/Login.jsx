@@ -33,6 +33,9 @@ export default function Login() {
   };
 
   const handleGoogle = () => {
+    if (returnTo && returnTo !== "/") {
+      sessionStorage.setItem("postOAuthRedirect", returnTo);
+    }
     base44.auth.loginWithProvider("google", returnTo);
   };
 
