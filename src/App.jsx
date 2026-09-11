@@ -85,6 +85,7 @@ import SystemMap from '@/pages/admin/SystemMap';
 import AutonomousWorkflows from '@/pages/admin/AutonomousWorkflows';
 import PlaybookLibrary from '@/pages/admin/PlaybookLibrary';
 import AlphaPrime from '@/pages/admin/AlphaPrime';
+import Shadow from '@/pages/admin/Shadow';
 import Acquire from '@/pages/Acquire';
 import GraphConsole from '@/pages/admin/GraphConsole';
 import CustomerPortal from '@/pages/CustomerPortal';
@@ -148,6 +149,7 @@ const AuthenticatedApp = () => {
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="alpha-prime" element={<AlphaPrime />} />
+        <Route path="shadow" element={<Shadow />} />
         <Route path="system-map" element={<SystemMap />} />
         <Route path="workflows" element={<AutonomousWorkflows />} />
         <Route path="playbooks" element={<PlaybookLibrary />} />

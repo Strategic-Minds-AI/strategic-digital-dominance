@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, Outlet, Link } from "react-router-dom";
-import { LayoutDashboard, Users, KanbanSquare, Settings, ExternalLink, Mail, Radar, Globe, ScrollText, Star, Wrench, Factory, Smartphone, Rocket, Layers, UserCircle,   TrendingUp, MessageSquare, Brain, Target, BarChart3, Package, Bot, KeyRound, Share2, Wand2, MapPin, Network, Crown, Building2, Code2, Heart, PhoneCall, Activity,   ListOrdered, Database, Workflow, Gauge, Cpu, Sparkles, Boxes, BookOpen } from "lucide-react";
+import { LayoutDashboard, Users, KanbanSquare, Settings, ExternalLink, Mail, Radar, Globe, ScrollText, Star, Wrench, Factory, Smartphone, Rocket, Layers, UserCircle,   TrendingUp, MessageSquare, Brain, Target, BarChart3, Package, Bot, KeyRound, Share2, Wand2, MapPin, Network, Crown, Building2, Code2, Heart, PhoneCall, Activity,   ListOrdered, Database, Workflow, Gauge, Cpu, Sparkles, Boxes, BookOpen, EyeOff } from "lucide-react";
 import BackButton from "@/components/BackButton";
 import Logo from "@/components/Logo";
 import { XTREME_AI_ICON_URL } from "@/components/Logo";
@@ -9,6 +9,7 @@ import AIAssistBubble from "@/components/ai-assist/AIAssistBubble";
 const links = [
   { to: "/admin", end: true, icon: LayoutDashboard, label: "Dashboard" },
   { to: "/admin/alpha-prime", icon: Crown, label: "Alpha Prime" },
+  { to: "/admin/shadow", icon: EyeOff, label: "Shadow" },
   { to: "/admin/system-map", icon: Boxes, label: "System Map" },
   { to: "/admin/workflows", icon: Workflow, label: "Workflows" },
   { to: "/admin/playbooks", icon: BookOpen, label: "Playbooks" },
