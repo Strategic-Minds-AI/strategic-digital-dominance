@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Menu, X, Phone, Sparkles, Package, Image as ImageIcon, BookOpen, HelpCircle, ArrowRight, Home as HomeIcon } from "lucide-react";
+import { Menu, X, Phone, Sparkles, Package, Image as ImageIcon, BookOpen, HelpCircle, ArrowRight, Home as HomeIcon, Camera } from "lucide-react";
 import { LOGO_URL } from "@/components/Logo";
 import VisionWorkflow from "@/components/assistant/VisionWorkflow";
+import ContractorVisualizer from "@/components/contractor/ContractorVisualizer";
 
 const GOLD_GRADIENT = "linear-gradient(180deg, #FFF6D5 0%, #D4AF37 45%, #8B6914 100%)";
 
@@ -32,6 +33,7 @@ const DRAWER_ITEMS = [
 export default function EpoxyProAssistant() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [workflowOpen, setWorkflowOpen] = useState(false);
+  const [visualizerOpen, setVisualizerOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -57,15 +59,15 @@ export default function EpoxyProAssistant() {
           <p className="text-[11px] text-stone-500 mt-2">Welcome — let's visualize your new floor</p>
         </div>
 
-        {/* Vision Starts Here button */}
+        {/* Start New Estimate button — opens the contractor visualizer */}
         <button
-          onClick={() => setWorkflowOpen(true)}
+          onClick={() => setVisualizerOpen(true)}
           className="w-full h-14 rounded-xl flex items-center justify-center gap-2 text-[14px] font-bold transition"
           style={{ background: GOLD_GRADIENT, border: "2px solid #000", color: "#1a1a1a", boxShadow: "0 4px 12px rgba(212,175,55,.4), inset 0 1px rgba(255,255,255,.4)" }}
         >
-          <Sparkles className="h-4 w-4" /> Your Vision Starts Here
+          <Camera className="h-4 w-4" /> + Start New Estimate
         </button>
-        <p className="text-[10px] text-stone-400 text-center mt-1.5">Upload up to 10 photos · Pick your colors · See your new floor</p>
+        <p className="text-[10px] text-stone-400 text-center mt-1.5">Photo · Color · Sq Ft · Instant Bid · SMS or Email to Client</p>
 
         {/* 4 cards */}
         <div className="mt-5 space-y-2.5">
@@ -87,7 +89,7 @@ export default function EpoxyProAssistant() {
       {/* Bottom nav */}
       <div className="fixed bottom-0 inset-x-0 h-[56px] grid grid-cols-4 border-t border-stone-200 bg-white/96 backdrop-blur z-30 px-2 max-w-[450px] mx-auto" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
         {BOTTOM_NAV.map((n, i) => (
-          <button key={i} onClick={() => n.label === "Vision" && setWorkflowOpen(true)} className="flex flex-col items-center gap-0.5">
+          <button key={i} onClick={() => n.label === "Vision" && setVisualizerOpen(true)} className="flex flex-col items-center gap-0.5">
             <n.icon className="h-4 w-4" style={{ color: n.active ? "#D4AF37" : "#9CA3AF" }} strokeWidth={n.active ? 2.2 : 1.8} />
             <span className="text-[8px] font-semibold" style={{ color: n.active ? "#D4AF37" : "#9CA3AF" }}>{n.label}</span>
           </button>
@@ -118,6 +120,9 @@ export default function EpoxyProAssistant() {
 
       {/* Vision Workflow */}
       {workflowOpen && <VisionWorkflow onClose={() => setWorkflowOpen(false)} />}
+
+      {/* Contractor Visualizer */}
+      {visualizerOpen && <ContractorVisualizer onClose={() => setVisualizerOpen(false)} />}
     </div>
   );
 }
