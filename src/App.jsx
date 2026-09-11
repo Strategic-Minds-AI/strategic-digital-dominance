@@ -81,6 +81,8 @@ import Platform from '@/pages/admin/Platform';
 import SeoSimulator from '@/pages/admin/SeoSimulator';
 import DomainGoldRush from '@/pages/admin/DomainGoldRush';
 import CrystalBall from '@/pages/admin/CrystalBall';
+import SystemMap from '@/pages/admin/SystemMap';
+import AutonomousWorkflows from '@/pages/admin/AutonomousWorkflows';
 import Acquire from '@/pages/Acquire';
 import GraphConsole from '@/pages/admin/GraphConsole';
 import CustomerPortal from '@/pages/CustomerPortal';
@@ -143,6 +145,8 @@ const AuthenticatedApp = () => {
       <Route path="/app-settings" element={<AppSettings />} />
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<Dashboard />} />
+        <Route path="system-map" element={<SystemMap />} />
+        <Route path="workflows" element={<AutonomousWorkflows />} />
         <Route path="leads" element={<Leads />} />
         <Route path="leads/:id" element={<LeadDetail />} />
         <Route path="pipeline" element={<Pipeline />} />
