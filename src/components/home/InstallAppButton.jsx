@@ -8,11 +8,7 @@ export default function InstallAppButton({ variant = "light" }) {
 
   if (isInstalled || dismissed) return null;
 
-  // If the browser doesn't support beforeinstallprompt (iOS Safari), show a
-  // hint button that tells the user how to add it manually
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-
-  if (!canInstall && !isIOS) return null;
 
   const handleInstall = async () => {
     if (canInstall) {
@@ -41,7 +37,7 @@ export default function InstallAppButton({ variant = "light" }) {
   return (
     <button
       onClick={handleInstall}
-      className={`inline-flex h-12 px-6 items-center justify-center gap-2 rounded-xl font-bold transition animate-pop-bounce ${
+      className={`inline-flex h-12 px-6 w-full items-center justify-center gap-2 rounded-xl font-bold transition animate-pop-bounce ${
         dark
           ? "bg-amber-500 hover:bg-amber-400 text-stone-950"
           : "bg-amber-500 hover:bg-amber-400 text-stone-950"
