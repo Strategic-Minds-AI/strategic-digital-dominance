@@ -94,6 +94,7 @@ import Shadow from '@/pages/admin/Shadow';
 import Acquire from '@/pages/Acquire';
 import GraphConsole from '@/pages/admin/GraphConsole';
 import CustomerPortal from '@/pages/CustomerPortal';
+import ProtectedRoute from '@/components/ProtectedRoute';
 import ContractorApp from '@/pages/ContractorApp';
 import ContractorBid from '@/pages/ContractorBid';
 import CodeStudio from '@/pages/admin/CodeStudio';
@@ -212,7 +213,9 @@ const AuthenticatedApp = () => {
       <Route path="/:slug" element={<GeneratedPageView />} />
       <Route path="/visualizer-test" element={<VisualizerTest />} />
       <Route path="/tool-hub" element={<ToolHub />} />
-      <Route path="/portal" element={<CustomerPortal />} />
+      <Route path="/portal" element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+        <Route index element={<CustomerPortal />} />
+      </Route>
       <Route path="/acquire" element={<Acquire />} />
       <Route path="/contractor" element={<ContractorApp />} />
       <Route path="/contractor/bid" element={<ContractorBid />} />
