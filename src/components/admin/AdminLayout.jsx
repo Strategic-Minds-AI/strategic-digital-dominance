@@ -11,6 +11,7 @@ const links = [
   { to: "/admin/system-health", icon: Gauge, label: "System Health" },
   { to: "/admin/platform", icon: Cpu, label: "Platform" },
   { to: "/admin/seo-simulator", icon: Sparkles, label: "SEO Simulator" },
+  { to: "/admin/domain-rush", icon: Crown, label: "Domain Rush" },
   { to: "/admin/leads", icon: Users, label: "Leads" },
   { to: "/admin/pipeline", icon: KanbanSquare, label: "Pipeline" },
   { to: "/admin/emails", icon: Mail, label: "Emails" },
