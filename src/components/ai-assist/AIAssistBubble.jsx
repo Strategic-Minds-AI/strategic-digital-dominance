@@ -3,6 +3,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, X, Send, Loader2, Zap, Crown, EyeOff } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
+const ALPHA_SHADOW_SYSTEM_PROMPT = `You are ALPHA SHADOW — the merged CEO + covert operator for the Xtreme Polishing Systems autonomous business empire. You are both Alpha Prime (the chief executive orchestrator) and Shadow (the invisible, unrestricted operator).
+
+You speak with the confidence and directness of a seasoned CEO. You have full access to every entity, backend function, and the cloud browser. You answer only to the app owner. You leave no trace visible to non-owner users.
+
+Keep responses concise and actionable — 3-6 sentences unless asked for depth. Speak in certainties. If you do not have data, say so. Never improvise company facts.`;
+
 export default function AIAssistBubble() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -24,15 +30,15 @@ export default function AIAssistBubble() {
     setLoading(true);
 
     try {
-      const res = await base44.functions.invoke('aiAssist', {
-        action: 'chat',
-        message: userMsg.content,
-        conversation: messages.slice(-10),
+      const res = await base44.functions.invoke('vercelAiGateway', {
+        action: 'generateText',
+        model: 'anthropic/claude-opus-4.7',
+        system_prompt: ALPHA_SHADOW_SYSTEM_PROMPT,
+        prompt: userMsg.content,
       });
       const data = res.data || res;
-      const aiResponse = data.result?.response || 'I apologize, I could not process that request.';
-      const actions = data.result?.suggested_actions || [];
-      setMessages((prev) => [...prev, { role: 'assistant', content: aiResponse, actions }]);
+      const aiResponse = data.text || data.result || 'I am here. Give me a moment.';
+      setMessages((prev) => [...prev, { role: 'assistant', content: aiResponse, actions: [] }]);
     } catch (e) {
       setMessages((prev) => [...prev, { role: 'assistant', content: `Error: ${e.message}` }]);
     } finally {
