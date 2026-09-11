@@ -9,6 +9,8 @@ import LocalModules from "@/components/seo-sim/LocalModules";
 import ContentModules from "@/components/seo-sim/ContentModules";
 import AmplifyModules from "@/components/seo-sim/AmplifyModules";
 import UrlSimulator from "@/components/seo-sim/UrlSimulator";
+import SyncPanel from "@/components/seo-sim/SyncPanel";
+import GeneratorWorkflow from "@/components/seo-sim/GeneratorWorkflow";
 
 // ── Google-Perfected Baseline ──
 // Every ranking factor pre-filled to the optimal value that Google's published
@@ -146,6 +148,8 @@ export default function SeoSimulator() {
   const [loading, setLoading] = useState(false);
   const [savedId, setSavedId] = useState(null);
   const [simName, setSimName] = useState("Google-Perfected Baseline");
+  const [targetUrl, setTargetUrl] = useState("");
+  const [targetSiteUrl, setTargetSiteUrl] = useState("");
   const debounceRef = useRef();
 
   // Load saved simulations list
@@ -184,6 +188,22 @@ export default function SeoSimulator() {
   const updatePageContent = (page_content) => setSim((s) => ({ ...s, page_content }));
   const updateModules = (modules) => setSim((s) => ({ ...s, modules }));
   const updateKeyword = (target_keyword) => setSim((s) => ({ ...s, target_keyword }));
+
+  // Apply live sync data from connected accounts into the simulator
+  const handleApplySyncData = (moduleUpdates) => {
+    setSim((s) => ({
+      ...s,
+      modules: {
+        ...s.modules,
+        ...Object.fromEntries(
+          Object.entries(moduleUpdates).map(([key, val]) => [
+            key,
+            { ...(s.modules[key] || {}), ...val },
+          ])
+        ),
+      },
+    }));
+  };
 
   const handleSave = async () => {
     try {
@@ -309,6 +329,45 @@ export default function SeoSimulator() {
       <div>
         <h2 className="text-sm font-bold uppercase tracking-wider text-stone-500 mb-2">URL Simulator — Score Any Page</h2>
         <UrlSimulator />
+      </div>
+
+      {/* 5. Target URL for sync + generator */}
+      <div className="bg-white rounded-2xl border border-stone-200 p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <label className="text-xs font-bold uppercase tracking-wider text-stone-500">Target Page URL (for sync & generator)</label>
+          <input
+            value={targetUrl}
+            onChange={(e) => setTargetUrl(e.target.value)}
+            placeholder="https://epoxyquotenearme.com/"
+            className="w-full mt-1 px-3 py-2 text-sm border border-stone-200 rounded-lg focus:border-amber-500 outline-none"
+          />
+        </div>
+        <div>
+          <label className="text-xs font-bold uppercase tracking-wider text-stone-500">GSC Site URL</label>
+          <input
+            value={targetSiteUrl}
+            onChange={(e) => setTargetSiteUrl(e.target.value)}
+            placeholder="sc-domain:epoxyquotenearme.com"
+            className="w-full mt-1 px-3 py-2 text-sm border border-stone-200 rounded-lg focus:border-amber-500 outline-none"
+          />
+        </div>
+      </div>
+
+      {/* 6. Live Account Sync */}
+      <div>
+        <h2 className="text-sm font-bold uppercase tracking-wider text-stone-500 mb-2">Live Account Sync — Pull Real Data</h2>
+        <SyncPanel keyword={sim.target_keyword} url={targetUrl} siteUrl={targetSiteUrl} onApplyData={handleApplySyncData} />
+      </div>
+
+      {/* 7. Generator Workflow */}
+      <div>
+        <h2 className="text-sm font-bold uppercase tracking-wider text-stone-500 mb-2">Generator Workflow — Automate Everything</h2>
+        <GeneratorWorkflow
+          keyword={sim.target_keyword}
+          url={targetUrl}
+          siteUrl={targetSiteUrl}
+          sitemapUrl="/sitemap.xml"
+        />
       </div>
 
       {/* 5. Interactive modules */}
