@@ -13,19 +13,20 @@ import { createClientFromRequest } from "npm:@base44/sdk@0.8.40";
 // ============================================================
 
 // Trade industries with BLS CES series IDs
-// CEU{NAICS6}0001 = All Employees, Thousands
-// CEU{NAICS6}0003 = Average Hourly Earnings, Dollars
+// CES format: CEU + 8-digit industry code + 2-digit data type
+// Construction supersector = 20, so industry code = 20 + 6-digit NAICS
+// Data type 01 = All Employees (thousands), 03 = Average Hourly Earnings ($/hr)
 const TRADE_INDUSTRIES = [
-  { naics: "238330", name: "Flooring Contractors", category: "Flooring", emp_series: "CEU2383300001", wage_series: "CEU2383300003" },
-  { naics: "238320", name: "Painting & Wall Covering", category: "Painting", emp_series: "CEU2383200001", wage_series: "CEU2383200003" },
-  { naics: "238310", name: "Drywall & Insulation", category: "Drywall", emp_series: "CEU2383100001", wage_series: "CEU2383100003" },
-  { naics: "238110", name: "Poured Concrete Foundation", category: "Concrete", emp_series: "CEU2381100001", wage_series: "CEU2381100003" },
-  { naics: "238160", name: "Roofing Contractors", category: "Roofing", emp_series: "CEU2381600001", wage_series: "CEU2381600003" },
-  { naics: "238210", name: "Electrical Contractors", category: "Electrical", emp_series: "CEU2382100001", wage_series: "CEU2382100003" },
-  { naics: "238220", name: "Plumbing & HVAC", category: "Plumbing", emp_series: "CEU2382200001", wage_series: "CEU2382200003" },
-  { naics: "238350", name: "Finish Carpentry", category: "Carpentry", emp_series: "CEU2383500001", wage_series: "CEU2383500003" },
-  { naics: "238990", name: "Other Specialty Trade", category: "Other", emp_series: "CEU2389900001", wage_series: "CEU2389900003" },
-  { naics: "236220", name: "Commercial Construction", category: "Construction", emp_series: "CEU2362200001", wage_series: "CEU2362200003" },
+  { naics: "238330", name: "Flooring Contractors", category: "Flooring", emp_series: "CEU2023833001", wage_series: "CEU2023833003" },
+  { naics: "238320", name: "Painting & Wall Covering", category: "Painting", emp_series: "CEU2023832001", wage_series: "CEU2023832003" },
+  { naics: "238310", name: "Drywall & Insulation", category: "Drywall", emp_series: "CEU2023831001", wage_series: "CEU2023831003" },
+  { naics: "238110", name: "Poured Concrete Foundation", category: "Concrete", emp_series: "CEU2023811001", wage_series: "CEU2023811003" },
+  { naics: "238160", name: "Roofing Contractors", category: "Roofing", emp_series: "CEU2023816001", wage_series: "CEU2023816003" },
+  { naics: "238210", name: "Electrical Contractors", category: "Electrical", emp_series: "CEU2023821001", wage_series: "CEU2023821003" },
+  { naics: "238220", name: "Plumbing & HVAC", category: "Plumbing", emp_series: "CEU2023822001", wage_series: "CEU2023822003" },
+  { naics: "238350", name: "Finish Carpentry", category: "Carpentry", emp_series: "CEU2023835001", wage_series: "CEU2023835003" },
+  { naics: "238990", name: "Other Specialty Trade", category: "Other", emp_series: "CEU2023899001", wage_series: "CEU2023899003" },
+  { naics: "236220", name: "Commercial Construction", category: "Construction", emp_series: "CEU2023622001", wage_series: "CEU2023622003" },
 ];
 
 interface AnnualData {
