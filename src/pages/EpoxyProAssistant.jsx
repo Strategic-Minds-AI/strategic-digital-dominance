@@ -6,6 +6,7 @@ import {
   User,
   Download,
   ChevronRight,
+  Plus,
   Play,
   Search,
   Calculator,
@@ -119,7 +120,7 @@ export default function EpoxyProAssistant() {
               className="mt-3 inline-flex items-center gap-1.5 rounded-full px-5 h-11 text-[14px] font-extrabold text-black self-start"
               style={{ background: GOLD, boxShadow: SHADOW_HERO_BTN }}
             >
-              + Start New Estimate <ChevronRight className="h-4 w-4" />
+              <Plus className="h-4 w-4" /> Start New Estimate <ChevronRight className="h-4 w-4" />
             </button>
           </div>
         </section>
@@ -138,41 +139,41 @@ export default function EpoxyProAssistant() {
               <button
                 key={card.title}
                 onClick={() => setVisualizerOpen(true)}
-                className="flex flex-col gap-2 rounded-2xl bg-white p-3.5 text-left transition"
+                className="flex items-start gap-2.5 rounded-2xl bg-white p-3 text-left transition border border-stone-200"
                 style={{ boxShadow: SHADOW_CARD }}
                 onMouseEnter={(e) => (e.currentTarget.style.boxShadow = SHADOW_CARD_HOVER)}
                 onMouseLeave={(e) => (e.currentTarget.style.boxShadow = SHADOW_CARD)}
               >
-                <div className="flex items-center justify-between">
-                  <div
-                    className="h-10 w-10 rounded-xl flex items-center justify-center"
-                    style={{ background: "#F5F5F5" }}
-                  >
-                    <card.icon className="h-5 w-5 text-black" strokeWidth={2} />
+                <div
+                  className="h-9 w-9 rounded-lg flex items-center justify-center shrink-0"
+                  style={{ background: "#F5F5F5" }}
+                >
+                  <card.icon className="h-4 w-4 text-black" strokeWidth={2} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[12px] font-bold text-black leading-tight">
+                      {card.title}
+                    </span>
                   </div>
                   <span
-                    className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                    className="inline-block mt-1 text-[9px] font-bold px-1.5 py-0.5 rounded-full"
                     style={{ background: BADGE_YELLOW, color: "#5a4a00" }}
                   >
                     {card.badge}
                   </span>
-                </div>
-                <div>
-                  <div className="text-[13px] font-bold text-black leading-tight">
-                    {card.title}
-                  </div>
-                  <div className="flex items-center gap-1 mt-1">
+                  <div className="flex items-center gap-1 mt-1.5">
                     <Play
                       className="h-2.5 w-2.5 fill-current"
                       style={{ color: GOLD }}
                       strokeWidth={0}
                     />
-                    <span className="text-[10px] font-medium text-stone-500">
+                    <span className="text-[9px] font-medium text-stone-500">
                       Guided workflow
                     </span>
                   </div>
                 </div>
-                <ChevronRight className="h-4 w-4 text-stone-300 self-end" />
+                <ChevronRight className="h-4 w-4 text-stone-300 shrink-0 mt-1" />
               </button>
             ))}
           </div>
@@ -182,7 +183,7 @@ export default function EpoxyProAssistant() {
         <section className="px-4 pt-4">
           <button
             onClick={() => setVisualizerOpen(true)}
-            className="w-full flex items-center gap-3 rounded-2xl bg-white p-4 text-left transition"
+            className="w-full flex items-center gap-3 rounded-2xl bg-white p-4 text-left transition border border-stone-200"
             style={{ boxShadow: SHADOW_CARD }}
             onMouseEnter={(e) => (e.currentTarget.style.boxShadow = SHADOW_CARD_HOVER)}
             onMouseLeave={(e) => (e.currentTarget.style.boxShadow = SHADOW_CARD)}
@@ -207,10 +208,10 @@ export default function EpoxyProAssistant() {
         <section className="px-4 pt-3">
           <button
             onClick={() => setVisualizerOpen(true)}
-            className="w-full flex items-center gap-3 rounded-2xl bg-black p-4 text-left transition"
-            style={{ boxShadow: SHADOW_AI_BAR }}
+            className="w-full flex items-center gap-3 rounded-2xl p-4 text-left transition"
+            style={{ background: "#1A1A1A", boxShadow: SHADOW_AI_BAR }}
           >
-            <div className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0 bg-stone-900">
+            <div className="h-10 w-10 rounded-full flex items-center justify-center shrink-0" style={{ background: "#2A2A2A" }}>
               <Sparkles className="h-5 w-5" style={{ color: GOLD }} />
             </div>
             <div className="flex-1 min-w-0">
@@ -219,7 +220,7 @@ export default function EpoxyProAssistant() {
                 Get answers, ideas and next steps.
               </div>
             </div>
-            <ChevronRight className="h-5 w-5 text-stone-500 shrink-0" />
+            <ChevronRight className="h-5 w-5 text-white shrink-0" />
           </button>
         </section>
       </main>
