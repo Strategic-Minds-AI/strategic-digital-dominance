@@ -67,9 +67,6 @@ export default function Nav({ settings }) {
           </div>
 
           <div className="flex items-center gap-2 md:hidden">
-            <a href={`sms:${settings.automation_phone || "+1-833-700-1239"}`} className="flex h-9 items-center gap-1.5 px-3 rounded-lg text-xs font-bold transition bg-stone-900/80 border border-amber-500/50 text-amber-400">
-              <Smartphone className="h-4 w-4" /> Text
-            </a>
             <a href={`tel:${settings.phone}`} className="flex h-9 items-center gap-1.5 px-3 rounded-lg text-xs font-bold transition" style={{ background: 'linear-gradient(180deg, #FFE25A 0%, #FFD700 45%, #C8A300 100%)', border: '2px solid #000', color: '#1a1a1a', boxShadow: '0 3px 8px rgba(255,215,0,.35), inset 0 1px rgba(255,255,255,.4)' }}>
               <Phone className="h-4 w-4" /> Call
             </a>
