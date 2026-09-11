@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import {
   Camera, Palette, Sparkles, ArrowRight, Eye, Layers,
-  Wand2, CheckCircle2, MoveHorizontal, LogIn,
+  Wand2, CheckCircle2, MoveHorizontal,
 } from "lucide-react";
 import { LOGO_URL } from "@/components/Logo";
 import { Image } from "@/components/ui/image";
@@ -201,12 +201,6 @@ export default function MobileSection() {
           <div className="w-full max-w-[300px]">
             <InstallAppButton variant="dark" />
           </div>
-          <Link
-            to="/login?returnTo=/portal"
-            className="inline-flex h-12 px-8 items-center justify-center gap-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold transition animate-pop-bounce"
-          >
-            <LogIn className="h-5 w-5" /> Client Portal Sign In
-          </Link>
         </div>
       </div>
     </section>
