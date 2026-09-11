@@ -1,0 +1,118 @@
+{
+  "name": "MarketplaceListing",
+  "type": "object",
+  "properties": {
+    "domain": {
+      "type": "string",
+      "description": "The domain name of the site for sale"
+    },
+    "niche": {
+      "type": "string",
+      "enum": [
+        "epoxy_garage",
+        "decorative_concrete",
+        "polished_concrete",
+        "epoxy_flooring",
+        "garage_coating",
+        "concrete_resurfacing",
+        "roofing",
+        "plumbing",
+        "electrical",
+        "hvac",
+        "painting",
+        "drywall",
+        "flooring",
+        "other"
+      ],
+      "description": "Trade industry this site serves"
+    },
+    "city": {
+      "type": "string",
+      "description": "Target city (null for national sites)"
+    },
+    "state": {
+      "type": "string"
+    },
+    "keyword": {
+      "type": "string",
+      "description": "Primary keyword the site ranks for"
+    },
+    "google_rank": {
+      "type": "number",
+      "description": "Current Google rank position for primary keyword"
+    },
+    "monthly_visitors": {
+      "type": "number",
+      "default": 0
+    },
+    "monthly_leads": {
+      "type": "number",
+      "default": 0,
+      "description": "Average leads generated per month"
+    },
+    "monthly_revenue": {
+      "type": "number",
+      "default": 0,
+      "description": "Monthly revenue the site currently produces"
+    },
+    "asking_price": {
+      "type": "number",
+      "description": "Asking price in dollars"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "for_sale",
+        "under_contract",
+        "sold",
+        "coming_soon"
+      ],
+      "default": "for_sale"
+    },
+    "highlights": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "image_url": {
+      "type": "string"
+    },
+    "live_url": {
+      "type": "string"
+    },
+    "years_live": {
+      "type": "number",
+      "default": 0,
+      "description": "How long the site has been live and generating leads"
+    }
+  },
+  "required": [
+    "domain",
+    "niche",
+    "asking_price"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

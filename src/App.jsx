@@ -80,6 +80,8 @@ import SystemHealth from '@/pages/admin/SystemHealth';
 import Platform from '@/pages/admin/Platform';
 import SeoSimulator from '@/pages/admin/SeoSimulator';
 import DomainGoldRush from '@/pages/admin/DomainGoldRush';
+import CrystalBall from '@/pages/admin/CrystalBall';
+import Acquire from '@/pages/Acquire';
 import GraphConsole from '@/pages/admin/GraphConsole';
 import CustomerPortal from '@/pages/CustomerPortal';
 import ContractorApp from '@/pages/ContractorApp';
@@ -183,6 +185,7 @@ const AuthenticatedApp = () => {
         <Route path="platform" element={<Platform />} />
         <Route path="seo-simulator" element={<SeoSimulator />} />
         <Route path="domain-rush" element={<DomainGoldRush />} />
+        <Route path="crystal-ball" element={<CrystalBall />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
       <Route path="/:state/:citySlug" element={<LocationSeoPage />} />
@@ -190,6 +193,7 @@ const AuthenticatedApp = () => {
       <Route path="/visualizer-test" element={<VisualizerTest />} />
       <Route path="/tool-hub" element={<ToolHub />} />
       <Route path="/portal" element={<CustomerPortal />} />
+      <Route path="/acquire" element={<Acquire />} />
       <Route path="/contractor" element={<ContractorApp />} />
       <Route path="/contractor/bid" element={<ContractorBid />} />
       <Route path="/p/:slug" element={<DynamicPageView />} />
