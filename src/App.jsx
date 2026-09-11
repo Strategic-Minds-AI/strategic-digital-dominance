@@ -84,6 +84,7 @@ import CrystalBall from '@/pages/admin/CrystalBall';
 import SystemMap from '@/pages/admin/SystemMap';
 import AutonomousWorkflows from '@/pages/admin/AutonomousWorkflows';
 import PlaybookLibrary from '@/pages/admin/PlaybookLibrary';
+import AlphaPrime from '@/pages/admin/AlphaPrime';
 import Acquire from '@/pages/Acquire';
 import GraphConsole from '@/pages/admin/GraphConsole';
 import CustomerPortal from '@/pages/CustomerPortal';
@@ -146,6 +147,7 @@ const AuthenticatedApp = () => {
       <Route path="/app-settings" element={<AppSettings />} />
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<Dashboard />} />
+        <Route path="alpha-prime" element={<AlphaPrime />} />
         <Route path="system-map" element={<SystemMap />} />
         <Route path="workflows" element={<AutonomousWorkflows />} />
         <Route path="playbooks" element={<PlaybookLibrary />} />

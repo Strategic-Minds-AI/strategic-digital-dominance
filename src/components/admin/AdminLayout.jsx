@@ -8,6 +8,7 @@ import AIAssistBubble from "@/components/ai-assist/AIAssistBubble";
 
 const links = [
   { to: "/admin", end: true, icon: LayoutDashboard, label: "Dashboard" },
+  { to: "/admin/alpha-prime", icon: Crown, label: "Alpha Prime" },
   { to: "/admin/system-map", icon: Boxes, label: "System Map" },
   { to: "/admin/workflows", icon: Workflow, label: "Workflows" },
   { to: "/admin/playbooks", icon: BookOpen, label: "Playbooks" },
