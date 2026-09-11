@@ -7,6 +7,8 @@ import {
   Loader2, ThumbsUp, X, MessageSquare, Brain, Shield, Rocket, DollarSign,
   ArrowRight, Bell, Eye, Sparkles
 } from "lucide-react";
+import RecommendationCard from "@/components/alpha-prime/RecommendationCard";
+import ChatMessage from "@/components/alpha-prime/ChatMessage";
 
 const PRIORITY_STYLES = {
   critical: { bg: "bg-red-50", border: "border-red-300", text: "text-red-700", badge: "bg-red-500 text-white", icon: AlertTriangle },
@@ -114,17 +116,9 @@ export default function AlphaPrime() {
   };
 
   // === AGENT CONVERSATION (via Vercel AI Gateway — bypasses Base44 integration credits) ===
-  const sendMessage = async () => {
-    if (!chatInput.trim() || chatLoading) return;
-    const userMsg = chatInput.trim();
-    setChatInput("");
-    const newMessages = [...chatMessages, { role: "user", content: userMsg }];
-    setChatMessages(newMessages);
-    setChatLoading(true);
-
-    try {
-      // Build live business context from the latest audit so Alpha Prime answers with real data
-      const auditContext = audit ? `
+  const buildAuditContext = () => {
+    if (!audit) return "\n(No audit data available yet — run an audit first.)";
+    return `
 === LIVE BUSINESS SNAPSHOT (real data from the latest executive audit) ===
 Health Score: ${audit.health_score}/100 — Verdict: ${audit.verdict}
 Executive Summary: ${audit.executive_summary}
@@ -149,19 +143,53 @@ ${(audit.recommendations || []).slice(0, 5).map((r, i) => `${i + 1}. [${r.priori
 
 Risks:
 ${(audit.risks || []).map((r, i) => `${i + 1}. ${r}`).join("\n")}
-=== END SNAPSHOT ===` : "\n(No audit data available yet — run an audit first.)";
+=== END SNAPSHOT ===`;
+  };
 
-      const res = await base44.functions.invoke("vercelAiGateway", {
-        action: "generateText",
-        model: "anthropic/claude-opus-4.7",
-        system_prompt: ALPHA_PRIME_SYSTEM_PROMPT + auditContext,
-        prompt: userMsg,
-      });
+  const callAlphaPrime = async (prompt) => {
+    const res = await base44.functions.invoke("vercelAiGateway", {
+      action: "generateText",
+      model: "anthropic/claude-opus-4.7",
+      system_prompt: ALPHA_PRIME_SYSTEM_PROMPT + buildAuditContext(),
+      prompt,
+    });
+    return res.data?.text || "I am here, boss. Give me a moment to pull the latest numbers.";
+  };
 
-      const reply = res.data?.text || "I am here, boss. Give me a moment to pull the latest numbers.";
+  const sendMessage = async () => {
+    if (!chatInput.trim() || chatLoading) return;
+    const userMsg = chatInput.trim();
+    setChatInput("");
+    const newMessages = [...chatMessages, { role: "user", content: userMsg }];
+    setChatMessages(newMessages);
+    setChatLoading(true);
+    try {
+      const reply = await callAlphaPrime(userMsg);
       setChatMessages([...newMessages, { role: "assistant", content: reply }]);
     } catch (e) {
       setChatMessages([...newMessages, { role: "assistant", content: "I hit a snag reaching the AI gateway. Check that the VERCEL_AI_GATEWAY_API_KEY secret is set, then try again." }]);
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
+  // === CHAT MESSAGE REGENERATE / EDIT ===
+  const handleRegenerateMessage = (index, newContent) => {
+    setChatMessages(prev => prev.map((m, i) => i === index ? { ...m, content: newContent } : m));
+  };
+
+  const handleEditUserMessage = async (index, newContent) => {
+    // Replace the user message, drop everything after it, and re-fetch AI reply
+    const trimmed = [...chatMessages];
+    trimmed[index] = { role: "user", content: newContent };
+    trimmed.splice(index + 1); // remove old assistant reply + anything after
+    setChatMessages(trimmed);
+    setChatLoading(true);
+    try {
+      const reply = await callAlphaPrime(newContent);
+      setChatMessages([...trimmed, { role: "assistant", content: reply }]);
+    } catch (e) {
+      setChatMessages([...trimmed, { role: "assistant", content: "I hit a snag reaching the AI gateway. Try again." }]);
     } finally {
       setChatLoading(false);
     }
@@ -286,75 +314,15 @@ ${(audit.risks || []).map((r, i) => `${i + 1}. ${r}`).join("\n")}
             ) : (
               <div className="space-y-3">
                 {audit.recommendations.map((rec, idx) => {
-                  const style = PRIORITY_STYLES[rec.priority] || PRIORITY_STYLES.medium;
-                  const Icon = style.icon;
                   const isApproved = approvedTasks.some(t => t.title === rec.title);
                   return (
-                    <div key={idx} className={`rounded-xl border-2 ${style.border} ${style.bg} p-4`}>
-                      <div className="flex items-start gap-3">
-                        <div className={`shrink-0 rounded-lg p-2 ${style.badge}`}>
-                          <Icon className="h-5 w-5" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1 flex-wrap">
-                            <span className={`text-xs font-bold uppercase tracking-wide ${style.text}`}>{rec.priority}</span>
-                            <span className="text-xs text-stone-500">·</span>
-                            <span className="text-xs font-medium text-stone-600">{rec.category}</span>
-                          </div>
-                          <h3 className="font-bold text-stone-900 text-sm mb-2">{rec.title}</h3>
-
-                          <div className="space-y-2 text-sm">
-                            <div>
-                              <span className="font-bold text-stone-700">Problem: </span>
-                              <span className="text-stone-600">{rec.problem}</span>
-                            </div>
-                            <div>
-                              <span className="font-bold text-stone-700">Action: </span>
-                              <span className="text-stone-600">{rec.action}</span>
-                            </div>
-                            <div>
-                              <span className="font-bold text-stone-700">Expected: </span>
-                              <span className="text-stone-600">{rec.expected_result}</span>
-                            </div>
-                            <div className="flex items-center gap-4 text-xs text-stone-500 pt-1">
-                              <span className="flex items-center gap-1"><Bot className="h-3 w-3" /> {rec.owner}</span>
-                              <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {rec.timeline}</span>
-                            </div>
-                          </div>
-
-                          {/* Approval Buttons */}
-                          <div className="flex items-center gap-2 mt-4">
-                            {isApproved ? (
-                              <div className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-100 text-emerald-700 text-sm font-bold">
-                                <CheckCircle2 className="h-4 w-4" /> Approved — Task Created
-                              </div>
-                            ) : (
-                              <>
-                                <button
-                                  onClick={() => handleApprove(rec)}
-                                  disabled={approveMutation.isPending}
-                                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-stone-900 text-white text-sm font-bold hover:bg-stone-800 transition disabled:opacity-50"
-                                >
-                                  {approveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <ThumbsUp className="h-4 w-4" />}
-                                  Approve
-                                </button>
-                                <button
-                                  onClick={() => handleApproveAndSchedule(rec)}
-                                  disabled={scheduleMutation.isPending}
-                                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 text-stone-950 text-sm font-bold hover:bg-amber-400 transition disabled:opacity-50"
-                                >
-                                  {scheduleMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Calendar className="h-4 w-4" />}
-                                  Approve + Schedule
-                                </button>
-                                <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white text-stone-600 text-sm font-medium hover:bg-stone-100 transition border border-stone-200">
-                                  <X className="h-4 w-4" /> Dismiss
-                                </button>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    <RecommendationCard
+                      key={idx}
+                      rec={rec}
+                      isApproved={isApproved}
+                      onApprove={handleApprove}
+                      onApproveAndSchedule={handleApproveAndSchedule}
+                    />
                   );
                 })}
               </div>
@@ -454,11 +422,16 @@ ${(audit.risks || []).map((r, i) => `${i + 1}. ${r}`).join("\n")}
                 </div>
               )}
               {chatMessages.map((msg, idx) => (
-                <div key={idx} className={msg.role === "user" ? "flex justify-end" : "flex justify-start"}>
-                  <div className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm whitespace-pre-wrap ${msg.role === "user" ? "bg-stone-900 text-white" : "bg-stone-100 text-stone-800"}`}>
-                    {msg.content}
-                  </div>
-                </div>
+                <ChatMessage
+                  key={idx}
+                  msg={msg}
+                  index={idx}
+                  onRegenerate={handleRegenerateMessage}
+                  onEditUserMessage={handleEditUserMessage}
+                  systemPrompt={ALPHA_PRIME_SYSTEM_PROMPT}
+                  auditContext={buildAuditContext()}
+                  chatHistory={chatMessages}
+                />
               ))}
               {chatLoading && (
                 <div className="flex justify-start">
