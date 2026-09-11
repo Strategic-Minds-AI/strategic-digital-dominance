@@ -1,0 +1,148 @@
+{
+  "name": "SeoSimulation",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Simulation name (e.g. 'Orlando Epoxy \u2014 Primary Keyword')"
+    },
+    "target_keyword": {
+      "type": "string",
+      "description": "The keyword this simulation targets"
+    },
+    "page_content": {
+      "type": "object",
+      "description": "Editable landing page content",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "meta_description": {
+          "type": "string"
+        },
+        "h1": {
+          "type": "string"
+        },
+        "subheader": {
+          "type": "string"
+        },
+        "body_content": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "nav_items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "modules": {
+      "type": "object",
+      "description": "State of every interactive ranking-factor module",
+      "properties": {
+        "google_business": {
+          "type": "object"
+        },
+        "reviews": {
+          "type": "object"
+        },
+        "citations": {
+          "type": "object"
+        },
+        "social": {
+          "type": "object"
+        },
+        "aeo": {
+          "type": "object"
+        },
+        "technical": {
+          "type": "object"
+        },
+        "backlinks": {
+          "type": "object"
+        },
+        "ads": {
+          "type": "object"
+        }
+      }
+    },
+    "seo_score": {
+      "type": "number"
+    },
+    "aeo_score": {
+      "type": "number"
+    },
+    "local_score": {
+      "type": "number"
+    },
+    "social_score": {
+      "type": "number"
+    },
+    "overall_score": {
+      "type": "number"
+    },
+    "timeline_months": {
+      "type": "number"
+    },
+    "keyword_difficulty": {
+      "type": "number"
+    },
+    "score_breakdown": {
+      "type": "object"
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "active",
+        "archived"
+      ],
+      "default": "draft"
+    }
+  },
+  "required": [
+    "name",
+    "target_keyword"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -78,6 +78,7 @@ import WebsiteQueue from '@/pages/admin/WebsiteQueue';
 import RagConsole from '@/pages/admin/RagConsole';
 import SystemHealth from '@/pages/admin/SystemHealth';
 import Platform from '@/pages/admin/Platform';
+import SeoSimulator from '@/pages/admin/SeoSimulator';
 import GraphConsole from '@/pages/admin/GraphConsole';
 import CustomerPortal from '@/pages/CustomerPortal';
 import ContractorApp from '@/pages/ContractorApp';
@@ -179,6 +180,7 @@ const AuthenticatedApp = () => {
         <Route path="graph" element={<GraphConsole />} />
         <Route path="system-health" element={<SystemHealth />} />
         <Route path="platform" element={<Platform />} />
+        <Route path="seo-simulator" element={<SeoSimulator />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
       <Route path="/:state/:citySlug" element={<LocationSeoPage />} />
