@@ -17,6 +17,14 @@ import { createClientFromRequest } from "npm:@base44/sdk@0.8.40";
 // Construction supersector = 20, so industry code = 20 + 6-digit NAICS
 // Data type 01 = All Employees (thousands), 03 = Average Hourly Earnings ($/hr)
 const TRADE_INDUSTRIES = [
+  // === Core niches (proxy-mapped to closest BLS trade category) ===
+  // BLS doesn't track epoxy/polished/decorative as separate categories,
+  // so we map to the closest BLS trade and label the proxy source.
+  { naics: "238330", name: "Epoxy Flooring", category: "Epoxy", emp_series: "CEU2023833001", wage_series: "CEU2023833003", proxy_of: "Flooring Contractors (238330)" },
+  { naics: "238320", name: "Epoxy Coatings", category: "Epoxy", emp_series: "CEU2023832001", wage_series: "CEU2023832003", proxy_of: "Painting & Wall Covering (238320)" },
+  { naics: "238110", name: "Polished Concrete", category: "Concrete", emp_series: "CEU2023811001", wage_series: "CEU2023811003", proxy_of: "Poured Concrete (238110)" },
+  { naics: "238990", name: "Decorative Concrete", category: "Concrete", emp_series: "CEU2023899001", wage_series: "CEU2023899003", proxy_of: "Other Specialty Trade (238990)" },
+  // === Standard BLS trade industries ===
   { naics: "238330", name: "Flooring Contractors", category: "Flooring", emp_series: "CEU2023833001", wage_series: "CEU2023833003" },
   { naics: "238320", name: "Painting & Wall Covering", category: "Painting", emp_series: "CEU2023832001", wage_series: "CEU2023832003" },
   { naics: "238310", name: "Drywall & Insulation", category: "Drywall", emp_series: "CEU2023831001", wage_series: "CEU2023831003" },
@@ -39,6 +47,7 @@ interface IndustryResult {
   naics: string;
   name: string;
   category: string;
+  proxy_of?: string;
   current_employment: number;
   current_wages: number;
   employment_10yr_cagr: number;
@@ -135,8 +144,8 @@ export default async function (req: Request): Promise<Response> {
       const currentYear = new Date().getFullYear().toString();
       const startYear = (parseInt(currentYear) - 10).toString();
 
-      // Collect all series IDs (employment + wages for each industry)
-      const allSeriesIds = TRADE_INDUSTRIES.flatMap((ind) => [ind.emp_series, ind.wage_series]);
+      // Collect all series IDs (employment + wages for each industry) — deduplicated
+      const allSeriesIds = [...new Set(TRADE_INDUSTRIES.flatMap((ind) => [ind.emp_series, ind.wage_series]))];
 
       // Fetch 10 years of data from BLS
       const blsSeries = await fetchBLSSeries(allSeriesIds, startYear, currentYear);
@@ -170,6 +179,7 @@ export default async function (req: Request): Promise<Response> {
             naics: industry.naics,
             name: industry.name,
             category: industry.category,
+            proxy_of: industry.proxy_of,
             current_employment: 0,
             current_wages: 0,
             employment_10yr_cagr: 0,
@@ -228,6 +238,7 @@ export default async function (req: Request): Promise<Response> {
           naics: industry.naics,
           name: industry.name,
           category: industry.category,
+          proxy_of: industry.proxy_of,
           current_employment: latest.employment,
           current_wages: latest.wages,
           employment_10yr_cagr: Math.round(empCAGR * 100) / 100,

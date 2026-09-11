@@ -135,7 +135,10 @@ export default function CrystalBall() {
                       <td className="px-4 py-3 font-bold text-stone-400">{i + 1}</td>
                       <td className="px-4 py-3">
                         <div className="font-semibold text-stone-900">{ind.name}</div>
-                        <div className="text-xs text-stone-400">{ind.category} · NAICS {ind.naics}</div>
+                        <div className="text-xs text-stone-400">
+                          {ind.category} · NAICS {ind.naics}
+                          {ind.proxy_of && <span className="text-amber-600"> · proxy: {ind.proxy_of}</span>}
+                        </div>
                       </td>
                       <td className="px-4 py-3 text-right font-mono">{ind.current_employment.toFixed(1)}</td>
                       <td className="px-4 py-3 text-right font-mono">
