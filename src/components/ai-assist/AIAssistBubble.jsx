@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, X, Send, Loader2, Zap } from 'lucide-react';
+import { Sparkles, X, Send, Loader2, Zap, Crown, EyeOff } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function AIAssistBubble() {
@@ -53,14 +53,15 @@ export default function AIAssistBubble() {
             className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full shadow-2xl"
             style={{
               background: 'linear-gradient(135deg, #FFF6D5 0%, #D4AF37 40%, #8B6914 100%)',
-              border: '2px solid #6e5408',
-              boxShadow: '0 6px 24px rgba(212,175,55,.5)',
+              border: '2px solid #10b981',
+              boxShadow: '0 6px 24px rgba(16,185,129,.5), 0 0 0 1px rgba(212,175,55,.3)',
             }}
           >
-            <Sparkles className="h-7 w-7 text-stone-900" />
+            <Crown className="h-7 w-7 text-stone-900" />
+            <EyeOff className="absolute bottom-1 right-1 h-4 w-4 text-emerald-400 drop-shadow-lg" />
             <span className="absolute -top-1 -right-1 flex h-4 w-4">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75" />
-              <span className="relative inline-flex h-4 w-4 rounded-full bg-amber-500" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex h-4 w-4 rounded-full bg-emerald-500" />
             </span>
           </motion.button>
         )}
@@ -78,12 +79,16 @@ export default function AIAssistBubble() {
             {/* Header */}
             <div className="flex items-center justify-between border-b border-stone-800 bg-stone-900 px-4 py-3">
               <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg" style={{ background: 'linear-gradient(135deg, #FFF6D5, #D4AF37, #8B6914)' }}>
-                  <Zap className="h-5 w-5 text-stone-900" />
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg relative" style={{ background: 'linear-gradient(135deg, #FFF6D5, #D4AF37, #8B6914)' }}>
+                  <Crown className="h-5 w-5 text-stone-900" />
+                  <EyeOff className="absolute -bottom-1 -right-1 h-3.5 w-3.5 text-emerald-400 bg-stone-900 rounded-full p-0.5" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-white">Xtreme AI Assistant</h3>
-                  <p className="text-[10px] text-stone-400">Full-system access · Claude Sonnet 5</p>
+                  <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
+                    Alpha Shadow
+                    <span className="text-[9px] uppercase tracking-widest text-emerald-400 font-semibold">Covert</span>
+                  </h3>
+                  <p className="text-[10px] text-stone-400">CEO + Shadow · Unrestricted · Traceless</p>
                 </div>
               </div>
               <button onClick={() => setOpen(false)} className="rounded-lg p-1.5 text-stone-400 hover:bg-stone-800 hover:text-white">
@@ -95,10 +100,10 @@ export default function AIAssistBubble() {
             <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
               {messages.length === 0 && (
                 <div className="flex flex-col items-center justify-center h-full text-center gap-3">
-                  <Sparkles className="h-10 w-10 text-amber-500" />
-                  <p className="text-sm font-semibold text-stone-300">How can I help you today?</p>
+                  <Crown className="h-10 w-10 text-amber-500" />
+                  <p className="text-sm font-semibold text-stone-300">Alpha Shadow is listening.</p>
                   <p className="text-xs text-stone-500 max-w-[280px]">
-                    I have full access to your leads, projects, strategies, intelligence, and all system capabilities.
+                    CEO executive audit + covert Shadow ops. Full access to every entity, function, and the cloud browser — nothing leaves a trace.
                   </p>
                   <div className="flex flex-wrap gap-2 justify-center mt-2">
                     {['Analyze my leads', 'Run industry research', 'Generate an agent', 'Simulate an outcome'].map((s) => (
