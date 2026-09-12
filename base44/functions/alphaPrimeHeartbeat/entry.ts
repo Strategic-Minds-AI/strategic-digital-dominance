@@ -97,9 +97,9 @@ export default async function (req: Request): Promise<Response> {
     });
     const staleTasksCount = staleTasks.length;
 
-    // ── 7. CONNECTOR FRESHNESS ──
-    // Alpha Prime 6B fix: connectors.list() does not exist in the SDK.
-    // Use getConnection per connector type — VERIFIED_HEALTHY only after a canary read confirms it.
+    // ── 7. CONNECTOR CONNECTION STATE ──
+    // getConnection() proves an authenticated connector exists; it does NOT prove end-to-end sync health.
+    // Functional canaries promote CONNECTED_AUTH_OK to SYNC_VERIFIED elsewhere.
     const connectorFreshness: Record<string, string> = {};
     const connectorTypes = [
       "googledrive", "googlesheets", "googlecalendar", "gmail", "googletasks",
@@ -108,7 +108,7 @@ export default async function (req: Request): Promise<Response> {
     for (const type of connectorTypes) {
       try {
         await base44.asServiceRole.connectors.getConnection(type);
-        connectorFreshness[type] = "VERIFIED_HEALTHY";
+        connectorFreshness[type] = "CONNECTED_AUTH_OK";
       } catch {
         connectorFreshness[type] = "DISCONNECTED";
       }
@@ -126,29 +126,48 @@ export default async function (req: Request): Promise<Response> {
       (templateCount !== locationCount) ||
       (expectedLocations !== locationCount);
 
-    // ── 9. SITEMAP/CANONICAL DRIFT CHECK ──
+    // ── 9. SITEMAP/CANONICAL SET RECONCILIATION ──
+    // A domain-string check is insufficient. Compare the live sitemap URL set to the
+    // canonical registry URL set and treat an unreadable sitemap as UNKNOWN/drift.
     let sitemapCanonicalDrift = false;
     try {
       const sitemapResp = await fetch(`${canonicalUrl}/sitemap.xml`, {
         method: "GET",
         signal: AbortSignal.timeout(5000),
       });
-      if (sitemapResp.ok) {
+      if (!sitemapResp.ok) {
+        sitemapCanonicalDrift = true;
+      } else {
         const sitemapText = await sitemapResp.text();
-        // Check if sitemap contains the canonical domain
-        if (!sitemapText.includes(canonicalDomain)) {
-          sitemapCanonicalDrift = true;
-        }
-        // Check for old-domain contamination
-        if (
-          sitemapText.includes("epoxygaragefloorestimate.com") ||
-          sitemapText.includes("base44.app")
-        ) {
-          sitemapCanonicalDrift = true;
-        }
+        const sitemapUrls = new Set(
+          [...sitemapText.matchAll(/<loc>\s*([^<]+?)\s*<\/loc>/gi)].map((m) => m[1].trim().replace(/\/$/, ""))
+        );
+        const registryUrls = new Set(
+          locationRegistry
+            .map((l: any) => String(l.canonical_url || "").trim().replace(/\/$/, ""))
+            .filter(Boolean)
+        );
+        const registryMissingFromSitemap = [...registryUrls].filter((u) => !sitemapUrls.has(u));
+        const nonCanonicalLocationUrls = [...sitemapUrls].filter((u) => {
+          try {
+            const parsed = new URL(u);
+            const parts = parsed.pathname.split("/").filter(Boolean);
+            if (parts.length !== 2) return false; // static route, not a location route
+            return !registryUrls.has(u);
+          } catch {
+            return true;
+          }
+        });
+        const contaminated = [...sitemapUrls].some((u) =>
+          u.includes("epoxygaragefloorestimate.com") || u.includes("base44.app")
+        );
+        sitemapCanonicalDrift =
+          registryMissingFromSitemap.length > 0 ||
+          nonCanonicalLocationUrls.length > 0 ||
+          contaminated;
       }
     } catch {
-      // Sitemap fetch failed — not necessarily drift, could be network
+      sitemapCanonicalDrift = true;
     }
 
     // ── 10. BOUNDED CRITICAL URL SMOKE CHECKS ──
