@@ -27,55 +27,73 @@
       "entity_name": "StrategyDocument",
       "allowed_operations": [
         "read",
-        "create"
+        "create",
+        "update"
       ]
     },
     {
       "entity_name": "SystemHealthAudit",
       "allowed_operations": [
-        "read"
+        "read",
+        "update",
+        "create"
       ]
     },
     {
       "entity_name": "WebsiteQueue",
       "allowed_operations": [
-        "read"
+        "read",
+        "create",
+        "update"
       ]
     },
     {
       "entity_name": "SwarmAudit",
       "allowed_operations": [
-        "read"
+        "read",
+        "create",
+        "update"
       ]
     },
     {
       "entity_name": "Appointment",
       "allowed_operations": [
-        "read"
+        "read",
+        "create",
+        "update",
+        "delete"
       ]
     },
     {
       "entity_name": "FunnelEvent",
       "allowed_operations": [
-        "read"
+        "read",
+        "create",
+        "update"
       ]
     },
     {
       "entity_name": "SocialPost",
       "allowed_operations": [
-        "read"
+        "read",
+        "create",
+        "update"
       ]
     },
     {
       "entity_name": "MarketplaceListing",
       "allowed_operations": [
-        "read"
+        "read",
+        "create",
+        "update"
       ]
     },
     {
       "entity_name": "DomainStrategy",
       "allowed_operations": [
-        "read"
+        "read",
+        "create",
+        "update"
       ]
     },
     {
@@ -109,8 +127,8 @@
   "selected_workspace_skill_ids": [],
   "model": "automatic",
   "whatsapp_greeting": "Good day. I am Alpha Prime, your Chief Executive Orchestrator. I am online 24/7, auditing your business, tracking your pipeline, watching for anything that needs your attention, and persistently tracking the 60-day workflow implementation. I will proactively message you when there is something you need to approve, a risk I see coming, a workflow tool I autonomously implemented, or a result worth celebrating. What would you like me to focus on right now \u2014 or shall I run a full executive audit with workflow status?",
-  "telegram_greeting": null,
-  "line_greeting": null,
+  "telegram_greeting": "",
+  "line_greeting": "",
   "memory_config": {
     "enabled": true,
     "scope": "both",
