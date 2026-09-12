@@ -1,0 +1,129 @@
+{
+  "name": "AdminProfile",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Admin profile display name"
+    },
+    "profile_id": {
+      "type": "string",
+      "description": "Unique identifier (e.g. 'architect', 'operator')"
+    },
+    "profile_type": {
+      "type": "string",
+      "enum": [
+        "architect",
+        "operator",
+        "analyst",
+        "auditor",
+        "executive"
+      ],
+      "default": "operator"
+    },
+    "description": {
+      "type": "string"
+    },
+    "tech_skill_level": {
+      "type": "string",
+      "enum": [
+        "none",
+        "basic",
+        "intermediate",
+        "advanced",
+        "expert"
+      ],
+      "default": "intermediate"
+    },
+    "focus_areas": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "decision_style": {
+      "type": "string"
+    },
+    "access_level": {
+      "type": "string",
+      "enum": [
+        "full",
+        "read_only",
+        "limited"
+      ],
+      "default": "full"
+    },
+    "configuration": {
+      "type": "object",
+      "description": "Profile-specific settings (dashboard layout, default views, notification prefs)",
+      "properties": {
+        "default_landing": {
+          "type": "string"
+        },
+        "dashboard_widgets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "notification_prefs": {
+          "type": "object"
+        },
+        "visible_sections": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "personality_prompt": {
+      "type": "string",
+      "maxLength": 5000,
+      "description": "LLM prompt that defines this admin profile's opinions and behavior"
+    },
+    "opinionated_stance": {
+      "type": "string",
+      "maxLength": 3000,
+      "description": "What this profile strongly believes about how the system should work"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    },
+    "assigned_archetypes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Which contractor archetypes this admin profile evaluates from their perspective"
+    }
+  },
+  "required": [
+    "name",
+    "profile_type"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

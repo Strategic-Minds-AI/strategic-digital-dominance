@@ -89,6 +89,7 @@ import CrystalBall from '@/pages/admin/CrystalBall';
 import SystemMap from '@/pages/admin/SystemMap';
 import ContractorWorkflow from '@/pages/admin/ContractorWorkflow';
 import WorkflowFindings from '@/pages/admin/WorkflowFindings';
+import ContractorSimulation from '@/pages/admin/ContractorSimulation';
 import AutonomousWorkflows from '@/pages/admin/AutonomousWorkflows';
 import PlaybookLibrary from '@/pages/admin/PlaybookLibrary';
 import AlphaPrime from '@/pages/admin/AlphaPrime';
@@ -166,6 +167,7 @@ const AuthenticatedApp = () => {
         <Route path="system-map" element={<SystemMap />} />
         <Route path="contractor-workflow" element={<ContractorWorkflow />} />
         <Route path="workflow-findings" element={<WorkflowFindings />} />
+        <Route path="contractor-simulation" element={<ContractorSimulation />} />
         <Route path="workflows" element={<AutonomousWorkflows />} />
         <Route path="playbooks" element={<PlaybookLibrary />} />
         <Route path="leads" element={<Leads />} />

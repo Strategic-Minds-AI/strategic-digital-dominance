@@ -1,0 +1,203 @@
+{
+  "name": "SimulatedVisitor",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Visitor persona name"
+    },
+    "visitor_id": {
+      "type": "string",
+      "description": "Unique identifier"
+    },
+    "visitor_type": {
+      "type": "string",
+      "enum": [
+        "homeowner",
+        "contractor",
+        "business_owner",
+        "researcher",
+        "competitor"
+      ],
+      "default": "homeowner"
+    },
+    "demographics": {
+      "type": "object",
+      "description": "Age, income, location, family status, home type",
+      "properties": {
+        "age": {
+          "type": "number"
+        },
+        "income": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "family_status": {
+          "type": "string"
+        },
+        "home_type": {
+          "type": "string"
+        },
+        "home_value": {
+          "type": "number"
+        }
+      }
+    },
+    "psychographics": {
+      "type": "object",
+      "description": "Values, fears, desires, decision style",
+      "properties": {
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "fears": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "desires": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "decision_style": {
+          "type": "string"
+        }
+      }
+    },
+    "personality_profile": {
+      "type": "object",
+      "description": "Big Five + DISC personality mapping",
+      "properties": {
+        "openness": {
+          "type": "number"
+        },
+        "conscientiousness": {
+          "type": "number"
+        },
+        "extraversion": {
+          "type": "number"
+        },
+        "agreeableness": {
+          "type": "number"
+        },
+        "neuroticism": {
+          "type": "number"
+        },
+        "disc_type": {
+          "type": "string"
+        }
+      }
+    },
+    "search_intent": {
+      "type": "string"
+    },
+    "landing_page": {
+      "type": "string"
+    },
+    "browsing_behavior": {
+      "type": "object",
+      "properties": {
+        "pages_visited": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "time_on_site": {
+          "type": "number"
+        },
+        "actions_taken": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "exit_page": {
+          "type": "string"
+        }
+      }
+    },
+    "pain_points": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "objections": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "conversion_probability": {
+      "type": "number",
+      "default": 0,
+      "description": "0-100 probability of converting"
+    },
+    "lead_score": {
+      "type": "number",
+      "default": 0
+    },
+    "personality_prompt": {
+      "type": "string",
+      "maxLength": 5000,
+      "description": "LLM prompt to simulate this visitor's behavior"
+    },
+    "assigned_archetype": {
+      "type": "string",
+      "description": "Which contractor archetype is assigned to this visitor"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "browsing",
+        "engaged",
+        "lead_captured",
+        "estimate_requested",
+        "booked",
+        "lost"
+      ],
+      "default": "browsing"
+    },
+    "simulated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "name",
+    "visitor_type"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

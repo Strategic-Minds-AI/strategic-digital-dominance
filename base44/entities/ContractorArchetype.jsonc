@@ -1,0 +1,230 @@
+{
+  "name": "ContractorArchetype",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Contractor persona name (e.g. 'Mike Reynolds')"
+    },
+    "archetype_id": {
+      "type": "string",
+      "description": "Unique identifier (e.g. 'primary', 'old_school', 'tech_savvy')"
+    },
+    "archetype_type": {
+      "type": "string",
+      "enum": [
+        "primary",
+        "old_school",
+        "tech_savvy",
+        "family_man",
+        "luxury_specialist",
+        "hustler"
+      ],
+      "default": "primary"
+    },
+    "business_name": {
+      "type": "string"
+    },
+    "business_size": {
+      "type": "string",
+      "enum": [
+        "solo",
+        "small_team",
+        "mid_size",
+        "large"
+      ],
+      "default": "small_team"
+    },
+    "years_in_business": {
+      "type": "number"
+    },
+    "annual_revenue": {
+      "type": "number"
+    },
+    "crew_count": {
+      "type": "number"
+    },
+    "tech_skill_level": {
+      "type": "string",
+      "enum": [
+        "none",
+        "basic",
+        "intermediate",
+        "advanced"
+      ],
+      "default": "basic"
+    },
+    "ambition_level": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "aggressive"
+      ],
+      "default": "medium"
+    },
+    "budget_mindset": {
+      "type": "string",
+      "enum": [
+        "frugal",
+        "moderate",
+        "premium",
+        "enterprise"
+      ],
+      "default": "moderate"
+    },
+    "family_size": {
+      "type": "number"
+    },
+    "family_description": {
+      "type": "string"
+    },
+    "personality_traits": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "daily_routine": {
+      "type": "object",
+      "description": "Hour-by-hour daily routine",
+      "properties": {
+        "morning": {
+          "type": "string"
+        },
+        "midday": {
+          "type": "string"
+        },
+        "evening": {
+          "type": "string"
+        },
+        "night": {
+          "type": "string"
+        }
+      }
+    },
+    "weekly_routine": {
+      "type": "object",
+      "description": "Day-by-day weekly routine"
+    },
+    "monthly_routine": {
+      "type": "object",
+      "description": "Week-by-week monthly routine"
+    },
+    "sops": {
+      "type": "object",
+      "description": "Standard operating procedures",
+      "properties": {
+        "lead_handling": {
+          "type": "string"
+        },
+        "estimating": {
+          "type": "string"
+        },
+        "installation": {
+          "type": "string"
+        },
+        "customer_communication": {
+          "type": "string"
+        },
+        "quality_control": {
+          "type": "string"
+        }
+      }
+    },
+    "social_media_method": {
+      "type": "string"
+    },
+    "billing_method": {
+      "type": "string"
+    },
+    "sales_method": {
+      "type": "string"
+    },
+    "marketing_method": {
+      "type": "string"
+    },
+    "payroll_method": {
+      "type": "string"
+    },
+    "supplier_relationship": {
+      "type": "string"
+    },
+    "finances_accounting_method": {
+      "type": "string"
+    },
+    "pain_points": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "goals": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "fears": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "decision_making_style": {
+      "type": "string"
+    },
+    "communication_style": {
+      "type": "string"
+    },
+    "act_as_prompt": {
+      "type": "string",
+      "maxLength": 10000,
+      "description": "The full 'Act as if this contractor is a...' LLM prompt"
+    },
+    "drive_folder_id": {
+      "type": "string",
+      "description": "Google Drive folder ID for this archetype's documents"
+    },
+    "simulation_score": {
+      "type": "number",
+      "default": 0,
+      "description": "Latest simulation score 0-100"
+    },
+    "last_simulated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "name",
+    "archetype_type"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
