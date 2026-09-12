@@ -72,6 +72,6 @@ Allow: /
 User-agent: CommonCrawl
 Allow: /
 
-# Sitemaps
-Sitemap: https://epoxygaragefloorestimate.com/sitemap.xml
+# Sitemaps — canonical domain only (Alpha Prime Phase 6B fix)
+Sitemap: https://epoxyquotenearme.com/sitemap.xml
 Sitemap: https://epoxyquotenearme.com/sitemap-epn.xml

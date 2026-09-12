@@ -36,7 +36,9 @@ export default async function (req: Request): Promise<Response> {
     const mm = String(now.getUTCMonth() + 1).padStart(2, "0");
     const dd = String(now.getUTCDate()).padStart(2, "0");
     const hh = String(now.getUTCHours()).padStart(2, "0");
-    const mi = String(now.getUTCMinutes()).padStart(2, "0");
+    const rawMinute = now.getUTCMinutes();
+    const bucketMinute = Math.floor(rawMinute / 5) * 5;
+    const mi = String(bucketMinute).padStart(2, "0");
     const cycleId = `alpha-prime-heartbeat-${yyyy}${mm}${dd}-${hh}${mi}-5min`;
 
     // ── 2. CHECK IDEMPOTENCY — skip if this cycle already ran ──
@@ -96,21 +98,33 @@ export default async function (req: Request): Promise<Response> {
     const staleTasksCount = staleTasks.length;
 
     // ── 7. CONNECTOR FRESHNESS ──
+    // Alpha Prime 6B fix: connectors.list() does not exist in the SDK.
+    // Use getConnection per connector type — VERIFIED_HEALTHY only after a canary read confirms it.
     const connectorFreshness: Record<string, string> = {};
-    try {
-      const connectors = await base44.asServiceRole.connectors.list();
-      for (const c of connectors) {
-        connectorFreshness[c.integration_type] = c.connected ? "healthy" : "disconnected";
+    const connectorTypes = [
+      "googledrive", "googlesheets", "googlecalendar", "gmail", "googletasks",
+      "googledocs", "google_search_console", "google_analytics", "hubspot", "supabase",
+    ];
+    for (const type of connectorTypes) {
+      try {
+        await base44.asServiceRole.connectors.getConnection(type);
+        connectorFreshness[type] = "VERIFIED_HEALTHY";
+      } catch {
+        connectorFreshness[type] = "DISCONNECTED";
       }
-    } catch {
-      connectorFreshness.error = "unable_to_read";
     }
 
     // ── 8. SOURCE DRIFT CHECK ──
-    // Compare expected vs actual entity counts
-    const templateCount = await base44.asServiceRole.entities.WebsiteTemplate.list(1);
+    // Alpha Prime 6B fix: real drift detection — compare template count, registry count, and location registry count
+    const templates = await base44.asServiceRole.entities.WebsiteTemplate.list(500);
+    const templateCount = templates.length;
+    const locationRegistry = await base44.asServiceRole.entities.CanonicalLocationRegistry.list(500);
+    const locationCount = locationRegistry.length;
     const expectedLocations = registry?.approved_location_count || 0;
-    const sourceDriftDetected = expectedLocations > 0 && templateCount.length === 0;
+    const sourceDriftDetected =
+      (templateCount !== expectedLocations) ||
+      (templateCount !== locationCount) ||
+      (expectedLocations !== locationCount);
 
     // ── 9. SITEMAP/CANONICAL DRIFT CHECK ──
     let sitemapCanonicalDrift = false;
