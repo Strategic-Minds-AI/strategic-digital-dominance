@@ -1,18 +1,17 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
-  Menu,
-  X,
   Bell,
   User,
   Download,
   ChevronRight,
   Plus,
   Play,
-  Search,
+  Users,
   Calculator,
   FileText,
   MessageSquare,
-  PenTool,
+  FileCheck,
   Package,
   Briefcase,
   Sparkles,
@@ -22,6 +21,7 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import { LOGO_URL } from "@/components/Logo";
+import { usePwaInstall } from "@/lib/usePwaInstall";
 import ContractorVisualizer from "@/components/contractor/ContractorVisualizer";
 
 const GOLD = "#FFD700";
@@ -35,46 +35,75 @@ const HERO_BG =
   "https://images.unsplash.com/photo-1622895175520-59d2f3c4e642?auto=format&fit=crop&w=1400&q=80";
 
 const WORKFLOW_CARDS = [
-  { icon: Search, title: "Find & Qualify Leads", badge: "4 new" },
-  { icon: Calculator, title: "Takeoff & Estimate", badge: "3 ready" },
-  { icon: FileText, title: "Review & Send Bid", badge: "2 ready" },
-  { icon: MessageSquare, title: "Respond & Close", badge: "3 replies" },
-  { icon: PenTool, title: "Sign & Schedule", badge: "1 to sign" },
-  { icon: Package, title: "Order Materials", badge: "1 ready" },
+  { icon: Users, title: "Find & Qualify Leads", badge: "4 new", route: "/admin/leads" },
+  { icon: Calculator, title: "Takeoff & Estimate", badge: "3 ready", action: "visualizer" },
+  { icon: FileText, title: "Review & Send Bid", badge: "2 ready", route: "/contractor/bid" },
+  { icon: MessageSquare, title: "Respond & Close", badge: "3 replies", route: "/admin/emails" },
+  { icon: FileCheck, title: "Sign & Schedule", badge: "1 to sign", route: "/admin" },
+  { icon: Package, title: "Order Materials", badge: "1 ready", route: "/admin" },
 ];
 
 const BOTTOM_NAV = [
-  { icon: HomeIcon, label: "Home", active: true },
-  { icon: ClipboardList, label: "Leads" },
-  { icon: FileSpreadsheet, label: "Takeoffs" },
-  { icon: FileText, label: "Bids" },
-  { icon: MoreHorizontal, label: "More" },
+  { icon: HomeIcon, label: "Home", route: null },
+  { icon: ClipboardList, label: "Leads", route: "/admin/leads" },
+  { icon: FileSpreadsheet, label: "Takeoffs", route: "/contractor/bid" },
+  { icon: FileText, label: "Bids", route: "/contractor/bid" },
+  { icon: MoreHorizontal, label: "More", route: "/admin" },
 ];
 
 export default function EpoxyProAssistant() {
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const navigate = useNavigate();
+  const { promptInstall, canInstall, isInstalled } = usePwaInstall();
   const [visualizerOpen, setVisualizerOpen] = useState(false);
+  const [activeNav, setActiveNav] = useState("Home");
+
+  const handleDownload = () => {
+    if (canInstall) {
+      promptInstall();
+    } else {
+      navigate("/download");
+    }
+  };
+
+  const handleWorkflowClick = (card) => {
+    if (card.action === "visualizer") {
+      setVisualizerOpen(true);
+    } else if (card.route) {
+      navigate(card.route);
+    }
+  };
+
+  const handleNavClick = (nav) => {
+    setActiveNav(nav.label);
+    if (nav.route) {
+      navigate(nav.route);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col font-body" style={{ background: "#F5F5F5" }}>
       {/* ── Header ── */}
       <header className="sticky top-0 z-30 bg-white" style={{ boxShadow: SHADOW_CARD }}>
+        {/* Main header row */}
         <div className="flex items-center justify-between h-14 px-3">
           <div className="flex items-center gap-2 shrink-0">
-            <button
-              onClick={() => setDrawerOpen(true)}
-              className="w-9 h-9 rounded-lg flex items-center justify-center"
-            >
-              <Menu className="h-5 w-5 text-stone-800" />
-            </button>
-            <img src={LOGO_URL} alt="XPS" className="h-7 w-7 object-contain" />
-            <span className="text-[13px] font-extrabold text-black font-heading tracking-tight hidden sm:inline">
-              XTREME CONTRACTOR AI
-            </span>
+            <img src={LOGO_URL} alt="XPS" className="h-8 w-8 object-contain" />
+            <div className="flex flex-col leading-none">
+              <span className="text-[12px] font-extrabold text-black font-heading tracking-tight">
+                XTREME AI SYSTEMS
+              </span>
+              <span className="text-[8px] font-semibold text-stone-500 tracking-wider uppercase mt-0.5">
+                Intelligence for Growth
+              </span>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
-            <button className="relative w-9 h-9 rounded-lg flex items-center justify-center">
+          <div className="flex items-center gap-1.5 shrink-0">
+            <button
+              onClick={() => navigate("/admin")}
+              className="relative w-9 h-9 rounded-lg flex items-center justify-center"
+              aria-label="Notifications"
+            >
               <Bell className="h-5 w-5 text-stone-700" />
               <span
                 className="absolute top-1 right-1 w-4 h-4 rounded-full text-[9px] font-bold flex items-center justify-center text-black"
@@ -83,17 +112,26 @@ export default function EpoxyProAssistant() {
                 3
               </span>
             </button>
-            <button className="w-9 h-9 rounded-lg flex items-center justify-center">
+            <button
+              onClick={() => navigate("/admin")}
+              className="w-9 h-9 rounded-lg flex items-center justify-center"
+              aria-label="Profile"
+            >
               <User className="h-5 w-5 text-stone-700" />
             </button>
-            <button
-              className="h-9 px-3 rounded-full flex items-center gap-1.5 text-[12px] font-bold text-black"
-              style={{ background: GOLD, boxShadow: "0 2px 8px rgba(255,215,0,0.4)" }}
-            >
-              <Download className="h-4 w-4" />
-              Download App
-            </button>
           </div>
+        </div>
+
+        {/* Sub-header: Download App button */}
+        <div className="px-3 pb-2">
+          <button
+            onClick={handleDownload}
+            className="w-full h-9 rounded-lg flex items-center justify-center gap-1.5 text-[12px] font-bold text-black"
+            style={{ background: GOLD, boxShadow: "0 2px 8px rgba(255,215,0,0.4)" }}
+          >
+            <Download className="h-4 w-4" />
+            {isInstalled ? "App Installed" : "Download App"}
+          </button>
         </div>
       </header>
 
@@ -138,7 +176,7 @@ export default function EpoxyProAssistant() {
             {WORKFLOW_CARDS.map((card) => (
               <button
                 key={card.title}
-                onClick={() => setVisualizerOpen(true)}
+                onClick={() => handleWorkflowClick(card)}
                 className="flex items-start gap-2.5 rounded-2xl bg-white p-3 text-left transition border border-stone-200"
                 style={{ boxShadow: SHADOW_CARD }}
                 onMouseEnter={(e) => (e.currentTarget.style.boxShadow = SHADOW_CARD_HOVER)}
@@ -182,7 +220,7 @@ export default function EpoxyProAssistant() {
         {/* ── Business Tools ── */}
         <section className="px-4 pt-4">
           <button
-            onClick={() => setVisualizerOpen(true)}
+            onClick={() => navigate("/admin")}
             className="w-full flex items-center gap-3 rounded-2xl bg-white p-4 text-left transition border border-stone-200"
             style={{ boxShadow: SHADOW_CARD }}
             onMouseEnter={(e) => (e.currentTarget.style.boxShadow = SHADOW_CARD_HOVER)}
@@ -207,7 +245,7 @@ export default function EpoxyProAssistant() {
         {/* ── AI Access Bar ── */}
         <section className="px-4 pt-3">
           <button
-            onClick={() => setVisualizerOpen(true)}
+            onClick={() => navigate("/admin/alpha-prime")}
             className="w-full flex items-center gap-3 rounded-2xl p-4 text-left transition"
             style={{ background: "#1A1A1A", boxShadow: SHADOW_AI_BAR }}
           >
@@ -233,77 +271,35 @@ export default function EpoxyProAssistant() {
           paddingBottom: "env(safe-area-inset-bottom)",
         }}
       >
-        {BOTTOM_NAV.map((n, i) => (
-          <button
-            key={i}
-            className="flex flex-col items-center justify-center gap-1 relative"
-          >
-            <n.icon
-              className="h-5 w-5"
-              style={{ color: n.active ? GOLD : "#9CA3AF" }}
-              strokeWidth={n.active ? 2.4 : 1.8}
-            />
-            <span
-              className="text-[9px] font-semibold"
-              style={{ color: n.active ? "#B8860B" : "#9CA3AF" }}
+        {BOTTOM_NAV.map((n, i) => {
+          const active = activeNav === n.label;
+          return (
+            <button
+              key={i}
+              onClick={() => handleNavClick(n)}
+              className="flex flex-col items-center justify-center gap-1 relative"
             >
-              {n.label}
-            </span>
-            {n.active && (
-              <span
-                className="absolute bottom-0 h-0.5 w-8 rounded-full"
-                style={{ background: GOLD }}
+              <n.icon
+                className="h-5 w-5"
+                style={{ color: active ? GOLD : "#9CA3AF" }}
+                strokeWidth={active ? 2.4 : 1.8}
               />
-            )}
-          </button>
-        ))}
-      </nav>
-
-      {/* ── Drawer ── */}
-      {drawerOpen && (
-        <div className="fixed inset-0 z-50 flex items-end" onClick={() => setDrawerOpen(false)}>
-          <div className="absolute inset-0 bg-black/50" />
-          <div
-            className="relative w-full max-w-[450px] mx-auto bg-white rounded-t-2xl max-h-[70%] flex flex-col"
-            style={{ boxShadow: "0 -4px 20px rgba(0,0,0,0.15)" }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between px-4 h-14 border-b border-stone-200">
-              <h3 className="text-sm font-bold text-black">Menu</h3>
-              <button
-                onClick={() => setDrawerOpen(false)}
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-stone-400"
+              <span
+                className="text-[9px] font-semibold"
+                style={{ color: active ? "#B8860B" : "#9CA3AF" }}
               >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            <div className="p-3 grid grid-cols-2 gap-2 overflow-y-auto">
-              {[
-                { icon: HomeIcon, label: "Home" },
-                { icon: Search, label: "Find Leads" },
-                { icon: Calculator, label: "Takeoff" },
-                { icon: FileText, label: "Send Bid" },
-                { icon: MessageSquare, label: "Respond" },
-                { icon: PenTool, label: "Sign & Schedule" },
-                { icon: Package, label: "Order Materials" },
-                { icon: Briefcase, label: "Business Tools" },
-              ].map((item) => (
-                <button
-                  key={item.label}
-                  onClick={() => {
-                    setDrawerOpen(false);
-                    setVisualizerOpen(true);
-                  }}
-                  className="rounded-xl p-3 flex items-center gap-2 text-xs font-medium text-stone-700 transition"
-                  style={{ background: "#F9F9F9", boxShadow: SHADOW_CARD }}
-                >
-                  <item.icon className="h-4 w-4" style={{ color: GOLD }} /> {item.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+                {n.label}
+              </span>
+              {active && (
+                <span
+                  className="absolute bottom-0 h-0.5 w-8 rounded-full"
+                  style={{ background: GOLD }}
+                />
+              )}
+            </button>
+          );
+        })}
+      </nav>
 
       {/* ── Contractor Visualizer ── */}
       {visualizerOpen && <ContractorVisualizer onClose={() => setVisualizerOpen(false)} />}
