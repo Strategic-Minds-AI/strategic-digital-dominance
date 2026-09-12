@@ -54,7 +54,8 @@ export default async function (req: Request): Promise<Response> {
       const conversionRate = leads.length > 0 ? (wonLeads.length / leads.length) * 100 : 0;
 
       // === FUNNEL PERFORMANCE ===
-      const funnelStarted = funnelEvents.filter(e => e.event_type === "funnel_started" || e.event_name === "funnel_started");
+      // FunnelEvent source-truth field is `event` (see entity schema + tracking.js).
+      const funnelStarted = funnelEvents.filter(e => e.event === "funnel_started");
       const estimatesGenerated = leads.length;
       const funnelDropoff = funnelStarted.length > 0
         ? ((funnelStarted.length - estimatesGenerated) / funnelStarted.length) * 100
