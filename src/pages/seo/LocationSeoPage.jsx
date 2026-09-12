@@ -1,66 +1,132 @@
-import React from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import EpoxyContractorTemplate from "@/components/seo/EpoxyContractorTemplate";
 import PageNotFound from "@/lib/PageNotFound";
+import { base44 } from "@/api/base44Client";
 import {
   SEO_LOCATIONS,
-  STATE_NAMES,
   citySlug,
   locationSeoConfig,
 } from "@/lib/seoConfig";
 
-// Turn a kebab-case slug back into a title-cased city name.
-// "fort-lauderdale" → "Fort Lauderdale", "st-petersburg" → "St Petersburg"
-function deslugCity(slug) {
-  return (slug || "")
-    .split("-")
-    .filter(Boolean)
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ");
+// ── Comprehensive US state + Canadian province mapping ──────────────────────
+// Alpha Prime Canonical URL Grammar: /{2-letter-state}/{city-slug}
+// Full-state-name URLs redirect to 2-letter-code URLs (e.g. /florida/miami → /fl/miami)
+const STATE_MAP = {
+  AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas", CA: "California",
+  CO: "Colorado", CT: "Connecticut", DE: "Delaware", DC: "District of Columbia",
+  FL: "Florida", GA: "Georgia", HI: "Hawaii", ID: "Idaho", IL: "Illinois",
+  IN: "Indiana", IA: "Iowa", KS: "Kansas", KY: "Kentucky", LA: "Louisiana",
+  ME: "Maine", MD: "Maryland", MA: "Massachusetts", MI: "Michigan",
+  MN: "Minnesota", MS: "Mississippi", MO: "Missouri", MT: "Montana",
+  NE: "Nebraska", NV: "Nevada", NH: "New Hampshire", NJ: "New Jersey",
+  NM: "New Mexico", NY: "New York", NC: "North Carolina", ND: "North Dakota",
+  OH: "Ohio", OK: "Oklahoma", OR: "Oregon", PA: "Pennsylvania",
+  RI: "Rhode Island", SC: "South Carolina", SD: "South Dakota",
+  TN: "Tennessee", TX: "Texas", UT: "Utah", VT: "Vermont", VA: "Virginia",
+  WA: "Washington", WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming",
+  ON: "Ontario", AB: "Alberta", BC: "British Columbia",
+};
+
+// Reverse: full state name slug → 2-letter code
+const STATE_SLUG_TO_CODE = {};
+for (const [code, name] of Object.entries(STATE_MAP)) {
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  STATE_SLUG_TO_CODE[slug] = code;
 }
 
 const slugify = (s) => (s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
-// Resolve a state URL segment — accepts either a 2-letter code ("nc") or a
-// slugified full name ("north-carolina") — to { code, name }.
+// Resolve a state URL segment to { code, name, needsRedirect }
 function resolveState(segment) {
   const s = (segment || "").toLowerCase();
-  for (const [code, name] of Object.entries(STATE_NAMES)) {
-    if (code.toLowerCase() === s) return { code, name };
+  // Direct 2-letter code match
+  for (const [code, name] of Object.entries(STATE_MAP)) {
+    if (code.toLowerCase() === s) return { code, name, needsRedirect: false };
   }
-  for (const [code, name] of Object.entries(STATE_NAMES)) {
-    if (slugify(name) === s) return { code, name };
+  // Full state name slug → redirect to 2-letter code
+  if (STATE_SLUG_TO_CODE[s]) {
+    const code = STATE_SLUG_TO_CODE[s];
+    return { code, name: STATE_MAP[code], needsRedirect: true };
   }
   return null;
 }
 
 export default function LocationSeoPage() {
   const { state, citySlug: slug } = useParams();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
+  const [pageData, setPageData] = useState(null);
+
   const resolved = resolveState(state);
 
-  // Unrecognized state → 404
-  if (!resolved) return <PageNotFound />;
-  const { code: stateCode, name: stateName } = resolved;
+  useEffect(() => {
+    if (!resolved) {
+      setNotFound(true);
+      setLoading(false);
+      return;
+    }
 
-  // 1. Real XPS store location → full page with nearby communities
-  const loc = SEO_LOCATIONS.find(
-    (l) => l.state === stateCode && citySlug(l.city) === slug
-  );
+    // Redirect full-state-name URLs to 2-letter-code canonical grammar
+    if (resolved.needsRedirect) {
+      navigate(`/${resolved.code.toLowerCase()}/${slug}`, { replace: true });
+      return;
+    }
 
-  // 2. Any other city → same rich page, synthetic location (no lat/lng)
-  const synthetic = !loc ? { city: deslugCity(slug), state: stateCode } : null;
+    const { code: stateCode, name: stateName } = resolved;
 
-  if (!loc && !synthetic) return <PageNotFound />;
+    // 1. Check if it's a real XPS store location (static, always available)
+    const loc = SEO_LOCATIONS.find(
+      (l) => l.state === stateCode && citySlug(l.city) === slug
+    );
 
-  const useLoc = loc || synthetic;
-  const cfg = locationSeoConfig(useLoc);
+    if (loc) {
+      const cfg = locationSeoConfig(loc);
+      setPageData({ loc, cfg, stateName });
+      setLoading(false);
+      return;
+    }
+
+    // 2. Check CanonicalLocationRegistry for approved locations
+    // Only approved locations get pages — unknown slugs get 404 (no synthetic pages)
+    const locationId = `${stateCode.toLowerCase()}-${slug}`;
+    base44.entities.CanonicalLocationRegistry.filter({ location_id: locationId }, "-created_date", 1)
+      .then((results) => {
+        if (results && results.length > 0) {
+          const reg = results[0];
+          const approvedLoc = { city: reg.canonical_city, state: reg.canonical_state };
+          const cfg = locationSeoConfig(approvedLoc);
+          setPageData({ loc: approvedLoc, cfg, stateName, registry: reg });
+        } else {
+          // Not in registry → 404 (not a synthetic page)
+          setNotFound(true);
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        // Registry query failed → 404 (fail closed, do not manufacture synthetic pages)
+        setNotFound(true);
+        setLoading(false);
+      });
+  }, [state, slug]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-stone-50">
+        <div className="w-8 h-8 border-4 border-stone-200 border-t-amber-500 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (!resolved || notFound || !pageData) return <PageNotFound />;
 
   return (
     <EpoxyContractorTemplate
-      city={useLoc.city}
-      stateCode={useLoc.state}
-      stateName={stateName}
-      seoConfig={cfg}
+      city={pageData.loc.city}
+      stateCode={pageData.loc.state}
+      stateName={pageData.stateName}
+      seoConfig={pageData.cfg}
     />
   );
 }

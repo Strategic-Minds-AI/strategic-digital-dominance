@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import RecommendationCard from "@/components/alpha-prime/RecommendationCard";
 import ChatMessage from "@/components/alpha-prime/ChatMessage";
+import SourceTruthPanel from "@/components/alpha-prime/SourceTruthPanel";
 import ShadowCloudBrowser from "@/components/shadow/ShadowCloudBrowser";
 import ShadowCodex from "@/components/shadow/ShadowCodex";
 
@@ -266,6 +267,9 @@ ${(audit.risks || []).map((r, i) => `${i + 1}. ${r}`).join("\n")}
           </div>
         </div>
       </div>
+
+      {/* === SOURCE TRUTH AUTHORITY === */}
+      <SourceTruthPanel />
 
       {/* === HEALTH SCORE === */}
       {isLoading ? (
