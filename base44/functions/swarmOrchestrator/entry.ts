@@ -594,31 +594,37 @@ export default async function (req: Request): Promise<Response> {
             escalated.push(audit.id);
           }
 
-          // Alpha Prime Constitution: never mark failures as "fixed"
-          // A fix_result containing failure indicators means the fix did NOT succeed.
+          // Alpha Prime Constitution: autoFix may remediate, but it may NOT self-certify FIXED.
+          // Only an independent postcondition validator may promote an audit to `fixed`.
           const failurePattern = /failed|failure|error|404|409|429|500|timeout|missing artifact|missing expected|validation failure|ambiguous/i;
-          const actuallyFixed = !failurePattern.test(fixResult);
-          const finalStatus = escalated.includes(audit.id) ? 'escalated' : actuallyFixed ? 'fixed' : 'failed';
+          const remediationFailed = failurePattern.test(fixResult);
+          const finalStatus = escalated.includes(audit.id)
+            ? 'escalated'
+            : remediationFailed
+              ? 'failed'
+              : 'retesting';
           await svc.entities.SwarmAudit.update(audit.id, {
             status: finalStatus,
             fix_result: fixResult,
-            fixed_at: actuallyFixed ? new Date().toISOString() : undefined,
+            fixed_at: undefined,
           });
-          if (actuallyFixed && !escalated.includes(audit.id)) fixed.push({ id: audit.id, type: audit.audit_type, result: fixResult });
+          if (!remediationFailed && !escalated.includes(audit.id)) {
+            fixed.push({ id: audit.id, type: audit.audit_type, result: fixResult, status: 'retesting' });
+          }
         } catch (e: any) {
           await svc.entities.SwarmAudit.update(audit.id, { status: 'escalated', fix_result: `Fix failed: ${e.message}` });
           escalated.push(audit.id);
         }
       }
 
-      await logSop(svc, 'swarm_auto_fix', `Auto-fixed ${fixed.length}, escalated ${escalated.length} findings`, JSON.stringify({ fixed: fixed.length, escalated: escalated.length }));
-      return Response.json({ ok: true, fixed_count: fixed.length, escalated_count: escalated.length, fixed, escalated });
+      await logSop(svc, 'swarm_auto_fix', `Remediated ${fixed.length} finding(s) awaiting postcondition validation; escalated ${escalated.length}`, JSON.stringify({ awaiting_validation: fixed.length, escalated: escalated.length }));
+      return Response.json({ ok: true, awaiting_validation_count: fixed.length, escalated_count: escalated.length, awaiting_validation: fixed, escalated });
     }
 
     // ── autoHeal: retry failed tasks and recover broken integrations ──
     if (action === 'autoHeal') {
       const failedTasks = await svc.entities.SwarmTask.filter({ status: 'failed' }, '-created_date', 50);
-      const healed: any[] = [];
+      const requeued: any[] = [];
       const unhealable: any[] = [];
 
       for (const task of failedTasks) {
@@ -630,7 +636,7 @@ export default async function (req: Request): Promise<Response> {
             error: null,
             retry_count: retries + 1,
           });
-          healed.push({ id: task.id, title: task.title, retry: retries + 1 });
+          requeued.push({ id: task.id, title: task.title, retry: retries + 1, state: 'pending_revalidation' });
         } else {
           unhealable.push({ id: task.id, title: task.title, reason: 'max retries exceeded' });
         }
@@ -643,8 +649,8 @@ export default async function (req: Request): Promise<Response> {
         integrationHealth.google_sheets = 'ok';
       } catch { integrationHealth.google_sheets = 'degraded'; }
 
-      await logSop(svc, 'swarm_auto_heal', `Healed ${healed.length} tasks, ${unhealable.length} unhealable`, JSON.stringify({ healed: healed.length, integrationHealth }));
-      return Response.json({ ok: true, healed_count: healed.length, unhealable_count: unhealable.length, healed, unhealable, integration_health: integrationHealth });
+      await logSop(svc, 'swarm_auto_heal', `Requeued ${requeued.length} failed task(s) for another attempt; ${unhealable.length} exceeded retry ceiling`, JSON.stringify({ requeued: requeued.length, integrationHealth }));
+      return Response.json({ ok: true, requeued_count: requeued.length, unhealable_count: unhealable.length, requeued, unhealable, integration_health: integrationHealth });
     }
 
     // ── autoHarden: security scan and hardening ──
@@ -678,16 +684,19 @@ export default async function (req: Request): Promise<Response> {
         checks.push({ check: 'Deadlocked tasks', status: 'none', severity: 'info' });
       }
 
-      // Check 3: Old audit records cleanup — mark open audits older than 7 days as wont_fix
+      // Check 3: Stale audit escalation — age is NEVER sufficient reason to close a finding.
       const oldAudits = await svc.entities.SwarmAudit.filter({ status: 'open' }, '-created_date', 100);
       const stale = oldAudits.filter((a) => {
         const age = a.audited_at ? (now - new Date(a.audited_at).getTime()) / 86400000 : 0;
         return age > 7;
       });
       for (const sa of stale) {
-        await svc.entities.SwarmAudit.update(sa.id, { status: 'wont_fix', fix_result: 'Auto-hardened: audit open for >7 days' });
+        await svc.entities.SwarmAudit.update(sa.id, {
+          status: 'escalated',
+          fix_result: 'Escalated by autoHarden: unresolved audit remained open >7 days; requires root-cause review and postcondition validation',
+        });
       }
-      if (stale.length > 0) checks.push({ check: 'Stale audit cleanup', status: `${stale.length} closed`, severity: 'low' });
+      if (stale.length > 0) checks.push({ check: 'Stale audit escalation', status: `${stale.length} escalated, none auto-closed`, severity: 'high' });
 
       await logSop(svc, 'swarm_auto_harden', `Hardening: ${checks.length} checks run`, JSON.stringify(checks));
       return Response.json({ ok: true, checks_run: checks.length, checks });
