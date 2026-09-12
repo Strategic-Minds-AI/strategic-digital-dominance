@@ -95,9 +95,9 @@ export default function LocationSeoPage() {
       .then((results) => {
         if (results && results.length > 0) {
           const reg = results[0];
-          const approvedLoc = { city: reg.canonical_city, state: reg.canonical_state };
+          const approvedLoc = { city: reg.canonical_city, state: reg.state_abbreviation || stateCode };
           const cfg = locationSeoConfig(approvedLoc);
-          setPageData({ loc: approvedLoc, cfg, stateName, registry: reg });
+          setPageData({ loc: approvedLoc, cfg, stateName: reg.canonical_state || stateName, registry: reg });
         } else {
           // Not in registry → 404 (not a synthetic page)
           setNotFound(true);
