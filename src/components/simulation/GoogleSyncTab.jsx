@@ -30,9 +30,9 @@ export default function GoogleSyncTab() {
   const services = [
     { id: "sheets", name: "Google Sheets", icon: FileSpreadsheet, authorized: true, desc: "Master tracking spreadsheet with all archetypes, visitors, admin profiles, and questionnaire data" },
     { id: "calendar", name: "Google Calendar", icon: Calendar, authorized: true, desc: "Day-by-day, hour-by-hour simulation schedule with QA checkpoints" },
-    { id: "drive", name: "Google Drive", icon: FolderOpen, authorized: false, desc: "Folder structure: root → archetypes (6) → email templates, simulation reports" },
-    { id: "tasks", name: "Google Tasks", icon: CheckSquare, authorized: false, desc: "Task lists per agent (7 agents) with deadlines, results, and notes" },
-    { id: "docs", name: "Google Docs", icon: FileText, authorized: false, desc: "Email templates for bids@ and support@, archetype profiles, simulation reports" },
+    { id: "drive", name: "Google Drive", icon: FolderOpen, authorized: true, desc: "Folder structure: root → archetypes (6) → email templates, simulation reports" },
+    { id: "tasks", name: "Google Tasks", icon: CheckSquare, authorized: true, desc: "Task lists per agent (7 agents) with deadlines, results, and notes" },
+    { id: "docs", name: "Google Docs", icon: FileText, authorized: true, desc: "Email templates for bids@ and support@, archetype profiles, simulation reports" },
   ];
 
   return (

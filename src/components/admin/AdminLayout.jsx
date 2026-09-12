@@ -11,6 +11,7 @@ const links = [
   { to: "/admin/alpha-prime", icon: Crown, label: "Alpha Prime" },
   { to: "/admin/shadow", icon: EyeOff, label: "Shadow" },
   { to: "/admin/system-map", icon: Boxes, label: "System Map" },
+  { to: "/admin/contractor-simulation", icon: Users, label: "Simulation" },
   { to: "/admin/workflows", icon: Workflow, label: "Workflows" },
   { to: "/admin/playbooks", icon: BookOpen, label: "Playbooks" },
   { to: "/admin/system-health", icon: Gauge, label: "System Health" },
