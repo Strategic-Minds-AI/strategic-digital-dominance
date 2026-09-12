@@ -1,0 +1,6 @@
+{
+  "type": "googledocs",
+  "scopes": [
+    "email"
+  ]
+}
