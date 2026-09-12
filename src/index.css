@@ -161,6 +161,27 @@
 }
 
 @layer utilities {
+  /* === Light-theme electric gold/silver hover border for white admin pages === */
+  @keyframes xa-electric-light-flow {
+    0%, 100% {
+      border-color: #C0C0C0;
+      box-shadow: 0 0 0 1px rgba(192, 192, 192, 0.3), 0 0 14px -4px rgba(192, 192, 192, 0.4), 4px 4px 0px 0px rgba(0,0,0,1);
+    }
+    50% {
+      border-color: #D4AF37;
+      box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.4), 0 0 18px -4px rgba(212, 175, 55, 0.55), 4px 4px 0px 0px rgba(0,0,0,1);
+    }
+  }
+  .xa-electric-light {
+    border: 1px solid #000;
+    box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  }
+  .xa-electric-light:hover {
+    animation: xa-electric-light-flow 1.8s ease-in-out infinite;
+    transform: translateY(-2px);
+  }
+
   /* === Electric silver/gold animated border for admin cards & buttons === */
   @keyframes xa-electric-flow {
     0%, 100% {

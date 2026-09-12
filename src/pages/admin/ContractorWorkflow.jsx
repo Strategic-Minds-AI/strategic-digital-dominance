@@ -14,6 +14,7 @@ import {
   FileText,
   X,
   ArrowRight,
+  Brain,
 } from "lucide-react";
 import { WORKFLOW_STAGES, WORKFLOW_DAYS, WORKFLOW_SUMMARY } from "@/data/contractorWorkflow";
 import { base44 } from "@/api/base44Client";
@@ -26,6 +27,8 @@ export default function ContractorWorkflow() {
   const [selectedDay, setSelectedDay] = useState(null);
   const [syncing, setSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState(null);
+  const [swarmSyncing, setSwarmSyncing] = useState(false);
+  const [swarmResult, setSwarmResult] = useState(null);
 
   const filteredDays = useMemo(() => {
     let days = WORKFLOW_DAYS;
@@ -56,6 +59,18 @@ export default function ContractorWorkflow() {
     setSyncing(false);
   };
 
+  const handleSwarmSync = async () => {
+    setSwarmSyncing(true);
+    setSwarmResult(null);
+    try {
+      const res = await base44.functions.invoke("syncWorkflowToSwarm", {});
+      setSwarmResult({ success: true, ...res.data });
+    } catch (err) {
+      setSwarmResult({ success: false, error: err?.message || "Swarm sync failed" });
+    }
+    setSwarmSyncing(false);
+  };
+
   return (
     <div className="min-h-screen bg-white text-black">
       {/* Header */}
@@ -79,6 +94,14 @@ export default function ContractorWorkflow() {
                 className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white border border-black text-sm font-semibold text-black hover:bg-black hover:text-white transition"
               >
                 <FileText className="h-4 w-4" /> Findings
+              </button>
+              <button
+                onClick={handleSwarmSync}
+                disabled={swarmSyncing}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white border border-black text-black hover:bg-stone-100 text-sm font-bold transition disabled:opacity-50"
+              >
+                {swarmSyncing ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Brain className="h-4 w-4" />}
+                {swarmSyncing ? "Syncing..." : "Sync to Swarm"}
               </button>
               <button
                 onClick={handleSync}
@@ -177,6 +200,41 @@ export default function ContractorWorkflow() {
               )}
               {!syncResult.success && (
                 <p className="text-xs text-red-600 mt-1">{syncResult.error}</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Swarm Sync Result */}
+      {swarmResult && (
+        <div className="max-w-7xl mx-auto px-4 pb-4">
+          <div
+            className={`rounded-xl p-4 flex items-start gap-3 border ${
+              swarmResult.success
+                ? "bg-blue-50 border-blue-600"
+                : "bg-red-50 border-red-600"
+            }`}
+            style={{ boxShadow: "4px 4px 0px 0px rgba(0,0,0,1)" }}
+          >
+            {swarmResult.success ? (
+              <Brain className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
+            ) : (
+              <AlertCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
+            )}
+            <div className="flex-1">
+              <p className={`text-sm font-semibold ${swarmResult.success ? "text-blue-700" : "text-red-700"}`}>
+                {swarmResult.success
+                  ? `Swarm synced! ${swarmResult.tasksCreated} tasks created. ${swarmResult.totalTracked} total tracked across ${swarmResult.stagesTracked} stages.`
+                  : "Swarm sync failed"}
+              </p>
+              {swarmResult.success && (
+                <p className="text-xs text-stone-500 mt-1">
+                  Alpha Prime now has persistent awareness of all 60 workflow days. Investigation ID: {swarmResult.investigationId?.slice(0, 12)}...
+                </p>
+              )}
+              {!swarmResult.success && (
+                <p className="text-xs text-red-600 mt-1">{swarmResult.error}</p>
               )}
             </div>
           </div>
