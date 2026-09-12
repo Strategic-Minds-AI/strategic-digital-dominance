@@ -1,0 +1,156 @@
+{
+  "name": "AlphaPrimeHeartbeat",
+  "type": "object",
+  "properties": {
+    "cycle_id": {
+      "type": "string",
+      "required": true,
+      "description": "Deterministic idempotency key (alpha-prime-heartbeat-YYYYMMDD-HHmm-scopeHash)"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "duration_ms": {
+      "type": "number"
+    },
+    "cadence": {
+      "type": "string",
+      "enum": [
+        "5min",
+        "15min",
+        "hourly",
+        "daily",
+        "weekly"
+      ],
+      "default": "5min"
+    },
+    "previous_cycle_completed": {
+      "type": "boolean"
+    },
+    "urgent_queue_count": {
+      "type": "number"
+    },
+    "critical_findings_count": {
+      "type": "number"
+    },
+    "stale_tasks_count": {
+      "type": "number"
+    },
+    "connector_freshness": {
+      "type": "object",
+      "properties": {
+        "googledrive": {
+          "type": "string"
+        },
+        "googlesheets": {
+          "type": "string"
+        },
+        "googlecalendar": {
+          "type": "string"
+        },
+        "gmail": {
+          "type": "string"
+        },
+        "googletasks": {
+          "type": "string"
+        },
+        "googledocs": {
+          "type": "string"
+        },
+        "google_search_console": {
+          "type": "string"
+        },
+        "google_analytics": {
+          "type": "string"
+        },
+        "hubspot": {
+          "type": "string"
+        },
+        "supabase": {
+          "type": "string"
+        }
+      }
+    },
+    "source_drift_detected": {
+      "type": "boolean"
+    },
+    "google_sync_freshness": {
+      "type": "string"
+    },
+    "sitemap_canonical_drift": {
+      "type": "boolean"
+    },
+    "smoke_checks_passed": {
+      "type": "number"
+    },
+    "smoke_checks_failed": {
+      "type": "number"
+    },
+    "agents_dispatched": {
+      "type": "number"
+    },
+    "artifacts_collected": {
+      "type": "number"
+    },
+    "validations_run": {
+      "type": "number"
+    },
+    "receipts_written": {
+      "type": "number"
+    },
+    "self_model_updated": {
+      "type": "boolean"
+    },
+    "open_loops_updated": {
+      "type": "boolean"
+    },
+    "approval_items_raised": {
+      "type": "number"
+    },
+    "health_score": {
+      "type": "number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "running",
+        "completed",
+        "failed"
+      ],
+      "default": "running"
+    },
+    "error": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "cycle_id"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,148 @@
+{
+  "name": "CanonicalLocationRegistry",
+  "type": "object",
+  "properties": {
+    "location_id": {
+      "type": "string",
+      "description": "Stable deterministic ID (e.g. fl-miami)"
+    },
+    "canonical_city": {
+      "type": "string",
+      "required": true
+    },
+    "canonical_state": {
+      "type": "string",
+      "description": "Full state name (e.g. Florida)"
+    },
+    "state_abbreviation": {
+      "type": "string",
+      "description": "2-letter code (e.g. FL)"
+    },
+    "state_slug": {
+      "type": "string",
+      "description": "URL-safe state slug (e.g. fl)"
+    },
+    "city_slug": {
+      "type": "string",
+      "description": "URL-safe city slug (e.g. miami)"
+    },
+    "canonical_path": {
+      "type": "string",
+      "description": "Path only (e.g. /fl/miami)"
+    },
+    "canonical_url": {
+      "type": "string",
+      "description": "Full URL (e.g. https://epoxyquotenearme.com/fl/miami)"
+    },
+    "closest_xps_location": {
+      "type": "string",
+      "description": "Name of nearest approved XPS/XPS Xpress store"
+    },
+    "service_radius": {
+      "type": "number",
+      "description": "Service radius in miles from closest XPS store"
+    },
+    "serviceability_status": {
+      "type": "string",
+      "enum": [
+        "serviceable",
+        "borderline",
+        "not_serviceable"
+      ],
+      "default": "serviceable"
+    },
+    "content_status": {
+      "type": "string",
+      "enum": [
+        "none",
+        "draft",
+        "published",
+        "needs_update"
+      ],
+      "default": "none"
+    },
+    "validation_status": {
+      "type": "string",
+      "enum": [
+        "unvalidated",
+        "validating",
+        "passed",
+        "failed"
+      ],
+      "default": "unvalidated"
+    },
+    "template_id": {
+      "type": "string",
+      "description": "WebsiteTemplate ID if a template exists for this location"
+    },
+    "seo_id": {
+      "type": "string",
+      "description": "SeoContent ID if SEO content exists"
+    },
+    "sitemap_status": {
+      "type": "string",
+      "enum": [
+        "not_in_sitemap",
+        "in_sitemap",
+        "stale"
+      ],
+      "default": "not_in_sitemap"
+    },
+    "google_indexing_state": {
+      "type": "string",
+      "enum": [
+        "unknown",
+        "discovered",
+        "indexed",
+        "not_indexed",
+        "error"
+      ],
+      "default": "unknown"
+    },
+    "funnel_status": {
+      "type": "string",
+      "enum": [
+        "none",
+        "active",
+        "broken"
+      ],
+      "default": "none"
+    },
+    "lead_routing_destination": {
+      "type": "string",
+      "description": "Where leads from this location are routed (e.g. nearest XPS store)"
+    },
+    "last_validation_timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "local_value_score": {
+      "type": "number",
+      "default": 0,
+      "description": "0-100 score for genuine local value (not just keyword substitution)"
+    }
+  },
+  "required": [
+    "location_id",
+    "canonical_city",
+    "canonical_path"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

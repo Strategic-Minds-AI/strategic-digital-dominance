@@ -1,0 +1,136 @@
+{
+  "name": "CanonicalSiteRegistry",
+  "type": "object",
+  "properties": {
+    "canonical_domain": {
+      "type": "string",
+      "description": "The single authoritative production domain (e.g. epoxyquotenearme.com)"
+    },
+    "canonical_protocol": {
+      "type": "string",
+      "default": "https"
+    },
+    "preferred_url_pattern": {
+      "type": "string",
+      "description": "URL grammar for location pages (e.g. /{state_slug}/{city_slug})"
+    },
+    "trailing_slash_policy": {
+      "type": "string",
+      "enum": [
+        "none",
+        "always",
+        "redirect_to_none"
+      ],
+      "default": "none"
+    },
+    "google_search_console_property": {
+      "type": "string",
+      "description": "Exact GSC property identifier (e.g. sc-domain:epoxyquotenearme.com)"
+    },
+    "ga4_property_id": {
+      "type": "string",
+      "description": "GA4 property ID for behavioral analytics"
+    },
+    "sitemap_url": {
+      "type": "string"
+    },
+    "robots_url": {
+      "type": "string"
+    },
+    "base44_app_id": {
+      "type": "string"
+    },
+    "github_repository": {
+      "type": "string"
+    },
+    "production_branch": {
+      "type": "string",
+      "default": "main"
+    },
+    "vercel_project": {
+      "type": "string"
+    },
+    "brand_identifier": {
+      "type": "string"
+    },
+    "business_facts_identifier": {
+      "type": "string"
+    },
+    "active_environment": {
+      "type": "string",
+      "enum": [
+        "production",
+        "staging",
+        "preview"
+      ],
+      "default": "production"
+    },
+    "approved_location_count": {
+      "type": "number",
+      "default": 0
+    },
+    "preview_domains": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "release_version": {
+      "type": "string"
+    },
+    "last_source_truth_sync": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_google_sync": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_validation_cycle": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "current_health_score": {
+      "type": "number",
+      "default": 0
+    },
+    "current_optimization_score": {
+      "type": "number",
+      "default": 0
+    },
+    "data_quarantine": {
+      "type": "boolean",
+      "default": false,
+      "description": "When true, contaminated optimization inputs are frozen until revalidated"
+    },
+    "quarantine_reason": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "canonical_domain"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

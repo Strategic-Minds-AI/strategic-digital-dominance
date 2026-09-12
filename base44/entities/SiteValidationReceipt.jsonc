@@ -1,0 +1,140 @@
+{
+  "name": "SiteValidationReceipt",
+  "type": "object",
+  "properties": {
+    "canonical_url": {
+      "type": "string",
+      "required": true
+    },
+    "location_id": {
+      "type": "string"
+    },
+    "validated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "validator_version": {
+      "type": "string",
+      "default": "1.0"
+    },
+    "deployment_id": {
+      "type": "string"
+    },
+    "dns_reachable": {
+      "type": "boolean"
+    },
+    "tls_valid": {
+      "type": "boolean"
+    },
+    "http_status": {
+      "type": "number"
+    },
+    "redirect_chain": {
+      "type": "string"
+    },
+    "final_url": {
+      "type": "string"
+    },
+    "response_latency_ms": {
+      "type": "number"
+    },
+    "render_complete": {
+      "type": "boolean"
+    },
+    "correct_city": {
+      "type": "boolean"
+    },
+    "correct_state": {
+      "type": "boolean"
+    },
+    "correct_h1": {
+      "type": "boolean"
+    },
+    "correct_title": {
+      "type": "boolean"
+    },
+    "correct_description": {
+      "type": "boolean"
+    },
+    "correct_canonical": {
+      "type": "boolean"
+    },
+    "correct_robots": {
+      "type": "boolean"
+    },
+    "correct_og_url": {
+      "type": "boolean"
+    },
+    "structured_data_valid": {
+      "type": "boolean"
+    },
+    "correct_business_facts": {
+      "type": "boolean"
+    },
+    "internal_nav_works": {
+      "type": "boolean"
+    },
+    "estimate_cta_present": {
+      "type": "boolean"
+    },
+    "visualizer_accessible": {
+      "type": "boolean"
+    },
+    "mobile_viewport_ok": {
+      "type": "boolean"
+    },
+    "desktop_viewport_ok": {
+      "type": "boolean"
+    },
+    "console_errors": {
+      "type": "string"
+    },
+    "broken_assets": {
+      "type": "string"
+    },
+    "canonical_conflict": {
+      "type": "boolean"
+    },
+    "sitemap_member": {
+      "type": "boolean"
+    },
+    "registry_member": {
+      "type": "boolean"
+    },
+    "overall_pass": {
+      "type": "boolean"
+    },
+    "failure_reasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    }
+  },
+  "required": [
+    "canonical_url"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

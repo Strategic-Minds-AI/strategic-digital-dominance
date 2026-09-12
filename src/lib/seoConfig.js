@@ -4,12 +4,11 @@
 
 import { XPS_LOCATIONS, ALL_WORLDWIDE_LOCATIONS } from "@/lib/xpsLocations";
 
-// Canonical origin — defaults to the live serving domain so canonical tags and
-// JSON-LD always match the URL Google actually crawls (eliminates DUPLICATE_ALTERNATE).
-// Overridable at runtime from AppSettings via applySeoSettings().
-export let SITE_URL = typeof window !== "undefined" && window.location?.origin
-  ? window.location.origin
-  : "https://epoxyquotenearme.base44.app";
+// CANONICAL ORIGIN — Alpha Prime Source-Truth Authority
+// The canonical URL is ALWAYS the production domain, never the preview domain.
+// This eliminates preview-domain canonical contamination (P0 finding from Sept 12 audit).
+// Overridable at runtime from AppSettings via applySeoSettings() or CanonicalSiteRegistry.
+export let SITE_URL = "https://epoxyquotenearme.com";
 
 // Apply live branding/domain from AppSettings so the canonical + JSON-LD match the
 // connected custom domain and brand name without code changes.
