@@ -594,12 +594,17 @@ export default async function (req: Request): Promise<Response> {
             escalated.push(audit.id);
           }
 
+          // Alpha Prime Constitution: never mark failures as "fixed"
+          // A fix_result containing failure indicators means the fix did NOT succeed.
+          const failurePattern = /failed|failure|error|404|409|429|500|timeout|missing artifact|missing expected|validation failure|ambiguous/i;
+          const actuallyFixed = !failurePattern.test(fixResult);
+          const finalStatus = escalated.includes(audit.id) ? 'escalated' : actuallyFixed ? 'fixed' : 'failed';
           await svc.entities.SwarmAudit.update(audit.id, {
-            status: escalated.includes(audit.id) ? 'escalated' : 'fixed',
+            status: finalStatus,
             fix_result: fixResult,
-            fixed_at: new Date().toISOString(),
+            fixed_at: actuallyFixed ? new Date().toISOString() : undefined,
           });
-          if (!escalated.includes(audit.id)) fixed.push({ id: audit.id, type: audit.audit_type, result: fixResult });
+          if (actuallyFixed && !escalated.includes(audit.id)) fixed.push({ id: audit.id, type: audit.audit_type, result: fixResult });
         } catch (e: any) {
           await svc.entities.SwarmAudit.update(audit.id, { status: 'escalated', fix_result: `Fix failed: ${e.message}` });
           escalated.push(audit.id);

@@ -34,7 +34,15 @@
         "auto_fixing",
         "fixed",
         "escalated",
-        "wont_fix"
+        "wont_fix",
+        "investigating",
+        "root_cause_identified",
+        "remediation_queued",
+        "remediating",
+        "retesting",
+        "regression_testing",
+        "failed",
+        "accepted_risk"
       ],
       "default": "open"
     },
@@ -44,12 +52,10 @@
     },
     "details": {
       "type": "string",
-      "maxLength": 3000,
-      "description": "Full audit context \u2014 URLs, metrics, affected entities"
+      "maxLength": 3000
     },
     "affected_entity_type": {
-      "type": "string",
-      "description": "Entity type impacted (Lead, WebsiteTemplate, GeneratedPage, etc.)"
+      "type": "string"
     },
     "affected_entity_id": {
       "type": "string"
@@ -58,8 +64,7 @@
       "type": "string"
     },
     "fix_action": {
-      "type": "string",
-      "description": "What action was taken to fix the issue"
+      "type": "string"
     },
     "fix_result": {
       "type": "string",
@@ -68,16 +73,13 @@
     },
     "auto_fixable": {
       "type": "boolean",
-      "default": true,
-      "description": "Whether this finding can be auto-fixed by the swarm"
+      "default": true
     },
     "audited_by": {
-      "type": "string",
-      "description": "Agent or system that performed the audit"
+      "type": "string"
     },
     "fixed_by": {
-      "type": "string",
-      "description": "Agent or system that applied the fix"
+      "type": "string"
     },
     "audited_at": {
       "type": "string",

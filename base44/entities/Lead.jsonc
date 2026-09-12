@@ -85,7 +85,7 @@
     },
     "sqft_source": {
       "type": "string",
-      "description": "Which source provided the garage sqft (rentcast, osm_garage_takeoff, consensus, fallback_size, etc.)"
+      "description": "Which source provided the garage sqft"
     },
     "sqft_confidence": {
       "type": "string",
@@ -93,8 +93,7 @@
         "high",
         "medium",
         "low"
-      ],
-      "description": "Confidence level of the sqft determination: high = 2+ sources agree, medium = 1 source, low = fallback"
+      ]
     },
     "floor_condition": {
       "type": "array",
@@ -106,16 +105,13 @@
       "type": "string"
     },
     "flake_color": {
-      "type": "string",
-      "description": "Selected color chart code (e.g. FB-807)"
+      "type": "string"
     },
     "flake_color_name": {
-      "type": "string",
-      "description": "Human-readable color name (e.g. Tidal Wave)"
+      "type": "string"
     },
     "flake_color_hex": {
-      "type": "string",
-      "description": "Hex value of the selected color for the visualizer"
+      "type": "string"
     },
     "timeline": {
       "type": "string"
@@ -127,8 +123,7 @@
       }
     },
     "concept_image": {
-      "type": "string",
-      "description": "AI-generated concept image URL from the floor visualizer"
+      "type": "string"
     },
     "estimate_mid": {
       "type": "number"
@@ -170,8 +165,7 @@
       "type": "string"
     },
     "assigned_agent_id": {
-      "type": "string",
-      "description": "AgentPersona assigned for automated outreach"
+      "type": "string"
     },
     "appointment_status": {
       "type": "string",
@@ -179,8 +173,7 @@
     },
     "enrichment": {
       "type": "string",
-      "maxLength": 3000,
-      "description": "AI-enriched background data (business info, social profiles, revenue, reviews)"
+      "maxLength": 3000
     },
     "status": {
       "type": "string",
@@ -209,5 +202,23 @@
     "first_name",
     "email",
     "phone"
-  ]
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
 }
