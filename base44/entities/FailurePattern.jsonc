@@ -1,0 +1,124 @@
+{
+  "name": "FailurePattern",
+  "type": "object",
+  "properties": {
+    "fingerprint": {
+      "type": "string",
+      "description": "Deterministic hash of failure signature"
+    },
+    "pattern_name": {
+      "type": "string",
+      "description": "Human-readable name"
+    },
+    "affected_subsystem": {
+      "type": "string",
+      "enum": [
+        "seo",
+        "funnel",
+        "lead_engine",
+        "swarm",
+        "connector",
+        "deployment",
+        "data_quality",
+        "security",
+        "workflow",
+        "agent",
+        "frontend",
+        "backend",
+        "database",
+        "integration"
+      ]
+    },
+    "frequency": {
+      "type": "number",
+      "default": 1,
+      "description": "Number of occurrences"
+    },
+    "first_seen": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_seen": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "root_causes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "attempted_fixes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "successful_fix": {
+      "type": "string",
+      "description": "Fix that actually resolved the pattern"
+    },
+    "failed_fixes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "regression_test": {
+      "type": "string",
+      "description": "Test added to prevent recurrence"
+    },
+    "preventive_control": {
+      "type": "string",
+      "description": "Control to prevent this class of failure"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "resolved",
+        "recurring",
+        "escalated"
+      ],
+      "default": "active"
+    },
+    "producer_process": {
+      "type": "string",
+      "description": "Which process/function/agent keeps creating this failure"
+    },
+    "parent_audit_id": {
+      "type": "string",
+      "description": "SwarmAudit or SystemHealthAudit that tracks this pattern"
+    }
+  },
+  "required": [
+    "fingerprint",
+    "pattern_name",
+    "affected_subsystem"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

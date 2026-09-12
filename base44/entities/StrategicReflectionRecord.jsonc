@@ -1,0 +1,115 @@
+{
+  "name": "StrategicReflectionRecord",
+  "type": "object",
+  "properties": {
+    "cycle_id": {
+      "type": "string",
+      "description": "Audit cycle this reflection belongs to"
+    },
+    "observation": {
+      "type": "string",
+      "maxLength": 5000,
+      "description": "What was observed"
+    },
+    "claim": {
+      "type": "string",
+      "maxLength": 2000,
+      "description": "The claim or belief being examined"
+    },
+    "evidence": {
+      "type": "string",
+      "maxLength": 5000,
+      "description": "Evidence supporting or contradicting the claim"
+    },
+    "hypothesis": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "counter_hypothesis": {
+      "type": "string",
+      "maxLength": 2000,
+      "description": "What would prove the claim wrong"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0
+    },
+    "risk": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "decision": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "test": {
+      "type": "string",
+      "maxLength": 2000,
+      "description": "Smallest independent test capable of verifying the claim"
+    },
+    "result": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "fail",
+        "inconclusive",
+        "pending"
+      ],
+      "default": "pending"
+    },
+    "lesson": {
+      "type": "string",
+      "maxLength": 3000
+    },
+    "next_action": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "reflection_type": {
+      "type": "string",
+      "enum": [
+        "assumption_challenge",
+        "false_green_detection",
+        "validator_reliability",
+        "agent_performance",
+        "knowledge_freshness",
+        "cost_optimization",
+        "architecture_review"
+      ],
+      "default": "assumption_challenge"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "cycle_id",
+    "observation",
+    "claim"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

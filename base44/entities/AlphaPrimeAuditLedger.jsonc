@@ -1,0 +1,177 @@
+{
+  "name": "AlphaPrimeAuditLedger",
+  "type": "object",
+  "properties": {
+    "cycle_id": {
+      "type": "string",
+      "required": true,
+      "description": "Deterministic audit cycle ID"
+    },
+    "trigger": {
+      "type": "string",
+      "description": "What triggered this audit (schedule, code_change, anomaly, etc.)"
+    },
+    "scope": {
+      "type": "string",
+      "enum": [
+        "full",
+        "lightweight_5min",
+        "active_15min",
+        "strategic_hourly",
+        "deep_daily",
+        "architecture_weekly",
+        "strategic_monthly",
+        "event_driven"
+      ],
+      "default": "full"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "duration_ms": {
+      "type": "number"
+    },
+    "systems_scanned": {
+      "type": "number",
+      "default": 0
+    },
+    "tests_run": {
+      "type": "number",
+      "default": 0
+    },
+    "tests_passed": {
+      "type": "number",
+      "default": 0
+    },
+    "tests_failed": {
+      "type": "number",
+      "default": 0
+    },
+    "tests_unknown": {
+      "type": "number",
+      "default": 0
+    },
+    "tests_stale": {
+      "type": "number",
+      "default": 0
+    },
+    "score_before": {
+      "type": "number"
+    },
+    "score_after": {
+      "type": "number"
+    },
+    "findings_created": {
+      "type": "number",
+      "default": 0
+    },
+    "findings_closed": {
+      "type": "number",
+      "default": 0
+    },
+    "repairs_attempted": {
+      "type": "number",
+      "default": 0
+    },
+    "repairs_passed": {
+      "type": "number",
+      "default": 0
+    },
+    "repairs_failed": {
+      "type": "number",
+      "default": 0
+    },
+    "rollbacks": {
+      "type": "number",
+      "default": 0
+    },
+    "cost_credits": {
+      "type": "number",
+      "default": 0
+    },
+    "source_version": {
+      "type": "string"
+    },
+    "deployment_version": {
+      "type": "string"
+    },
+    "final_state": {
+      "type": "string",
+      "enum": [
+        "GREEN",
+        "DEGRADED",
+        "BLOCKED",
+        "STABLE_GREEN",
+        "PRESERVATION"
+      ],
+      "default": "BLOCKED"
+    },
+    "audit_suites": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Which audit suites were executed"
+    },
+    "category_scores": {
+      "type": "object",
+      "description": "Per-category scores from the master score architecture"
+    },
+    "false_greens_detected": {
+      "type": "number",
+      "default": 0
+    },
+    "unknown_states": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "blocked_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "approvals_required": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    }
+  },
+  "required": [
+    "cycle_id"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

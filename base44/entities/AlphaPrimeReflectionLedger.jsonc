@@ -1,0 +1,96 @@
+{
+  "name": "AlphaPrimeReflectionLedger",
+  "type": "object",
+  "properties": {
+    "cycle_id": {
+      "type": "string",
+      "required": true,
+      "description": "Audit cycle this reflection belongs to"
+    },
+    "what_changed": {
+      "type": "string",
+      "maxLength": 3000
+    },
+    "what_surprised_me": {
+      "type": "string",
+      "maxLength": 3000
+    },
+    "which_assumption_was_wrong": {
+      "type": "string",
+      "maxLength": 3000
+    },
+    "which_evidence_changed_model": {
+      "type": "string",
+      "maxLength": 3000
+    },
+    "which_failure_repeated": {
+      "type": "string",
+      "maxLength": 3000
+    },
+    "which_validator_unreliable": {
+      "type": "string",
+      "maxLength": 3000
+    },
+    "which_agent_performed_poorly": {
+      "type": "string",
+      "maxLength": 3000
+    },
+    "which_agent_performed_exceptionally": {
+      "type": "string",
+      "maxLength": 3000
+    },
+    "which_capability_missing": {
+      "type": "string",
+      "maxLength": 3000
+    },
+    "which_deterministic_rule_should_replace_probabilistic": {
+      "type": "string",
+      "maxLength": 3000
+    },
+    "which_manual_step_should_become_automation": {
+      "type": "string",
+      "maxLength": 3000
+    },
+    "which_cost_reducible": {
+      "type": "string",
+      "maxLength": 3000
+    },
+    "which_test_missing": {
+      "type": "string",
+      "maxLength": 3000
+    },
+    "highest_value_next_action": {
+      "type": "string",
+      "maxLength": 3000
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "cycle_id"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

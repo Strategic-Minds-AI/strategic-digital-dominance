@@ -1,0 +1,125 @@
+{
+  "name": "AuditSystemIntegrityScore",
+  "type": "object",
+  "properties": {
+    "cycle_id": {
+      "type": "string",
+      "required": true
+    },
+    "audit_triggers_firing": {
+      "type": "boolean",
+      "default": false
+    },
+    "receipts_being_created": {
+      "type": "boolean",
+      "default": false
+    },
+    "failures_being_reopened_correctly": {
+      "type": "boolean",
+      "default": false
+    },
+    "scores_computed_correctly": {
+      "type": "boolean",
+      "default": false
+    },
+    "validators_checking_intended_state": {
+      "type": "boolean",
+      "default": false
+    },
+    "validators_reading_production": {
+      "type": "boolean",
+      "default": false
+    },
+    "false_positive_risk": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "high"
+    },
+    "false_negative_risk": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "high"
+    },
+    "health_score_hiding_defects": {
+      "type": "boolean",
+      "default": true
+    },
+    "categories_never_tested": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "duplicated_checks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "stuck_audit_records": {
+      "type": "number",
+      "default": 0
+    },
+    "repair_loop_repeat_failures": {
+      "type": "number",
+      "default": 0
+    },
+    "findings_closed_only_after_postcondition": {
+      "type": "boolean",
+      "default": false
+    },
+    "overall_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "default": 0
+    },
+    "mandatory_gates_passing": {
+      "type": "number",
+      "default": 0
+    },
+    "mandatory_gates_total": {
+      "type": "number",
+      "default": 0
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "cycle_id"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
