@@ -32,13 +32,14 @@ export default async function (req: Request): Promise<Response> {
     const generated = await base44.asServiceRole.entities.GeneratedPage.list(500);
     const published = generated.filter((g) => g.status !== "draft");
 
-    // Fetch ALL WebsiteTemplate records — each one is a live city page
-    let allTemplates: any[] = [];
+    // Fetch CanonicalLocationRegistry — canonical 2-letter state code URLs only
+    // Alpha Prime 6B fix: use registry instead of raw WebsiteTemplate URLs (which contain non-canonical state slugs)
+    let locationRegistry: any[] = [];
     let skip = 0;
     while (true) {
-      const batch: any[] = await base44.asServiceRole.entities.WebsiteTemplate.list(500, skip);
+      const batch: any[] = await base44.asServiceRole.entities.CanonicalLocationRegistry.list(500, skip);
       if (!batch || batch.length === 0) break;
-      allTemplates = allTemplates.concat(batch);
+      locationRegistry = locationRegistry.concat(batch);
       if (batch.length < 500) break;
       skip += 500;
     }
@@ -53,17 +54,12 @@ export default async function (req: Request): Promise<Response> {
       seenPaths.add(path);
     }
 
-    // Location pages from WebsiteTemplate records (all 344 city pages)
-    for (const t of allTemplates) {
-      // Extract the path from generated_url (e.g. "https://epoxyquotenearme.com/texas/pearland" -> "/texas/pearland")
-      const url = t.generated_url || "";
-      const match = url.match(/^https?:\/\/[^/]+(\/.+)$/);
-      if (match) {
-        const path = match[1];
-        if (!seenPaths.has(path)) {
-          entries.push(urlEntry(path, now, "0.8", "monthly"));
-          seenPaths.add(path);
-        }
+    // Location pages from CanonicalLocationRegistry — canonical 2-letter state code URLs only
+    for (const loc of locationRegistry) {
+      const path = loc.canonical_path;
+      if (path && !seenPaths.has(path)) {
+        entries.push(urlEntry(path, now, "0.8", "monthly"));
+        seenPaths.add(path);
       }
     }
 
@@ -84,7 +80,7 @@ ${entries.join("\n")}
     await logStep(base44, {
       category: "seo",
       action: "Generated dynamic sitemap",
-      detail: `${entries.length} URLs (${STATIC_PATHS.length} static, ${allTemplates.length} location, ${published.length} generated)`,
+      detail: `${entries.length} URLs (${STATIC_PATHS.length} static, ${locationRegistry.length} location, ${published.length} generated)`,
       source: "generateSitemap",
     });
 
