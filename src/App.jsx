@@ -87,6 +87,8 @@ import SeoSimulator from '@/pages/admin/SeoSimulator';
 import DomainGoldRush from '@/pages/admin/DomainGoldRush';
 import CrystalBall from '@/pages/admin/CrystalBall';
 import SystemMap from '@/pages/admin/SystemMap';
+import ContractorWorkflow from '@/pages/admin/ContractorWorkflow';
+import WorkflowFindings from '@/pages/admin/WorkflowFindings';
 import AutonomousWorkflows from '@/pages/admin/AutonomousWorkflows';
 import PlaybookLibrary from '@/pages/admin/PlaybookLibrary';
 import AlphaPrime from '@/pages/admin/AlphaPrime';
@@ -162,6 +164,8 @@ const AuthenticatedApp = () => {
         <Route path="alpha-prime" element={<AlphaPrime />} />
         <Route path="shadow" element={<Shadow />} />
         <Route path="system-map" element={<SystemMap />} />
+        <Route path="contractor-workflow" element={<ContractorWorkflow />} />
+        <Route path="workflow-findings" element={<WorkflowFindings />} />
         <Route path="workflows" element={<AutonomousWorkflows />} />
         <Route path="playbooks" element={<PlaybookLibrary />} />
         <Route path="leads" element={<Leads />} />
