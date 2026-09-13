@@ -93,6 +93,8 @@ import ContractorSimulation from '@/pages/admin/ContractorSimulation';
 import AutonomousWorkflows from '@/pages/admin/AutonomousWorkflows';
 import PlaybookLibrary from '@/pages/admin/PlaybookLibrary';
 import AlphaPrime from '@/pages/admin/AlphaPrime';
+import FleetDashboard from '@/pages/admin/FleetDashboard';
+import ShadowVisionCortex from '@/pages/admin/ShadowVisionCortex';
 import Shadow from '@/pages/admin/Shadow';
 import Acquire from '@/pages/Acquire';
 import GraphConsole from '@/pages/admin/GraphConsole';
@@ -163,6 +165,8 @@ const AuthenticatedApp = () => {
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="alpha-prime" element={<AlphaPrime />} />
+        <Route path="fleet" element={<FleetDashboard />} />
+        <Route path="vision-cortex" element={<ShadowVisionCortex />} />
         <Route path="shadow" element={<Shadow />} />
         <Route path="system-map" element={<SystemMap />} />
         <Route path="contractor-workflow" element={<ContractorWorkflow />} />

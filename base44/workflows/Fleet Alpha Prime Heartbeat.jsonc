@@ -1,0 +1,47 @@
+{
+  "name": "Fleet Alpha Prime Heartbeat",
+  "description": "Autonomous 5-minute fleet governance cycle \u2014 Fleet Alpha Prime inspects all registered systems, prioritizes compute allocation, checks for pending approvals, and routes operator intents. This is the PRIMARY CLOCK in the two-clock heartbeat architecture.",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "fleet_alpha_prime_heartbeat",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "govern_fleet": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "fleetAlphaPrime",
+            "args": {
+              "action": "govern"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Govern fleet",
+            "description": "Inspect all systems, prioritize compute, route intents, check approvals"
+          }
+        }
+      }
+    ]
+  },
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "*/5 * * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  }
+}

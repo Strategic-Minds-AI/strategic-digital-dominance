@@ -1,0 +1,261 @@
+{
+  "name": "FleetSystem",
+  "type": "object",
+  "properties": {
+    "system_id": {
+      "type": "string",
+      "description": "Unique system identifier (e.g. 'epoxyquotenearme', 'thextremeteam-console')"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable system name"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "system_type": {
+      "type": "string",
+      "enum": [
+        "website",
+        "saas",
+        "pwa",
+        "communications",
+        "lead_generation",
+        "marketplace",
+        "ai_product",
+        "data_system",
+        "browser_system",
+        "financial",
+        "crm",
+        "automation",
+        "research",
+        "agent_platform",
+        "construction",
+        "control_plane",
+        "unknown"
+      ],
+      "default": "website"
+    },
+    "business_purpose": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "repository": {
+      "type": "string",
+      "description": "GitHub repository (owner/repo)"
+    },
+    "default_branch": {
+      "type": "string",
+      "default": "main"
+    },
+    "vercel_project": {
+      "type": "string"
+    },
+    "railway_project": {
+      "type": "string"
+    },
+    "supabase_project": {
+      "type": "string"
+    },
+    "domains": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "drive_root": {
+      "type": "string",
+      "description": "Google Drive folder ID for system knowledge"
+    },
+    "owner": {
+      "type": "string",
+      "description": "Responsible operator"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low"
+      ],
+      "default": "medium"
+    },
+    "lifecycle": {
+      "type": "string",
+      "enum": [
+        "bootstrap",
+        "completion_sprint",
+        "preservation",
+        "degraded",
+        "blocked"
+      ],
+      "default": "bootstrap"
+    },
+    "current_mode": {
+      "type": "string",
+      "enum": [
+        "bootstrap",
+        "completion_sprint",
+        "preservation",
+        "degraded",
+        "blocked"
+      ],
+      "default": "bootstrap"
+    },
+    "global_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "default": 0
+    },
+    "distance_to_100": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "default": 100
+    },
+    "p0_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "p1_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "total_benchmarks": {
+      "type": "integer",
+      "default": 0
+    },
+    "passing_benchmarks": {
+      "type": "integer",
+      "default": 0
+    },
+    "failing_benchmarks": {
+      "type": "integer",
+      "default": 0
+    },
+    "unknown_benchmarks": {
+      "type": "integer",
+      "default": 0
+    },
+    "stale_benchmarks": {
+      "type": "integer",
+      "default": 0
+    },
+    "source_parity": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "fail",
+        "unknown"
+      ],
+      "default": "unknown"
+    },
+    "deployment_parity": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "fail",
+        "unknown"
+      ],
+      "default": "unknown"
+    },
+    "consecutive_pass_cycles": {
+      "type": "integer",
+      "default": 0
+    },
+    "required_consecutive_passes": {
+      "type": "integer",
+      "default": 3
+    },
+    "last_full_cycle": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "next_full_cycle": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "active_agents": {
+      "type": "integer",
+      "default": 0
+    },
+    "active_repair_jobs": {
+      "type": "integer",
+      "default": 0
+    },
+    "pending_approvals": {
+      "type": "integer",
+      "default": 0
+    },
+    "cost_credits_today": {
+      "type": "number",
+      "default": 0
+    },
+    "manifest": {
+      "type": "string",
+      "maxLength": 10000,
+      "description": "System manifest YAML (system.manifest.yaml content)"
+    },
+    "base44_app_id": {
+      "type": "string",
+      "description": "If this system runs on Base44, the app ID for migration tracking"
+    },
+    "migration_status": {
+      "type": "string",
+      "enum": [
+        "native",
+        "discovered",
+        "mapped",
+        "replacement_built",
+        "data_migrated",
+        "shadow_run",
+        "parity_tested",
+        "cutover_ready",
+        "approved",
+        "cutover",
+        "observed",
+        "decommission_candidate"
+      ],
+      "default": "native"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    },
+    "registered_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "system_id",
+    "name",
+    "system_type"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

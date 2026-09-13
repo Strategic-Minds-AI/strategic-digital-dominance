@@ -1,0 +1,135 @@
+{
+  "name": "OperatorIntent",
+  "type": "object",
+  "properties": {
+    "intent_id": {
+      "type": "string",
+      "description": "Deterministic intent identifier"
+    },
+    "system_id": {
+      "type": "string",
+      "description": "Target system (or 'fleet' for fleet-wide)"
+    },
+    "operator_input": {
+      "type": "string",
+      "maxLength": 5000,
+      "description": "The operator's natural language request"
+    },
+    "interpreted_objective": {
+      "type": "string",
+      "maxLength": 2000,
+      "description": "What the Vision Cortex interpreted as the objective"
+    },
+    "scope": {
+      "type": "string",
+      "enum": [
+        "fleet",
+        "system",
+        "workflow",
+        "agent",
+        "benchmark",
+        "repair",
+        "deployment",
+        "research",
+        "approval",
+        "query"
+      ],
+      "default": "query"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low"
+      ],
+      "default": "medium"
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Constraints on execution"
+    },
+    "risk": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "low"
+    },
+    "target_benchmarks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "approval_policy": {
+      "type": "string",
+      "enum": [
+        "auto",
+        "operator_required",
+        "operator_required_protected"
+      ],
+      "default": "auto"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "executing",
+        "completed",
+        "rejected",
+        "blocked"
+      ],
+      "default": "pending"
+    },
+    "result": {
+      "type": "string",
+      "maxLength": 5000,
+      "description": "Execution result or response"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "executed_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "intent_id",
+    "operator_input",
+    "scope"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
