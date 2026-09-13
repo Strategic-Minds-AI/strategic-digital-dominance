@@ -1,0 +1,83 @@
+{
+  "name": "ControlLease",
+  "type": "object",
+  "properties": {
+    "lock_key": {
+      "type": "string",
+      "description": "Deterministic lock key (e.g. fleet-govern-202609130600)"
+    },
+    "owner_id": {
+      "type": "string",
+      "description": "Worker or function that holds this lease"
+    },
+    "cycle_id": {
+      "type": "string",
+      "description": "Governance cycle this lease belongs to"
+    },
+    "acquired_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "lease_expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this lease becomes stale and can be re-acquired"
+    },
+    "heartbeat_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last heartbeat while lease is held"
+    },
+    "released_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the lease was explicitly released"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "held",
+        "released",
+        "expired",
+        "stale"
+      ],
+      "default": "held"
+    },
+    "version": {
+      "type": "integer",
+      "default": 1,
+      "description": "Optimistic concurrency version"
+    },
+    "idempotency_key": {
+      "type": "string",
+      "description": "Deterministic idempotency key for the operation this lease protects"
+    }
+  },
+  "required": [
+    "lock_key",
+    "owner_id",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -182,23 +182,108 @@ export default async function (req: Request): Promise<Response> {
     // ── GOVERN: Full fleet governance cycle ─────────────────────────────────
     if (action === "govern") {
       const svc = base44.asServiceRole;
-      const now = new Date().toISOString();
-      const cycleId = `fleet-govern-${now.slice(0, 16).replace(/[-T:]/g, "")}`;
+      const nowDate = new Date();
+      const now = nowDate.toISOString();
+
+      // ── 5-MINUTE BUCKET (mathematical, not exact minute) ──
+      // floor(current_minute / 5) * 5
+      const minute = nowDate.getUTCMinutes();
+      const bucketMinute = Math.floor(minute / 5) * 5;
+      const bucketKey = `${nowDate.getUTCFullYear()}${String(nowDate.getUTCMonth() + 1).padStart(2, "0")}${String(nowDate.getUTCDate()).padStart(2, "0")}${String(nowDate.getUTCHours()).padStart(2, "0")}${String(bucketMinute).padStart(2, "0")}`;
+
+      const cycleId = `fleet-govern-${bucketKey}`;
       const heartbeatId = `hb-${cycleId}`;
-      const startedAt = new Date().toISOString();
+      const lockKey = `fleet-govern-${bucketKey}`;
+      const idempotencyKey = `govern-${bucketKey}`;
+      const ownerId = `fleet-alpha-${nowDate.getUTCMilliseconds()}-${Math.random().toString(36).substring(2, 6)}`;
+      const leaseExpiresAt = new Date(nowDate.getTime() + 5 * 60 * 1000).toISOString(); // 5 min lease
+      const startedAt = now;
       const errors: string[] = [];
 
-      // ── ACQUIRE LOCK (time-bucketed idempotency) ──
-      // Check if a heartbeat already exists for this 5-min bucket
-      const existingHeartbeat = await svc.entities.FleetHeartbeat.filter({ heartbeat_id: heartbeatId }, "-created_date", 1);
-      const lockAcquired = !existingHeartbeat || existingHeartbeat.length === 0;
+      // ── ATOMIC LOCK via ControlLease ──
+      // Strategy: Try to create a ControlLease with id = lockKey.
+      // If create succeeds → lock acquired (first time for this bucket).
+      // If create fails (primary key exists) → try to re-acquire expired/released lease
+      //   via updateMany CAS: { lock_key, status: { $in: ["released","expired","stale"] } }
+      // If CAS returns 0 → lock not acquired (LOCK_NOT_ACQUIRED).
+      //
+      // The database enforces primary key uniqueness on create (atomic).
+      // The updateMany filter is a true compare-and-swap (atomic).
+      // This is NOT check→create; the database arbitrates ownership.
+
+      let lockAcquired = false;
+      let leaseRecord: any = null;
+
+      // Attempt 1: Try to create a new lease (atomic — primary key uniqueness)
+      try {
+        leaseRecord = await svc.entities.ControlLease.create({
+          lock_key: lockKey,
+          owner_id: ownerId,
+          cycle_id: cycleId,
+          acquired_at: now,
+          lease_expires_at: leaseExpiresAt,
+          heartbeat_at: now,
+          status: "held",
+          version: 1,
+          idempotency_key: idempotencyKey,
+        });
+        lockAcquired = true;
+      } catch (createErr: any) {
+        // Create failed — lease already exists for this lock_key
+        // Attempt 2: Try to re-acquire an expired/released lease via CAS
+        const casResult = await svc.entities.ControlLease.updateMany(
+          {
+            lock_key: lockKey,
+            status: { $in: ["released", "expired", "stale"] },
+          },
+          {
+            $set: {
+              status: "held",
+              owner_id: ownerId,
+              cycle_id: cycleId,
+              acquired_at: now,
+              lease_expires_at: leaseExpiresAt,
+              heartbeat_at: now,
+              idempotency_key: idempotencyKey,
+            },
+          }
+        );
+        if (casResult && casResult.updated > 0) {
+          lockAcquired = true;
+          // Read the updated record
+          const leases = await svc.entities.ControlLease.filter({ lock_key: lockKey, status: "held" }, "-acquired_at", 1);
+          leaseRecord = leases[0];
+        }
+      }
 
       if (!lockAcquired) {
+        // ── IDEMPOTENT: Return existing cycle state ──
+        // Check if a heartbeat already exists for this cycle
+        const existingHeartbeats = await svc.entities.FleetHeartbeat.filter({ heartbeat_id: heartbeatId }, "-created_date", 1);
+        if (existingHeartbeats.length > 0) {
+          const hb = existingHeartbeats[0];
+          return Response.json({
+            ok: true,
+            cycle_id: cycleId,
+            lock_acquired: false,
+            idempotent: true,
+            heartbeat_id: heartbeatId,
+            message: "Governance cycle already ran in this 5-minute bucket — returning existing state",
+            existing_heartbeat: {
+              heartbeat_id: hb.heartbeat_id,
+              status: hb.status,
+              fleet_score: hb.fleet_score,
+              systems_checked: hb.systems_checked,
+              intents_routed: hb.intents_routed,
+            },
+          });
+        }
         return Response.json({
           ok: true,
           cycle_id: cycleId,
           lock_acquired: false,
-          message: "Governance cycle already ran in this 5-minute bucket — skipping",
+          lock_status: "LOCK_NOT_ACQUIRED",
+          message: "Another owner holds the lease for this 5-minute bucket",
         });
       }
 
@@ -291,6 +376,17 @@ export default async function (req: Request): Promise<Response> {
         receipt_id: `receipt-${heartbeatId}`,
         status: errors.length > 0 ? "partial" : "completed",
       });
+
+      // ── RELEASE LEASE ──
+      try {
+        if (leaseRecord) {
+          await svc.entities.ControlLease.update(leaseRecord.id, {
+            status: "released",
+            released_at: completedAt,
+            heartbeat_at: completedAt,
+          });
+        }
+      } catch (e: any) { /* non-critical */ }
 
       return Response.json({
         ok: true,

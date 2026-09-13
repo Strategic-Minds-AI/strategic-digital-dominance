@@ -137,28 +137,76 @@ export default async function (req: Request): Promise<Response> {
 
     const svc = base44.asServiceRole;
     const now = new Date().toISOString();
+    const body = await req.json().catch(() => ({}));
+    const targetSystemId = body.system_id; // Optional: process gaps for a specific system
 
     // Read open gaps, sorted by priority score (descending)
-    const gaps = await svc.entities.OptimizationGap.filter({ status: 'open' }, '-repair_priority_score', 100);
+    // If system_id provided, filter to that system only (no cross-system contamination)
+    const gapFilter: any = { status: 'open' };
+    if (targetSystemId) gapFilter.system_id = targetSystemId;
+    const gaps = await svc.entities.OptimizationGap.filter(gapFilter, '-repair_priority_score', 200);
 
-    // Read existing ACTIVE repair jobs to avoid duplicates (queued, claimed, in_progress, blocked)
-    // This prevents duplicate repair explosion — one active repair per benchmark
-    const existingJobs = await svc.entities.RepairJob.filter({ status: ['queued', 'claimed', 'in_progress', 'blocked'] }, '-created_date', 200);
-    const existingBenchmarkIds = new Set(existingJobs.map((j: any) => j.benchmark_id));
+    // Read existing ACTIVE repair jobs to avoid duplicates
+    // COMPOSITE IDEMPOTENCY: system_id + benchmark_id + failure_fingerprint
+    // (not benchmark_id alone — different systems can have the same benchmark_id)
+    const existingJobs = await svc.entities.RepairJob.filter({ status: ['queued', 'claimed', 'in_progress', 'blocked'] }, '-created_date', 500);
+
+    // Build a composite dedupe key set: system_id + benchmark_id + failure_fingerprint
+    const existingDedupeKeys = new Set<string>();
+    // Also track per (system_id + benchmark_id) to handle failure evolution
+    const existingBySystemBenchmark: Record<string, any[]> = {};
+
+    for (const job of existingJobs) {
+      const fp = job.failure_fingerprint || '';
+      const dedupeKey = `${job.system_id}:${job.benchmark_id}:${fp}`;
+      existingDedupeKeys.add(dedupeKey);
+      const sbKey = `${job.system_id}:${job.benchmark_id}`;
+      if (!existingBySystemBenchmark[sbKey]) existingBySystemBenchmark[sbKey] = [];
+      existingBySystemBenchmark[sbKey].push(job);
+    }
 
     let created = 0;
     let skipped = 0;
+    let updated = 0;
     const repairJobs: any[] = [];
 
     for (const gap of gaps) {
-      // Skip if a repair job already exists for this benchmark
-      if (existingBenchmarkIds.has(gap.benchmark_id)) {
+      const gapSystemId = gap.system_id || 'epoxyquotenearme';
+      const gapFingerprint = `${gap.benchmark_id}:${gap.actual?.slice(0, 100) || 'unknown'}`;
+      const dedupeKey = `${gapSystemId}:${gap.benchmark_id}:${gapFingerprint}`;
+
+      // ── COMPOSITE IDEMPOTENCY CHECK ──
+      // Skip if an active repair already exists for this exact composite key
+      if (existingDedupeKeys.has(dedupeKey)) {
         skipped++;
         continue;
       }
 
+      // ── FAILURE EVOLUTION CHECK ──
+      // Same system + same benchmark but DIFFERENT failure fingerprint
+      // → evaluate whether existing repair can be updated or new repair is necessary
+      const sbKey = `${gapSystemId}:${gap.benchmark_id}`;
+      const existingForBenchmark = existingBySystemBenchmark[sbKey] || [];
+      if (existingForBenchmark.length > 0) {
+        // Check if any existing job has a DIFFERENT fingerprint
+        const hasDifferentFingerprint = existingForBenchmark.some((j: any) =>
+          (j.failure_fingerprint || '') !== gapFingerprint
+        );
+
+        if (hasDifferentFingerprint) {
+          // Failure has evolved — the existing repair addresses a different root cause
+          // Do NOT blindly merge. Create a new repair for the new failure signature.
+          // The old repair will be superseded by canonicalizeRepairBacklog if needed.
+          // Continue to create a new repair below.
+        } else {
+          // Same fingerprint — skip (already has an active repair)
+          skipped++;
+          continue;
+        }
+      }
+
       // Read the benchmark definition
-      const benchmarks = await svc.entities.BenchmarkDefinition.filter({ benchmark_id: gap.benchmark_id }, '-created_date', 1);
+      const benchmarks = await svc.entities.BenchmarkDefinition.filter({ benchmark_id: gap.benchmark_id, system_id: gapSystemId }, '-created_date', 1);
       const bench = benchmarks[0];
       if (!bench) {
         skipped++;
@@ -175,9 +223,9 @@ export default async function (req: Request): Promise<Response> {
       };
 
       const specialist = SPECIALIST_MAP[bench.category] || 'software_engineer';
-      const repairId = `repair-${gap.benchmark_id}-${now.slice(0, 16).replace(/[-T:]/g, '')}`;
+      const repairId = `repair-${gapSystemId}-${gap.benchmark_id}-${now.slice(0, 16).replace(/[-T:]/g, '')}`;
 
-      const failureFingerprint = `${gap.benchmark_id}:${gap.actual?.slice(0, 100) || 'unknown'}`;
+      const failureFingerprint = gapFingerprint;
       const job = await svc.entities.RepairJob.create({
         repair_id: repairId,
         system_id: gap.system_id || 'epoxyquotenearme',
@@ -213,7 +261,13 @@ export default async function (req: Request): Promise<Response> {
         repair_job_id: repairId,
       });
 
-      repairJobs.push({ repair_id: repairId, benchmark_id: gap.benchmark_id, specialist, approval_required: template.approval_required || false });
+      // Add to dedupe set so subsequent gaps in this batch don't create duplicates
+      existingDedupeKeys.add(dedupeKey);
+      const sbKeyNew = `${gapSystemId}:${gap.benchmark_id}`;
+      if (!existingBySystemBenchmark[sbKeyNew]) existingBySystemBenchmark[sbKeyNew] = [];
+      existingBySystemBenchmark[sbKeyNew].push({ repair_id: repairId, failure_fingerprint: failureFingerprint });
+
+      repairJobs.push({ repair_id: repairId, system_id: gapSystemId, benchmark_id: gap.benchmark_id, specialist, approval_required: template.approval_required || false, failure_fingerprint });
       created++;
     }
 
@@ -221,6 +275,7 @@ export default async function (req: Request): Promise<Response> {
       ok: true,
       repair_jobs_created: created,
       repair_jobs_skipped: skipped,
+      repair_jobs_updated: updated,
       repair_jobs: repairJobs,
     });
   } catch (error) {

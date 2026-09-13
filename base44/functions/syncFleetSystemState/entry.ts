@@ -38,9 +38,10 @@ export default async function (req: Request): Promise<Response> {
 
     for (const system of systems) {
       try {
-        // ── Read all benchmark definitions for this system ──
-        const benchmarks = await svc.entities.BenchmarkDefinition.filter({ system_id: system.system_id, enabled: true }, '-created_date', 500);
-        const benchmarkIds = new Set(benchmarks.map((b: any) => b.benchmark_id));
+        // ── Read all ENABLED benchmark DEFINITIONS for this system ──
+        // The denominator is COUNT(enabled BenchmarkDefinition), NOT COUNT(BenchmarkResult).
+        const definitions = await svc.entities.BenchmarkDefinition.filter({ system_id: system.system_id, enabled: true }, '-created_date', 500);
+        const total = definitions.length; // ← correct denominator
 
         // ── Read latest BenchmarkResults for this system ──
         const allResults = await svc.entities.BenchmarkResult.filter({ system_id: system.system_id }, '-created_date', 500);
@@ -52,24 +53,86 @@ export default async function (req: Request): Promise<Response> {
             latestByBenchmark[r.benchmark_id] = r;
           }
         }
-        const latestResults = Object.values(latestByBenchmark);
 
-        const passing = latestResults.filter((r: any) => r.status === 'pass').length;
-        const failing = latestResults.filter((r: any) => r.status === 'fail').length;
-        const unknown = latestResults.filter((r: any) => r.status === 'unknown').length;
-        const stale = latestResults.filter((r: any) => r.status === 'stale').length;
-        const total = latestResults.length;
+        // ── For every BenchmarkDefinition, find latest valid result; if none → UNKNOWN ──
+        let passing = 0;
+        let failing = 0;
+        let unknown = 0;
+        let stale = 0;
+        let p0Count = 0;
+        let p1Count = 0;
+
+        // Track parity-relevant results for deterministic rollup
+        const sourceParityResults: any[] = [];
+        const deployParityResults: any[] = [];
+
+        for (const def of definitions) {
+          const result = latestByBenchmark[def.benchmark_id];
+          if (!result) {
+            // Definition exists but no current usable result → UNKNOWN
+            unknown++;
+            if (def.severity === 'P0') p0Count++; // Mandatory UNKNOWN prevents VERIFIED_100
+            continue;
+          }
+
+          if (result.status === 'pass') {
+            passing++;
+          } else if (result.status === 'fail') {
+            failing++;
+            if (def.severity === 'P0') p0Count++;
+            if (def.severity === 'P1') p1Count++;
+          } else if (result.status === 'stale') {
+            stale++;
+          } else {
+            unknown++;
+          }
+
+          // Collect parity-relevant results by category
+          if (def.category === 'source_parity' || def.category === 'source_truth') {
+            if (def.benchmark_id.startsWith('SRC-') || def.benchmark_id.startsWith('PARITY-GITHUB-') || def.benchmark_id.startsWith('PARITY-VERCEL-')) {
+              sourceParityResults.push({ benchmark_id: def.benchmark_id, status: result.status, mandatory: def.mandatory });
+            }
+          }
+          if (def.category === 'deployment' || def.benchmark_id.startsWith('DEPLOY-')) {
+            deployParityResults.push({ benchmark_id: def.benchmark_id, status: result.status, mandatory: def.mandatory });
+          }
+        }
 
         const globalScore = total > 0 ? Math.round((passing / total) * 100) : 0;
         const distanceTo100 = 100 - globalScore;
 
-        // P0/P1 from failing results
-        const p0Count = latestResults.filter((r: any) => r.status === 'fail' && r.severity === 'P0').length;
-        const p1Count = latestResults.filter((r: any) => r.status === 'fail' && r.severity === 'P1').length;
+        // ── DETERMINISTIC PARITY ROLLUP ──
+        // SOURCE PARITY: depends on repository identity, accessibility, expected SHA, source SHA, validated SHA
+        // DEPLOYMENT PARITY: depends on deployment identity, production SHA, validated release SHA
+        // Rules:
+        //   - If any mandatory component FAILS → aggregate FAIL
+        //   - If none fail but one required component is UNKNOWN → aggregate UNKNOWN
+        //   - Only all required PASS → aggregate PASS
 
-        // Active repair jobs
-        const activeRepairs = await svc.entities.RepairJob.filter({ system_id: system.system_id, status: ['queued', 'claimed', 'in_progress', 'blocked'] }, '-created_date', 100);
-        const pendingApprovals = activeRepairs.filter((j: any) => j.approval_required).length;
+        const rollupParity = (parityResults: any[]): string => {
+          if (parityResults.length === 0) return 'unknown';
+          const mandatoryResults = parityResults.filter((r: any) => r.mandatory !== false);
+          const hasFail = mandatoryResults.some((r: any) => r.status === 'fail');
+          const hasUnknown = mandatoryResults.some((r: any) => r.status === 'unknown' || r.status === 'stale' || !r.status);
+          const allPass = mandatoryResults.every((r: any) => r.status === 'pass');
+          if (hasFail) return 'fail';
+          if (hasUnknown || !allPass) return 'unknown';
+          return 'pass';
+        };
+
+        const sourceParity = rollupParity(sourceParityResults);
+        const deploymentParity = rollupParity(deployParityResults);
+
+        // ── Active repair jobs (count UNIQUE legitimate active repairs) ──
+        const activeRepairs = await svc.entities.RepairJob.filter({ system_id: system.system_id, status: ['queued', 'claimed', 'in_progress', 'blocked'] }, '-created_date', 500);
+        // Filter out orphaned in_progress (no claimed_by or expired lease)
+        const legitimateActive = activeRepairs.filter((j: any) => {
+          if (j.status === 'in_progress' || j.status === 'claimed') {
+            return j.claimed_by && j.lease_expires_at && new Date(j.lease_expires_at) > new Date(now);
+          }
+          return true;
+        });
+        const pendingApprovals = legitimateActive.filter((j: any) => j.approval_required).length;
 
         // Open gaps
         const openGaps = await svc.entities.OptimizationGap.filter({ system_id: system.system_id, status: 'open' }, '-created_date', 100);
@@ -85,12 +148,6 @@ export default async function (req: Request): Promise<Response> {
           newMode = newConsecutive >= (system.required_consecutive_passes || 3) ? 'preservation' : 'completion_sprint';
         }
 
-        // Source/deployment parity
-        const sourceParityBench = latestResults.find((r: any) => r.benchmark_id && r.benchmark_id.startsWith('SRC-'));
-        const deployParityBench = latestResults.find((r: any) => r.benchmark_id && r.benchmark_id.startsWith('DEPLOY-'));
-        const sourceParity = sourceParityBench ? (sourceParityBench.status === 'pass' ? 'pass' : 'fail') : 'unknown';
-        const deploymentParity = deployParityBench ? (deployParityBench.status === 'pass' ? 'pass' : 'fail') : 'unknown';
-
         // ── Update FleetSystem ──
         await svc.entities.FleetSystem.update(system.id, {
           total_benchmarks: total,
@@ -105,7 +162,7 @@ export default async function (req: Request): Promise<Response> {
           current_mode: newMode,
           last_full_cycle: now,
           next_full_cycle: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
-          active_repair_jobs: activeRepairs.length,
+          active_repair_jobs: legitimateActive.length,
           pending_approvals: pendingApprovals,
           source_parity: sourceParity as any,
           deployment_parity: deploymentParity as any,
@@ -123,9 +180,11 @@ export default async function (req: Request): Promise<Response> {
           p0: p0Count,
           p1: p1Count,
           mode: newMode,
-          active_repairs: activeRepairs.length,
+          active_repairs: legitimateActive.length,
           pending_approvals: pendingApprovals,
           open_gaps: openGaps.length,
+          source_parity: sourceParity,
+          deployment_parity: deploymentParity,
         });
       } catch (e: any) {
         results.push({ system_id: system.system_id, error: e.message });

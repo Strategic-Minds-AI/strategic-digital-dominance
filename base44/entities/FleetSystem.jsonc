@@ -207,7 +207,11 @@
     },
     "base44_app_id": {
       "type": "string",
-      "description": "Actual Base44 application ID if applicable (not a slug)"
+      "description": "Actual Base44 application ID (e.g. 6a77f4491f0bf92de9a3ed8b) \u2014 never a slug"
+    },
+    "base44_app_slug": {
+      "type": "string",
+      "description": "Human-readable Base44 app slug (e.g. epoxyquotenearme) for display only"
     },
     "migration_status": {
       "type": "string",

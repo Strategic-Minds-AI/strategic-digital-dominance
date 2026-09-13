@@ -80,6 +80,33 @@ export default async function (req: Request): Promise<Response> {
       steps.push({ step: 'sync_fleet_state', result: 'synced' });
     } catch (e: any) { steps.push({ step: 'sync_fleet_state', error: e.message }); }
 
+    // ── Step 5c: Update Local Alpha linkage fields on FleetSystem ──
+    try {
+      const fleetSystems = await svc.entities.FleetSystem.filter({ system_id: 'epoxyquotenearme' }, '-created_date', 1);
+      if (fleetSystems.length > 0) {
+        const fs = fleetSystems[0];
+        // Find the SystemMode record for this system
+        const modeRecords = await svc.entities.SystemMode.filter({ mode_id: 'current' }, '-created_date', 1);
+        const modeRecord = modeRecords[0];
+        const finalResultForHealth = finalDistance || distanceResult;
+        const health = (finalResultForHealth?.p0 || 0) === 0 && (finalResultForHealth?.p1 || 0) === 0
+          ? 'healthy'
+          : (finalResultForHealth?.fail || 0) > 0
+          ? 'degraded'
+          : 'unknown';
+
+        await svc.entities.FleetSystem.update(fs.id, {
+          local_alpha_controller: 'alphaPrimeOptimizationCycle',
+          local_alpha_mode_record: modeRecord?.id || null,
+          last_local_cycle_id: cycleId,
+          last_local_cycle_at: now,
+          local_alpha_health: health,
+          benchmark_pack_version: 'universal_core_v1',
+        });
+        steps.push({ step: 'update_local_alpha_linkage', result: 'updated' });
+      }
+    } catch (e: any) { steps.push({ step: 'update_local_alpha_linkage', error: e.message }); }
+
     // ── Step 6: Recalculate distance after repairs ──
     let finalDistance: any = null;
     if (validationResult?.verified > 0 || staleLeasesDetected > 0) {
