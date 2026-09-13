@@ -1,0 +1,154 @@
+{
+  "name": "RepairJob",
+  "type": "object",
+  "properties": {
+    "repair_id": {
+      "type": "string",
+      "description": "Stable deterministic ID"
+    },
+    "benchmark_id": {
+      "type": "string"
+    },
+    "gap_id": {
+      "type": "string"
+    },
+    "root_cause": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "affected_system": {
+      "type": "string"
+    },
+    "affected_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "affected_entities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "reproduction_steps": {
+      "type": "string",
+      "maxLength": 3000
+    },
+    "expected_state": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "observed_state": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "implementation_plan": {
+      "type": "string",
+      "maxLength": 5000,
+      "description": "Exact work, not vague"
+    },
+    "assigned_specialist": {
+      "type": "string",
+      "description": "software_engineer, seo_specialist, etc."
+    },
+    "risk": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "low"
+    },
+    "rollback": {
+      "type": "string",
+      "maxLength": 2000,
+      "description": "How to undo if repair fails"
+    },
+    "acceptance_test": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "regression_test": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "postcondition_validator": {
+      "type": "string",
+      "description": "Function that validates the fix"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "queued",
+        "in_progress",
+        "implemented",
+        "validating",
+        "regression_testing",
+        "production_verified",
+        "closed",
+        "blocked",
+        "failed"
+      ],
+      "default": "queued"
+    },
+    "implementer": {
+      "type": "string",
+      "description": "Agent that implements"
+    },
+    "validator": {
+      "type": "string",
+      "description": "Independent agent that validates"
+    },
+    "release_authority": {
+      "type": "string",
+      "description": "Agent that authorizes release"
+    },
+    "approval_required": {
+      "type": "boolean",
+      "default": false,
+      "description": "Protected action needing operator approval"
+    },
+    "approval_packet_id": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "repair_id",
+    "benchmark_id",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

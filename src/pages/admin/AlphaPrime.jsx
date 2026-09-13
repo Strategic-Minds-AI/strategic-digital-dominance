@@ -10,6 +10,7 @@ import {
 import RecommendationCard from "@/components/alpha-prime/RecommendationCard";
 import ChatMessage from "@/components/alpha-prime/ChatMessage";
 import SourceTruthPanel from "@/components/alpha-prime/SourceTruthPanel";
+import ControlCenter from "@/components/alpha-prime/ControlCenter";
 import ShadowCloudBrowser from "@/components/shadow/ShadowCloudBrowser";
 import ShadowCodex from "@/components/shadow/ShadowCodex";
 
@@ -267,6 +268,9 @@ ${(audit.risks || []).map((r, i) => `${i + 1}. ${r}`).join("\n")}
           </div>
         </div>
       </div>
+
+      {/* === 100% CONTROL CENTER === */}
+      <ControlCenter />
 
       {/* === SOURCE TRUTH AUTHORITY === */}
       <SourceTruthPanel />

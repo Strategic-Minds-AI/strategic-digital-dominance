@@ -1,0 +1,82 @@
+{
+  "name": "BenchmarkCandidate",
+  "type": "object",
+  "properties": {
+    "candidate_id": {
+      "type": "string",
+      "description": "Stable deterministic ID"
+    },
+    "source": {
+      "type": "string",
+      "description": "Google, Vercel, OWASP, WCAG, etc."
+    },
+    "standard_name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 3000
+    },
+    "current_understanding": {
+      "type": "string",
+      "maxLength": 3000
+    },
+    "proposed_benchmark": {
+      "type": "string",
+      "maxLength": 5000
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "discovered",
+        "reviewed",
+        "validated",
+        "benchmark_approved",
+        "rejected"
+      ],
+      "default": "discovered"
+    },
+    "researched_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "approved_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "reviewer": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "candidate_id",
+    "source",
+    "standard_name"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

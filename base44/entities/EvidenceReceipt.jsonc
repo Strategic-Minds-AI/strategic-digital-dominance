@@ -1,0 +1,87 @@
+{
+  "name": "EvidenceReceipt",
+  "type": "object",
+  "properties": {
+    "receipt_id": {
+      "type": "string",
+      "description": "Stable deterministic ID"
+    },
+    "benchmark_id": {
+      "type": "string"
+    },
+    "cycle_id": {
+      "type": "string"
+    },
+    "evidence_type": {
+      "type": "string",
+      "enum": [
+        "http_response",
+        "dom_snapshot",
+        "entity_record",
+        "function_output",
+        "connector_status",
+        "file_content",
+        "log_entry",
+        "screenshot"
+      ],
+      "description": "What kind of evidence this is"
+    },
+    "evidence_url": {
+      "type": "string",
+      "description": "URL or path where evidence was captured"
+    },
+    "evidence_description": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "evidence_data": {
+      "type": "string",
+      "maxLength": 5000,
+      "description": "Serialized evidence payload"
+    },
+    "verified_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "verified_by": {
+      "type": "string",
+      "description": "Agent or function that captured this"
+    },
+    "valid": {
+      "type": "boolean",
+      "default": true
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this evidence goes stale"
+    }
+  },
+  "required": [
+    "receipt_id",
+    "benchmark_id",
+    "evidence_type"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,145 @@
+{
+  "name": "BenchmarkDefinition",
+  "type": "object",
+  "properties": {
+    "benchmark_id": {
+      "type": "string",
+      "description": "Stable ID (e.g. SEO-CANONICAL-001)"
+    },
+    "category": {
+      "type": "string",
+      "description": "Benchmark pack (source_truth, public_website, security, seo, etc.)"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "target": {
+      "type": "string",
+      "description": "Expected state"
+    },
+    "measurement": {
+      "type": "string",
+      "description": "How to measure actual state"
+    },
+    "comparator": {
+      "type": "string",
+      "description": "exact_equality, threshold, contains, etc."
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "P0",
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "default": "P1"
+    },
+    "mandatory": {
+      "type": "boolean",
+      "default": true
+    },
+    "environment": {
+      "type": "string",
+      "enum": [
+        "production",
+        "staging",
+        "preview"
+      ],
+      "default": "production"
+    },
+    "data_source": {
+      "type": "string",
+      "description": "Where to read actual state"
+    },
+    "validator": {
+      "type": "string",
+      "description": "Function or agent that validates"
+    },
+    "evidence_required": {
+      "type": "boolean",
+      "default": true
+    },
+    "freshness_requirement": {
+      "type": "string",
+      "description": "Max age of valid evidence (e.g. 5min, 1h, 24h)"
+    },
+    "auto_repair_allowed": {
+      "type": "boolean",
+      "default": true
+    },
+    "applicable_routes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "applicable_workflows": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "applicable_entities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "benchmark_version": {
+      "type": "string",
+      "default": "1.0"
+    },
+    "standard_source": {
+      "type": "string",
+      "description": "Primary source (Google, Vercel, OWASP, WCAG, etc.)"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "benchmark_id",
+    "category",
+    "name",
+    "severity"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

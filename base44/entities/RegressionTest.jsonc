@@ -1,0 +1,89 @@
+{
+  "name": "RegressionTest",
+  "type": "object",
+  "properties": {
+    "test_id": {
+      "type": "string",
+      "description": "Stable deterministic ID"
+    },
+    "failure_fingerprint": {
+      "type": "string",
+      "description": "Hash of failure signature"
+    },
+    "benchmark_id": {
+      "type": "string"
+    },
+    "original_test": {
+      "type": "string",
+      "maxLength": 3000,
+      "description": "The test that originally caught the defect"
+    },
+    "repair_id": {
+      "type": "string"
+    },
+    "regression_test": {
+      "type": "string",
+      "maxLength": 3000,
+      "description": "Permanent test to prevent recurrence"
+    },
+    "affected_benchmark": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "validator": {
+      "type": "string",
+      "description": "Agent that validated the regression test"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "disabled"
+      ],
+      "default": "active"
+    },
+    "last_run_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_result": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "fail",
+        "not_run"
+      ],
+      "default": "not_run"
+    }
+  },
+  "required": [
+    "test_id",
+    "failure_fingerprint",
+    "regression_test"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

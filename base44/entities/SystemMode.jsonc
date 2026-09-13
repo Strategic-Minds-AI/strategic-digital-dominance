@@ -1,0 +1,113 @@
+{
+  "name": "SystemMode",
+  "type": "object",
+  "properties": {
+    "mode_id": {
+      "type": "string",
+      "description": "Singleton: 'current'"
+    },
+    "current_mode": {
+      "type": "string",
+      "enum": [
+        "completion_sprint",
+        "preservation",
+        "degraded",
+        "blocked"
+      ],
+      "default": "completion_sprint"
+    },
+    "previous_mode": {
+      "type": "string"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "consecutive_pass_cycles": {
+      "type": "integer",
+      "default": 0
+    },
+    "required_consecutive_passes": {
+      "type": "integer",
+      "default": 3
+    },
+    "last_full_cycle": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "next_full_cycle": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "global_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "default": 0
+    },
+    "distance_to_100": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "default": 100
+    },
+    "p0_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "p1_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "total_benchmarks": {
+      "type": "integer",
+      "default": 0
+    },
+    "passing_benchmarks": {
+      "type": "integer",
+      "default": 0
+    },
+    "failing_benchmarks": {
+      "type": "integer",
+      "default": 0
+    },
+    "unknown_benchmarks": {
+      "type": "integer",
+      "default": 0
+    },
+    "stale_benchmarks": {
+      "type": "integer",
+      "default": 0
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "mode_id",
+    "current_mode"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

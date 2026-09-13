@@ -1,0 +1,45 @@
+{
+  "name": "Alpha Prime Completion Sprint",
+  "description": "Autonomous 5-minute optimization cycle \u2014 generates benchmarks, measures distance to 100, creates repair jobs, dispatches safe repairs, validates postconditions, and updates system mode. Runs until all mandatory benchmarks reach 100%, then transitions to Preservation Mode.",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "alpha_prime_completion_sprint",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_optimization_cycle": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "alphaPrimeOptimizationCycle",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Run optimization cycle",
+            "description": "Benchmark \u2192 measure \u2192 repair \u2192 validate \u2192 update mode"
+          }
+        }
+      }
+    ]
+  },
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "*/5 * * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  }
+}
