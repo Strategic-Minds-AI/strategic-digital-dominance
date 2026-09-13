@@ -267,7 +267,7 @@ export default async function (req: Request): Promise<Response> {
       if (!existingBySystemBenchmark[sbKeyNew]) existingBySystemBenchmark[sbKeyNew] = [];
       existingBySystemBenchmark[sbKeyNew].push({ repair_id: repairId, failure_fingerprint: failureFingerprint });
 
-      repairJobs.push({ repair_id: repairId, system_id: gapSystemId, benchmark_id: gap.benchmark_id, specialist, approval_required: template.approval_required || false, failure_fingerprint });
+      repairJobs.push({ repair_id: repairId, system_id: gapSystemId, benchmark_id: gap.benchmark_id, specialist, approval_required: template.approval_required || false, failure_fingerprint: failureFingerprint });
       created++;
     }
 

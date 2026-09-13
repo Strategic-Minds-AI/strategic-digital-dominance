@@ -287,6 +287,39 @@ export default async function (req: Request): Promise<Response> {
         });
       }
 
+      // ── IDEMPOTENCY CHECK: Even if lock was acquired (via CAS on a released lease),
+      // check if a heartbeat already exists for this cycle. If so, return idempotent
+      // instead of creating a duplicate heartbeat. ──
+      const existingHb = await svc.entities.FleetHeartbeat.filter({ heartbeat_id: heartbeatId }, "-created_date", 1);
+      if (existingHb.length > 0) {
+        const hb = existingHb[0];
+        // Release the lease we just acquired (since the cycle already ran)
+        if (leaseRecord) {
+          try {
+            await svc.entities.ControlLease.update(leaseRecord.id, {
+              status: "released",
+              released_at: now,
+              heartbeat_at: now,
+            });
+          } catch (e: any) { /* non-critical */ }
+        }
+        return Response.json({
+          ok: true,
+          cycle_id: cycleId,
+          lock_acquired: false,
+          idempotent: true,
+          heartbeat_id: heartbeatId,
+          message: "Governance cycle already ran in this 5-minute bucket — returning existing state",
+          existing_heartbeat: {
+            heartbeat_id: hb.heartbeat_id,
+            status: hb.status,
+            fleet_score: hb.fleet_score,
+            systems_checked: hb.systems_checked,
+            intents_routed: hb.intents_routed,
+          },
+        });
+      }
+
       // ── LOAD ACTIVE SYSTEMS ──
       const systems = await svc.entities.FleetSystem.filter({ active: true }, "-created_date", 500);
 

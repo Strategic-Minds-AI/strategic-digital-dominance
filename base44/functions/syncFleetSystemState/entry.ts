@@ -67,35 +67,34 @@ export default async function (req: Request): Promise<Response> {
         const deployParityResults: any[] = [];
 
         for (const def of definitions) {
-          const result = latestByBenchmark[def.benchmark_id];
-          if (!result) {
-            // Definition exists but no current usable result → UNKNOWN
-            unknown++;
-            if (def.severity === 'P0') p0Count++; // Mandatory UNKNOWN prevents VERIFIED_100
-            continue;
-          }
+         const result = latestByBenchmark[def.benchmark_id];
+         const status = result ? result.status : 'unknown';
 
-          if (result.status === 'pass') {
-            passing++;
-          } else if (result.status === 'fail') {
-            failing++;
-            if (def.severity === 'P0') p0Count++;
-            if (def.severity === 'P1') p1Count++;
-          } else if (result.status === 'stale') {
-            stale++;
-          } else {
-            unknown++;
-          }
+         if (!result) {
+           // Definition exists but no current usable result → UNKNOWN
+           unknown++;
+           if (def.severity === 'P0') p0Count++; // Mandatory UNKNOWN prevents VERIFIED_100
+         } else if (result.status === 'pass') {
+           passing++;
+         } else if (result.status === 'fail') {
+           failing++;
+           if (def.severity === 'P0') p0Count++;
+           if (def.severity === 'P1') p1Count++;
+         } else if (result.status === 'stale') {
+           stale++;
+         } else {
+           unknown++;
+         }
 
-          // Collect parity-relevant results by category
-          if (def.category === 'source_parity' || def.category === 'source_truth') {
-            if (def.benchmark_id.startsWith('SRC-') || def.benchmark_id.startsWith('PARITY-GITHUB-') || def.benchmark_id.startsWith('PARITY-VERCEL-')) {
-              sourceParityResults.push({ benchmark_id: def.benchmark_id, status: result.status, mandatory: def.mandatory });
-            }
-          }
-          if (def.category === 'deployment' || def.benchmark_id.startsWith('DEPLOY-')) {
-            deployParityResults.push({ benchmark_id: def.benchmark_id, status: result.status, mandatory: def.mandatory });
-          }
+         // Collect parity-relevant results by CATEGORY (not prefix matching)
+         // source_parity category: repository identity, accessibility, SHA validation
+         if (def.category === 'source_parity') {
+           sourceParityResults.push({ benchmark_id: def.benchmark_id, status, mandatory: def.mandatory });
+         }
+         // deployment category: deployment identity, production SHA, release SHA
+         if (def.category === 'deployment') {
+           deployParityResults.push({ benchmark_id: def.benchmark_id, status, mandatory: def.mandatory });
+         }
         }
 
         const globalScore = total > 0 ? Math.round((passing / total) * 100) : 0;

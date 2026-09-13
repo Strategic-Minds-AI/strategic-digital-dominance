@@ -62,13 +62,15 @@ export default async function (req: Request): Promise<Response> {
     const now = new Date().toISOString();
 
     // ── Load live fleet state ──
-    const [fleetSystems, pendingIntents, openGaps, activeRepairJobs, recentResults, recentHeartbeats] = await Promise.all([
+    const [fleetSystems, pendingIntents, completedIntents, openGaps, activeRepairJobs, recentResults, recentHeartbeats, recentReceipts] = await Promise.all([
       svc.entities.FleetSystem.filter({ active: true }, '-created_date', 50),
       svc.entities.OperatorIntent.filter({ status: 'pending' }, '-created_date', 20),
+      svc.entities.OperatorIntent.filter({ status: 'completed' }, '-created_date', 10),
       svc.entities.OptimizationGap.filter({ status: 'open' }, '-repair_priority_score', 20),
       svc.entities.RepairJob.filter({ status: ['queued', 'in_progress', 'blocked'] }, '-created_date', 20),
       svc.entities.BenchmarkResult.list('-created_date', 50),
       svc.entities.FleetHeartbeat.list('-created_date', 1),
+      svc.entities.EvidenceReceipt.list('-created_date', 10),
     ]);
 
     // ── Build fleet context from evidence ──
@@ -88,6 +90,18 @@ export default async function (req: Request): Promise<Response> {
     if (activeRepairJobs.length > 0) {
       activeRepairJobs.slice(0, 5).forEach(j => {
         fleetContext += `  - ${j.system_id}/${j.benchmark_id} status=${j.status} risk=${j.risk} approval=${j.approval_required}\n`;
+      });
+    }
+    fleetContext += `\nRecently Completed Intents: ${completedIntents.length}\n`;
+    if (completedIntents.length > 0) {
+      completedIntents.slice(0, 5).forEach(i => {
+        fleetContext += `  - ${i.intent_id} | scope=${i.scope} | system=${i.system_id} | result=${(i.result || '').slice(0, 120)}\n`;
+      });
+    }
+    fleetContext += `\nRecent Evidence Receipts: ${recentReceipts.length}\n`;
+    if (recentReceipts.length > 0) {
+      recentReceipts.slice(0, 5).forEach(r => {
+        fleetContext += `  - ${r.receipt_id} | system=${r.system_id} | type=${r.evidence_type} | desc=${(r.evidence_description || '').slice(0, 100)}\n`;
       });
     }
     const lastHeartbeat = recentHeartbeats[0];
