@@ -191,10 +191,10 @@ export default async function (req: Request): Promise<Response> {
       const bucketMinute = Math.floor(minute / 5) * 5;
       const bucketKey = `${nowDate.getUTCFullYear()}${String(nowDate.getUTCMonth() + 1).padStart(2, "0")}${String(nowDate.getUTCDate()).padStart(2, "0")}${String(nowDate.getUTCHours()).padStart(2, "0")}${String(bucketMinute).padStart(2, "0")}`;
 
-      const cycleId = `fleet-govern-${bucketKey}`;
+      const lockKey = body.test_lock_key || `fleet-govern-${bucketKey}`;
+      const cycleId = body.test_lock_key ? `test-govern-${body.test_lock_key}` : `fleet-govern-${bucketKey}`;
       const heartbeatId = `hb-${cycleId}`;
-      const lockKey = `fleet-govern-${bucketKey}`;
-      const idempotencyKey = `govern-${bucketKey}`;
+      const idempotencyKey = body.test_lock_key ? `test-govern-${body.test_lock_key}` : `govern-${bucketKey}`;
       const ownerId = `fleet-alpha-${nowDate.getUTCMilliseconds()}-${Math.random().toString(36).substring(2, 6)}`;
       const leaseExpiresAt = new Date(nowDate.getTime() + 5 * 60 * 1000).toISOString(); // 5 min lease
       const startedAt = now;
