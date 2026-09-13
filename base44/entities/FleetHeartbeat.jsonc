@@ -1,0 +1,130 @@
+{
+  "name": "FleetHeartbeat",
+  "type": "object",
+  "properties": {
+    "heartbeat_id": {
+      "type": "string",
+      "description": "Stable deterministic heartbeat ID"
+    },
+    "cycle_id": {
+      "type": "string",
+      "description": "Governance cycle ID"
+    },
+    "scheduled_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "duration_ms": {
+      "type": "number"
+    },
+    "lock_acquired": {
+      "type": "boolean",
+      "default": false
+    },
+    "systems_checked": {
+      "type": "integer",
+      "default": 0
+    },
+    "intents_routed": {
+      "type": "integer",
+      "default": 0
+    },
+    "jobs_dispatched": {
+      "type": "integer",
+      "default": 0
+    },
+    "jobs_failed": {
+      "type": "integer",
+      "default": 0
+    },
+    "systems_degraded": {
+      "type": "integer",
+      "default": 0
+    },
+    "approvals_detected": {
+      "type": "integer",
+      "default": 0
+    },
+    "worker_health": {
+      "type": "string",
+      "enum": [
+        "healthy",
+        "degraded",
+        "blocked",
+        "not_deployed"
+      ],
+      "default": "not_deployed"
+    },
+    "queue_health": {
+      "type": "string",
+      "enum": [
+        "healthy",
+        "degraded",
+        "blocked",
+        "not_deployed"
+      ],
+      "default": "not_deployed"
+    },
+    "fleet_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "default": 0
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "receipt_id": {
+      "type": "string",
+      "description": "EvidenceReceipt ID for this heartbeat"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "completed",
+        "failed",
+        "partial",
+        "skipped"
+      ],
+      "default": "completed"
+    }
+  },
+  "required": [
+    "heartbeat_id",
+    "cycle_id"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "name": "VisionConversation",
+  "type": "object",
+  "properties": {
+    "conversation_id": {
+      "type": "string",
+      "description": "Stable deterministic conversation ID"
+    },
+    "operator_id": {
+      "type": "string",
+      "description": "User ID of the operator"
+    },
+    "operator_email": {
+      "type": "string",
+      "description": "Operator email for audit"
+    },
+    "title": {
+      "type": "string",
+      "description": "Auto-generated conversation title"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_message_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "completed",
+        "archived"
+      ],
+      "default": "active"
+    },
+    "systems_referenced": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "intent_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "message_count": {
+      "type": "integer",
+      "default": 0
+    }
+  },
+  "required": [
+    "conversation_id"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -137,6 +137,9 @@ export default async function (req: Request): Promise<Response> {
         if (!existingBench || existingBench.length === 0) {
           await base44.asServiceRole.entities.BenchmarkDefinition.create({
             benchmark_id: benchId,
+            system_id: manifest.system_id,
+            benchmark_pack_id: bench.category,
+            validator_id: bench.validator || bench.data_source || 'manual',
             category: bench.category,
             name: bench.name,
             description: bench.description,
@@ -176,41 +179,136 @@ export default async function (req: Request): Promise<Response> {
       });
     }
 
-    // ── GOVERN: Fleet governance loop ───────────────────────────────────────
+    // ── GOVERN: Full fleet governance cycle ─────────────────────────────────
     if (action === "govern") {
-      const systems = await base44.asServiceRole.entities.FleetSystem.list("-created_date", 500);
+      const svc = base44.asServiceRole;
+      const now = new Date().toISOString();
+      const cycleId = `fleet-govern-${now.slice(0, 16).replace(/[-T:]/g, "")}`;
+      const heartbeatId = `hb-${cycleId}`;
+      const startedAt = new Date().toISOString();
+      const errors: string[] = [];
 
+      // ── ACQUIRE LOCK (time-bucketed idempotency) ──
+      // Check if a heartbeat already exists for this 5-min bucket
+      const existingHeartbeat = await svc.entities.FleetHeartbeat.filter({ heartbeat_id: heartbeatId }, "-created_date", 1);
+      const lockAcquired = !existingHeartbeat || existingHeartbeat.length === 0;
+
+      if (!lockAcquired) {
+        return Response.json({
+          ok: true,
+          cycle_id: cycleId,
+          lock_acquired: false,
+          message: "Governance cycle already ran in this 5-minute bucket — skipping",
+        });
+      }
+
+      // ── LOAD ACTIVE SYSTEMS ──
+      const systems = await svc.entities.FleetSystem.filter({ active: true }, "-created_date", 500);
+
+      // ── SYNC LOCAL SYSTEM STATES (from evidence) ──
+      let systemsSynced = 0;
+      try {
+        await base44.functions.invoke("syncFleetSystemState", {});
+        systemsSynced = systems.length;
+      } catch (e: any) { errors.push(`sync_fleet_state: ${e.message}`); }
+
+      // ── READ PENDING INTENTS ──
+      const pendingIntents = await svc.entities.OperatorIntent.filter({ status: "pending" }, "-created_date", 50);
+
+      // ── ROUTE ELIGIBLE INTENTS ──
+      let intentsRouted = 0;
+      if (pendingIntents.length > 0) {
+        try {
+          const routeRes = await base44.functions.invoke("intentRouter", {});
+          intentsRouted = routeRes.data?.intents_processed || 0;
+        } catch (e: any) { errors.push(`intent_router: ${e.message}`); }
+      }
+
+      // ── READ OPEN INCIDENTS (SwarmAudits) ──
+      const openIncidents = await svc.entities.SwarmAudit.filter({ status: "open" }, "-created_date", 50);
+
+      // ── READ REPAIR QUEUES ──
+      const activeRepairs = await svc.entities.RepairJob.filter({ status: ["queued", "claimed", "in_progress", "blocked"] }, "-created_date", 100);
+
+      // ── DETECT STALE LEASES ──
+      let staleJobsDetected = 0;
+      const claimedJobs = activeRepairs.filter((j: any) => j.status === "claimed" && j.lease_expires_at && new Date(j.lease_expires_at) < new Date(now));
+      for (const job of claimedJobs) {
+        try {
+          await svc.entities.RepairJob.update(job.id, {
+            status: "queued",
+            claimed_by: null,
+            lease_expires_at: null,
+            updated_at: now,
+          });
+          staleJobsDetected++;
+        } catch (e: any) { errors.push(`stale_lease_${job.repair_id}: ${e.message}`); }
+      }
+
+      // ── DETECT DEGRADED SYSTEMS ──
+      const degradedSystems = systems.filter((s: any) => s.current_mode === "degraded" || s.current_mode === "blocked");
+
+      // ── READ APPROVALS ──
+      const approvalRepairs = activeRepairs.filter((j: any) => j.approval_required);
+
+      // ── PRIORITIZE SYSTEMS ──
       const priorityOrder: Record<string, number> = {
         blocked: 0, degraded: 1, completion_sprint: 2, bootstrap: 3, preservation: 4,
       };
+      const prioritized = systems.sort((a: any, b: any) => {
+        const p0Diff = (b.p0_count || 0) - (a.p0_count || 0);
+        if (p0Diff !== 0) return p0Diff;
+        const modeDiff = (priorityOrder[a.current_mode] || 99) - (priorityOrder[b.current_mode] || 99);
+        if (modeDiff !== 0) return modeDiff;
+        return (a.distance_to_100 || 100) - (b.distance_to_100 || 100);
+      });
 
-      const prioritized = systems
-        .filter((s: any) => s.active)
-        .sort((a: any, b: any) => {
-          const p0Diff = (b.p0_count || 0) - (a.p0_count || 0);
-          if (p0Diff !== 0) return p0Diff;
-          const modeDiff = (priorityOrder[a.current_mode] || 99) - (priorityOrder[b.current_mode] || 99);
-          if (modeDiff !== 0) return modeDiff;
-          return (a.distance_to_100 || 100) - (b.distance_to_100 || 100);
-        });
+      // ── CALCULATE FLEET SCORE ──
+      const fleetScore = systems.length > 0
+        ? Math.round(systems.reduce((sum: number, s: any) => sum + (s.global_score || 0), 0) / systems.length)
+        : 0;
 
-      // Collect pending operator intents
-      const pendingIntents = await base44.asServiceRole.entities.OperatorIntent.filter(
-        { status: "pending" },
-        "-created_date",
-        50
-      );
-
-      // Collect pending approvals from repair jobs
-      const approvalRepairs = await base44.asServiceRole.entities.RepairJob.filter(
-        { approval_required: true, status: "queued" },
-        "-created_date",
-        50
-      );
+      // ── WRITE GOVERNANCE RECEIPT (FleetHeartbeat) ──
+      const completedAt = new Date().toISOString();
+      const heartbeat = await svc.entities.FleetHeartbeat.create({
+        heartbeat_id: heartbeatId,
+        cycle_id: cycleId,
+        scheduled_at: now,
+        started_at: startedAt,
+        completed_at: completedAt,
+        duration_ms: Date.now() - new Date(startedAt).getTime(),
+        lock_acquired: true,
+        systems_checked: systems.length,
+        intents_routed: intentsRouted,
+        jobs_dispatched: 0, // Jobs are dispatched by workers claiming them, not by govern
+        jobs_failed: staleJobsDetected,
+        systems_degraded: degradedSystems.length,
+        approvals_detected: approvalRepairs.length,
+        worker_health: "not_deployed", // Phase 10 — Railway workers
+        queue_health: "not_deployed",   // Phase 11 — Supabase queues
+        fleet_score: fleetScore,
+        errors,
+        receipt_id: `receipt-${heartbeatId}`,
+        status: errors.length > 0 ? "partial" : "completed",
+      });
 
       return Response.json({
         ok: true,
+        cycle_id: cycleId,
+        heartbeat_id: heartbeatId,
+        lock_acquired: true,
         fleet_size: systems.length,
+        systems_synced: systemsSynced,
+        systems_checked: systems.length,
+        intents_routed: intentsRouted,
+        stale_leases_detected: staleJobsDetected,
+        systems_degraded: degradedSystems.length,
+        pending_approvals: approvalRepairs.length,
+        open_incidents: openIncidents.length,
+        active_repair_jobs: activeRepairs.length,
+        fleet_score: fleetScore,
+        heartbeat_status: heartbeat.status,
+        errors,
         priority_order: prioritized.map((s: any) => ({
           system_id: s.system_id,
           name: s.name,
@@ -223,10 +321,9 @@ export default async function (req: Request): Promise<Response> {
           source_parity: s.source_parity,
           deployment_parity: s.deployment_parity,
         })),
-        pending_intents: pendingIntents.length,
-        pending_approvals: approvalRepairs.length,
         approval_items: approvalRepairs.map((r: any) => ({
           repair_id: r.repair_id,
+          system_id: r.system_id,
           benchmark_id: r.benchmark_id,
           risk: r.risk,
           implementation_plan: r.implementation_plan?.substring(0, 200),

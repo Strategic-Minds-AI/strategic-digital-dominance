@@ -196,6 +196,17 @@
     },
     "notes": {
       "type": "string"
+    },
+    "test_data_classification": {
+      "type": "string",
+      "enum": [
+        "test_confirmed",
+        "test_likely",
+        "real_confirmed",
+        "unknown"
+      ],
+      "default": "unknown",
+      "description": "Whether this lead is test data or real business data \u2014 excludes test records from business KPIs"
     }
   },
   "required": [

@@ -6,6 +6,11 @@
       "type": "string",
       "description": "Stable deterministic ID"
     },
+    "system_id": {
+      "type": "string",
+      "description": "Owning system",
+      "default": "epoxyquotenearme"
+    },
     "failure_fingerprint": {
       "type": "string",
       "description": "Hash of failure signature"
@@ -61,6 +66,7 @@
   },
   "required": [
     "test_id",
+    "system_id",
     "failure_fingerprint",
     "regression_test"
   ],

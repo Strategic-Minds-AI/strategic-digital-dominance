@@ -1,0 +1,89 @@
+{
+  "name": "VisionMessage",
+  "type": "object",
+  "properties": {
+    "message_id": {
+      "type": "string",
+      "description": "Stable deterministic message ID"
+    },
+    "conversation_id": {
+      "type": "string",
+      "description": "Parent conversation"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "user",
+        "assistant",
+        "system"
+      ],
+      "description": "Who sent this message"
+    },
+    "content": {
+      "type": "string",
+      "maxLength": 10000,
+      "description": "Operational summary only \u2014 never store hidden chain-of-thought"
+    },
+    "operator_id": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "intent_id": {
+      "type": "string",
+      "description": "OperatorIntent created from this message (if any)"
+    },
+    "systems_referenced": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "EvidenceReceipt IDs referenced"
+    },
+    "model_used": {
+      "type": "string"
+    },
+    "tokens_used": {
+      "type": "integer",
+      "default": 0
+    }
+  },
+  "required": [
+    "message_id",
+    "conversation_id",
+    "role",
+    "content"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -37,9 +37,11 @@ export default async function (req: Request): Promise<Response> {
     const svc = base44.asServiceRole;
     const now = new Date().toISOString();
     const cycleId = `opt-cycle-${now.slice(0, 16).replace(/[-T:]/g, '')}`;
+    const body = await req.json().catch(() => ({}));
+    const system_id = body.system_id || 'epoxyquotenearme';
 
-    // Read all enabled benchmarks
-    const benchmarks = await svc.entities.BenchmarkDefinition.filter({ enabled: true }, '-created_date', 500);
+    // Read enabled benchmarks FOR THIS SYSTEM ONLY (no cross-system contamination)
+    const benchmarks = await svc.entities.BenchmarkDefinition.filter({ enabled: true, system_id }, '-created_date', 500);
 
     // ── Parallel data gathering for measurement ──
     const [registry, locationRegistry, templates, leads, heartbeats, auditLedgers, integrityScores, swarmAudits, swarmTasks, businessFacts] = await Promise.all([
@@ -364,6 +366,7 @@ export default async function (req: Request): Promise<Response> {
       // Create BenchmarkResult
       const result = await svc.entities.BenchmarkResult.create({
         benchmark_id: bid,
+        system_id,
         cycle_id: cycleId,
         target: bench.target,
         actual,
@@ -378,29 +381,51 @@ export default async function (req: Request): Promise<Response> {
       });
       results.push({ benchmark_id: bid, status, actual, severity: bench.severity });
 
-      // Create OptimizationGap for failures
+      // Create or UPDATE OptimizationGap for failures (dedup by system_id + benchmark_id)
       if (status === 'fail' && bench.mandatory) {
-        const gapId = `${bid}-${cycleId}`;
         const priorityScore = calcPriorityScore(bench.severity, businessImpact, confidence, estimatedEffort, estimatedCost, changeRisk);
-        const gap = await svc.entities.OptimizationGap.create({
-          gap_id: gapId,
-          benchmark_id: bid,
-          cycle_id: cycleId,
-          target: bench.target,
-          actual,
-          delta: actual,
-          severity: bench.severity,
-          business_impact: businessImpact,
-          confidence,
-          estimated_effort: estimatedEffort,
-          estimated_cost: estimatedCost,
-          change_risk: changeRisk,
-          dependencies: [],
-          repair_priority_score: priorityScore,
-          status: 'open',
-          created_at: now,
-        });
-        gaps.push({ gap_id: gapId, benchmark_id: bid, priority_score: priorityScore, severity: bench.severity });
+        // Check if an OPEN gap already exists for this system + benchmark
+        const existingGaps = await svc.entities.OptimizationGap.filter({ system_id, benchmark_id: bid, status: 'open' }, '-created_date', 1);
+        if (existingGaps.length > 0) {
+          // UPDATE existing gap — do NOT create a duplicate
+          await svc.entities.OptimizationGap.update(existingGaps[0].id, {
+            last_seen: now,
+            occurrence_count: (existingGaps[0].occurrence_count || 1) + 1,
+            latest_cycle: cycleId,
+            latest_evidence: actual,
+            actual,
+            delta: actual,
+            repair_priority_score: priorityScore,
+          });
+          gaps.push({ gap_id: existingGaps[0].gap_id, benchmark_id: bid, priority_score: priorityScore, severity: bench.severity, updated: true });
+        } else {
+          // Create new gap
+          const gapId = `${system_id}-${bid}`;
+          await svc.entities.OptimizationGap.create({
+            gap_id: gapId,
+            system_id,
+            benchmark_id: bid,
+            cycle_id: cycleId,
+            target: bench.target,
+            actual,
+            delta: actual,
+            severity: bench.severity,
+            business_impact: businessImpact,
+            confidence,
+            estimated_effort: estimatedEffort,
+            estimated_cost: estimatedCost,
+            change_risk: changeRisk,
+            dependencies: [],
+            repair_priority_score: priorityScore,
+            status: 'open',
+            last_seen: now,
+            occurrence_count: 1,
+            latest_cycle: cycleId,
+            latest_evidence: actual,
+            created_at: now,
+          });
+          gaps.push({ gap_id: gapId, benchmark_id: bid, priority_score: priorityScore, severity: bench.severity, updated: false });
+        }
       }
     }
 

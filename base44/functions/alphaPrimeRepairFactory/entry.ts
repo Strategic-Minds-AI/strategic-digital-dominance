@@ -141,8 +141,9 @@ export default async function (req: Request): Promise<Response> {
     // Read open gaps, sorted by priority score (descending)
     const gaps = await svc.entities.OptimizationGap.filter({ status: 'open' }, '-repair_priority_score', 100);
 
-    // Read existing repair jobs to avoid duplicates
-    const existingJobs = await svc.entities.RepairJob.filter({ status: 'queued' }, '-created_date', 200);
+    // Read existing ACTIVE repair jobs to avoid duplicates (queued, claimed, in_progress, blocked)
+    // This prevents duplicate repair explosion — one active repair per benchmark
+    const existingJobs = await svc.entities.RepairJob.filter({ status: ['queued', 'claimed', 'in_progress', 'blocked'] }, '-created_date', 200);
     const existingBenchmarkIds = new Set(existingJobs.map((j: any) => j.benchmark_id));
 
     let created = 0;
@@ -176,9 +177,12 @@ export default async function (req: Request): Promise<Response> {
       const specialist = SPECIALIST_MAP[bench.category] || 'software_engineer';
       const repairId = `repair-${gap.benchmark_id}-${now.slice(0, 16).replace(/[-T:]/g, '')}`;
 
+      const failureFingerprint = `${gap.benchmark_id}:${gap.actual?.slice(0, 100) || 'unknown'}`;
       const job = await svc.entities.RepairJob.create({
         repair_id: repairId,
+        system_id: gap.system_id || 'epoxyquotenearme',
         benchmark_id: gap.benchmark_id,
+        failure_fingerprint: failureFingerprint,
         gap_id: gap.gap_id,
         root_cause: template.root_cause,
         affected_system: bench.category,

@@ -52,23 +52,33 @@ export default async function (req: Request): Promise<Response> {
       steps.push({ step: 'postcondition_validator', result: valRes.data });
     } catch (e: any) { steps.push({ step: 'postcondition_validator', error: e.message }); }
 
-    // ── Step 5: Dispatch safe (non-approval-required) repair jobs ──
-    let dispatchedCount = 0;
+    // ── Step 5: Detect stale leases (DO NOT auto-dispatch — workers must claim via lease) ──
+    // Repair jobs are NOT moved to in_progress here. A worker must claim them
+    // using a lease (claimed_by, lease_expires_at). This prevents false dispatch
+    // where jobs appear "in progress" but no worker is actually executing them.
+    let staleLeasesDetected = 0;
     try {
-      const queuedJobs = await svc.entities.RepairJob.filter({ status: 'queued' }, '-created_date', 50);
-      for (const job of queuedJobs) {
-        // Only dispatch jobs that don't require approval
-        if (job.approval_required) continue;
-
-        // Mark as in_progress — the implementer (specialist) will execute
-        await svc.entities.RepairJob.update(job.id, {
-          status: 'in_progress',
-          updated_at: now,
-        });
-        dispatchedCount++;
+      const claimedJobs = await svc.entities.RepairJob.filter({ status: 'claimed' }, '-created_date', 50);
+      for (const job of claimedJobs) {
+        if (job.lease_expires_at && new Date(job.lease_expires_at) < new Date(now)) {
+          // Lease expired — return to queued so another worker can claim it
+          await svc.entities.RepairJob.update(job.id, {
+            status: 'queued',
+            claimed_by: null,
+            lease_expires_at: null,
+            updated_at: now,
+          });
+          staleLeasesDetected++;
+        }
       }
-      steps.push({ step: 'dispatch_safe_repairs', dispatched: dispatchedCount });
-    } catch (e: any) { steps.push({ step: 'dispatch_safe_repairs', error: e.message }); }
+      steps.push({ step: 'detect_stale_leases', stale_leases: staleLeasesDetected });
+    } catch (e: any) { steps.push({ step: 'detect_stale_leases', error: e.message }); }
+
+    // ── Step 5b: Sync fleet system state after cycle ──
+    try {
+      await base44.functions.invoke('syncFleetSystemState', { system_id: 'epoxyquotenearme' });
+      steps.push({ step: 'sync_fleet_state', result: 'synced' });
+    } catch (e: any) { steps.push({ step: 'sync_fleet_state', error: e.message }); }
 
     // ── Step 6: Recalculate distance after repairs ──
     let finalDistance: any = null;

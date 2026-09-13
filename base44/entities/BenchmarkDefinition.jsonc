@@ -6,6 +6,19 @@
       "type": "string",
       "description": "Stable ID (e.g. SEO-CANONICAL-001)"
     },
+    "system_id": {
+      "type": "string",
+      "description": "Owning system (e.g. epoxyquotenearme, thextremeteam-console, fleet)",
+      "default": "epoxyquotenearme"
+    },
+    "benchmark_pack_id": {
+      "type": "string",
+      "description": "Which benchmark pack generated this (e.g. universal_core, lead_generation, control_plane)"
+    },
+    "validator_id": {
+      "type": "string",
+      "description": "Which ValidatorRegistry entry validates this benchmark"
+    },
     "category": {
       "type": "string",
       "description": "Benchmark pack (source_truth, public_website, security, seo, etc.)"
@@ -116,6 +129,7 @@
   },
   "required": [
     "benchmark_id",
+    "system_id",
     "category",
     "name",
     "severity"

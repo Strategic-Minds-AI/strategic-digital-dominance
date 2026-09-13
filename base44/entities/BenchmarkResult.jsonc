@@ -6,6 +6,11 @@
       "type": "string",
       "description": "Which benchmark was run"
     },
+    "system_id": {
+      "type": "string",
+      "description": "Owning system",
+      "default": "epoxyquotenearme"
+    },
     "cycle_id": {
       "type": "string",
       "description": "Optimization cycle this result belongs to"
@@ -68,6 +73,7 @@
   },
   "required": [
     "benchmark_id",
+    "system_id",
     "cycle_id",
     "status"
   ],

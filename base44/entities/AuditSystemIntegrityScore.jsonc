@@ -92,6 +92,54 @@
       "type": "number",
       "default": 0
     },
+    "fleet_scheduler_firing": {
+      "type": "boolean",
+      "default": false
+    },
+    "locks_working": {
+      "type": "boolean",
+      "default": false
+    },
+    "intent_routing_functioning": {
+      "type": "boolean",
+      "default": false
+    },
+    "jobs_consumed": {
+      "type": "boolean",
+      "default": false
+    },
+    "workers_heartbeating": {
+      "type": "boolean",
+      "default": false
+    },
+    "validators_independent": {
+      "type": "boolean",
+      "default": false
+    },
+    "receipts_present": {
+      "type": "boolean",
+      "default": false
+    },
+    "score_rollup_correct": {
+      "type": "boolean",
+      "default": false
+    },
+    "no_cross_system_contamination": {
+      "type": "boolean",
+      "default": false
+    },
+    "no_duplicate_gaps": {
+      "type": "boolean",
+      "default": false
+    },
+    "no_duplicate_repairs": {
+      "type": "boolean",
+      "default": false
+    },
+    "no_false_closure": {
+      "type": "boolean",
+      "default": false
+    },
     "created_at": {
       "type": "string",
       "format": "date-time"

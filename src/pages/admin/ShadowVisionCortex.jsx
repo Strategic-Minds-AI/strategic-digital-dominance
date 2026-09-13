@@ -78,26 +78,8 @@ export default function ShadowVisionCortex() {
     refetchInterval: 60000,
   });
 
-  // ── Create operator intent ──
-  const createIntentMutation = useMutation({
-    mutationFn: async (intent) => {
-      const intentId = `intent-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
-      return await base44.entities.OperatorIntent.create({
-        intent_id: intentId,
-        system_id: intent.system_id || "fleet",
-        operator_input: intent.operator_input,
-        interpreted_objective: intent.objective,
-        scope: intent.scope || "query",
-        priority: intent.priority || "medium",
-        constraints: intent.constraints || [],
-        risk: intent.risk || "low",
-        target_benchmarks: intent.target_benchmarks || [],
-        approval_policy: intent.approval_policy || "auto",
-        status: "pending",
-        created_at: new Date().toISOString(),
-      });
-    },
-  });
+  // ── Conversation ID for durable multi-turn memory ──
+  const [conversationId, setConversationId] = useState(null);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -141,51 +123,29 @@ export default function ShadowVisionCortex() {
     setLoading(true);
 
     try {
-      const res = await base44.integrations.Core.InvokeLLM({
-        prompt: userMsg,
-        model: "claude-sonnet-5",
-        response_json_schema: {
-          type: "object",
-          properties: {
-            response: { type: "string", description: "Natural language response to the operator" },
-            intent: {
-              type: "object",
-              properties: {
-                system_id: { type: "string" },
-                objective: { type: "string" },
-                scope: { type: "string" },
-                priority: { type: "string" },
-                constraints: { type: "array", items: { type: "string" } },
-                risk: { type: "string" },
-                approval_policy: { type: "string" },
-                target_benchmarks: { type: "array", items: { type: "string" } },
-              },
-            },
-          },
-          required: ["response"],
-        },
+      // Call the backend visionCortexRouter — it loads live fleet state,
+      // constructs the full prompt with evidence, calls the model, validates
+      // the structured response, and creates OperatorIntent when actionable.
+      // The frontend is NOT the orchestration authority.
+      const res = await base44.functions.invoke("visionCortexRouter", {
+        message: userMsg,
+        conversation_id: conversationId,
       });
+      const data = res.data || res;
 
-      const aiResponse = res.response || "I am here. How can I help you govern the fleet?";
-      const intent = res.intent;
-
-      // If there's an actionable intent, create an OperatorIntent record
-      if (intent && intent.objective && intent.scope !== "query") {
-        try {
-          await createIntentMutation.mutateAsync({
-            ...intent,
-            operator_input: userMsg,
-          });
-        } catch (e) {
-          // Intent creation is best-effort
-        }
+      // Persist conversation ID for durable multi-turn memory
+      if (data.conversation_id && !conversationId) {
+        setConversationId(data.conversation_id);
       }
+
+      const aiResponse = data.response || "I am here. How can I help you govern the fleet?";
+      const intent = data.intent;
 
       setMessages([...newMessages, { role: "assistant", content: aiResponse, intent }]);
     } catch (e) {
       setMessages([...newMessages, {
         role: "assistant",
-        content: "I hit a snag reaching the AI. Try again in a moment.",
+        content: "I hit a snag reaching the Vision Cortex backend. Check that visionCortexRouter is deployed.",
       }]);
     } finally {
       setLoading(false);

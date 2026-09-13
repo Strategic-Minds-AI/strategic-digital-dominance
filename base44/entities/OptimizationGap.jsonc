@@ -4,7 +4,12 @@
   "properties": {
     "gap_id": {
       "type": "string",
-      "description": "Stable ID (benchmark_id + cycle_id)"
+      "description": "Stable ID (system_id + benchmark_id)"
+    },
+    "system_id": {
+      "type": "string",
+      "description": "Owning system",
+      "default": "epoxyquotenearme"
     },
     "benchmark_id": {
       "type": "string"
@@ -98,6 +103,25 @@
     "repair_job_id": {
       "type": "string"
     },
+    "last_seen": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last cycle this gap was observed"
+    },
+    "occurrence_count": {
+      "type": "integer",
+      "default": 1,
+      "description": "How many cycles this gap has been observed"
+    },
+    "latest_cycle": {
+      "type": "string",
+      "description": "Most recent cycle_id that observed this gap"
+    },
+    "latest_evidence": {
+      "type": "string",
+      "maxLength": 3000,
+      "description": "Most recent actual value observed"
+    },
     "created_at": {
       "type": "string",
       "format": "date-time"
@@ -105,6 +129,7 @@
   },
   "required": [
     "gap_id",
+    "system_id",
     "benchmark_id",
     "cycle_id",
     "severity"

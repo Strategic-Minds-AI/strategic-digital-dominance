@@ -6,11 +6,20 @@
       "type": "string",
       "description": "Stable deterministic ID"
     },
+    "system_id": {
+      "type": "string",
+      "description": "Owning system",
+      "default": "epoxyquotenearme"
+    },
     "benchmark_id": {
       "type": "string"
     },
     "gap_id": {
       "type": "string"
+    },
+    "failure_fingerprint": {
+      "type": "string",
+      "description": "Deterministic hash of failure signature for idempotency"
     },
     "root_cause": {
       "type": "string",
@@ -84,6 +93,7 @@
       "type": "string",
       "enum": [
         "queued",
+        "claimed",
         "in_progress",
         "implemented",
         "validating",
@@ -115,6 +125,30 @@
     "approval_packet_id": {
       "type": "string"
     },
+    "claimed_by": {
+      "type": "string",
+      "description": "Worker/agent that claimed this job via lease"
+    },
+    "lease_expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the current claim lease expires"
+    },
+    "attempt_count": {
+      "type": "integer",
+      "default": 0,
+      "description": "Number of claim attempts"
+    },
+    "last_heartbeat_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last worker heartbeat while claimed"
+    },
+    "occurrence_count": {
+      "type": "integer",
+      "default": 1,
+      "description": "How many times this same failure has been observed"
+    },
     "created_at": {
       "type": "string",
       "format": "date-time"
@@ -126,6 +160,7 @@
   },
   "required": [
     "repair_id",
+    "system_id",
     "benchmark_id",
     "status"
   ],

@@ -6,6 +6,11 @@
       "type": "string",
       "description": "Stable deterministic ID"
     },
+    "system_id": {
+      "type": "string",
+      "description": "Owning system",
+      "default": "epoxyquotenearme"
+    },
     "benchmark_id": {
       "type": "string"
     },
@@ -59,6 +64,7 @@
   },
   "required": [
     "receipt_id",
+    "system_id",
     "benchmark_id",
     "evidence_type"
   ],

@@ -4,7 +4,7 @@
   "properties": {
     "system_id": {
       "type": "string",
-      "description": "Unique system identifier (e.g. 'epoxyquotenearme', 'thextremeteam-console')"
+      "description": "Unique system identifier"
     },
     "name": {
       "type": "string",
@@ -105,6 +105,11 @@
       ],
       "default": "bootstrap"
     },
+    "bootstrap_container": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if this system is a logical system inside the bootstrap container, not an independently deployed application"
+    },
     "global_score": {
       "type": "number",
       "minimum": 0,
@@ -198,11 +203,11 @@
     "manifest": {
       "type": "string",
       "maxLength": 10000,
-      "description": "System manifest YAML (system.manifest.yaml content)"
+      "description": "System manifest YAML"
     },
     "base44_app_id": {
       "type": "string",
-      "description": "If this system runs on Base44, the app ID for migration tracking"
+      "description": "Actual Base44 application ID if applicable (not a slug)"
     },
     "migration_status": {
       "type": "string",
@@ -221,6 +226,37 @@
         "decommission_candidate"
       ],
       "default": "native"
+    },
+    "local_alpha_controller": {
+      "type": "string",
+      "description": "Function name of the Local Alpha Prime optimizer (e.g. alphaPrimeOptimizationCycle)"
+    },
+    "local_alpha_mode_record": {
+      "type": "string",
+      "description": "Entity record ID of the SystemMode for this system"
+    },
+    "last_local_cycle_id": {
+      "type": "string",
+      "description": "Most recent Local Alpha Prime cycle ID"
+    },
+    "last_local_cycle_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the Local Alpha Prime last ran"
+    },
+    "local_alpha_health": {
+      "type": "string",
+      "enum": [
+        "healthy",
+        "degraded",
+        "blocked",
+        "unknown"
+      ],
+      "default": "unknown"
+    },
+    "benchmark_pack_version": {
+      "type": "string",
+      "description": "Version of the benchmark pack assigned to this system"
     },
     "active": {
       "type": "boolean",
