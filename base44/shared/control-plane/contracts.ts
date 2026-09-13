@@ -1,5 +1,5 @@
 // ════════════════════════════════════════════════════════════════
-// XTREME Universal Operating Fabric — Contracts Package
+// XTREME Universal Operating Fabric -- Contracts Package
 // Shared by Vercel, Supabase, Railway, web console, and agents.
 // Runtime schema validation enforced at every boundary.
 // ════════════════════════════════════════════════════════════════
@@ -9,9 +9,38 @@ export type Severity = 'P0' | 'P1' | 'P2' | 'P3';
 export type RiskClass = 'low' | 'medium' | 'high';
 export type Environment = 'production' | 'staging' | 'preview';
 export type LifecycleMode = 'bootstrap' | 'completion_sprint' | 'preservation' | 'degraded' | 'blocked';
+export type OrgRole = 'owner' | 'admin' | 'operator' | 'builder' | 'viewer';
+export type PhaseGate = 'BRIDGE_PROVEN' | 'ARTIFACTS_HARDENED' | 'INFRASTRUCTURE_DEPLOYED' | 'RUNTIME_PROVEN' | 'PARITY_PROVEN' | 'CUTOVER_READY';
+
+// ════════════════════════════════════════════════════════════════
+// Organization Model -- Multi-tenant access control
+// ════════════════════════════════════════════════════════════════
+
+export interface Organization {
+  org_id: string;
+  name: string;
+  slug: string;
+  status: 'active' | 'suspended' | 'deleted';
+  created_at: string;
+  updated_at: string;
+}
+
+export interface OrganizationMember {
+  org_id: string;
+  user_id: string;
+  role: OrgRole;
+  status: 'pending' | 'active' | 'revoked';
+  invited_at: string;
+  joined_at?: string;
+}
+
+// ════════════════════════════════════════════════════════════════
+// System Manifest
+// ════════════════════════════════════════════════════════════════
 
 export interface SystemManifest {
   system_id: string;
+  organization_id: string;
   name: string;
   description?: string;
   system_type: SystemType;
@@ -30,8 +59,13 @@ export interface SystemManifest {
   manifest_version?: string;
 }
 
+// ════════════════════════════════════════════════════════════════
+// Operator Intents
+// ════════════════════════════════════════════════════════════════
+
 export interface OperatorIntent {
   intent_id: string;
+  organization_id: string;
   system_id: string;
   operator_input: string;
   interpreted_objective?: string;
@@ -43,14 +77,20 @@ export interface OperatorIntent {
   approval_policy: 'auto' | 'operator_required' | 'operator_required_protected';
   status: 'pending' | 'approved' | 'executing' | 'completed' | 'rejected' | 'blocked' | 'validating' | 'validating_result' | 'routed' | 'queued' | 'failed';
   result?: string;
+  correlation_id?: string;
   created_at: string;
   executed_at?: string;
 }
+
+// ════════════════════════════════════════════════════════════════
+// Jobs -- includes pgmq_message_id for full lineage tracking
+// ════════════════════════════════════════════════════════════════
 
 export type JobStatus = 'queued' | 'claimed' | 'in_progress' | 'ready_for_validation' | 'validating' | 'verified' | 'closed' | 'retry' | 'blocked' | 'failed' | 'superseded' | 'dead_letter';
 
 export interface Job {
   job_id: string;
+  organization_id: string;
   system_id: string;
   job_type: string;
   priority: 'critical' | 'high' | 'normal' | 'low';
@@ -73,13 +113,16 @@ export interface Job {
   status: JobStatus;
   claimed_by?: string;
   lease_expires_at?: string;
+  pgmq_message_id?: number;
 }
 
 export interface JobResult {
   result_id: string;
   job_id: string;
+  organization_id: string;
   system_id: string;
   worker_id: string;
+  pgmq_message_id?: number;
   status: 'success' | 'failure' | 'partial';
   output?: Record<string, any>;
   artifacts?: ArtifactReference[];
@@ -88,8 +131,13 @@ export interface JobResult {
   completed_at: string;
 }
 
+// ════════════════════════════════════════════════════════════════
+// Workers -- server-side identity, no client credentials
+// ════════════════════════════════════════════════════════════════
+
 export interface WorkerRegistration {
   worker_id: string;
+  organization_id?: string;
   worker_type: string;
   version: string;
   capabilities: string[];
@@ -101,8 +149,13 @@ export interface WorkerRegistration {
   registered_at: string;
 }
 
+// ════════════════════════════════════════════════════════════════
+// Benchmarks
+// ════════════════════════════════════════════════════════════════
+
 export interface BenchmarkDefinition {
   benchmark_id: string;
+  organization_id: string;
   system_id: string;
   benchmark_pack_id?: string;
   validator_id?: string;
@@ -127,6 +180,7 @@ export interface BenchmarkDefinition {
 
 export interface BenchmarkResult {
   benchmark_id: string;
+  organization_id: string;
   system_id: string;
   cycle_id: string;
   target: string;
@@ -142,8 +196,13 @@ export interface BenchmarkResult {
   failure_reasons?: string[];
 }
 
+// ════════════════════════════════════════════════════════════════
+// Optimization Gaps + Repairs
+// ════════════════════════════════════════════════════════════════
+
 export interface OptimizationGap {
   gap_id: string;
+  organization_id: string;
   system_id: string;
   benchmark_id: string;
   cycle_id: string;
@@ -160,6 +219,7 @@ export interface OptimizationGap {
 
 export interface RepairPacket {
   repair_id: string;
+  organization_id: string;
   system_id: string;
   benchmark_id: string;
   gap_id?: string;
@@ -177,8 +237,13 @@ export interface RepairPacket {
   status: string;
 }
 
+// ════════════════════════════════════════════════════════════════
+// Validation -- includes worker_id and pgmq_message_id for lineage
+// ════════════════════════════════════════════════════════════════
+
 export interface ValidationRequest {
   validation_id: string;
+  organization_id: string;
   system_id: string;
   job_id: string;
   repair_id?: string;
@@ -187,10 +252,13 @@ export interface ValidationRequest {
   target_url?: string;
   expected_state?: string;
   validator_id: string;
+  worker_id?: string;
+  pgmq_message_id?: number;
 }
 
 export interface ValidationResult {
   validation_id: string;
+  organization_id: string;
   system_id: string;
   job_id: string;
   status: 'pass' | 'fail' | 'error';
@@ -199,10 +267,17 @@ export interface ValidationResult {
   details?: string;
   validated_at: string;
   validated_by: string;
+  worker_id?: string;
+  pgmq_message_id?: number;
 }
+
+// ════════════════════════════════════════════════════════════════
+// Evidence Receipts -- includes worker_id and pgmq_message_id
+// ════════════════════════════════════════════════════════════════
 
 export interface EvidenceReceipt {
   receipt_id: string;
+  organization_id: string;
   system_id: string;
   benchmark_id?: string;
   cycle_id?: string;
@@ -212,12 +287,19 @@ export interface EvidenceReceipt {
   evidence_data?: string;
   verified_at: string;
   verified_by: string;
+  worker_id?: string;
+  pgmq_message_id?: number;
   valid: boolean;
   expires_at?: string;
 }
 
+// ════════════════════════════════════════════════════════════════
+// Control Lease -- atomic, database-enforced
+// ════════════════════════════════════════════════════════════════
+
 export interface ControlLease {
   lock_key: string;
+  organization_id?: string;
   owner_id: string;
   cycle_id?: string;
   acquired_at: string;
@@ -229,8 +311,13 @@ export interface ControlLease {
   idempotency_key?: string;
 }
 
+// ════════════════════════════════════════════════════════════════
+// Incidents, Approvals, Artifacts, Heartbeats
+// ════════════════════════════════════════════════════════════════
+
 export interface Incident {
   incident_id: string;
+  organization_id: string;
   system_id: string;
   severity: 'critical' | 'high' | 'medium' | 'low';
   title: string;
@@ -243,7 +330,8 @@ export interface Incident {
 
 export interface ApprovalPacket {
   approval_id: string;
-  action_type: 'supabase_migration' | 'railway_service' | 'vercel_deployment' | 'dns' | 'secret_movement' | 'production_cutover';
+  organization_id: string;
+  action_type: 'supabase_staging' | 'supabase_production' | 'railway_staging' | 'railway_production' | 'vercel_staging' | 'vercel_production' | 'dns' | 'secret_movement' | 'production_cutover';
   description: string;
   risk: RiskClass;
   payload: Record<string, any>;
@@ -255,6 +343,7 @@ export interface ApprovalPacket {
 
 export interface ArtifactReference {
   artifact_id: string;
+  organization_id: string;
   system_id: string;
   artifact_type: 'branch' | 'commit' | 'diff' | 'screenshot' | 'log' | 'report' | 'file' | 'receipt';
   url?: string;
@@ -266,6 +355,7 @@ export interface ArtifactReference {
 
 export interface FleetHeartbeat {
   heartbeat_id: string;
+  organization_id?: string;
   cycle_id: string;
   scheduled_at: string;
   started_at: string;
@@ -289,4 +379,22 @@ export interface AgentDefinition {
   model?: string;
   tools?: string[];
   max_concurrent_tasks?: number;
+}
+
+// ════════════════════════════════════════════════════════════════
+// Job Lineage -- Full traceability chain
+// QUEUE MESSAGE -> JOB -> WORKER -> RESULT -> VALIDATOR -> RECEIPT
+// ════════════════════════════════════════════════════════════════
+
+export interface JobLineage {
+  pgmq_message_id: number;
+  job_id: string;
+  system_id: string;
+  organization_id: string;
+  correlation_id?: string;
+  idempotency_key: string;
+  worker_id?: string;
+  attempt: number;
+  validation_id?: string;
+  evidence_receipt_id?: string;
 }

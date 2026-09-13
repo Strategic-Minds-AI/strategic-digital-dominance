@@ -1,7 +1,7 @@
 // ════════════════════════════════════════════════════════════════
 // XTREME Validation Worker
-// The safest proof worker — HTTP, DOM, API, schema, file hash checks.
-// No production mutation. Generates evidence receipts.
+// The safest proof worker -- HTTP, DOM, API, schema, file hash checks.
+// No production mutation. Generates evidence receipts with full lineage.
 // ════════════════════════════════════════════════════════════════
 
 import { BaseWorker, WorkerConfig, JobEnvelope } from './worker-sdk';
@@ -62,9 +62,10 @@ export class ValidationWorker extends BaseWorker {
         result = await this.validateHttp(job, payload);
     }
 
-    // Write validation run record
+    // Write validation run record with full lineage: worker_id + pgmq_message_id
     await this.supabase.from('validation_runs').insert({
       validation_id: `val-${job.job_id}`,
+      organization_id: job.organization_id,
       system_id: job.system_id,
       job_id: job.job_id,
       repair_id: payload.repair_id,
@@ -78,6 +79,8 @@ export class ValidationWorker extends BaseWorker {
       details: result.details,
       validated_at: now,
       validated_by: this.config.worker_id,
+      worker_id: this.config.worker_id,
+      pgmq_message_id: job.pgmq_message_id || this.current_pgmq_msg_id,
     });
 
     return result;
@@ -97,11 +100,9 @@ export class ValidationWorker extends BaseWorker {
       const httpStatus = response.status;
       const html = await response.text();
 
-      // Extract title
       const titleMatch = html.match(/<title[^>]*>([^<]*)<\/title>/i);
       const title = titleMatch ? titleMatch[1].trim() : '';
 
-      // Check expected status
       let status: 'pass' | 'fail' | 'error' = 'pass';
       const checks: string[] = [];
 
@@ -125,63 +126,41 @@ export class ValidationWorker extends BaseWorker {
       const actualState = `HTTP ${httpStatus} | Title: "${title}"`;
       const details = checks.length > 0 ? checks.join('; ') : 'All checks passed';
 
-      // Generate evidence receipt
       const evidenceData = JSON.stringify({
-        url: payload.target_url,
-        http_status: httpStatus,
-        title,
-        response_size: html.length,
-        timestamp: now,
-        checks,
+        url: payload.target_url, http_status: httpStatus, title,
+        response_size: html.length, timestamp: now, checks,
       });
 
       const receiptId = await this.writeEvidenceReceipt(
-        job.system_id,
-        payload.benchmark_id || null,
-        'http_response',
-        `HTTP validation of ${payload.target_url} — status ${httpStatus}, title "${title}"`,
+        job.system_id, job.organization_id,
+        payload.benchmark_id || null, 'http_response',
+        `HTTP validation of ${payload.target_url} -- status ${httpStatus}, title "${title}"`,
         evidenceData
       );
 
       return {
-        status,
-        actual_state: actualState,
-        http_status: httpStatus,
-        title,
-        evidence_receipt_id: receiptId,
-        details,
-        validated_at: now,
-        validated_by: this.config.worker_id,
+        status, actual_state: actualState, http_status: httpStatus, title,
+        evidence_receipt_id: receiptId, details,
+        validated_at: now, validated_by: this.config.worker_id,
       };
     } catch (e: any) {
-      const evidenceData = JSON.stringify({
-        url: payload.target_url,
-        error: e.message,
-        timestamp: now,
-      });
-
+      const evidenceData = JSON.stringify({ url: payload.target_url, error: e.message, timestamp: now });
       const receiptId = await this.writeEvidenceReceipt(
-        job.system_id,
-        payload.benchmark_id || null,
-        'http_response',
-        `HTTP validation FAILED — ${e.message}`,
-        evidenceData
+        job.system_id, job.organization_id,
+        payload.benchmark_id || null, 'http_response',
+        `HTTP validation FAILED -- ${e.message}`, evidenceData
       );
 
       return {
-        status: 'error',
-        actual_state: `Error: ${e.message}`,
-        evidence_receipt_id: receiptId,
-        details: e.message,
-        validated_at: now,
-        validated_by: this.config.worker_id,
+        status: 'error', actual_state: `Error: ${e.message}`,
+        evidence_receipt_id: receiptId, details: e.message,
+        validated_at: now, validated_by: this.config.worker_id,
       };
     }
   }
 
   // ── DOM Validation (basic HTML parsing) ──
   async validateDom(job: JobEnvelope, payload: ValidationPayload): Promise<ValidationOutput> {
-    // For production, use Playwright here. For now, fetch + regex parse.
     return this.validateHttp(job, payload);
   }
 
@@ -210,13 +189,13 @@ export class ValidationWorker extends BaseWorker {
       const evidenceData = JSON.stringify({ url: payload.target_url, http_status: httpStatus, body: actualState, timestamp: now });
 
       const receiptId = await this.writeEvidenceReceipt(
-        job.system_id, payload.benchmark_id || null, 'http_response',
-        `API validation — status ${httpStatus}`, evidenceData
+        job.system_id, job.organization_id, payload.benchmark_id || null,
+        'http_response', `API validation -- status ${httpStatus}`, evidenceData
       );
 
       return {
         status, actual_state: actualState, http_status: httpStatus,
-        evidence_receipt_id: receiptId, details: `API check — HTTP ${httpStatus}`,
+        evidence_receipt_id: receiptId, details: `API check -- HTTP ${httpStatus}`,
         validated_at: now, validated_by: this.config.worker_id,
       };
     } catch (e: any) {
@@ -248,8 +227,8 @@ export class ValidationWorker extends BaseWorker {
 
     const evidenceData = JSON.stringify({ data, expected, missing, timestamp: now });
     const receiptId = await this.writeEvidenceReceipt(
-      job.system_id, payload.benchmark_id || null, 'function_output',
-      `Schema validation — ${missing.length} missing fields`, evidenceData
+      job.system_id, job.organization_id, payload.benchmark_id || null,
+      'function_output', `Schema validation -- ${missing.length} missing fields`, evidenceData
     );
 
     return {
