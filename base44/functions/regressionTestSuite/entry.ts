@@ -27,25 +27,37 @@ export default async function (req: Request): Promise<Response> {
     const svc = base44.asServiceRole;
     const results: any[] = [];
 
-    // ── FLEET-LOCK-RACE-001: duplicate governance invocation ──
+    // ── FLEET-LOCK-RACE-001: fixed lock_key duplicate invocation ──
+    // Uses explicitly supplied fixed lock_key — no time-derived bucket ambiguity.
     try {
-      // Fire two concurrent governance calls
-      const [res1, res2] = await Promise.all([
-        base44.functions.invoke('fleetAlphaPrime', { action: 'govern' }),
-        base44.functions.invoke('fleetAlphaPrime', { action: 'govern' }),
-      ]);
-      const d1 = res1.data || res1;
-      const d2 = res2.data || res2;
-      const lockCount = (d1.lock_acquired ? 1 : 0) + (d2.lock_acquired ? 1 : 0);
-      const pass = lockCount === 1 || (d1.idempotent && d2.idempotent);
+      const fixedLockKey = `test-fleet-lock-${Date.now()}`;
+      const ts = new Date().toISOString();
+      const promises = [
+        svc.entities.ControlLease.create({
+          lock_key: fixedLockKey, owner_id: 'test-owner-1', cycle_id: 'test-cycle',
+          acquired_at: ts, lease_expires_at: new Date(Date.now() + 60000).toISOString(),
+          heartbeat_at: ts, status: 'held', version: 1, idempotency_key: 'test-1',
+        }).then(() => true).catch(() => false),
+        svc.entities.ControlLease.create({
+          lock_key: fixedLockKey, owner_id: 'test-owner-2', cycle_id: 'test-cycle',
+          acquired_at: ts, lease_expires_at: new Date(Date.now() + 60000).toISOString(),
+          heartbeat_at: ts, status: 'held', version: 1, idempotency_key: 'test-2',
+        }).then(() => true).catch(() => false),
+      ];
+      const [win1, win2] = await Promise.all(promises);
+      const winners = (win1 ? 1 : 0) + (win2 ? 1 : 0);
+      const pass = winners === 1;
+      // Cleanup
+      const leases = await svc.entities.ControlLease.filter({ lock_key: fixedLockKey }, '-created_date', 1);
+      if (leases[0]) await svc.entities.ControlLease.update(leases[0].id, { status: 'released', released_at: new Date().toISOString() });
       results.push({
         test_id: 'FLEET-LOCK-RACE-001',
-        name: 'Duplicate governance invocation — exactly one owner',
+        name: 'Fixed lock_key duplicate invocation — exactly one owner',
         pass,
-        details: `lock1=${d1.lock_acquired}, lock2=${d2.lock_acquired}, idempotent1=${!!d1.idempotent}, idempotent2=${!!d2.idempotent}`,
+        details: `lock_key=${fixedLockKey}, winners=${winners}/2, win1=${win1}, win2=${win2}`,
       });
     } catch (e: any) {
-      results.push({ test_id: 'FLEET-LOCK-RACE-001', name: 'Duplicate governance invocation', pass: false, error: e.message });
+      results.push({ test_id: 'FLEET-LOCK-RACE-001', name: 'Fixed lock_key duplicate invocation', pass: false, error: e.message });
     }
 
     // ── REPAIR-DEDUPE-001: duplicate RepairJob creation ──
@@ -67,26 +79,69 @@ export default async function (req: Request): Promise<Response> {
       results.push({ test_id: 'REPAIR-DEDUPE-001', name: 'Duplicate RepairJob creation', pass: false, error: e.message });
     }
 
-    // ── CROSS-SYSTEM-001: cross-system identical benchmark IDs ──
+    // ── CROSS-SYSTEM-001: cross-system collision fixture ──
+    // Creates controlled fixture: System A and System B with SAME benchmark_id.
+    // Generates failure in both. Asserts two independent RepairJobs are permitted.
     try {
-      // Verify that benchmark definitions for different systems with same benchmark_id don't collide
-      const epoxyBenches = await svc.entities.BenchmarkDefinition.filter({ system_id: 'epoxyquotenearme', enabled: true }, '-created_date', 500);
-      const consoleBenches = await svc.entities.BenchmarkDefinition.filter({ system_id: 'thextremeteam-console', enabled: true }, '-created_date', 500);
-      // Check that repair jobs are scoped by system_id
-      const epoxyRepairs = await svc.entities.RepairJob.filter({ system_id: 'epoxyquotenearme', status: ['queued', 'claimed', 'in_progress', 'blocked'] }, '-created_date', 50);
-      const consoleRepairs = await svc.entities.RepairJob.filter({ system_id: 'thextremeteam-console', status: ['queued', 'claimed', 'in_progress', 'blocked'] }, '-created_date', 50);
-      const epoxyBenchmarkIds = new Set(epoxyRepairs.map((r: any) => r.benchmark_id));
-      const consoleBenchmarkIds = new Set(consoleRepairs.map((r: any) => r.benchmark_id));
-      // Repairs in system A should not suppress repairs in system B
-      const pass = epoxyRepairs.every((r: any) => r.system_id === 'epoxyquotenearme') && consoleRepairs.every((r: any) => r.system_id === 'thextremeteam-console');
+      const testBenchId = `TEST-COLLISION-${Date.now()}`;
+      const sysA = 'epoxyquotenearme';
+      const sysB = 'thextremeteam-console';
+      const ts = new Date().toISOString();
+
+      // Create benchmark definitions for both systems with same benchmark_id
+      const benchA = await svc.entities.BenchmarkDefinition.create({
+        benchmark_id: testBenchId, system_id: sysA, category: 'test', name: 'Test Collision A',
+        severity: 'P1', mandatory: true, enabled: true, environment: 'production',
+        evidence_required: true, auto_repair_allowed: true, benchmark_version: '1.0',
+        created_at: ts, updated_at: ts,
+      });
+      const benchB = await svc.entities.BenchmarkDefinition.create({
+        benchmark_id: testBenchId, system_id: sysB, category: 'test', name: 'Test Collision B',
+        severity: 'P1', mandatory: true, enabled: true, environment: 'production',
+        evidence_required: true, auto_repair_allowed: true, benchmark_version: '1.0',
+        created_at: ts, updated_at: ts,
+      });
+
+      // Create gaps for both systems with same benchmark_id
+      const gapA = await svc.entities.OptimizationGap.create({
+        gap_id: `${sysA}:${testBenchId}`, system_id: sysA, benchmark_id: testBenchId,
+        cycle_id: 'test-cycle', target: 'pass', actual: 'fail', severity: 'P1', status: 'open',
+        created_at: ts,
+      });
+      const gapB = await svc.entities.OptimizationGap.create({
+        gap_id: `${sysB}:${testBenchId}`, system_id: sysB, benchmark_id: testBenchId,
+        cycle_id: 'test-cycle', target: 'pass', actual: 'fail', severity: 'P1', status: 'open',
+        created_at: ts,
+      });
+
+      // Run repair factory for each system independently
+      await base44.functions.invoke('alphaPrimeRepairFactory', { system_id: sysA });
+      await base44.functions.invoke('alphaPrimeRepairFactory', { system_id: sysB });
+
+      // Verify both systems have repair jobs for the same benchmark_id
+      const repairsA = await svc.entities.RepairJob.filter({ system_id: sysA, benchmark_id: testBenchId, status: ['queued', 'claimed', 'in_progress', 'blocked'] }, '-created_date', 10);
+      const repairsB = await svc.entities.RepairJob.filter({ system_id: sysB, benchmark_id: testBenchId, status: ['queued', 'claimed', 'in_progress', 'blocked'] }, '-created_date', 10);
+
+      const bothHaveRepairs = repairsA.length > 0 && repairsB.length > 0;
+      const scopedCorrectly = repairsA.every((r: any) => r.system_id === sysA) && repairsB.every((r: any) => r.system_id === sysB);
+
+      // Cleanup test data
+      for (const r of repairsA) await svc.entities.RepairJob.delete(r.id);
+      for (const r of repairsB) await svc.entities.RepairJob.delete(r.id);
+      await svc.entities.OptimizationGap.delete(gapA.id);
+      await svc.entities.OptimizationGap.delete(gapB.id);
+      await svc.entities.BenchmarkDefinition.delete(benchA.id);
+      await svc.entities.BenchmarkDefinition.delete(benchB.id);
+
+      const pass = bothHaveRepairs && scopedCorrectly;
       results.push({
         test_id: 'CROSS-SYSTEM-001',
-        name: 'Cross-system identical benchmark IDs — no contamination',
+        name: 'Cross-system collision — same benchmark_id, independent repairs',
         pass,
-        details: `epoxy_repairs=${epoxyRepairs.length}, console_repairs=${consoleRepairs.length}, epoxy_scoped=${epoxyRepairs.every((r: any) => r.system_id === 'epoxyquotenearme')}`,
+        details: `bench_id=${testBenchId}, repairs_A=${repairsA.length}, repairs_B=${repairsB.length}, both_have=${bothHaveRepairs}, scoped=${scopedCorrectly}`,
       });
     } catch (e: any) {
-      results.push({ test_id: 'CROSS-SYSTEM-001', name: 'Cross-system identical benchmark IDs', pass: false, error: e.message });
+      results.push({ test_id: 'CROSS-SYSTEM-001', name: 'Cross-system collision', pass: false, error: e.message });
     }
 
     // ── MISSING-RESULT-001: missing BenchmarkResult → UNKNOWN ──
@@ -95,7 +150,9 @@ export default async function (req: Request): Promise<Response> {
       const syncData = syncRes.data || syncRes;
       const result = syncData.results?.[0] || {};
       // Console system has benchmarks but likely no results → unknown should be > 0
-      const pass = result.unknown > 0 || result.total === 0;
+      // No escape clause: definition exists + no result = UNKNOWN.
+      // total === 0 (no definitions) must NOT count as PASS.
+      const pass = result.unknown > 0;
       results.push({
         test_id: 'MISSING-RESULT-001',
         name: 'Missing BenchmarkResult → UNKNOWN status',
@@ -231,6 +288,36 @@ export default async function (req: Request): Promise<Response> {
       });
     } catch (e: any) {
       results.push({ test_id: 'INTENT-CONSUMED-001', name: 'Intent never consumed', pass: false, error: e.message });
+    }
+
+    // ── CONTROL-LEASE-CONCURRENCY-001: 10-way lock race ──
+    // Launch 10 simultaneous acquisition attempts against the same lock_key.
+    // Expected: 1 winner, 9 rejections. Records owner, result, timestamp.
+    try {
+      const lockKey = `test-concurrency-${Date.now()}`;
+      const ts = new Date().toISOString();
+      const promises = Array.from({ length: 10 }, (_, i) =>
+        svc.entities.ControlLease.create({
+          lock_key: lockKey, owner_id: `concurrent-owner-${i}`, cycle_id: 'concurrency-test',
+          acquired_at: ts, lease_expires_at: new Date(Date.now() + 60000).toISOString(),
+          heartbeat_at: ts, status: 'held', version: 1, idempotency_key: `concurrent-${i}`,
+        }).then(() => ({ owner: `concurrent-owner-${i}`, result: 'acquired' }))
+          .catch(() => ({ owner: `concurrent-owner-${i}`, result: 'rejected' }))
+      );
+      const outcomes = await Promise.all(promises);
+      const winners = outcomes.filter((o: any) => o.result === 'acquired');
+      const pass = winners.length === 1;
+      // Cleanup
+      const leases = await svc.entities.ControlLease.filter({ lock_key: lockKey }, '-created_date', 1);
+      if (leases[0]) await svc.entities.ControlLease.update(leases[0].id, { status: 'released', released_at: new Date().toISOString() });
+      results.push({
+        test_id: 'CONTROL-LEASE-CONCURRENCY-001',
+        name: '10-way lock race — exactly 1 winner, 9 rejected',
+        pass,
+        details: `lock_key=${lockKey}, winners=${winners.length}/10, winner=${winners[0]?.owner || 'none'}`,
+      });
+    } catch (e: any) {
+      results.push({ test_id: 'CONTROL-LEASE-CONCURRENCY-001', name: '10-way lock race', pass: false, error: e.message });
     }
 
     // ── Summary ──
