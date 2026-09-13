@@ -82,7 +82,7 @@ export default async function (req: Request): Promise<Response> {
 
     // ── Step 6: Recalculate distance after repairs ──
     let finalDistance: any = null;
-    if (validationResult?.verified > 0 || dispatchedCount > 0) {
+    if (validationResult?.verified > 0 || staleLeasesDetected > 0) {
       try {
         const reDistRes = await base44.functions.invoke('calculateDistanceTo100', {});
         finalDistance = reDistRes.data;
@@ -146,7 +146,8 @@ export default async function (req: Request): Promise<Response> {
         p1: finalResult?.p1 || 0,
         current_mode: finalResult?.current_mode || 'completion_sprint',
         consecutive_pass_cycles: finalResult?.consecutive_pass_cycles || 0,
-        repairs_dispatched: dispatchedCount,
+        repairs_dispatched: 0,
+        stale_leases_detected: staleLeasesDetected,
         repairs_verified: validationResult?.verified || 0,
         repairs_failed: validationResult?.failed || 0,
         regression_tests_created: validationResult?.regression_tests_created || 0,
