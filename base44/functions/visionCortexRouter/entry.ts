@@ -163,7 +163,7 @@ export default async function (req: Request): Promise<Response> {
     // ── Call the model with FULL prompt + context ──
     const fullPrompt = VISION_CORTEX_PROMPT + fleetContext + historyContext + `\n=== OPERATOR MESSAGE ===\n${message}\n=== END OPERATOR MESSAGE ===\n\nRespond with a JSON object containing "response" (natural language) and optionally "intent" (structured) and "systems_referenced" (array of system_ids).`;
 
-    const llmRes = await base44.integrations.Core.InvokeLLM({
+    const llmRes = await svc.integrations.Core.InvokeLLM({
       prompt: fullPrompt,
       model: 'claude-sonnet-5',
       response_json_schema: {

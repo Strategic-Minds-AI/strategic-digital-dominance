@@ -39,7 +39,7 @@ Deno.serve(async (req: Request) => {
       if (hoursSinceDownload >= 20 && !user.questionnaire_warning_sent) {
         try {
           if (user.email) {
-            await base44.integrations.Core.SendEmail({
+            await db.integrations.Core.SendEmail({
               to: user.email,
               subject: "Action Required: Complete Your Questionnaire Within 4 Hours",
               body: `Hi ${user.full_name || "there"},\n\nThis is your one and only warning. You agreed to complete a 10-question questionnaire within 24 hours of downloading the Xtreme AI app. You have less than 4 hours remaining.\n\nIf the questionnaire is not completed within 24 hours of your download, your app access will be turned off.\n\nOpen the app, tap the menu (☰), and select "Questionnaire" to complete it now.\n\n— Xtreme AI Systems`,
@@ -60,7 +60,7 @@ Deno.serve(async (req: Request) => {
           shutOffs++;
           console.log("checkQuestionnaireCompliance: shut off (questionnaire not completed)", { userId: user.id, email: user.email });
           if (user.email) {
-            await base44.integrations.Core.SendEmail({
+            await db.integrations.Core.SendEmail({
               to: user.email,
               subject: "Your Xtreme AI App Access Has Been Turned Off",
               body: `Hi ${user.full_name || "there"},\n\nYour Xtreme AI app access has been turned off because the required 10-question questionnaire was not completed within 24 hours of your download, as agreed in the terms.\n\nIf you believe this is an error, or would like to re-activate your account, please contact support.\n\n— Xtreme AI Systems`,

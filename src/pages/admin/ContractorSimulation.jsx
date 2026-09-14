@@ -45,25 +45,11 @@ export default function ContractorSimulation() {
     setSimulating(true);
     setSimulationResult(null);
     try {
-      const res = await base44.integrations.Core.InvokeLLM({
+      const res = await base44.functions.invoke("runContractorSimulation", {
+        simulation_type: "archetype",
         prompt: `${archetype.act_as_prompt}\n\nYou are evaluating the Xtreme AI system for your epoxy coating business. Answer the following questionnaire honestly from your character's perspective. For each question, give a score from 1-10 and a brief explanation.\n\n${QUESTIONNAIRE_CATEGORIES.map(c => `${c.name}:\n${c.questions.map((q, i) => `${i+1}. ${q.text}`).join("\n")}`).join("\n\n")}\n\nProvide your overall score (0-100) and your honest opinion as ${archetype.name}.`,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            archetype_name: { type: "string" },
-            overall_score: { type: "number" },
-            category_scores: {
-              type: "object",
-              properties: QUESTIONNAIRE_CATEGORIES.reduce((acc, c) => ({ ...acc, [c.id]: { type: "number" } }), {}),
-            },
-            honest_opinion: { type: "string" },
-            would_buy: { type: "boolean" },
-            biggest_concern: { type: "string" },
-            favorite_feature: { type: "string" },
-          },
-        },
       });
-      setSimulationResult({ archetype, result: res });
+      setSimulationResult({ archetype, result: res.data.result });
     } catch (err) {
       setSimulationResult({ error: err?.message || "Simulation failed" });
     }
@@ -74,22 +60,11 @@ export default function ContractorSimulation() {
     setSimulating(true);
     setSimulationResult(null);
     try {
-      const res = await base44.integrations.Core.InvokeLLM({
+      const res = await base44.functions.invoke("runContractorSimulation", {
+        simulation_type: "visitor",
         prompt: `${visitor.personality_prompt}\n\nYou are visiting the epoxy garage floor estimate website. Simulate your browsing experience. What pages do you visit? What do you think? Do you convert? Why or why not? Be honest from your character's perspective.`,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            visitor_name: { type: "string" },
-            pages_visited: { type: "array", items: { type: "string" } },
-            thoughts: { type: "string" },
-            converted: { type: "boolean" },
-            conversion_reason: { type: "string" },
-            objections: { type: "array", items: { type: "string" } },
-            lead_score: { type: "number" },
-          },
-        },
       });
-      setSimulationResult({ visitor, result: res });
+      setSimulationResult({ visitor, result: res.data.result });
     } catch (err) {
       setSimulationResult({ error: err?.message || "Simulation failed" });
     }
