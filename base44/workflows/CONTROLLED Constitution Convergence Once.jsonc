@@ -1,0 +1,49 @@
+{
+  "name": "CONTROLLED Constitution Convergence Once",
+  "description": "Operator-approved one-run convergence: push the complete EpoxyQuoteNearMe benchmark constitution from Base44 into canonical Xtreme OS. Protected production actions remain gated.",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "controlled_constitution_convergence_once",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "push_constitution": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "xtremeUniversalGeneratorBridge",
+            "args": {
+              "action": "push_constitution_to_supabase",
+              "mode": "execute",
+              "system_id": "epoxyquotenearme"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Converge 74-benchmark constitution",
+            "description": "Backfill Base44 benchmark definitions to canonical Xtreme OS and remove the 1/1 false-green baseline."
+          }
+        }
+      }
+    ]
+  },
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "* * * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "after_count",
+      "ends_on_date": null,
+      "ends_after_count": 1
+    }
+  }
+}
