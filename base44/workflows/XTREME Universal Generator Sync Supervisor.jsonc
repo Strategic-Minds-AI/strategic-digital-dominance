@@ -1,0 +1,48 @@
+{
+  "name": "XTREME Universal Generator Sync Supervisor",
+  "description": "Persistent shadow-mode reconciliation between the EpoxyQuoteNearMe Base44 bridge, XTREME Universal Generator source truth, and canonical Xtreme OS Supabase. It never overwrites the richer benchmark constitution and never promotes a false-green score.",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "xtreme_universal_generator_sync_supervisor",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "shadow_sync": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "xtremeUniversalGeneratorBridge",
+            "args": {
+              "action": "shadow_sync",
+              "system_id": "epoxyquotenearme"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Reconcile Universal Generator state",
+            "description": "Compare Base44, Drive source truth, and canonical Xtreme OS without destructive writes."
+          }
+        }
+      }
+    ]
+  },
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "*/15 * * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  }
+}
