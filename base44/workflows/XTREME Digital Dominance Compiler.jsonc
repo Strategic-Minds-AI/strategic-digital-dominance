@@ -1,0 +1,49 @@
+{
+  "name": "XTREME Digital Dominance Compiler",
+  "description": "Persistent canonical-source compiler for XTREME Digital Dominance. Every six hours it refreshes machine-readable StrategyDocument chunks from the approved Drive workbooks. It does not publish pages, message customers, spend money, alter DNS, or perform production cutover.",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "xtreme_digital_dominance_compiler",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "compile_sources": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "digitalDominanceCompiler",
+            "args": {
+              "action": "compile",
+              "mode": "execute",
+              "promote": false
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Compile Digital Dominance source truth",
+            "description": "Refresh approved workflow and business-concept intelligence from Google Drive into auditable Base44 strategy records."
+          }
+        }
+      }
+    ]
+  },
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "17 */6 * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  }
+}
