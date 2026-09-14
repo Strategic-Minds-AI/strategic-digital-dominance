@@ -80,6 +80,9 @@ export default async function (req: Request): Promise<Response> {
       steps.push({ step: 'sync_fleet_state', result: 'synced' });
     } catch (e: any) { steps.push({ step: 'sync_fleet_state', error: e.message }); }
 
+    // Predeclare finalDistance before linkage calculations so health updates cannot hit the let temporal-dead-zone.
+    let finalDistance: any = null;
+
     // ── Step 5c: Update Local Alpha linkage fields on FleetSystem ──
     try {
       const fleetSystems = await svc.entities.FleetSystem.filter({ system_id: 'epoxyquotenearme' }, '-created_date', 1);
@@ -108,7 +111,6 @@ export default async function (req: Request): Promise<Response> {
     } catch (e: any) { steps.push({ step: 'update_local_alpha_linkage', error: e.message }); }
 
     // ── Step 6: Recalculate distance after repairs ──
-    let finalDistance: any = null;
     if (validationResult?.verified > 0 || staleLeasesDetected > 0) {
       try {
         const reDistRes = await base44.functions.invoke('calculateDistanceTo100', {});
