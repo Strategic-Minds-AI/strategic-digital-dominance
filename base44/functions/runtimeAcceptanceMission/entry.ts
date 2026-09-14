@@ -243,15 +243,53 @@ export default async function (req: Request): Promise<Response> {
     await execSql(`UPDATE public.workers SET status = 'idle', current_job = NULL, load = 0, last_heartbeat = '${now}', updated_at = '${now}' WHERE worker_id = '${workerId}';`);
 
     // ════════════════════════════════════════════════════════════════
-    // STEP 10: FleetSystem update — Update system score
+    // STEP 10: FleetSystem update — FULL CONSTITUTION rollup
     // ════════════════════════════════════════════════════════════════
-    const newScore = validationStatus === 'pass' ? 100 : 0;
-    const newMode = validationStatus === 'pass' ? 'preservation' : 'completion_sprint';
+    // CRITICAL: A single HTTP 200 can never produce system score 100.
+    // Score denominator is the complete enabled benchmark constitution.
+    const rollupRows = await execSql(`WITH latest AS (
+      SELECT DISTINCT ON (benchmark_id) benchmark_id, status
+      FROM public.benchmark_results
+      WHERE system_id = '${systemId}'
+      ORDER BY benchmark_id, measured_at DESC NULLS LAST, created_at DESC
+    )
+    SELECT
+      COUNT(*)::int AS total,
+      COUNT(*) FILTER (WHERE COALESCE(l.status,'unknown') = 'pass')::int AS passing,
+      COUNT(*) FILTER (WHERE COALESCE(l.status,'unknown') = 'fail')::int AS failing,
+      COUNT(*) FILTER (WHERE l.status IS NULL OR l.status NOT IN ('pass','fail'))::int AS unknown,
+      COUNT(*) FILTER (WHERE b.severity = 'P0' AND COALESCE(l.status,'unknown') <> 'pass')::int AS p0,
+      COUNT(*) FILTER (WHERE b.severity = 'P1' AND COALESCE(l.status,'unknown') <> 'pass')::int AS p1
+    FROM public.benchmarks b
+    LEFT JOIN latest l ON l.benchmark_id = b.benchmark_id
+    WHERE b.system_id = '${systemId}' AND b.enabled = true;`);
+    const rollup = rollupRows[0] || { total: 0, passing: 0, failing: 0, unknown: 0, p0: 0, p1: 0 };
+    const totalBenchmarks = Number(rollup.total || 0);
+    const passingBenchmarks = Number(rollup.passing || 0);
+    const failingBenchmarks = Number(rollup.failing || 0);
+    const unknownBenchmarks = Number(rollup.unknown || 0);
+    const p0Count = Number(rollup.p0 || 0);
+    const p1Count = Number(rollup.p1 || 0);
+    const newScore = totalBenchmarks > 0 ? Math.floor((passingBenchmarks / totalBenchmarks) * 100) : 0;
+
+    const currentSystems = await execSql(`SELECT source_parity,deployment_parity,consecutive_pass_cycles,required_consecutive_passes FROM public.systems WHERE system_id = '${systemId}' LIMIT 1;`);
+    const currentSystem = currentSystems[0] || {};
+    const verified100 = totalBenchmarks > 0
+      && passingBenchmarks === totalBenchmarks
+      && failingBenchmarks === 0
+      && unknownBenchmarks === 0
+      && p0Count === 0
+      && p1Count === 0
+      && currentSystem.source_parity === 'pass'
+      && currentSystem.deployment_parity === 'pass'
+      && Number(currentSystem.consecutive_pass_cycles || 0) >= Number(currentSystem.required_consecutive_passes || 3);
+    const newMode = verified100 ? 'preservation' : 'completion_sprint';
+
     await execSql(`UPDATE public.systems SET
       global_score = ${newScore}, distance_to_100 = ${100 - newScore},
-      total_benchmarks = 1, passing_benchmarks = ${validationStatus === 'pass' ? 1 : 0},
-      failing_benchmarks = ${validationStatus === 'fail' ? 1 : 0},
-      unknown_benchmarks = ${validationStatus === 'error' ? 1 : 0},
+      total_benchmarks = ${totalBenchmarks}, passing_benchmarks = ${passingBenchmarks},
+      failing_benchmarks = ${failingBenchmarks}, unknown_benchmarks = ${unknownBenchmarks},
+      p0_count = ${p0Count}, p1_count = ${p1Count},
       current_mode = '${newMode}', last_full_cycle = '${now}',
       next_full_cycle = '${new Date(Date.now() + 300000).toISOString()}', updated_at = '${now}'
       WHERE system_id = '${systemId}';`);
