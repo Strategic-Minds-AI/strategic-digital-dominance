@@ -43,6 +43,7 @@ const links = [
   { to: "/admin/national-launch", icon: Rocket, label: "National Launch" },
   { to: "/admin/seo-generator", icon: TrendingUp, label: "SEO Generator" },
   { to: "/admin/lead-scraper", icon: Radar, label: "Lead Scraper" },
+  { to: "/admin/skip-trace", icon: Radar, label: "Skip Trace" },
   { to: "/admin/xtreme-comms", icon: MessageSquare, label: "Xtreme Comms" },
   { to: "/admin/results", icon: BarChart3, label: "Analytics" },
   { to: "/admin/analytics", icon: Activity, label: "GA Traffic" },

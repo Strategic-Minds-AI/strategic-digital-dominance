@@ -1,0 +1,112 @@
+{
+  "name": "SkipTrace",
+  "type": "object",
+  "properties": {
+    "trace_id": {
+      "type": "string",
+      "description": "Deterministic ID (hash of normalized address)"
+    },
+    "address": {
+      "type": "string",
+      "description": "Normalized property address used for lookup"
+    },
+    "lead_id": {
+      "type": "string",
+      "description": "Optional link to the Lead entity that triggered this trace"
+    },
+    "owner_name": {
+      "type": "string",
+      "description": "Property owner name from tax records or web search"
+    },
+    "owner_mailing_address": {
+      "type": "string",
+      "description": "Mailing address if different from property address (absentee owner)"
+    },
+    "phone_numbers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "emails": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "property_details": {
+      "type": "string",
+      "maxLength": 3000,
+      "description": "Serialized property info (type, year built, sqft, etc.)"
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "high",
+        "medium",
+        "low",
+        "none"
+      ],
+      "default": "none"
+    },
+    "sources_found": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Which sources contributed data (rentcast, web_search, etc.)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "traced",
+        "not_found",
+        "queued",
+        "error"
+      ],
+      "default": "pending"
+    },
+    "batch_id": {
+      "type": "string",
+      "description": "Batch ID for group tracking"
+    },
+    "error_message": {
+      "type": "string"
+    },
+    "traced_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "trace_id",
+    "address",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

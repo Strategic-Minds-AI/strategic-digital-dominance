@@ -63,6 +63,7 @@ import NationalLaunch from '@/pages/admin/NationalLaunch';
 import SeoGenerator from '@/pages/admin/SeoGenerator';
 import XtremeComms from '@/pages/admin/XtremeComms';
 import LeadScraper from '@/pages/admin/LeadScraper';
+import SkipTraceSystem from '@/pages/admin/SkipTraceSystem';
 import AdminResults from '@/pages/admin/Results';
 import AgentBuilder from '@/pages/admin/AgentBuilder';
 import VisionStrategy from '@/pages/admin/VisionStrategy';
@@ -193,6 +194,7 @@ const AuthenticatedApp = () => {
         <Route path="seo-generator" element={<SeoGenerator />} />
         <Route path="xtreme-comms" element={<XtremeComms />} />
         <Route path="lead-scraper" element={<LeadScraper />} />
+        <Route path="skip-trace" element={<SkipTraceSystem />} />
         <Route path="results" element={<AdminResults />} />
         <Route path="agent-builder" element={<AgentBuilder />} />
         <Route path="vision-strategy" element={<VisionStrategy />} />

@@ -1,0 +1,48 @@
+{
+  "name": "Autonomous Skip Trace",
+  "description": "Every 4 hours, autonomously finds all leads with a property address but no phone or email, and runs skip tracing against RentCast property records + AI web search to find owner contact info. Updates leads with found phone/email automatically.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 */4 * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "autonomous_skip_trace",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_batch": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "skipTrace",
+            "args": {
+              "action": "batch",
+              "limit": 25
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Run autonomous skip trace batch",
+            "description": "Find leads with addresses but no contact info and skip trace them"
+          }
+        }
+      }
+    ]
+  }
+}
