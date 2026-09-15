@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.48';
 import { VALIDATION_CONSTITUTION, getHardGates, computeWeightedScore, isVerified100, PATH_TO_100 } from '../../shared/validationConstitution.ts';
+import { getUniversalBenchmarks } from '../../shared/universalBenchmarkPacks.ts';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // autoComplete — Universal AutoComplete orchestrator.
@@ -228,14 +229,62 @@ export default async function (req: Request): Promise<Response> {
             detail: hasManifest ? `repo=${system.repository || 'none'}, base44=${system.base44_app_id || 'none'}` : 'BLOCKED_SOURCE_TRUTH — no repo or Base44 app ID',
           });
 
-          // STEP 2: CONSTITUTE — Check benchmark coverage
-          const benchmarks = await svc.entities.BenchmarkDefinition.filter({ system_id: system.system_id, enabled: true }, '-created_date', 200);
-          const mandatoryCount = benchmarks.filter(b => b.mandatory).length;
-          systemSteps.push({
-            step: 'CONSTITUTE',
-            pass: mandatoryCount > 0,
-            detail: mandatoryCount > 0 ? `${mandatoryCount} mandatory benchmarks defined` : 'UNBENCHMARKED — no mandatory benchmarks',
-          });
+          // STEP 2: CONSTITUTE — Check benchmark coverage, auto-generate if missing
+          let benchmarks = await svc.entities.BenchmarkDefinition.filter({ system_id: system.system_id, enabled: true }, '-created_date', 200);
+          let mandatoryCount = benchmarks.filter(b => b.mandatory).length;
+
+          if (mandatoryCount === 0) {
+            // AUTO-CONSTITUTE: Generate benchmark constitution from universal packs
+            const universalBenchmarks = getUniversalBenchmarks(system.system_type);
+            let created = 0;
+            for (const bench of universalBenchmarks) {
+              const benchId = `${system.system_id}:${bench.benchmark_id}`;
+              const existingBench = await svc.entities.BenchmarkDefinition.filter({ benchmark_id: benchId }, '-created_date', 1);
+              if (!existingBench || existingBench.length === 0) {
+                await svc.entities.BenchmarkDefinition.create({
+                  benchmark_id: benchId,
+                  system_id: system.system_id,
+                  benchmark_pack_id: bench.category,
+                  validator_id: bench.validator || bench.data_source || 'manual',
+                  category: bench.category,
+                  name: bench.name,
+                  description: bench.description,
+                  target: bench.target,
+                  measurement: bench.measurement,
+                  comparator: bench.comparator,
+                  severity: bench.severity,
+                  mandatory: bench.mandatory,
+                  environment: bench.environment,
+                  data_source: bench.data_source,
+                  validator: bench.validator,
+                  evidence_required: bench.evidence_required,
+                  freshness_requirement: bench.freshness_requirement,
+                  auto_repair_allowed: bench.auto_repair_allowed,
+                  benchmark_version: bench.benchmark_version,
+                  standard_source: bench.standard_source,
+                  enabled: bench.enabled,
+                  applicable_entities: [],
+                  created_at: now,
+                  updated_at: now,
+                });
+                created++;
+              }
+            }
+            // Re-read benchmarks after constitution
+            benchmarks = await svc.entities.BenchmarkDefinition.filter({ system_id: system.system_id, enabled: true }, '-created_date', 200);
+            mandatoryCount = benchmarks.filter(b => b.mandatory).length;
+            systemSteps.push({
+              step: 'CONSTITUTE',
+              pass: mandatoryCount > 0,
+              detail: `AUTO-CONSTITUTED ${created} benchmarks (${mandatoryCount} mandatory) from universal pack for type="${system.system_type}"`,
+            });
+          } else {
+            systemSteps.push({
+              step: 'CONSTITUTE',
+              pass: true,
+              detail: `${mandatoryCount} mandatory benchmarks defined`,
+            });
+          }
 
           // STEP 3: BASELINE — Run validation
           const validationRes = await base44.functions.invoke('autoComplete', { action: 'validate', system_id: system.system_id });
