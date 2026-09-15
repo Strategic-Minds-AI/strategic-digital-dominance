@@ -27,6 +27,7 @@ const links = [
   { to: "/admin/reviews", icon: Star, label: "Reviews" },
   { to: "/admin/competitors", icon: Radar, label: "Competitors" },
   { to: "/admin/google", icon: Globe, label: "Google SEO" },
+  { to: "/admin/seo-dominance", icon: Rocket, label: "SEO Dominance" },
   { to: "/admin/sop", icon: ScrollText, label: "SOP & Memory" },
   { to: "/admin/tools", icon: Wrench, label: "App Tools" },
   { to: "/admin/tool-hub", icon: Layers, label: "Tool Hub" },

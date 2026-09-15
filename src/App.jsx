@@ -41,6 +41,7 @@ import AboutPage from '@/pages/About';
 import ContactPage from '@/pages/Contact';
 import Competitors from '@/pages/admin/Competitors';
 import GoogleSeo from '@/pages/admin/GoogleSeo';
+import SeoDominance from '@/pages/admin/SeoDominance';
 import LocationSeoPage from '@/pages/seo/LocationSeoPage';
 import GeneratedPageView from '@/pages/seo/GeneratedPageView';
 import Guides from '@/pages/seo/Guides';
@@ -181,6 +182,7 @@ const AuthenticatedApp = () => {
         <Route path="reviews" element={<Reviews />} />
         <Route path="competitors" element={<Competitors />} />
         <Route path="google" element={<GoogleSeo />} />
+        <Route path="seo-dominance" element={<SeoDominance />} />
         <Route path="factory" element={<SeoFactory />} />
         <Route path="sop" element={<SopSystem />} />
         <Route path="tools" element={<ToolManager />} />
