@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, Outlet, Link } from "react-router-dom";
-import { LayoutDashboard, Users, KanbanSquare, Settings, ExternalLink, Mail, Radar, Globe, ScrollText, Star, Wrench, Factory, Smartphone, Rocket, Layers, UserCircle,   TrendingUp, MessageSquare, Brain, Target, BarChart3, Package, Bot, KeyRound, Share2, Wand2, MapPin, Network, Crown, Building2, Code2, Heart, PhoneCall, Activity,   ListOrdered, Database, Workflow, Gauge, Cpu, Sparkles, Boxes, BookOpen, Eye, EyeOff } from "lucide-react";
+import { LayoutDashboard, Users, KanbanSquare, Settings, ExternalLink, Mail, Radar, Globe, ScrollText, Star, Wrench, Factory, Smartphone, Rocket, Layers, UserCircle,   TrendingUp, MessageSquare, Brain, Target, BarChart3, Package, Bot, KeyRound, Share2, Wand2, MapPin, Network, Crown, Building2, Code2, Heart, PhoneCall, Activity,   ListOrdered, Database, Workflow, Gauge, Cpu, Sparkles, Boxes, BookOpen, Eye, EyeOff, Zap } from "lucide-react";
 import BackButton from "@/components/BackButton";
 import Logo from "@/components/Logo";
 import { XTREME_AI_ICON_URL } from "@/components/Logo";
@@ -44,6 +44,7 @@ const links = [
   { to: "/admin/seo-generator", icon: TrendingUp, label: "SEO Generator" },
   { to: "/admin/lead-scraper", icon: Radar, label: "Lead Scraper" },
   { to: "/admin/skip-trace", icon: Radar, label: "Skip Trace" },
+  { to: "/admin/autocomplete", icon: Zap, label: "AutoComplete" },
   { to: "/admin/xtreme-comms", icon: MessageSquare, label: "Xtreme Comms" },
   { to: "/admin/results", icon: BarChart3, label: "Analytics" },
   { to: "/admin/analytics", icon: Activity, label: "GA Traffic" },
