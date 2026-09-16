@@ -914,6 +914,14 @@
       "description": "Deploy to Vercel"
     },
     {
+      "function_name": "vercelManager",
+      "description": "Full Vercel API \u2014 projects, deployments, env vars, domains, DNS records, user/team info"
+    },
+    {
+      "function_name": "godaddyApi",
+      "description": "Full GoDaddy API \u2014 domain listing, availability, purchase, DNS record CRUD, forwarding"
+    },
+    {
       "function_name": "githubSync",
       "description": "GitHub sync"
     },
