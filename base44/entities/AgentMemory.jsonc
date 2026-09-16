@@ -1,0 +1,159 @@
+{
+  "name": "AgentMemory",
+  "type": "object",
+  "properties": {
+    "agent_id": {
+      "type": "string",
+      "description": "Agent persona ID or 'shared' for cross-agent shared memory"
+    },
+    "agent_short_name": {
+      "type": "string",
+      "description": "Short name of the agent (A-1, A-2) for quick filtering"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "general",
+        "sales",
+        "technical",
+        "client_history",
+        "market_intel",
+        "competitor_intel",
+        "seo",
+        "lead_data",
+        "process",
+        "policy",
+        "conversation",
+        "decision",
+        "lesson_learned",
+        "custom"
+      ],
+      "default": "general",
+      "description": "Memory category for organized retrieval"
+    },
+    "memory_type": {
+      "type": "string",
+      "enum": [
+        "fact",
+        "preference",
+        "instruction",
+        "observation",
+        "decision",
+        "outcome",
+        "context",
+        "skill"
+      ],
+      "default": "fact",
+      "description": "What kind of memory this is"
+    },
+    "title": {
+      "type": "string",
+      "description": "Short title for this memory entry"
+    },
+    "content": {
+      "type": "string",
+      "maxLength": 10000,
+      "description": "The actual memory content"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Free-form tags for flexible retrieval"
+    },
+    "source": {
+      "type": "string",
+      "description": "Where this memory came from (operator, agent, system, external)"
+    },
+    "source_reference": {
+      "type": "string",
+      "description": "Entity ID or URL that originated this memory"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.8,
+      "description": "Confidence level in this memory (0-1)"
+    },
+    "importance": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low"
+      ],
+      "default": "medium"
+    },
+    "is_shared": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, this memory is accessible to all agents in the shared category"
+    },
+    "shared_with": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Agent IDs that can access this memory (empty = owner only)"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this memory becomes stale (null = permanent)"
+    },
+    "last_accessed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "access_count": {
+      "type": "integer",
+      "default": 0,
+      "description": "How many times this memory has been retrieved"
+    },
+    "embedding_vector": {
+      "type": "string",
+      "maxLength": 5000,
+      "description": "Serialized embedding vector for semantic search (Supabase RAG)"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "agent_id",
+    "category",
+    "content"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,305 @@
+{
+  "name": "AgentAction",
+  "type": "object",
+  "properties": {
+    "action_id": {
+      "type": "string",
+      "description": "Stable deterministic action ID"
+    },
+    "agent_id": {
+      "type": "string",
+      "description": "Agent persona ID assigned to this action"
+    },
+    "agent_short_name": {
+      "type": "string",
+      "description": "Short name of the agent (A-1, A-2)"
+    },
+    "title": {
+      "type": "string",
+      "description": "Action title"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 5000,
+      "description": "Detailed description of what this action does"
+    },
+    "action_category": {
+      "type": "string",
+      "enum": [
+        "lead_management",
+        "seo_optimization",
+        "content_creation",
+        "email_campaign",
+        "social_media",
+        "phone_call",
+        "sms_message",
+        "data_analysis",
+        "research",
+        "deployment",
+        "code_change",
+        "file_operation",
+        "browser_automation",
+        "calendar_management",
+        "task_management",
+        "reporting",
+        "audit",
+        "repair",
+        "benchmark",
+        "communication",
+        "monitoring",
+        "scheduling",
+        "custom"
+      ],
+      "default": "custom",
+      "description": "Category of action for filtering and checkboxes"
+    },
+    "action_type": {
+      "type": "string",
+      "enum": [
+        "function_invoke",
+        "entity_crud",
+        "api_call",
+        "browser_action",
+        "communication",
+        "composite",
+        "manual"
+      ],
+      "default": "function_invoke",
+      "description": "How this action is executed"
+    },
+    "target_function": {
+      "type": "string",
+      "description": "Backend function to invoke (if action_type is function_invoke)"
+    },
+    "target_entity": {
+      "type": "string",
+      "description": "Entity to operate on (if action_type is entity_crud)"
+    },
+    "entity_operation": {
+      "type": "string",
+      "enum": [
+        "create",
+        "read",
+        "update",
+        "delete",
+        "list",
+        "filter"
+      ],
+      "description": "CRUD operation if action_type is entity_crud"
+    },
+    "parameters": {
+      "type": "object",
+      "description": "Parameters to pass to the function or entity operation",
+      "additionalProperties": true
+    },
+    "trigger_type": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "schedule",
+        "event",
+        "condition",
+        "webhook",
+        "entity_change",
+        "interval",
+        "one_time"
+      ],
+      "default": "manual",
+      "description": "What triggers this action"
+    },
+    "schedule_config": {
+      "type": "object",
+      "description": "Scheduling configuration (when trigger_type is schedule or interval)",
+      "properties": {
+        "frequency": {
+          "type": "string",
+          "enum": [
+            "once",
+            "recurring",
+            "continuous"
+          ],
+          "default": "once"
+        },
+        "interval_seconds": {
+          "type": "integer",
+          "default": 0,
+          "description": "Seconds between executions (10s to infinite). 0 = no interval."
+        },
+        "cron_expression": {
+          "type": "string",
+          "description": "Cron expression for complex schedules"
+        },
+        "start_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the schedule starts"
+        },
+        "end_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the schedule ends (null = infinite)"
+        },
+        "run_24_7": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, runs continuously 24/7"
+        },
+        "days_of_week": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Days to run (mon, tue, wed, thu, fri, sat, sun). Empty = all days."
+        },
+        "hours_of_day": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "default": [],
+          "description": "Hours to run (0-23). Empty = all hours."
+        },
+        "timezone": {
+          "type": "string",
+          "default": "UTC"
+        }
+      }
+    },
+    "trigger_condition": {
+      "type": "string",
+      "description": "Condition expression that triggers this action (when trigger_type is condition)"
+    },
+    "trigger_entity": {
+      "type": "string",
+      "description": "Entity to watch for changes (when trigger_type is entity_change)"
+    },
+    "trigger_event_type": {
+      "type": "string",
+      "enum": [
+        "create",
+        "update",
+        "delete"
+      ],
+      "description": "Entity event type that triggers this action"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "normal",
+        "low"
+      ],
+      "default": "normal"
+    },
+    "autonomy_level": {
+      "type": "string",
+      "enum": [
+        "advisory",
+        "supervised",
+        "autonomous",
+        "full_autonomous"
+      ],
+      "default": "supervised",
+      "description": "Level of autonomy for this action"
+    },
+    "requires_approval": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, operator must approve before execution"
+    },
+    "max_retries": {
+      "type": "integer",
+      "default": 3
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "default": 300,
+      "description": "Maximum execution time in seconds"
+    },
+    "rollback_action_id": {
+      "type": "string",
+      "description": "Action to execute if this one fails"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "active",
+        "paused",
+        "running",
+        "completed",
+        "failed",
+        "blocked",
+        "archived"
+      ],
+      "default": "draft"
+    },
+    "last_run_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "next_run_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_result": {
+      "type": "string",
+      "maxLength": 3000,
+      "description": "Result of the last execution"
+    },
+    "last_error": {
+      "type": "string"
+    },
+    "execution_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "success_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "failure_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "action_id",
+    "agent_id",
+    "title",
+    "action_category",
+    "status"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

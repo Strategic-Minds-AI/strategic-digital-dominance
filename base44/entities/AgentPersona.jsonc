@@ -6,24 +6,36 @@
       "type": "string",
       "description": "Persona display name (e.g. 'Eden Skye \u2014 Sales')"
     },
+    "short_name": {
+      "type": "string",
+      "description": "Compact tracking ID (e.g. 'A-1', 'A-2', 'AP-01')"
+    },
     "persona_type": {
       "type": "string",
       "enum": [
         "voice",
         "email",
         "phone",
-        "social_media"
+        "social_media",
+        "ceo",
+        "seo",
+        "lead",
+        "swarm",
+        "research",
+        "deployment",
+        "custom"
       ],
-      "default": "voice"
-    },
-    "voice_id": {
-      "type": "string",
-      "description": "Telnyx Ultra voice UUID for voice personas"
+      "default": "custom"
     },
     "system_prompt": {
       "type": "string",
-      "description": "System prompt that defines the persona's behavior and expertise",
-      "maxLength": 5000
+      "description": "Core system prompt that defines the agent's behavior and expertise",
+      "maxLength": 10000
+    },
+    "custom_instructions": {
+      "type": "string",
+      "description": "User-defined custom instructions (like ChatGPT custom instructions) \u2014 persistent behavioral guidance",
+      "maxLength": 10000
     },
     "personality_traits": {
       "type": "array",
@@ -34,11 +46,233 @@
     },
     "tone": {
       "type": "string",
-      "description": "e.g. warm, authoritative, upbeat"
+      "description": "e.g. warm, authoritative, upbeat, analytical, direct"
     },
     "assigned_context": {
       "type": "string",
       "description": "Situation this persona is assigned to (sales calls, support emails, etc.)"
+    },
+    "voice_id": {
+      "type": "string",
+      "description": "Telnyx Ultra voice UUID for voice personas"
+    },
+    "avatar_color": {
+      "type": "string",
+      "default": "#ff6b00",
+      "description": "Calendar color code for tracking this agent in Google Calendar"
+    },
+    "communication_config": {
+      "type": "object",
+      "description": "SMS, MMS, email, voice communication settings",
+      "properties": {
+        "sms_enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "mms_enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "email_enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "voice_enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "whatsapp_enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "phone_number": {
+          "type": "string"
+        },
+        "email_alias": {
+          "type": "string",
+          "description": "Professional email alias (e.g. agent-name@thextremeteam.com)"
+        },
+        "from_name": {
+          "type": "string"
+        },
+        "auto_respond": {
+          "type": "boolean",
+          "default": true
+        },
+        "business_hours_only": {
+          "type": "boolean",
+          "default": false
+        },
+        "business_hours_start": {
+          "type": "string",
+          "default": "09:00"
+        },
+        "business_hours_end": {
+          "type": "string",
+          "default": "17:00"
+        },
+        "timezone": {
+          "type": "string",
+          "default": "UTC"
+        }
+      }
+    },
+    "google_workspace_config": {
+      "type": "object",
+      "description": "Google Workspace tool integration settings",
+      "properties": {
+        "calendar_enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "calendar_id": {
+          "type": "string",
+          "description": "Google Calendar ID to sync events to"
+        },
+        "tasks_enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "tasks_list_id": {
+          "type": "string",
+          "description": "Google Tasks list ID"
+        },
+        "gmail_enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "gmail_label": {
+          "type": "string",
+          "description": "Gmail label for this agent's emails"
+        },
+        "drive_enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "drive_folder_id": {
+          "type": "string"
+        },
+        "sheets_enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "sheets_id": {
+          "type": "string"
+        },
+        "docs_enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "auto_create_calendar_events": {
+          "type": "boolean",
+          "default": true
+        },
+        "auto_assign_tasks": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "cloud_browser_config": {
+      "type": "object",
+      "description": "Cloud browser automation settings",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "max_sessions": {
+          "type": "integer",
+          "default": 1
+        },
+        "auto_browse_on_query": {
+          "type": "boolean",
+          "default": false
+        },
+        "persist_history": {
+          "type": "boolean",
+          "default": false
+        },
+        "proxy_rotation": {
+          "type": "boolean",
+          "default": true
+        },
+        "allowed_domains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "blocked_domains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        }
+      }
+    },
+    "api_access_level": {
+      "type": "string",
+      "enum": [
+        "full",
+        "read_only",
+        "limited",
+        "custom"
+      ],
+      "default": "limited",
+      "description": "API access level for this agent's generated API key"
+    },
+    "api_allowed_functions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Whitelist of backend functions this agent can call via its API"
+    },
+    "api_allowed_entities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Whitelist of entities this agent can access via its API"
+    },
+    "memory_categories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "general"
+      ],
+      "description": "Categories of memory this agent can access (e.g. sales, technical, client_history)"
+    },
+    "intelligence_access": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Intelligence document IDs this agent can reference"
+    },
+    "model_preference": {
+      "type": "string",
+      "description": "Preferred LLM model for this agent (e.g. claude-sonnet-5, automatic)",
+      "default": "automatic"
+    },
+    "max_autonomy": {
+      "type": "string",
+      "enum": [
+        "advisory",
+        "supervised",
+        "autonomous",
+        "full_autonomous"
+      ],
+      "default": "supervised",
+      "description": "Maximum autonomy level this agent can operate at"
     },
     "active": {
       "type": "boolean",
@@ -48,9 +282,18 @@
       "type": "boolean",
       "default": false
     },
-    "avatar_color": {
+    "is_template": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, this persona is a template that can be cloned to other agents"
+    },
+    "parent_agent_id": {
       "type": "string",
-      "default": "#ff6b00"
+      "description": "If cloned, the ID of the source agent this was copied from"
+    },
+    "last_active_at": {
+      "type": "string",
+      "format": "date-time"
     }
   },
   "required": [

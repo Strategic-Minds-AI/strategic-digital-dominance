@@ -121,19 +121,19 @@
     },
     {
       "function_name": "alphaPrimeAudit",
-      "description": "Run executive audit, approve recommendations, and schedule tasks in calendar"
+      "description": "Run executive audits"
     },
     {
       "function_name": "systemAuditor",
-      "description": "Trigger full system health audits on demand"
+      "description": "Full system health audits"
     },
     {
       "function_name": "swarmOrchestrator",
-      "description": "Coordinate agent swarm task assignment and execution"
+      "description": "Coordinate swarm tasks"
     },
     {
       "function_name": "syncWorkflowToSwarm",
-      "description": "Sync the 60-Day Contractor Workflow into SwarmTask records for persistent tracking and self-reflection"
+      "description": "Sync workflow to swarm tasks"
     },
     {
       "entity_name": "FleetSystem",
@@ -716,6 +716,270 @@
       "allowed_operations": [
         "read"
       ]
+    },
+    {
+      "function_name": "autoComplete",
+      "description": "Run AutoComplete cycles"
+    },
+    {
+      "function_name": "fleetAlphaPrime",
+      "description": "Fleet governance"
+    },
+    {
+      "function_name": "visionCortexRouter",
+      "description": "Vision Cortex chat router"
+    },
+    {
+      "function_name": "intentRouter",
+      "description": "Route operator intents"
+    },
+    {
+      "function_name": "alphaPrimeOptimizationCycle",
+      "description": "Run optimization cycles"
+    },
+    {
+      "function_name": "alphaPrimeHeartbeat",
+      "description": "5-min heartbeat"
+    },
+    {
+      "function_name": "alphaPrimeBenchmarkGenerator",
+      "description": "Generate benchmarks"
+    },
+    {
+      "function_name": "alphaPrimeRepairFactory",
+      "description": "Create repair jobs"
+    },
+    {
+      "function_name": "autonomousSprint",
+      "description": "Autonomous sprint execution"
+    },
+    {
+      "function_name": "autonomousSeoDominance",
+      "description": "Autonomous SEO cycles"
+    },
+    {
+      "function_name": "enrichLead",
+      "description": "Enrich lead data"
+    },
+    {
+      "function_name": "propertyLookup",
+      "description": "Property data lookup"
+    },
+    {
+      "function_name": "skipTrace",
+      "description": "Skip trace property owners"
+    },
+    {
+      "function_name": "generateSeoPage",
+      "description": "Generate SEO pages"
+    },
+    {
+      "function_name": "generateSitemap",
+      "description": "Generate sitemap"
+    },
+    {
+      "function_name": "generateSop",
+      "description": "Generate SOPs"
+    },
+    {
+      "function_name": "optimizeSeo",
+      "description": "Optimize SEO content"
+    },
+    {
+      "function_name": "fillContentGaps",
+      "description": "Fill content gaps"
+    },
+    {
+      "function_name": "submitToIndexers",
+      "description": "Submit to search indexers"
+    },
+    {
+      "function_name": "pingIndexNow",
+      "description": "Ping IndexNow"
+    },
+    {
+      "function_name": "pullSearchConsoleData",
+      "description": "Pull GSC data"
+    },
+    {
+      "function_name": "verifySearchConsole",
+      "description": "Verify GSC"
+    },
+    {
+      "function_name": "addSearchConsoleProperty",
+      "description": "Add GSC property"
+    },
+    {
+      "function_name": "checkGoogleStatus",
+      "description": "Check Google status"
+    },
+    {
+      "function_name": "googleAnalytics",
+      "description": "GA data"
+    },
+    {
+      "function_name": "fetchCoreWebVitals",
+      "description": "Core Web Vitals"
+    },
+    {
+      "function_name": "socialStudio",
+      "description": "Social media management"
+    },
+    {
+      "function_name": "syncContentCalendar",
+      "description": "Sync content calendar"
+    },
+    {
+      "function_name": "sendEstimateEmail",
+      "description": "Send estimate emails"
+    },
+    {
+      "function_name": "sendFollowUpEmail",
+      "description": "Send follow-up emails"
+    },
+    {
+      "function_name": "sendReviewRequest",
+      "description": "Send review requests"
+    },
+    {
+      "function_name": "bookEstimate",
+      "description": "Book estimates"
+    },
+    {
+      "function_name": "dailyLeadEngine",
+      "description": "Daily lead processing"
+    },
+    {
+      "function_name": "scanCompetitors",
+      "description": "Scan competitors"
+    },
+    {
+      "function_name": "companyIntel",
+      "description": "Company intelligence"
+    },
+    {
+      "function_name": "intelligenceSync",
+      "description": "Sync intelligence"
+    },
+    {
+      "function_name": "tradeCrystalBall",
+      "description": "Trade predictions"
+    },
+    {
+      "function_name": "domainGoldRush",
+      "description": "Domain strategy"
+    },
+    {
+      "function_name": "seoGenerator",
+      "description": "Generate SEO content"
+    },
+    {
+      "function_name": "seoAeoSimulator",
+      "description": "SEO/AEO simulation"
+    },
+    {
+      "function_name": "seoSimSync",
+      "description": "Sync SEO sim"
+    },
+    {
+      "function_name": "rebrandStudio",
+      "description": "Rebrand content"
+    },
+    {
+      "function_name": "ragPipeline",
+      "description": "RAG pipeline"
+    },
+    {
+      "function_name": "graphEngine",
+      "description": "Knowledge graph"
+    },
+    {
+      "function_name": "voiceAssistant",
+      "description": "Voice assistant"
+    },
+    {
+      "function_name": "xtremeComms",
+      "description": "Xtreme communications"
+    },
+    {
+      "function_name": "shadowBrowse",
+      "description": "Cloud browser"
+    },
+    {
+      "function_name": "vercelAiGateway",
+      "description": "AI gateway"
+    },
+    {
+      "function_name": "vercelDeploy",
+      "description": "Deploy to Vercel"
+    },
+    {
+      "function_name": "githubSync",
+      "description": "GitHub sync"
+    },
+    {
+      "function_name": "syncFleetSystemState",
+      "description": "Sync fleet state"
+    },
+    {
+      "function_name": "syncLeadToSheet",
+      "description": "Sync leads to sheets"
+    },
+    {
+      "function_name": "syncContractorWorkflow",
+      "description": "Sync contractor workflow"
+    },
+    {
+      "function_name": "postconditionValidator",
+      "description": "Validate postconditions"
+    },
+    {
+      "function_name": "regressionTestSuite",
+      "description": "Run regression tests"
+    },
+    {
+      "function_name": "canonicalizeRepairBacklog",
+      "description": "Canonicalize repairs"
+    },
+    {
+      "function_name": "calculateDistanceTo100",
+      "description": "Calculate distance to 100"
+    },
+    {
+      "function_name": "apiKeyManager",
+      "description": "Manage API keys"
+    },
+    {
+      "function_name": "siteHealthChecker",
+      "description": "Check site health"
+    },
+    {
+      "function_name": "digitalDominanceCompiler",
+      "description": "Digital dominance"
+    },
+    {
+      "function_name": "xtremeUniversalGeneratorBridge",
+      "description": "Universal generator"
+    },
+    {
+      "function_name": "googleWorkspaceSync",
+      "description": "Google Workspace sync"
+    },
+    {
+      "function_name": "aiAssist",
+      "description": "AI assistant"
+    },
+    {
+      "function_name": "generateRss",
+      "description": "Generate RSS"
+    },
+    {
+      "function_name": "notifySeoUpdates",
+      "description": "Notify SEO updates"
+    },
+    {
+      "function_name": "checkQuestionnaireCompliance",
+      "description": "Check questionnaire compliance"
     }
   ],
   "context_files": [],

@@ -49,6 +49,7 @@ const links = [
   { to: "/admin/results", icon: BarChart3, label: "Analytics" },
   { to: "/admin/analytics", icon: Activity, label: "GA Traffic" },
   { to: "/admin/agent-builder", icon: Bot, label: "Agent Builder" },
+  { to: "/admin/agent-master", icon: Bot, label: "Agent Master" },
   { to: "/admin/vision-strategy", icon: Target, label: "Strategy" },
   { to: "/admin/intelligence", icon: Brain, label: "Intelligence" },
   { to: "/admin/client-packages", icon: Package, label: "Client Pkgs" },

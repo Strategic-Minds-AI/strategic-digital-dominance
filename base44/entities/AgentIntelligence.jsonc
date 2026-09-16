@@ -1,0 +1,162 @@
+{
+  "name": "AgentIntelligence",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Name of this intelligence document"
+    },
+    "intelligence_id": {
+      "type": "string",
+      "description": "Stable deterministic ID"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "market_research",
+        "competitor_analysis",
+        "industry_trends",
+        "customer_insights",
+        "product_knowledge",
+        "sales_playbook",
+        "technical_docs",
+        "company_policy",
+        "brand_guidelines",
+        "seo_strategy",
+        "domain_strategy",
+        "operational_data",
+        "training_material",
+        "custom"
+      ],
+      "default": "custom",
+      "description": "Intelligence category for routing to appropriate agents"
+    },
+    "content": {
+      "type": "string",
+      "maxLength": 50000,
+      "description": "The intelligence content (text, structured data, or serialized document)"
+    },
+    "file_url": {
+      "type": "string",
+      "description": "URL to uploaded file (PDF, Excel, CSV, etc.) if content is file-based"
+    },
+    "file_type": {
+      "type": "string",
+      "description": "Original file type (pdf, xlsx, csv, json, txt, md)"
+    },
+    "source": {
+      "type": "string",
+      "description": "Where this intelligence came from (operator upload, agent research, external API, generated)"
+    },
+    "source_url": {
+      "type": "string",
+      "description": "Original URL if sourced from the web"
+    },
+    "assigned_agents": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Agent persona IDs that have this intelligence assigned"
+    },
+    "assigned_categories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Agent categories that can access this (e.g. ['sales', 'seo']) \u2014 empty = all agents"
+    },
+    "is_shared": {
+      "type": "boolean",
+      "default": true,
+      "description": "If true, this intelligence is shared across the swarm"
+    },
+    "access_level": {
+      "type": "string",
+      "enum": [
+        "all_agents",
+        "category_only",
+        "assigned_only",
+        "owner_only"
+      ],
+      "default": "all_agents",
+      "description": "Who can access this intelligence"
+    },
+    "embedding_vector": {
+      "type": "string",
+      "maxLength": 5000,
+      "description": "Serialized embedding for semantic retrieval (Supabase RAG)"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.9
+    },
+    "freshness_requirement": {
+      "type": "string",
+      "description": "How often this intelligence needs refresh (e.g. 24h, 7d, 30d, never)"
+    },
+    "last_refreshed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "auto_refresh": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, agents can auto-refresh this intelligence from its source"
+    },
+    "version": {
+      "type": "string",
+      "default": "1.0"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "title",
+    "category",
+    "content"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
