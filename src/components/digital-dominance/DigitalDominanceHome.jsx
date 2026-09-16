@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
-  BarChart3,
   BrainCircuit,
   CheckCircle2,
   ChevronRight,
