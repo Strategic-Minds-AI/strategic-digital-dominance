@@ -394,6 +394,15 @@
     {
       "function_name": "seoGenerator",
       "description": "Generate SEO content at scale"
+    },
+    {
+      "entity_name": "VaultEntry",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
     }
   ],
   "context_files": [],
