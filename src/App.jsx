@@ -78,6 +78,7 @@ import RebrandStudio from '@/pages/admin/RebrandStudio';
 import LocationPerformance from '@/pages/admin/LocationPerformance';
 import SwarmCommand from '@/pages/admin/SwarmCommand';
 import SystemBlueprint from '@/pages/admin/SystemBlueprint';
+import DeepArchitecture from '@/pages/admin/DeepArchitecture';
 import SystemOperator from '@/pages/admin/SystemOperator';
 import WebsiteEmpire from '@/pages/admin/WebsiteEmpire';
 import SiteHealthMonitor from '@/pages/admin/SiteHealthMonitor';
@@ -213,6 +214,7 @@ const AuthenticatedApp = () => {
         <Route path="location-performance" element={<LocationPerformance />} />
         <Route path="swarm" element={<SwarmCommand />} />
         <Route path="blueprint" element={<SystemBlueprint />} />
+        <Route path="architecture" element={<DeepArchitecture />} />
         <Route path="operator" element={<SystemOperator />} />
         <Route path="code-studio" element={<CodeStudio />} />
         <Route path="empire" element={<WebsiteEmpire />} />
