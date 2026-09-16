@@ -105,6 +105,7 @@ import Acquire from '@/pages/Acquire';
 import GraphConsole from '@/pages/admin/GraphConsole';
 import CustomerPortal from '@/pages/CustomerPortal';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import ErrorBoundary from '@/components/ErrorBoundary';
 import ContractorApp from '@/pages/ContractorApp';
 import ContractorBid from '@/pages/ContractorBid';
 import CodeStudio from '@/pages/admin/CodeStudio';
@@ -134,7 +135,7 @@ const AuthenticatedApp = () => {
   }
 
   return (
-    <>
+    <ErrorBoundary>
     <CodeInjector />
     <Routes>
       <Route path="/login" element={<Login />} />
@@ -242,7 +243,7 @@ const AuthenticatedApp = () => {
       <Route path="/p/:slug" element={<DynamicPageView />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
-    </>
+    </ErrorBoundary>
   );
 };
 
