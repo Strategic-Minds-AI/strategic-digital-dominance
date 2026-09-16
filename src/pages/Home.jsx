@@ -14,9 +14,8 @@ import WhoWeAre from "@/components/home/WhoWeAre";
 import FAQ from "@/components/home/FAQ";
 import FinalCta from "@/components/home/FinalCta";
 import Footer from "@/components/home/Footer";
-import DigitalDominanceHome from "@/components/digital-dominance/DigitalDominanceHome";
 
-function EpoxyHome() {
+export default function Home() {
   const { settings } = useSettings();
 
   useEffect(() => {
@@ -44,11 +43,4 @@ function EpoxyHome() {
       <Footer />
     </div>
   );
-}
-
-export default function Home() {
-  const hostname = typeof window !== "undefined" ? window.location.hostname.toLowerCase() : "";
-  const isEpoxyProductionHost = hostname === "epoxyquotenearme.com" || hostname.endsWith(".epoxyquotenearme.com");
-
-  return isEpoxyProductionHost ? <EpoxyHome /> : <DigitalDominanceHome />;
 }
