@@ -53,6 +53,7 @@ const links = [
   { to: "/admin/vision-strategy", icon: Target, label: "Strategy" },
   { to: "/admin/intelligence", icon: Brain, label: "Intelligence" },
   { to: "/admin/client-packages", icon: Package, label: "Client Pkgs" },
+  { to: "/admin/vault", icon: Shield, label: "Vault" },
   { to: "/admin/api-keys", icon: KeyRound, label: "API Keys" },
   { to: "/admin/social-studio", icon: Share2, label: "Social Studio" },
   { to: "/admin/rebrand-studio", icon: Wand2, label: "Rebrand Studio" },

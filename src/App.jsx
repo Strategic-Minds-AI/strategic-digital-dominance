@@ -72,6 +72,7 @@ import VisionStrategy from '@/pages/admin/VisionStrategy';
 import Intelligence from '@/pages/admin/Intelligence';
 import ClientPackages from '@/pages/admin/ClientPackages';
 import ApiKeyManager from '@/pages/admin/ApiKeyManager';
+import SystemVault from '@/pages/admin/SystemVault';
 import SocialStudio from '@/pages/admin/SocialStudio';
 import RebrandStudio from '@/pages/admin/RebrandStudio';
 import LocationPerformance from '@/pages/admin/LocationPerformance';
@@ -205,6 +206,7 @@ const AuthenticatedApp = () => {
         <Route path="intelligence" element={<Intelligence />} />
         <Route path="client-packages" element={<ClientPackages />} />
         <Route path="api-keys" element={<ApiKeyManager />} />
+        <Route path="vault" element={<SystemVault />} />
         <Route path="social-studio" element={<SocialStudio />} />
         <Route path="rebrand-studio" element={<RebrandStudio />} />
         <Route path="location-performance" element={<LocationPerformance />} />

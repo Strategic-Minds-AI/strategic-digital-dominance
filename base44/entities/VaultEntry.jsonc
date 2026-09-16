@@ -1,0 +1,194 @@
+{
+  "name": "VaultEntry",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable label (e.g. 'GoDaddy API Key', 'Sales Inbox', 'Lead Sync \u2192 HubSpot')"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "api_key",
+        "email",
+        "sync_config",
+        "webhook",
+        "credential",
+        "other"
+      ],
+      "default": "api_key",
+      "description": "What kind of vault entry this is"
+    },
+    "service": {
+      "type": "string",
+      "description": "Which service this belongs to (godaddy, vercel, telnyx, gmail, hubspot, supabase, etc.)"
+    },
+    "key_name": {
+      "type": "string",
+      "description": "Identifier or env var name (e.g. GODADDY_API_KEY, sales@thextremeteam.com)"
+    },
+    "key_value": {
+      "type": "string",
+      "description": "The actual secret value, API key, email address, or token \u2014 masked in UI when is_secret=true"
+    },
+    "is_secret": {
+      "type": "boolean",
+      "default": true,
+      "description": "If true, the value is masked in the admin UI (click to reveal)"
+    },
+    "sync_config": {
+      "type": "object",
+      "description": "Configuration for sync entries (when category=sync_config)",
+      "properties": {
+        "sync_type": {
+          "type": "string",
+          "description": "What to sync (leads_to_sheets, contacts_to_hubspot, calendar_sync, etc.)"
+        },
+        "source_entity": {
+          "type": "string",
+          "description": "Entity to read from (Lead, Appointment, etc.)"
+        },
+        "target_service": {
+          "type": "string",
+          "description": "Where to sync to (googlesheets, hubspot, googlecalendar, etc.)"
+        },
+        "target_id": {
+          "type": "string",
+          "description": "Target resource ID (spreadsheet ID, calendar ID, etc.)"
+        },
+        "schedule": {
+          "type": "string",
+          "enum": [
+            "realtime",
+            "hourly",
+            "daily",
+            "weekly",
+            "manual"
+          ],
+          "default": "manual"
+        },
+        "field_mapping": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source_field": {
+                "type": "string"
+              },
+              "target_field": {
+                "type": "string"
+              }
+            }
+          },
+          "default": []
+        },
+        "auto_start": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "email_config": {
+      "type": "object",
+      "description": "Email account configuration (when category=email)",
+      "properties": {
+        "email_address": {
+          "type": "string"
+        },
+        "display_name": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string",
+          "enum": [
+            "sales",
+            "support",
+            "billing",
+            "marketing",
+            "agent_alias",
+            "notifications",
+            "general"
+          ],
+          "default": "general"
+        },
+        "smtp_host": {
+          "type": "string"
+        },
+        "smtp_port": {
+          "type": "integer"
+        },
+        "imap_host": {
+          "type": "string"
+        },
+        "imap_port": {
+          "type": "integer"
+        },
+        "password_or_app_token": {
+          "type": "string"
+        },
+        "forward_to": {
+          "type": "string"
+        },
+        "auto_respond": {
+          "type": "boolean",
+          "default": false
+        },
+        "assigned_agent_id": {
+          "type": "string"
+        }
+      }
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    },
+    "last_synced_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this entry was last synced (for sync_config entries)"
+    },
+    "last_sync_status": {
+      "type": "string",
+      "enum": [
+        "success",
+        "failed",
+        "pending",
+        "never"
+      ],
+      "default": "never"
+    },
+    "last_sync_error": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "category"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
