@@ -163,31 +163,46 @@ export default async function (req: Request): Promise<Response> {
     // ── Call the model with FULL prompt + context ──
     const fullPrompt = VISION_CORTEX_PROMPT + fleetContext + historyContext + `\n=== OPERATOR MESSAGE ===\n${message}\n=== END OPERATOR MESSAGE ===\n\nRespond with a JSON object containing "response" (natural language) and optionally "intent" (structured) and "systems_referenced" (array of system_ids).`;
 
-    const llmRes = await svc.integrations.Core.InvokeLLM({
-      prompt: fullPrompt,
-      model: 'claude-sonnet-5',
-      response_json_schema: {
-        type: 'object',
-        properties: {
-          response: { type: 'string', description: 'Natural language response to the operator' },
-          systems_referenced: { type: 'array', items: { type: 'string' } },
-          intent: {
-            type: 'object',
-            properties: {
-              system_id: { type: 'string' },
-              objective: { type: 'string' },
-              scope: { type: 'string' },
-              priority: { type: 'string' },
-              constraints: { type: 'array', items: { type: 'string' } },
-              risk: { type: 'string' },
-              approval_policy: { type: 'string' },
-              target_benchmarks: { type: 'array', items: { type: 'string' } },
-            },
+    let llmRes: any = null;
+    let lastError: any = null;
+    const jsonSchema = {
+      type: 'object' as const,
+      properties: {
+        response: { type: 'string', description: 'Natural language response to the operator' },
+        systems_referenced: { type: 'array', items: { type: 'string' } },
+        intent: {
+          type: 'object',
+          properties: {
+            system_id: { type: 'string' },
+            objective: { type: 'string' },
+            scope: { type: 'string' },
+            priority: { type: 'string' },
+            constraints: { type: 'array', items: { type: 'string' } },
+            risk: { type: 'string' },
+            approval_policy: { type: 'string' },
+            target_benchmarks: { type: 'array', items: { type: 'string' } },
           },
         },
-        required: ['response'],
       },
-    });
+      required: ['response'],
+    };
+    // Retry with fallback models to avoid 500s from single-model unavailability
+    for (const model of ['claude-sonnet-5', 'automatic']) {
+      try {
+        llmRes = await svc.integrations.Core.InvokeLLM({
+          prompt: fullPrompt,
+          model,
+          response_json_schema: jsonSchema,
+        });
+        if (llmRes && (llmRes as any).response) break;
+      } catch (e) {
+        lastError = e;
+        console.error(`[visionCortexRouter] Model ${model} failed:`, (e as any).message);
+      }
+    }
+    if (!llmRes || !(llmRes as any).response) {
+      throw new Error(lastError?.message || 'All LLM models failed to respond');
+    }
 
     const aiResponse = (llmRes as any).response || 'I am here. How can I help you govern the fleet?';
     const intent = (llmRes as any).intent;
@@ -240,7 +255,7 @@ export default async function (req: Request): Promise<Response> {
       intent_id: createdIntent?.intent_id || null,
       systems_referenced: systemsReferenced,
       evidence_refs: [],
-      model_used: 'claude-sonnet-5',
+      model_used: llmRes ? 'claude-sonnet-5' : 'automatic',
     });
 
     return Response.json({
