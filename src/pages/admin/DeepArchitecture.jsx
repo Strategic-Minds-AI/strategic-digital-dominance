@@ -24,9 +24,9 @@ const SECTIONS = [
 const ICON_MAP = { Shield, Brain, Globe, Factory, Rocket, Bot, Eye, Filter, ShoppingCart, Layout, Send, TrendingUp, Share2, Video };
 
 const STATUS_STYLE = {
-  current: { bg: "bg-amber-500/20", text: "text-amber-400", border: "border-amber-500/40", icon: Zap },
-  next: { bg: "bg-blue-500/20", text: "text-blue-400", border: "border-blue-500/40", icon: ArrowRight },
-  planned: { bg: "bg-stone-800", text: "text-stone-400", border: "border-stone-700", icon: Circle },
+  current: { bg: "bg-amber-100", text: "text-amber-700", border: "border-amber-300", icon: Zap },
+  next: { bg: "bg-blue-100", text: "text-blue-700", border: "border-blue-300", icon: ArrowRight },
+  planned: { bg: "bg-stone-100", text: "text-stone-500", border: "border-stone-200", icon: Circle },
 };
 
 export default function DeepArchitecture() {
@@ -52,16 +52,16 @@ export default function DeepArchitecture() {
   const totalVolume = SERVICE_VERTICALS.reduce((sum, t) => sum + t.services.reduce((s, v) => s + v.est_volume, 0), 0);
 
   return (
-    <div className="min-h-screen bg-stone-950 text-white">
+    <div className="min-h-screen bg-white text-stone-900">
       {/* Hero */}
-      <div className="bg-gradient-to-br from-stone-950 via-stone-900 to-black border-b border-amber-500/20">
+      <div className="bg-gradient-to-br from-white via-stone-50 to-stone-100 border-b border-amber-300">
         <div className="max-w-7xl mx-auto px-6 py-12">
           <div className="flex items-center gap-3 mb-4">
-            <Compass className="h-8 w-8 text-amber-500" />
-            <span className="text-xs font-bold tracking-[0.2em] text-amber-500 uppercase">XTREMEAUTOBUILDER.COM</span>
+            <Compass className="h-8 w-8 text-amber-600" />
+            <span className="text-xs font-bold tracking-[0.2em] text-amber-600 uppercase">XTREMEAUTOBUILDER.COM</span>
           </div>
-          <h1 className="text-4xl font-bold tracking-tight">Deep Architecture — Universal Digital Dominance</h1>
-          <p className="text-stone-400 mt-3 max-w-3xl text-lg">
+          <h1 className="text-4xl font-bold tracking-tight text-stone-900">Deep Architecture — Universal Digital Dominance</h1>
+          <p className="text-stone-600 mt-3 max-w-3xl text-lg">
             Deterministic plan for building thousands of Google-spec-compliant websites per day,
             ranking on the first page of Google for every "[service] near me" query in America,
             and operating hundreds of autonomous agents for continuous optimization.
@@ -76,10 +76,10 @@ export default function DeepArchitecture() {
       </div>
 
       {/* Sticky nav */}
-      <div className="sticky top-0 z-20 bg-stone-950/95 backdrop-blur border-b border-stone-800">
+      <div className="sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-stone-200">
         <div className="max-w-7xl mx-auto px-6 py-3 flex gap-1 overflow-x-auto">
           {SECTIONS.map((s) => (
-            <a key={s.id} href={`#${s.id}`} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition ${activeSection === s.id ? "bg-amber-500/20 text-amber-400 border border-amber-500/30" : "text-stone-400 hover:text-white hover:bg-white/5 border border-transparent"}`}>
+            <a key={s.id} href={`#${s.id}`} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition ${activeSection === s.id ? "bg-amber-100 text-amber-700 border border-amber-300" : "text-stone-500 hover:text-stone-900 hover:bg-stone-100 border border-transparent"}`}>
               <s.icon className="h-3.5 w-3.5" />
               {s.label}
             </a>
@@ -92,28 +92,28 @@ export default function DeepArchitecture() {
         {/* Executive Summary */}
         <ArchitectureSection id="executive" title="Executive Summary" subtitle="The mission, the method, and the measure of success" accent="#D4AF37">
           <div className="grid md:grid-cols-3 gap-4">
-            <div className="bg-stone-900 border border-stone-800 rounded-xl p-5">
-              <Target className="h-6 w-6 text-amber-500 mb-3" />
-              <h3 className="font-bold text-white mb-2">The Mission</h3>
-              <p className="text-sm text-stone-400">Buy every available <code className="text-amber-400">[service]nearme.com</code> domain. Build thousands of Google-spec-compliant websites per day. Rank on page 1 for every emergency service query in America.</p>
+            <div className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
+              <Target className="h-6 w-6 text-amber-600 mb-3" />
+              <h3 className="font-bold text-stone-900 mb-2">The Mission</h3>
+              <p className="text-sm text-stone-600">Buy every available <code className="text-amber-600">[service]nearme.com</code> domain. Build thousands of Google-spec-compliant websites per day. Rank on page 1 for every emergency service query in America.</p>
             </div>
-            <div className="bg-stone-900 border border-stone-800 rounded-xl p-5">
-              <Cpu className="h-6 w-6 text-amber-500 mb-3" />
-              <h3 className="font-bold text-white mb-2">The Method</h3>
-              <p className="text-sm text-stone-400">Deep architecture: 7 deterministic layers, dual-AI validation (GPT generates, Claude verifies), programmatic templates, autonomous swarm optimization. XTREMEAUTOBUILDER pipeline.</p>
+            <div className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
+              <Cpu className="h-6 w-6 text-amber-600 mb-3" />
+              <h3 className="font-bold text-stone-900 mb-2">The Method</h3>
+              <p className="text-sm text-stone-600">Deep architecture: 7 deterministic layers, dual-AI validation (GPT generates, Claude verifies), programmatic templates, autonomous swarm optimization. XTREMEAUTOBUILDER pipeline.</p>
             </div>
-            <div className="bg-stone-900 border border-stone-800 rounded-xl p-5">
-              <TrendingUp className="h-6 w-6 text-amber-500 mb-3" />
-              <h3 className="font-bold text-white mb-2">The Measure</h3>
-              <p className="text-sm text-stone-400">{totalServices} emergency service verticals. {(totalVolume / 1000000).toFixed(1)}M+ combined monthly "near me" searches. Every deployed site tracked, optimized, and ranked autonomously.</p>
+            <div className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
+              <TrendingUp className="h-6 w-6 text-amber-600 mb-3" />
+              <h3 className="font-bold text-stone-900 mb-2">The Measure</h3>
+              <p className="text-sm text-stone-600">{totalServices} emergency service verticals. {(totalVolume / 1000000).toFixed(1)}M+ combined monthly "near me" searches. Every deployed site tracked, optimized, and ranked autonomously.</p>
             </div>
           </div>
-          <div className="mt-4 bg-amber-500/5 border border-amber-500/20 rounded-xl p-5">
+          <div className="mt-4 bg-amber-50 border border-amber-200 rounded-xl p-5">
             <div className="flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+              <AlertCircle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm text-amber-400 font-semibold mb-1">Determinism Mandate</p>
-                <p className="text-sm text-stone-400">Everything below this page must be written into a deterministic plan before implementation. No ad-hoc builds. No non-deterministic LLM output touching production without fingerprinting and drift detection. This page is the source of truth.</p>
+                <p className="text-sm text-amber-700 font-semibold mb-1">Determinism Mandate</p>
+                <p className="text-sm text-stone-600">Everything below this page must be written into a deterministic plan before implementation. No ad-hoc builds. No non-deterministic LLM output touching production without fingerprinting and drift detection. This page is the source of truth.</p>
               </div>
             </div>
           </div>
@@ -125,20 +125,20 @@ export default function DeepArchitecture() {
             {ARCHITECTURE_LAYERS.map((layer) => {
               const Icon = ICON_MAP[layer.icon] || Shield;
               return (
-                <div key={layer.id} className="bg-stone-900 border border-stone-800 rounded-xl p-5 hover:border-amber-500/30 transition">
+                <div key={layer.id} className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm hover:border-amber-300 transition">
                   <div className="flex items-start gap-4">
                     <div className="flex flex-col items-center gap-2 shrink-0">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ borderColor: layer.color + "40", background: layer.color + "15" }}>
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center border" style={{ borderColor: layer.color + "60", background: layer.color + "20" }}>
                         <Icon className="h-6 w-6" style={{ color: layer.color }} />
                       </div>
-                      <span className="text-xs font-bold text-stone-500">L{layer.id}</span>
+                      <span className="text-xs font-bold text-stone-400">L{layer.id}</span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-white">{layer.name}</h3>
-                      <p className="text-sm text-stone-400 mt-1 mb-3 italic">"{layer.principle}"</p>
+                      <h3 className="font-bold text-stone-900">{layer.name}</h3>
+                      <p className="text-sm text-stone-500 mt-1 mb-3 italic">"{layer.principle}"</p>
                       <div className="flex flex-wrap gap-2">
                         {layer.components.map((c, i) => (
-                          <span key={i} className="text-xs px-2.5 py-1 rounded-lg bg-stone-800 text-stone-300 border border-stone-700">{c}</span>
+                          <span key={i} className="text-xs px-2.5 py-1 rounded-lg bg-stone-100 text-stone-700 border border-stone-200">{c}</span>
                         ))}
                       </div>
                     </div>
@@ -150,32 +150,32 @@ export default function DeepArchitecture() {
         </ArchitectureSection>
 
         {/* Service Verticals */}
-        <ArchitectureSection id="verticals" title="Service Vertical Matrix" subtitle={`${totalServices} emergency / need-based services across 5 search-volume tiers — all will be launched`} accent="#FFEA00">
+        <ArchitectureSection id="verticals" title="Service Vertical Matrix" subtitle={`${totalServices} emergency / need-based services across 5 search-volume tiers — all will be launched`} accent="#B8860B">
           <div className="space-y-4">
             {SERVICE_VERTICALS.map((tier) => (
-              <div key={tier.tier} className="bg-stone-900 border border-stone-800 rounded-xl overflow-hidden">
-                <div className="flex items-center justify-between px-5 py-3 bg-stone-800/50 border-b border-stone-800">
+              <div key={tier.tier} className="bg-white border border-stone-200 rounded-xl overflow-hidden shadow-sm">
+                <div className="flex items-center justify-between px-5 py-3 bg-stone-50 border-b border-stone-200">
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-bold px-2 py-1 rounded bg-amber-500/20 text-amber-400">{tier.priority}</span>
-                    <h3 className="font-bold text-white">Tier {tier.tier} — {tier.tier_label}</h3>
+                    <span className="text-xs font-bold px-2 py-1 rounded bg-amber-100 text-amber-700">{tier.priority}</span>
+                    <h3 className="font-bold text-stone-900">Tier {tier.tier} — {tier.tier_label}</h3>
                     <span className="text-sm text-stone-500">{tier.volume_range}</span>
                   </div>
                   <span className="text-sm text-stone-500">{tier.services.length} services</span>
                 </div>
-                <div className="divide-y divide-stone-800">
+                <div className="divide-y divide-stone-100">
                   {tier.services.map((s) => (
-                    <div key={s.slug} className="flex items-center gap-4 px-5 py-3 hover:bg-stone-800/30 transition">
+                    <div key={s.slug} className="flex items-center gap-4 px-5 py-3 hover:bg-stone-50 transition">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium text-white">{s.name}</span>
-                          {s.emergency && <span className="text-xs px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 font-bold">24HR</span>}
+                          <span className="font-medium text-stone-900">{s.name}</span>
+                          {s.emergency && <span className="text-xs px-1.5 py-0.5 rounded bg-red-100 text-red-600 font-bold">24HR</span>}
                         </div>
-                        <code className="text-xs text-stone-500">{s.slug}nearme.com</code>
+                        <code className="text-xs text-stone-400">{s.slug}nearme.com</code>
                       </div>
                       <div className="hidden md:flex items-center gap-6 text-sm">
-                        <span className="text-stone-400">{(s.est_volume / 1000).toFixed(0)}K/mo</span>
-                        <span className="text-stone-400 capitalize">{s.category.replace("_", " ")}</span>
-                        <span className="text-amber-400 font-medium">${s.avg_lead_value}</span>
+                        <span className="text-stone-600">{(s.est_volume / 1000).toFixed(0)}K/mo</span>
+                        <span className="text-stone-600 capitalize">{s.category.replace("_", " ")}</span>
+                        <span className="text-amber-600 font-medium">${s.avg_lead_value}</span>
                       </div>
                     </div>
                   ))}
@@ -188,10 +188,10 @@ export default function DeepArchitecture() {
         {/* Domain Engine */}
         <ArchitectureSection id="domain" title="Domain Acquisition Engine" subtitle="Search ALL [keyword]nearme.com domains — filter to available only — queue for auto-purchase" accent="#B8860B">
           <div className="grid md:grid-cols-2 gap-4">
-            <div className="bg-stone-900 border border-stone-800 rounded-xl p-5">
-              <Globe className="h-6 w-6 text-amber-500 mb-3" />
-              <h3 className="font-bold text-white mb-2">Bulk Domain Search</h3>
-              <p className="text-sm text-stone-400 mb-3">Modify existing UrlStrategy system to search every possible [service]nearme.com combination across all {totalServices} service verticals × all US cities.</p>
+            <div className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
+              <Globe className="h-6 w-6 text-amber-600 mb-3" />
+              <h3 className="font-bold text-stone-900 mb-2">Bulk Domain Search</h3>
+              <p className="text-sm text-stone-600 mb-3">Modify existing UrlStrategy system to search every possible [service]nearme.com combination across all {totalServices} service verticals × all US cities.</p>
               <div className="space-y-1.5">
                 <FlowStep n="1" text="Generate [service]nearme.com for every vertical" />
                 <FlowStep n="2" text="Generate [service][city]nearme.com for top 1000 cities" />
@@ -200,10 +200,10 @@ export default function DeepArchitecture() {
                 <FlowStep n="5" text="Queue available domains for auto-purchase" />
               </div>
             </div>
-            <div className="bg-stone-900 border border-stone-800 rounded-xl p-5">
-              <ShoppingCart className="h-6 w-6 text-amber-500 mb-3" />
-              <h3 className="font-bold text-white mb-2">Auto-Purchase Pipeline</h3>
-              <p className="text-sm text-stone-400 mb-3">When a domain is queued and approved, the system auto-purchases via GoDaddy API, points DNS to Vercel, and registers it in the FleetSystem domain portfolio.</p>
+            <div className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
+              <ShoppingCart className="h-6 w-6 text-amber-600 mb-3" />
+              <h3 className="font-bold text-stone-900 mb-2">Auto-Purchase Pipeline</h3>
+              <p className="text-sm text-stone-600 mb-3">When a domain is queued and approved, the system auto-purchases via GoDaddy API, points DNS to Vercel, and registers it in the FleetSystem domain portfolio.</p>
               <div className="space-y-1.5">
                 <FlowStep n="1" text="Domain marked available → queue for purchase" />
                 <FlowStep n="2" text="Operator approval (or auto-buy if enabled)" />
@@ -217,10 +217,10 @@ export default function DeepArchitecture() {
 
         {/* Site Factory */}
         <ArchitectureSection id="factory" title="Programmatic Site Factory" subtitle="XTREMEAUTOBUILDER pipeline — 1000-5000 Google-spec-compliant pages per day" accent="#D4AF37">
-          <div className="bg-stone-900 border border-stone-800 rounded-xl p-5">
+          <div className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
             <div className="flex items-center gap-3 mb-4">
-              <Factory className="h-6 w-6 text-amber-500" />
-              <h3 className="font-bold text-white">Build Pipeline</h3>
+              <Factory className="h-6 w-6 text-amber-600" />
+              <h3 className="font-bold text-stone-900">Build Pipeline</h3>
             </div>
             <div className="grid md:grid-cols-5 gap-3">
               {[
@@ -231,10 +231,10 @@ export default function DeepArchitecture() {
                 { step: "Deploy", desc: "Vercel edge deploy + SSL", icon: Rocket },
               ].map((s, i) => (
                 <div key={i} className="text-center">
-                  <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto mb-2">
-                    <s.icon className="h-6 w-6 text-amber-500" />
+                  <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center mx-auto mb-2">
+                    <s.icon className="h-6 w-6 text-amber-600" />
                   </div>
-                  <p className="text-sm font-bold text-white">{s.step}</p>
+                  <p className="text-sm font-bold text-stone-900">{s.step}</p>
                   <p className="text-xs text-stone-500 mt-1">{s.desc}</p>
                 </div>
               ))}
@@ -243,16 +243,16 @@ export default function DeepArchitecture() {
         </ArchitectureSection>
 
         {/* Templates */}
-        <ArchitectureSection id="templates" title="Template System — Google Spec Compliance" subtitle="Every template follows Google's exact recommendations. Nothing less is acceptable." accent="#FFEA00">
+        <ArchitectureSection id="templates" title="Template System — Google Spec Compliance" subtitle="Every template follows Google's exact recommendations. Nothing less is acceptable." accent="#B8860B">
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-3">
             {TEMPLATE_TYPES.map((t) => (
-              <div key={t.id} className="bg-stone-900 border border-stone-800 rounded-xl p-4 hover:border-amber-500/30 transition">
-                <h3 className="font-bold text-white text-sm">{t.name}</h3>
+              <div key={t.id} className="bg-white border border-stone-200 rounded-xl p-4 shadow-sm hover:border-amber-300 transition">
+                <h3 className="font-bold text-stone-900 text-sm">{t.name}</h3>
                 <p className="text-xs text-stone-500 mt-1">{t.pages_per_site} pages per site</p>
                 <div className="mt-3 space-y-1">
                   {t.google_specs.map((spec, i) => (
-                    <div key={i} className="flex items-center gap-1.5 text-xs text-stone-400">
-                      <CheckCircle2 className="h-3 w-3 text-amber-500 shrink-0" />
+                    <div key={i} className="flex items-center gap-1.5 text-xs text-stone-600">
+                      <CheckCircle2 className="h-3 w-3 text-amber-600 shrink-0" />
                       {spec}
                     </div>
                   ))}
@@ -270,15 +270,15 @@ export default function DeepArchitecture() {
               return (
                 <div key={stage.id} className="flex items-center gap-4">
                   <div className="flex flex-col items-center shrink-0">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center border" style={{ borderColor: stage.color + "40", background: stage.color + "15" }}>
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center border" style={{ borderColor: stage.color + "60", background: stage.color + "20" }}>
                       <Icon className="h-5 w-5" style={{ color: stage.color }} />
                     </div>
-                    {i < QUEUE_STAGES.length - 1 && <div className="w-0.5 h-6 bg-stone-800 mt-1" />}
+                    {i < QUEUE_STAGES.length - 1 && <div className="w-0.5 h-6 bg-stone-200 mt-1" />}
                   </div>
                   <div className="flex-1 pb-4">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-stone-600">{String(stage.id).padStart(2, "0")}</span>
-                      <h3 className="font-bold text-white text-sm">{stage.name}</h3>
+                      <span className="text-xs font-bold text-stone-400">{String(stage.id).padStart(2, "0")}</span>
+                      <h3 className="font-bold text-stone-900 text-sm">{stage.name}</h3>
                     </div>
                     <p className="text-xs text-stone-500 mt-0.5">{stage.desc}</p>
                   </div>
@@ -297,10 +297,10 @@ export default function DeepArchitecture() {
               { step: "Capture", desc: "Quote form — name, phone, address, urgency" },
               { step: "Route", desc: "Lead → HubSpot + Google Sheet + Gmail + agent" },
             ].map((s, i) => (
-              <div key={i} className="bg-stone-900 border border-stone-800 rounded-xl p-4">
+              <div key={i} className="bg-white border border-stone-200 rounded-xl p-4 shadow-sm">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs font-bold">{i + 1}</span>
-                  <h3 className="font-bold text-white text-sm">{s.step}</h3>
+                  <span className="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center text-xs font-bold">{i + 1}</span>
+                  <h3 className="font-bold text-stone-900 text-sm">{s.step}</h3>
                 </div>
                 <p className="text-xs text-stone-500">{s.desc}</p>
               </div>
@@ -309,35 +309,35 @@ export default function DeepArchitecture() {
         </ArchitectureSection>
 
         {/* AI Validation */}
-        <ArchitectureSection id="validation" title="AI Validation Council" subtitle="GPT generates. Claude verifies. Nothing ships without dual-AI approval." accent="#FFEA00">
+        <ArchitectureSection id="validation" title="AI Validation Council" subtitle="GPT generates. Claude verifies. Nothing ships without dual-AI approval." accent="#B8860B">
           <div className="grid md:grid-cols-2 gap-4">
-            <div className="bg-stone-900 border border-stone-800 rounded-xl p-5">
+            <div className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
               <div className="flex items-center gap-2 mb-3">
-                <Brain className="h-5 w-5 text-blue-400" />
-                <h3 className="font-bold text-white">GPT-5 — Generator</h3>
+                <Brain className="h-5 w-5 text-blue-600" />
+                <h3 className="font-bold text-stone-900">GPT-5 — Generator</h3>
               </div>
-              <p className="text-sm text-stone-400">Primary content generation. Writes page content, meta tags, schema, FAQ, video scripts. Temperature 0 for reproducibility.</p>
+              <p className="text-sm text-stone-600">Primary content generation. Writes page content, meta tags, schema, FAQ, video scripts. Temperature 0 for reproducibility.</p>
             </div>
-            <div className="bg-stone-900 border border-stone-800 rounded-xl p-5">
+            <div className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
               <div className="flex items-center gap-2 mb-3">
-                <Shield className="h-5 w-5 text-amber-400" />
-                <h3 className="font-bold text-white">Claude — Validator</h3>
+                <Shield className="h-5 w-5 text-amber-600" />
+                <h3 className="font-bold text-stone-900">Claude — Validator</h3>
               </div>
-              <p className="text-sm text-stone-400">Independent verification. Checks content against Google specs, E-E-A-T, YMYL, factual accuracy, and quality rubric. Rejects or approves.</p>
+              <p className="text-sm text-stone-600">Independent verification. Checks content against Google specs, E-E-A-T, YMYL, factual accuracy, and quality rubric. Rejects or approves.</p>
             </div>
           </div>
-          <div className="mt-4 bg-stone-900 border border-stone-800 rounded-xl p-5">
-            <h3 className="font-bold text-white mb-3 text-sm">Validation Flow</h3>
+          <div className="mt-4 bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
+            <h3 className="font-bold text-stone-900 mb-3 text-sm">Validation Flow</h3>
             <div className="flex items-center gap-2 text-sm flex-wrap">
-              <span className="px-3 py-1.5 rounded-lg bg-blue-500/20 text-blue-400">GPT generates</span>
-              <ArrowRight className="h-4 w-4 text-stone-600" />
-              <span className="px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-400">Claude validates</span>
-              <ArrowRight className="h-4 w-4 text-stone-600" />
-              <span className="px-3 py-1.5 rounded-lg bg-stone-800 text-stone-400">Fingerprint hash</span>
-              <ArrowRight className="h-4 w-4 text-stone-600" />
-              <span className="px-3 py-1.5 rounded-lg bg-green-500/20 text-green-400">Deploy</span>
-              <ArrowRight className="h-4 w-4 text-stone-600" />
-              <span className="px-3 py-1.5 rounded-lg bg-red-500/20 text-red-400">Reject → regenerate</span>
+              <span className="px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700">GPT generates</span>
+              <ArrowRight className="h-4 w-4 text-stone-400" />
+              <span className="px-3 py-1.5 rounded-lg bg-amber-100 text-amber-700">Claude validates</span>
+              <ArrowRight className="h-4 w-4 text-stone-400" />
+              <span className="px-3 py-1.5 rounded-lg bg-stone-100 text-stone-600">Fingerprint hash</span>
+              <ArrowRight className="h-4 w-4 text-stone-400" />
+              <span className="px-3 py-1.5 rounded-lg bg-green-100 text-green-700">Deploy</span>
+              <ArrowRight className="h-4 w-4 text-stone-400" />
+              <span className="px-3 py-1.5 rounded-lg bg-red-100 text-red-600">Reject → regenerate</span>
             </div>
           </div>
         </ArchitectureSection>
@@ -345,20 +345,20 @@ export default function DeepArchitecture() {
         {/* Video Pipeline */}
         <ArchitectureSection id="video" title="Video + YouTube Pipeline" subtitle="Ultra-realistic AI video → auto-post to YouTube + social media for every deployed site" accent="#EC4899">
           <div className="grid md:grid-cols-3 gap-4">
-            <div className="bg-stone-900 border border-stone-800 rounded-xl p-5">
-              <Video className="h-6 w-6 text-pink-400 mb-3" />
-              <h3 className="font-bold text-white mb-2">Video Generation</h3>
-              <p className="text-sm text-stone-400">Top-tier AI video (Veo 3 / Sora-tier). 6-8 second clips per service. Service-specific prompts. Professional voiceover.</p>
+            <div className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
+              <Video className="h-6 w-6 text-pink-500 mb-3" />
+              <h3 className="font-bold text-stone-900 mb-2">Video Generation</h3>
+              <p className="text-sm text-stone-600">Top-tier AI video (Veo 3 / Sora-tier). 6-8 second clips per service. Service-specific prompts. Professional voiceover.</p>
             </div>
-            <div className="bg-stone-900 border border-stone-800 rounded-xl p-5">
-              <Share2 className="h-6 w-6 text-pink-400 mb-3" />
-              <h3 className="font-bold text-white mb-2">YouTube Auto-Post</h3>
-              <p className="text-sm text-stone-400">Every deployed site auto-generates a video and posts to YouTube. SEO-optimized title, description, tags. Links back to the site.</p>
+            <div className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
+              <Share2 className="h-6 w-6 text-pink-500 mb-3" />
+              <h3 className="font-bold text-stone-900 mb-2">YouTube Auto-Post</h3>
+              <p className="text-sm text-stone-600">Every deployed site auto-generates a video and posts to YouTube. SEO-optimized title, description, tags. Links back to the site.</p>
             </div>
-            <div className="bg-stone-900 border border-stone-800 rounded-xl p-5">
-              <Globe className="h-6 w-6 text-pink-400 mb-3" />
-              <h3 className="font-bold text-white mb-2">Social Auto-Post</h3>
-              <p className="text-sm text-stone-400">Same video/content auto-posted to Facebook Pages. Matching social media presence for every website.</p>
+            <div className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
+              <Globe className="h-6 w-6 text-pink-500 mb-3" />
+              <h3 className="font-bold text-stone-900 mb-2">Social Auto-Post</h3>
+              <p className="text-sm text-stone-600">Same video/content auto-posted to Facebook Pages. Matching social media presence for every website.</p>
             </div>
           </div>
         </ArchitectureSection>
@@ -374,9 +374,9 @@ export default function DeepArchitecture() {
               { name: "Tasks", desc: "Optimization tasks per site", icon: "✅" },
               { name: "Gmail", desc: "Lead notifications per domain", icon: "📧" },
             ].map((tool, i) => (
-              <div key={i} className="bg-stone-900 border border-stone-800 rounded-xl p-4 text-center hover:border-amber-500/30 transition">
+              <div key={i} className="bg-white border border-stone-200 rounded-xl p-4 text-center shadow-sm hover:border-amber-300 transition">
                 <div className="text-3xl mb-2">{tool.icon}</div>
-                <h3 className="font-bold text-white text-sm">{tool.name}</h3>
+                <h3 className="font-bold text-stone-900 text-sm">{tool.name}</h3>
                 <p className="text-xs text-stone-500 mt-1">{tool.desc}</p>
               </div>
             ))}
@@ -386,21 +386,21 @@ export default function DeepArchitecture() {
         {/* Swarm Optimization */}
         <ArchitectureSection id="swarm" title="Swarm Optimization" subtitle="Hundreds of agents continuously iterating, optimizing, and ranking every deployed site" accent="#B8860B">
           <div className="grid md:grid-cols-2 gap-4">
-            <div className="bg-stone-900 border border-stone-800 rounded-xl p-5">
-              <Bot className="h-6 w-6 text-amber-500 mb-3" />
-              <h3 className="font-bold text-white mb-2">Agent Assignment</h3>
-              <p className="text-sm text-stone-400">One agent per domain cluster (10-50 domains). Agents continuously monitor rankings, find content gaps, generate new content, and deploy fixes.</p>
+            <div className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
+              <Bot className="h-6 w-6 text-amber-600 mb-3" />
+              <h3 className="font-bold text-stone-900 mb-2">Agent Assignment</h3>
+              <p className="text-sm text-stone-600">One agent per domain cluster (10-50 domains). Agents continuously monitor rankings, find content gaps, generate new content, and deploy fixes.</p>
             </div>
-            <div className="bg-stone-900 border border-stone-800 rounded-xl p-5">
-              <TrendingUp className="h-6 w-6 text-amber-500 mb-3" />
-              <h3 className="font-bold text-white mb-2">6-Hour Optimization Cycle</h3>
-              <p className="text-sm text-stone-400">Every 6 hours: pull GSC data → identify ranking gaps → generate content → dual-AI validate → deploy → submit to IndexNow → measure.</p>
+            <div className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
+              <TrendingUp className="h-6 w-6 text-amber-600 mb-3" />
+              <h3 className="font-bold text-stone-900 mb-2">6-Hour Optimization Cycle</h3>
+              <p className="text-sm text-stone-600">Every 6 hours: pull GSC data → identify ranking gaps → generate content → dual-AI validate → deploy → submit to IndexNow → measure.</p>
             </div>
           </div>
         </ArchitectureSection>
 
         {/* Determinism */}
-        <ArchitectureSection id="determinism" title="Determinism Framework" subtitle="How we make non-deterministic LLM output reproducible and auditable" accent="#FFEA00">
+        <ArchitectureSection id="determinism" title="Determinism Framework" subtitle="How we make non-deterministic LLM output reproducible and auditable" accent="#B8860B">
           <div className="space-y-3">
             {[
               { rule: "Temperature 0", desc: "All LLM calls use temperature=0 for maximum reproducibility" },
@@ -410,11 +410,11 @@ export default function DeepArchitecture() {
               { rule: "Benchmark Constitution", desc: "Every page validated against deterministic benchmarks (Schema, CWV, canonical, sitemap) before deploy" },
               { rule: "Evidence Receipts", desc: "Every action produces an evidence receipt. No assertion without proof" },
             ].map((r, i) => (
-              <div key={i} className="flex items-start gap-3 bg-stone-900 border border-stone-800 rounded-xl p-4">
-                <Lock className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+              <div key={i} className="flex items-start gap-3 bg-white border border-stone-200 rounded-xl p-4 shadow-sm">
+                <Lock className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
                 <div>
-                  <h3 className="font-bold text-white text-sm">{r.rule}</h3>
-                  <p className="text-sm text-stone-400 mt-0.5">{r.desc}</p>
+                  <h3 className="font-bold text-stone-900 text-sm">{r.rule}</h3>
+                  <p className="text-sm text-stone-600 mt-0.5">{r.desc}</p>
                 </div>
               </div>
             ))}
@@ -430,9 +430,9 @@ export default function DeepArchitecture() {
               { label: "Agents / Day", value: "100s", sub: "autonomous agents" },
               { label: "Videos / Day", value: "150+", sub: "AI-generated + posted" },
             ].map((s, i) => (
-              <div key={i} className="bg-gradient-to-br from-stone-900 to-stone-950 border border-amber-500/20 rounded-xl p-5 text-center">
-                <p className="text-3xl font-bold text-amber-400">{s.value}</p>
-                <p className="text-sm font-medium text-white mt-1">{s.label}</p>
+              <div key={i} className="bg-gradient-to-br from-amber-50 to-white border border-amber-200 rounded-xl p-5 text-center shadow-sm">
+                <p className="text-3xl font-bold text-amber-600">{s.value}</p>
+                <p className="text-sm font-medium text-stone-900 mt-1">{s.label}</p>
                 <p className="text-xs text-stone-500 mt-0.5">{s.sub}</p>
               </div>
             ))}
@@ -446,30 +446,30 @@ export default function DeepArchitecture() {
               const style = STATUS_STYLE[p.status] || STATUS_STYLE.planned;
               const StatusIcon = style.icon;
               return (
-                <div key={p.phase} className={`bg-stone-900 border rounded-xl p-5 ${style.border}`}>
+                <div key={p.phase} className={`bg-white border rounded-xl p-5 shadow-sm ${style.border}`}>
                   <div className="flex items-start gap-4">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${style.bg} ${style.text}`}>
                       <StatusIcon className="h-5 w-5" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-3 flex-wrap">
-                        <span className="text-xs font-bold text-stone-600">PHASE {p.phase}</span>
-                        <h3 className="font-bold text-white">{p.name}</h3>
+                        <span className="text-xs font-bold text-stone-400">PHASE {p.phase}</span>
+                        <h3 className="font-bold text-stone-900">{p.name}</h3>
                         <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${style.bg} ${style.text}`}>{p.status}</span>
                         <span className="text-xs text-stone-500">{p.duration}</span>
                       </div>
                       <div className="mt-3 grid md:grid-cols-2 gap-2">
                         {p.deliverables.map((d, i) => (
-                          <div key={i} className="flex items-start gap-2 text-sm text-stone-400">
-                            <CheckCircle2 className="h-4 w-4 text-stone-600 shrink-0 mt-0.5" />
+                          <div key={i} className="flex items-start gap-2 text-sm text-stone-600">
+                            <CheckCircle2 className="h-4 w-4 text-stone-300 shrink-0 mt-0.5" />
                             {d}
                           </div>
                         ))}
                       </div>
                       <div className="mt-3 flex items-center gap-2 text-xs">
-                        <Shield className="h-3.5 w-3.5 text-amber-500" />
+                        <Shield className="h-3.5 w-3.5 text-amber-600" />
                         <span className="text-stone-500">Gate:</span>
-                        <span className="text-amber-400 font-medium">{p.gate}</span>
+                        <span className="text-amber-700 font-medium">{p.gate}</span>
                       </div>
                     </div>
                   </div>
@@ -485,9 +485,9 @@ export default function DeepArchitecture() {
 
 function HeroMetric({ label, value, sub }) {
   return (
-    <div className="bg-stone-900/50 border border-stone-800 rounded-xl p-4">
-      <p className="text-2xl font-bold text-amber-400">{value}</p>
-      <p className="text-sm font-medium text-white mt-1">{label}</p>
+    <div className="bg-white border border-stone-200 rounded-xl p-4 shadow-sm">
+      <p className="text-2xl font-bold text-amber-600">{value}</p>
+      <p className="text-sm font-medium text-stone-900 mt-1">{label}</p>
       <p className="text-xs text-stone-500">{sub}</p>
     </div>
   );
@@ -495,8 +495,8 @@ function HeroMetric({ label, value, sub }) {
 
 function FlowStep({ n, text }) {
   return (
-    <div className="flex items-center gap-2 text-sm text-stone-400">
-      <span className="w-5 h-5 rounded bg-stone-800 text-stone-500 flex items-center justify-center text-xs font-bold shrink-0">{n}</span>
+    <div className="flex items-center gap-2 text-sm text-stone-600">
+      <span className="w-5 h-5 rounded bg-stone-100 text-stone-400 flex items-center justify-center text-xs font-bold shrink-0">{n}</span>
       {text}
     </div>
   );
