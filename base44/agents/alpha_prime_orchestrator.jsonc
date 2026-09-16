@@ -988,6 +988,15 @@
     {
       "function_name": "checkQuestionnaireCompliance",
       "description": "Check questionnaire compliance"
+    },
+    {
+      "entity_name": "VaultEntry",
+      "allowed_operations": [
+        "create",
+        "update",
+        "delete",
+        "read"
+      ]
     }
   ],
   "context_files": [],
