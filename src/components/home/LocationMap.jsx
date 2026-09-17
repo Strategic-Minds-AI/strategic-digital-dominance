@@ -53,11 +53,16 @@ function bearing(lat1, lng1, lat2, lng2) {
   return (toDeg(Math.atan2(y, x)) + 360) % 360;
 }
 
+// Check if a coordinate pair is valid (finite numbers, not NaN)
+function isValidLatLng(lat, lng) {
+  return Number.isFinite(lat) && Number.isFinite(lng);
+}
+
 // Recenter the map when a target is set
 function Recenter({ center, zoom, resetKey }) {
   const map = useMap();
   useEffect(() => {
-    if (center) {
+    if (center && isValidLatLng(center[0], center[1])) {
       map.flyTo(center, zoom, { duration: 1.4 });
     } else {
       map.flyTo([39.5, -98.35], 4, { duration: 1.2 });
@@ -103,6 +108,7 @@ export default function LocationMap() {
       if (!place) throw new Error("not found");
       const lat = parseFloat(place.latitude);
       const lng = parseFloat(place.longitude);
+      if (!isValidLatLng(lat, lng)) throw new Error("invalid coordinates");
       setUserPos({ lat, lng });
       const nearest = nearestLocation(lat, lng);
       // Use the store's precise geocoded coordinates when available; otherwise
@@ -191,7 +197,7 @@ export default function LocationMap() {
                 maxZoom={18}
               />
             )}
-            {ALL_XPS_LOCATIONS.map((loc, i) => (
+            {ALL_XPS_LOCATIONS.filter((loc) => isValidLatLng(loc.lat, loc.lng)).map((loc, i) => (
               <Marker key={i} position={[loc.lat, loc.lng]} icon={loc.hq ? hqIcon : xpsIcon}>
                 <Popup>
                   <div className="text-sm">
@@ -203,7 +209,7 @@ export default function LocationMap() {
                 </Popup>
               </Marker>
             ))}
-            {userPos && (
+            {userPos && isValidLatLng(userPos.lat, userPos.lng) && (
               <Marker position={[userPos.lat, userPos.lng]} icon={userIcon}>
                 <Popup>You are here (ZIP {zip})</Popup>
               </Marker>
