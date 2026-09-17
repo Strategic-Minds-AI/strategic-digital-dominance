@@ -30,14 +30,15 @@ export default function AIAssistBubble() {
     setLoading(true);
 
     try {
-      const res = await base44.functions.invoke('vercelAiGateway', {
-        action: 'generateText',
-        model: 'anthropic/claude-opus-4.7',
-        system_prompt: ALPHA_SHADOW_SYSTEM_PROMPT,
-        prompt: userMsg.content,
+      // Use Core InvokeLLM with web search so the agent can research live data
+      // (domain availability, search volumes, competitors, current events).
+      // gemini_3_flash is one of the two models that supports add_context_from_internet.
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `${ALPHA_SHADOW_SYSTEM_PROMPT}\n\n--- USER REQUEST ---\n${userMsg.content}`,
+        add_context_from_internet: true,
+        model: 'gemini_3_flash',
       });
-      const data = res.data || res;
-      const aiResponse = data.text || data.result || 'I am here. Give me a moment.';
+      const aiResponse = (typeof result === 'string' ? result : result?.text || result?.result) || 'I am here. Give me a moment.';
       setMessages((prev) => [...prev, { role: 'assistant', content: aiResponse, actions: [] }]);
     } catch (e) {
       setMessages((prev) => [...prev, { role: 'assistant', content: `Error: ${e.message}` }]);
