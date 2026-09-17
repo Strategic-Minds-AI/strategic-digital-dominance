@@ -52,8 +52,18 @@ export default async function(req: Request): Promise<Response> {
       }
       messages.push({ role: 'user', content });
 
+      // Model fallback chain — if the primary model fails upstream (rate limit,
+      // timeout, availability), retry with progressively lighter models so the
+      // chat stays responsive instead of throwing a 500 at the user.
+      const requestedModel = model || 'anthropic/claude-opus-4.7';
+      const FALLBACK_CHAIN: Record<string, string[]> = {
+        'anthropic/claude-opus-4.7': ['openai/gpt-5.4', 'openai/gpt-5.4-mini'],
+        'openai/gpt-5.4': ['openai/gpt-5.4-mini'],
+      };
+      const modelChain = [requestedModel, ...(FALLBACK_CHAIN[requestedModel] || [])];
+
       const payload: any = {
-        model: model || 'anthropic/claude-opus-4.7',
+        model: requestedModel,
         messages,
       };
 
@@ -62,21 +72,46 @@ export default async function(req: Request): Promise<Response> {
         payload.response_format = { type: 'json_schema', json_schema: { name: 'response', schema: response_json_schema } };
       }
 
-      const res = await fetch(`${GATEWAY_BASE}/chat/completions`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+      let data: any = null;
+      let lastError = '';
 
-      if (!res.ok) {
-        const err = await res.text();
-        return Response.json({ error: `AI Gateway error: ${err}`, status: res.status }, { status: 500 });
+      for (const m of modelChain) {
+        payload.model = m;
+        // 30s timeout — upstream hangs shouldn't stall the whole function
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 30000);
+        try {
+          const res = await fetch(`${GATEWAY_BASE}/chat/completions`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${apiKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+            signal: controller.signal,
+          });
+          clearTimeout(timeout);
+
+          if (!res.ok) {
+            lastError = `AI Gateway error (${res.status}): ${await res.text()}`;
+            console.warn(`[vercelAiGateway] model ${m} failed: ${res.status}`);
+            continue; // try next model in the fallback chain
+          }
+
+          data = await res.json();
+          break; // success
+        } catch (err) {
+          clearTimeout(timeout);
+          lastError = err.message;
+          console.warn(`[vercelAiGateway] model ${m} threw: ${err.message}`);
+          continue; // try next model
+        }
       }
 
-      const data = await res.json();
+      if (!data) {
+        return Response.json({ error: `All models failed. Last: ${lastError}` }, { status: 500 });
+      }
+
       const text = data.choices?.[0]?.message?.content || '';
 
       // If JSON schema was requested, parse the response
