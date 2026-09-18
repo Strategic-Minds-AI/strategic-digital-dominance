@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import { Bell, Calendar, Phone, Home, FileText, Trophy, DollarSign, Percent, Zap } from "lucide-react";
 import { XTREME_AI_ICON_URL } from "@/components/Logo";
 import { isAfter, subDays, startOfDay } from "date-fns";
+import QuickLaunchGrid from "@/components/admin/QuickLaunchGrid";
 
 export default function Dashboard() {
   const { data: leads = [] } = useQuery({ queryKey: ["leads"], queryFn: () => base44.entities.Lead.list("-created_date", 500) });
@@ -62,6 +63,9 @@ export default function Dashboard() {
           </div>
         </div>
       )}
+
+      {/* Quick Launch Grid — primary navigation */}
+      <QuickLaunchGrid />
 
       {/* Stat grid */}
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
