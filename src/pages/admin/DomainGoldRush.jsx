@@ -13,12 +13,14 @@ import FunnelCreator from "@/components/domain-rush/FunnelCreator";
 import DominanceGenerator from "@/components/domain-rush/DominanceGenerator";
 import FormFlood from "@/components/domain-rush/FormFlood";
 import WorkflowOrchestrator from "@/components/domain-rush/WorkflowOrchestrator";
+import DominanceCommand from "@/components/domain-rush/DominanceCommand";
 import DomainResultCard from "@/components/domain-rush/DomainResultCard";
 import { base44 } from "@/api/base44Client";
 import { Loader2, Zap, MapPin, TrendingUp } from "lucide-react";
 import { UNIVERSAL_NICHES } from "@/data/universalNiches";
 
 const TABS = [
+  { id: "dominance", label: "DOMINATE", icon: Crown, desc: "One-click fully automated dominance engine" },
   { id: "workflow", label: "Live Workflow", icon: Workflow, desc: "Top-to-bottom strategic workflow" },
   { id: "niches", label: "Universal Niches", icon: Grid3x3, desc: "200+ need & emergency businesses" },
   { id: "search", label: "Search Intelligence", icon: Search, desc: "Top searches, lost clicks, TLD patterns" },
@@ -165,6 +167,7 @@ export default function DomainGoldRush() {
       </div>
 
       {/* Tab content */}
+      {activeTab === "dominance" && <DominanceCommand selectedNiche={selectedNiche} />}
       {activeTab === "workflow" && <WorkflowOrchestrator onJumpToTab={handleJumpToTab} selectedNiche={selectedNiche} />}
       {activeTab === "niches" && <NicheRegistry onSelectNiche={handleNicheSelect} />}
       {activeTab === "search" && <SearchIntelligence selectedNiche={selectedNiche} />}
