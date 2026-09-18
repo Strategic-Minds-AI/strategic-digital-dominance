@@ -58,6 +58,7 @@ import ToolManager from '@/pages/admin/ToolManager';
 import VisualizerTest from '@/pages/VisualizerTest';
 import ToolHub from '@/pages/ToolHub';
 import WebsiteFactory from '@/pages/admin/WebsiteFactory';
+import TemplateManager from '@/pages/admin/TemplateManager';
 import AppFactory from '@/pages/admin/AppFactory';
 import NationalLaunch from '@/pages/admin/NationalLaunch';
 import SeoGenerator from '@/pages/admin/SeoGenerator';
@@ -194,6 +195,7 @@ const AuthenticatedApp = () => {
         <Route path="tools" element={<ToolManager />} />
         <Route path="tool-hub" element={<ToolHub />} />
         <Route path="website-factory" element={<WebsiteFactory />} />
+        <Route path="templates" element={<TemplateManager />} />
         <Route path="app-factory" element={<AppFactory />} />
         <Route path="national-launch" element={<NationalLaunch />} />
         <Route path="seo-generator" element={<SeoGenerator />} />

@@ -1,0 +1,190 @@
+{
+  "name": "TemplateLibrary",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Template display name (e.g. 'Epoxy Pro Homepage', 'Emergency Water Damage Landing')"
+    },
+    "slug": {
+      "type": "string",
+      "description": "URL-safe unique slug"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "homepage",
+        "landing_page",
+        "service_page",
+        "location_page",
+        "blog_post",
+        "about_page",
+        "contact_page",
+        "faq_page",
+        "cost_page",
+        "gallery_page",
+        "reviews_page",
+        "estimate_funnel",
+        "thank_you_page",
+        "error_page",
+        "email_template",
+        "component",
+        "section",
+        "custom"
+      ],
+      "default": "homepage",
+      "description": "What kind of page/template this is"
+    },
+    "niche": {
+      "type": "string",
+      "description": "Which niche this template is designed for (epoxy, water_damage, roofing, etc.) \u2014 empty = universal"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 2000,
+      "description": "What this template does, its target audience, and conversion strategy"
+    },
+    "content": {
+      "type": "string",
+      "maxLength": 50000,
+      "description": "Full template content (JSX, HTML, or structured JSON)"
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "section_id": {
+            "type": "string"
+          },
+          "section_type": {
+            "type": "string",
+            "description": "hero, cta, features, gallery, testimonials, faq, pricing, contact, map, footer, etc."
+          },
+          "section_name": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string",
+            "description": "Section content or component reference"
+          },
+          "config": {
+            "type": "object",
+            "description": "Section-specific configuration",
+            "additionalProperties": true
+          }
+        }
+      },
+      "default": [],
+      "description": "Structured breakdown of template sections for modular editing"
+    },
+    "preview_image_url": {
+      "type": "string",
+      "description": "Screenshot or preview image URL"
+    },
+    "preview_html": {
+      "type": "string",
+      "maxLength": 20000,
+      "description": "Compact HTML preview for the template card thumbnail"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Searchable tags (modern, conversion, emergency, luxury, budget, etc.)"
+    },
+    "color_scheme": {
+      "type": "string",
+      "description": "Primary color scheme (amber, blue, green, dark, light, etc.)"
+    },
+    "is_default": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, this is the default template for its category"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "If true, template is available for deployment"
+    },
+    "version": {
+      "type": "string",
+      "default": "1.0",
+      "description": "Template version number"
+    },
+    "parent_template_id": {
+      "type": "string",
+      "description": "If cloned, the ID of the source template"
+    },
+    "deployed_to": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Domains or site IDs using this template"
+    },
+    "deploy_count": {
+      "type": "integer",
+      "default": 0,
+      "description": "How many sites are currently using this template"
+    },
+    "conversion_rate": {
+      "type": "number",
+      "default": 0,
+      "description": "Average conversion rate across deployed sites (0-100)"
+    },
+    "performance_score": {
+      "type": "number",
+      "default": 0,
+      "description": "0-100 average performance score across deployments"
+    },
+    "author": {
+      "type": "string",
+      "description": "Who created this template"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "active",
+        "archived"
+      ],
+      "default": "draft"
+    },
+    "sort_order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order within category"
+    }
+  },
+  "required": [
+    "name",
+    "slug",
+    "category"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
