@@ -5,6 +5,7 @@ import "leaflet/dist/leaflet.css";
 import { Search, Loader2, MapPin, Phone, Navigation } from "lucide-react";
 import { ALL_XPS_LOCATIONS, nearestLocation } from "@/lib/xpsLocations";
 import { useSettings } from "@/lib/useSettings";
+import MapErrorBoundary from "@/components/home/MapErrorBoundary";
 
 // Fix default marker icons in react-leaflet (webpack/CDN path issues)
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
@@ -62,10 +63,15 @@ function isValidLatLng(lat, lng) {
 function Recenter({ center, zoom, resetKey }) {
   const map = useMap();
   useEffect(() => {
-    if (center && isValidLatLng(center[0], center[1])) {
-      map.flyTo(center, zoom, { duration: 1.4 });
-    } else {
-      map.flyTo([39.5, -98.35], 4, { duration: 1.2 });
+    try {
+      if (center && isValidLatLng(center[0], center[1])) {
+        map.flyTo(center, zoom, { duration: 1.4 });
+      } else {
+        map.flyTo([39.5, -98.35], 4, { duration: 1.2 });
+      }
+    } catch (e) {
+      // Swallow Leaflet NaN LatLng errors — don't crash the page
+      console.warn("[Recenter] flyTo failed:", e?.message || e);
     }
   }, [center, zoom, resetKey, map]);
   return null;
@@ -167,6 +173,7 @@ export default function LocationMap() {
       <div>
         {/* Map — full width so the entire USA is visible */}
         <div className="h-[380px] md:h-[460px] relative bg-stone-100">
+          <MapErrorBoundary>
           {result && result.preciseLat && mapsKey ? (
             <iframe
               title="XPS Xpress storefront"
@@ -217,6 +224,7 @@ export default function LocationMap() {
             <Recenter center={result ? [result.preciseLat || result.lat, result.preciseLng || result.lng] : userPos ? [userPos.lat, userPos.lng] : null} zoom={result ? 18 : 6} resetKey={resetKey} />
           </MapContainer>
           )}
+          </MapErrorBoundary>
         </div>
 
         {/* Side panel */}
