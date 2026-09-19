@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink, Outlet, Link } from "react-router-dom";
-import { LayoutDashboard, Users, KanbanSquare, Settings, ExternalLink, Mail, Radar, Globe, ScrollText, Star, Wrench, Factory, Smartphone, Rocket, Layers, Layout, UserCircle,   TrendingUp, MessageSquare, Brain, Target, BarChart3, Package, Bot, KeyRound, Share2, Wand2, MapPin, Network, Crown, Building2, Code2, Heart, PhoneCall, Activity,   ListOrdered, Database, Workflow, Gauge, Cpu, Sparkles, Boxes, BookOpen, Eye, EyeOff, Zap, Shield, Compass } from "lucide-react";
+import { LayoutDashboard, Users, KanbanSquare, Settings, ExternalLink, Mail, Radar, Globe, ScrollText, Star, Wrench, Factory, Smartphone, Rocket, Layers, Layout, UserCircle, TrendingUp, MessageSquare, Brain, Target, BarChart3, Package, Bot, KeyRound, Share2, Wand2, MapPin, Network, Crown, Building2, Code2, Heart, PhoneCall, Activity, ListOrdered, Database, Workflow, Gauge, Cpu, Sparkles, Boxes, BookOpen, Eye, EyeOff, Zap, Shield, Compass, Menu, X } from "lucide-react";
 import BackButton from "@/components/BackButton";
-import Logo from "@/components/Logo";
 import { XTREME_AI_ICON_URL } from "@/components/Logo";
 import AIAssistBubble from "@/components/ai-assist/AIAssistBubble";
 
@@ -69,38 +68,90 @@ const links = [
 ];
 
 export default function AdminLayout() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   return (
-    <div className="min-h-screen bg-stone-100">
-      <div className="bg-stone-950 text-white">
-        <div className="max-w-7xl mx-auto px-5 flex items-center gap-4 h-16 overflow-x-auto">
-          <img src={XTREME_AI_ICON_URL} alt="Xtreme AI Systems — Intelligence For Growth" className="h-10 w-10 object-contain shrink-0" />
-          <div className="flex flex-col shrink-0 leading-none">
-            <span className="text-[10px] font-bold tracking-[0.18em] text-amber-500 uppercase">Xtreme AI</span>
+    <div className="min-h-screen bg-stone-100 flex">
+      {/* === LEFT SIDEBAR / COMMAND CENTER === */}
+      <aside
+        className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-64 shrink-0 bg-stone-950 flex flex-col transition-transform duration-200 ${
+          mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        }`}
+      >
+        {/* Brand header */}
+        <div className="flex items-center gap-3 px-4 h-16 border-b border-stone-800 shrink-0">
+          <img src={XTREME_AI_ICON_URL} alt="Xtreme AI Systems" className="h-9 w-9 object-contain shrink-0" />
+          <div className="flex flex-col leading-none">
+            <span className="text-[9px] font-bold tracking-[0.18em] text-amber-500 uppercase">Xtreme AI</span>
             <span className="text-sm font-bold text-white tracking-tight">Command Center</span>
           </div>
-          <BackButton className="text-stone-400 hover:text-white shrink-0" showLabel={false} />
-          <nav className="flex gap-1">
-            {links.map((l) => (
-              <NavLink
-                key={l.to}
-                to={l.to}
-                end={l.end}
-                className={({ isActive }) =>
-                  `flex items-center gap-2 px-3 py-2 rounded-lg text-sm whitespace-nowrap transition-all ${isActive ? "bg-amber-500/20 text-amber-400 border border-amber-500/40" : "text-stone-400 hover:text-white hover:bg-white/5 border border-transparent"}`}
-              >
-                <l.icon className="h-4 w-4" />
-                {l.label}
-              </NavLink>
-            ))}
-          </nav>
-          <Link to="/" className="ml-auto text-sm text-stone-400 hover:text-amber-400 flex items-center gap-1 shrink-0 transition-colors">
-            Site <ExternalLink className="h-3.5 w-3.5" />
+          <button
+            onClick={() => setMobileOpen(false)}
+            className="ml-auto lg:hidden text-stone-400 hover:text-white"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Navigation — scrollable */}
+        <nav className="flex-1 overflow-y-auto px-2 py-3 space-y-0.5">
+          {links.map((l) => (
+            <NavLink
+              key={l.to}
+              to={l.to}
+              end={l.end}
+              onClick={() => setMobileOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all ${
+                  isActive
+                    ? "bg-amber-500/20 text-amber-400 border border-amber-500/40"
+                    : "text-stone-400 hover:text-white hover:bg-white/5 border border-transparent"
+                }`}
+            >
+              <l.icon className="h-4 w-4 shrink-0" />
+              <span className="truncate">{l.label}</span>
+            </NavLink>
+          ))}
+        </nav>
+
+        {/* Footer actions */}
+        <div className="px-3 py-3 border-t border-stone-800 shrink-0 space-y-1">
+          <BackButton className="text-stone-400 hover:text-white w-full" showLabel={true} />
+          <Link
+            to="/"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-stone-400 hover:text-amber-400 hover:bg-white/5 transition-colors"
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+            View Site
           </Link>
         </div>
+      </aside>
+
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/50 lg:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* === RIGHT CONTENT === */}
+      <div className="flex-1 min-w-0 flex flex-col">
+        {/* Mobile top bar */}
+        <div className="lg:hidden flex items-center gap-3 px-4 h-14 bg-stone-950 text-white shrink-0 sticky top-0 z-20">
+          <button onClick={() => setMobileOpen(true)} className="text-stone-400 hover:text-white">
+            <Menu className="h-6 w-6" />
+          </button>
+          <img src={XTREME_AI_ICON_URL} alt="Xtreme AI" className="h-7 w-7 object-contain" />
+          <span className="text-sm font-bold text-white">Command Center</span>
+        </div>
+
+        {/* Page content */}
+        <div className="flex-1 max-w-7xl w-full mx-auto px-5 py-8">
+          <Outlet />
+        </div>
       </div>
-      <div className="max-w-7xl mx-auto px-5 py-8">
-        <Outlet />
-      </div>
+
       <AIAssistBubble />
     </div>
   );
