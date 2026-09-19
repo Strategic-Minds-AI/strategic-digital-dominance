@@ -17,12 +17,20 @@ import { isAfter, subDays, startOfDay } from "date-fns";
 
 const PRIMARY_ACTIONS = [
   {
+    to: "/admin/site-builder",
+    icon: Crown,
+    label: "Universal Site Builder",
+    desc: "Full pipeline — pick industry, branding, logo, content, URL, launch everything",
+    gradient: "from-amber-500 via-amber-600 to-amber-700",
+    glow: "shadow-amber-500/30",
+  },
+  {
     to: "/admin/domain-rush",
     icon: Crown,
     label: "Launch Dominance Campaign",
     desc: "One-click automated pipeline — domain, site, content, social, SEO",
-    gradient: "from-amber-500 via-amber-600 to-amber-700",
-    glow: "shadow-amber-500/30",
+    gradient: "from-orange-500 via-orange-600 to-orange-700",
+    glow: "shadow-orange-500/30",
   },
   {
     to: "/admin/website-factory",
@@ -31,14 +39,6 @@ const PRIMARY_ACTIONS = [
     desc: "Create & deploy a new site from a template — pick niche, configure, go live",
     gradient: "from-blue-500 via-blue-600 to-blue-700",
     glow: "shadow-blue-500/30",
-  },
-  {
-    to: "/admin/social-studio",
-    icon: Share2,
-    label: "Launch Social Media",
-    desc: "Auto-generate & schedule posts across all platforms",
-    gradient: "from-purple-500 via-purple-600 to-purple-700",
-    glow: "shadow-purple-500/30",
   },
 ];
 

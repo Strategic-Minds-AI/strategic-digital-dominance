@@ -81,6 +81,7 @@ import SwarmCommand from '@/pages/admin/SwarmCommand';
 import SystemBlueprint from '@/pages/admin/SystemBlueprint';
 import DeepArchitecture from '@/pages/admin/DeepArchitecture';
 import SystemOperator from '@/pages/admin/SystemOperator';
+import UniversalSiteBuilder from '@/pages/admin/UniversalSiteBuilder';
 import WebsiteEmpire from '@/pages/admin/WebsiteEmpire';
 import SiteHealthMonitor from '@/pages/admin/SiteHealthMonitor';
 import UrlStrategy from '@/pages/admin/UrlStrategy';
@@ -232,6 +233,7 @@ const AuthenticatedApp = () => {
         <Route path="seo-simulator" element={<SeoSimulator />} />
         <Route path="domain-rush" element={<DomainGoldRush />} />
         <Route path="crystal-ball" element={<CrystalBall />} />
+        <Route path="site-builder" element={<UniversalSiteBuilder />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
       <Route path="/:state/:citySlug" element={<LocationSeoPage />} />
