@@ -7,6 +7,7 @@ import {
   Loader2, ArrowRight, Cpu, Database, Cloud, GitBranch, Eye, EyeOff,
   TrendingUp, Layers, Layout, BarChart3, Settings
 } from "lucide-react";
+import SectionCard from "@/components/admin/SectionCard";
 
 const SYSTEM_TYPE_ICONS = {
   website: Globe,
@@ -227,27 +228,38 @@ export default function FleetDashboard() {
             {activeTab === "overview" && (
               <>
                 {/* Fleet Metrics */}
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
-                  <FleetMetric icon={Gauge} label="Fleet Score" value={`${fleet.fleet_score}/100`} color="text-amber-600" />
-                  <FleetMetric icon={Server} label="Total Systems" value={fleet.total_systems} color="text-stone-700" />
-                  <FleetMetric icon={CheckCircle2} label="Verified 100" value={fleet.verified_100} color="text-emerald-600" />
-                  <FleetMetric icon={Zap} label="In Sprint" value={fleet.in_completion_sprint} color="text-amber-600" />
-                  <FleetMetric icon={AlertTriangle} label="Degraded" value={fleet.degraded} color="text-orange-600" />
-                  <FleetMetric icon={XCircle} label="Blocked" value={fleet.blocked} color="text-red-600" />
-                  <FleetMetric icon={AlertTriangle} label="Total P0" value={fleet.total_p0} color={fleet.total_p0 > 0 ? "text-red-600" : "text-emerald-600"} />
-                  <FleetMetric icon={AlertTriangle} label="Total P1" value={fleet.total_p1} color={fleet.total_p1 > 0 ? "text-orange-600" : "text-emerald-600"} />
-                </div>
+                <SectionCard
+                  icon={BarChart3}
+                  title="Fleet Metrics"
+                  subtitle="Real-time portfolio health at a glance"
+                  accent="amber"
+                  noPadding
+                >
+                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-px bg-stone-100">
+                    <FleetMetric icon={Gauge} label="Fleet Score" value={`${fleet.fleet_score}/100`} color="text-amber-600" />
+                    <FleetMetric icon={Server} label="Total Systems" value={fleet.total_systems} color="text-stone-700" />
+                    <FleetMetric icon={CheckCircle2} label="Verified 100" value={fleet.verified_100} color="text-emerald-600" />
+                    <FleetMetric icon={Zap} label="In Sprint" value={fleet.in_completion_sprint} color="text-amber-600" />
+                    <FleetMetric icon={AlertTriangle} label="Degraded" value={fleet.degraded} color="text-orange-600" />
+                    <FleetMetric icon={XCircle} label="Blocked" value={fleet.blocked} color="text-red-600" />
+                    <FleetMetric icon={AlertTriangle} label="Total P0" value={fleet.total_p0} color={fleet.total_p0 > 0 ? "text-red-600" : "text-emerald-600"} />
+                    <FleetMetric icon={AlertTriangle} label="Total P1" value={fleet.total_p1} color={fleet.total_p1 > 0 ? "text-orange-600" : "text-emerald-600"} />
+                  </div>
+                </SectionCard>
 
                 {/* Priority Order preview (top 5) */}
                 {governance && governance.priority_order && governance.priority_order.length > 0 && (
-                  <div className="bg-white rounded-2xl border border-stone-200 p-5">
-                    <div className="flex items-center gap-2 mb-4">
-                      <TrendingUp className="h-5 w-5 text-amber-500" />
-                      <h2 className="text-lg font-bold text-stone-900">Top Priority Systems</h2>
-                      <button onClick={() => setActiveTab("priority")} className="ml-auto text-xs text-amber-600 font-semibold hover:underline">
-                        View all →
+                  <SectionCard
+                    icon={TrendingUp}
+                    title="Top Priority Systems"
+                    subtitle="Highest compute allocation ranking"
+                    accent="amber"
+                    action={
+                      <button onClick={() => setActiveTab("priority")} className="text-xs text-amber-600 font-semibold hover:underline flex items-center gap-1">
+                        View all <ArrowRight className="h-3 w-3" />
                       </button>
-                    </div>
+                    }
+                  >
                     <div className="space-y-2">
                       {governance.priority_order.slice(0, 5).map((sys, idx) => {
                         const modeStyle = MODE_STYLES[sys.mode] || MODE_STYLES.bootstrap;
@@ -279,19 +291,19 @@ export default function FleetDashboard() {
                         );
                       })}
                     </div>
-                  </div>
+                  </SectionCard>
                 )}
               </>
             )}
 
             {/* === PRIORITY ORDER TAB === */}
             {activeTab === "priority" && governance && governance.priority_order && (
-              <div className="bg-white rounded-2xl border border-stone-200 p-5">
-                <div className="flex items-center gap-2 mb-4">
-                  <TrendingUp className="h-5 w-5 text-amber-500" />
-                  <h2 className="text-lg font-bold text-stone-900">Fleet Priority Order</h2>
-                  <span className="text-xs text-stone-500 ml-auto">Compute allocation ranking</span>
-                </div>
+              <SectionCard
+                icon={TrendingUp}
+                title="Fleet Priority Order"
+                subtitle="Compute allocation ranking — all systems"
+                accent="amber"
+              >
                 <div className="space-y-2">
                   {governance.priority_order.map((sys, idx) => {
                     const ModeIcon = MODE_STYLES[sys.mode]?.icon || Activity;
@@ -324,22 +336,22 @@ export default function FleetDashboard() {
                     );
                   })}
                 </div>
-              </div>
+              </SectionCard>
             )}
 
             {/* === APPROVALS TAB === */}
             {activeTab === "approvals" && (
               <>
                 {pendingApprovals > 0 ? (
-                  <div className="bg-red-50 rounded-2xl border-2 border-red-300 p-5">
-                    <div className="flex items-center gap-2 mb-3">
-                      <ShieldCheck className="h-5 w-5 text-red-600" />
-                      <h2 className="text-lg font-bold text-red-900">Protected Actions Awaiting Approval</h2>
-                      <span className="text-xs text-red-600 ml-auto">{pendingApprovals} items</span>
-                    </div>
+                  <SectionCard
+                    icon={ShieldCheck}
+                    title="Protected Actions Awaiting Approval"
+                    subtitle={`${pendingApprovals} items need review`}
+                    accent="red"
+                  >
                     <div className="space-y-2">
                       {governance.approval_items?.map((item, idx) => (
-                        <div key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-white border border-red-200">
+                        <div key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-red-50 border border-red-200">
                           <AlertTriangle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
                           <div className="flex-1">
                             <div className="text-sm font-semibold text-stone-900">{item.benchmark_id}</div>
@@ -349,25 +361,35 @@ export default function FleetDashboard() {
                         </div>
                       ))}
                     </div>
-                  </div>
+                  </SectionCard>
                 ) : (
-                  <div className="bg-white rounded-2xl border border-stone-200 p-12 text-center">
-                    <ShieldCheck className="h-12 w-12 text-emerald-500 mx-auto mb-3" />
-                    <h2 className="text-lg font-bold text-stone-900">No Pending Approvals</h2>
-                    <p className="text-sm text-stone-500 mt-1">All protected actions have been reviewed.</p>
-                  </div>
+                  <SectionCard icon={ShieldCheck} title="No Pending Approvals" subtitle="All protected actions have been reviewed" accent="emerald" noPadding>
+                    <div className="py-12 text-center">
+                      <ShieldCheck className="h-12 w-12 text-emerald-500 mx-auto mb-3" />
+                      <p className="text-sm text-stone-500">Everything is clear — no actions awaiting approval.</p>
+                    </div>
+                  </SectionCard>
                 )}
               </>
             )}
 
             {/* === SYSTEMS TAB === */}
             {activeTab === "systems" && (
-              <div className="bg-white rounded-2xl border border-stone-200 p-5">
-                <div className="flex items-center gap-2 mb-4">
-                  <Server className="h-5 w-5 text-amber-500" />
-                  <h2 className="text-lg font-bold text-stone-900">Registered Systems</h2>
-                  <span className="text-xs text-stone-500 ml-auto">{fleet.systems?.length || 0} systems</span>
-                </div>
+              <SectionCard
+                icon={Server}
+                title="Registered Systems"
+                subtitle={`${fleet.systems?.length || 0} systems in fleet`}
+                accent="amber"
+                action={
+                  <button
+                    onClick={() => setShowRegister(true)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 text-stone-950 text-xs font-bold hover:bg-amber-400 transition"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    Add System
+                  </button>
+                }
+              >
                 {fleet.systems?.length === 0 ? (
                   <div className="text-center py-12">
                     <Server className="h-12 w-12 text-stone-300 mx-auto mb-3" />
@@ -431,7 +453,7 @@ export default function FleetDashboard() {
                     })}
                   </div>
                 )}
-              </div>
+              </SectionCard>
             )}
           </>
         ) : null}
@@ -490,8 +512,8 @@ export default function FleetDashboard() {
 
 function FleetMetric({ icon: Icon, label, value, color }) {
   return (
-    <div className="bg-white rounded-xl border border-stone-200 p-3">
-      <Icon className={`h-4 w-4 ${color} mb-1`} />
+    <div className="bg-white p-4 flex flex-col gap-1.5">
+      <Icon className={`h-4 w-4 ${color}`} />
       <div className="text-lg font-bold text-stone-900">{value}</div>
       <div className="text-xs text-stone-500">{label}</div>
     </div>
