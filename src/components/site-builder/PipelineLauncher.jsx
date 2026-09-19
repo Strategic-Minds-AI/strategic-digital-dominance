@@ -111,6 +111,8 @@ export default function PipelineLauncher({ config, onBack }) {
       }
 
       // Step 3: Launch dominance engine (the full pipeline)
+      // dominanceEngine accepts: niche_id, keyword, city, state, auto_purchase_domain, auto_deploy_vercel
+      // Custom branding (logo, accent, content, domain) is saved in the WebsiteTemplate above.
       if (tools.dominance) {
         setCurrentStep("dominance");
         log("Launching Dominance Engine — 11-module pipeline...");
@@ -123,11 +125,6 @@ export default function PipelineLauncher({ config, onBack }) {
             state: config.state || "",
             auto_purchase_domain: tools.domain,
             auto_deploy_vercel: tools.deploy,
-            business_name: config.businessName,
-            accent_color: config.accentColor,
-            logo_url: config.logoUrl,
-            content: config.content,
-            domain: config.domain,
           });
           if (res?.data?.campaign) {
             setResults((r) => ({ ...r, campaign: res.data.campaign }));
@@ -140,53 +137,44 @@ export default function PipelineLauncher({ config, onBack }) {
         }
       }
 
-      // Step 4: Social media setup
+      // Step 4: Social media — socialStudio action is "autoGenerate"
       if (tools.social) {
         setCurrentStep("social");
         log("Generating social media posts...");
         try {
-          const res = await base44.functions.invoke("socialStudio", {
-            action: "generate",
-            niche: config.industry.id,
-            business_name: config.businessName,
-            city: config.city,
-            accent_color: config.accentColor,
+          await base44.functions.invoke("socialStudio", {
+            action: "autoGenerate",
           });
-          log("Social media posts generated", "done");
+          log("Social media post generated & scheduled", "done");
         } catch (e) {
           log(`Social setup failed: ${e.message}`, "error");
         }
       }
 
-      // Step 5: SEO pages
+      // Step 5: SEO pages — seoGenerator action is "runFullCycle" with url param
       if (tools.seo_pages) {
         setCurrentStep("seo_pages");
         log("Generating SEO pages...");
         try {
-          const res = await base44.functions.invoke("seoGenerator", {
-            action: "generate",
-            niche: config.industry.id,
+          const siteUrl = config.domain ? `https://${config.domain}` : undefined;
+          await base44.functions.invoke("seoGenerator", {
+            action: "runFullCycle",
+            url: siteUrl,
             keyword: config.industry.keyword,
-            city: config.city,
-            state: config.state,
-            domain: config.domain,
-            business_name: config.businessName,
           });
-          log("SEO pages generation started", "done");
+          log("SEO full cycle started", "done");
         } catch (e) {
           log(`SEO pages failed: ${e.message}`, "error");
         }
       }
 
-      // Step 6: Competitor scanning
+      // Step 6: Competitor scanning — scanCompetitors takes mode param
       if (tools.competitors) {
         setCurrentStep("competitors");
         log("Scanning competitors...");
         try {
           await base44.functions.invoke("scanCompetitors", {
-            keyword: config.industry.keyword,
-            city: config.city,
-            state: config.state,
+            mode: "full",
           });
           log("Competitor scan initiated", "done");
         } catch (e) {
@@ -194,51 +182,42 @@ export default function PipelineLauncher({ config, onBack }) {
         }
       }
 
-      // Step 7: Lead scraper
+      // Step 7: Lead scraper — dailyLeadEngine takes presets param
       if (tools.leads) {
         setCurrentStep("leads");
-        log("Setting up lead scraper...");
+        log("Running lead engine...");
         try {
           await base44.functions.invoke("dailyLeadEngine", {
-            action: "setup",
-            niche: config.industry.id,
-            city: config.city,
-            state: config.state,
+            presets: ["homeowner_leads"],
           });
-          log("Lead scraper configured", "done");
+          log("Lead engine run completed", "done");
         } catch (e) {
-          log(`Lead scraper failed: ${e.message}`, "error");
+          log(`Lead engine failed: ${e.message}`, "error");
         }
       }
 
-      // Step 8: Skip trace
+      // Step 8: Skip trace — skipTrace action is "batch"
       if (tools.skip_trace) {
         setCurrentStep("skip_trace");
-        log("Setting up skip trace...");
+        log("Running skip trace batch...");
         try {
           await base44.functions.invoke("skipTrace", {
-            action: "setup",
-            niche: config.industry.id,
-            city: config.city,
+            action: "batch",
+            limit: 50,
           });
-          log("Skip trace configured", "done");
+          log("Skip trace batch completed", "done");
         } catch (e) {
           log(`Skip trace failed: ${e.message}`, "error");
         }
       }
 
-      // Step 9: Crystal ball
+      // Step 9: Crystal ball — tradeCrystalBall takes no action param
       if (tools.crystal_ball) {
         setCurrentStep("crystal_ball");
         log("Running crystal ball analysis...");
         try {
-          await base44.functions.invoke("tradeCrystalBall", {
-            action: "analyze",
-            niche: config.industry.id,
-            city: config.city,
-            state: config.state,
-          });
-          log("Crystal ball analysis started", "done");
+          await base44.functions.invoke("tradeCrystalBall", {});
+          log("Crystal ball analysis complete", "done");
         } catch (e) {
           log(`Crystal ball failed: ${e.message}`, "error");
         }
