@@ -33,6 +33,14 @@ const PRIMARY_ACTIONS = [
     glow: "shadow-orange-500/30",
   },
   {
+    to: "/admin/dominance-sandbox",
+    icon: Rocket,
+    label: "Dominance Sandbox",
+    desc: "7-tab command center — discovery, branding, funnel, content, social, simulation, launch",
+    gradient: "from-emerald-500 via-emerald-600 to-emerald-700",
+    glow: "shadow-emerald-500/30",
+  },
+  {
     to: "/admin/website-factory",
     icon: Rocket,
     label: "Launch New Website",
@@ -48,6 +56,7 @@ const LAUNCH_SECTIONS = [
     icon: Crown,
     color: "amber",
     items: [
+      { to: "/admin/dominance-sandbox", icon: Rocket, label: "Sandbox" },
       { to: "/admin/domain-rush", icon: Crown, label: "Dominance Engine" },
       { to: "/admin/crystal-ball", icon: Sparkles, label: "Crystal Ball" },
       { to: "/admin/seo-dominance", icon: Rocket, label: "SEO Dominance" },
