@@ -31,12 +31,58 @@ export default async function(req: Request): Promise<Response> {
     let pageText: string;
     let meta: any = {};
 
-    if (stealth || action === 'stealth') {
+    // Google search URLs get captcha-blocked by the cloud browser — Google's
+    // anti-bot detects the headless session even with proxy rotation. Route
+    // Google searches through InvokeLLM's web search instead, which uses
+    // Google's API backend (not a browser) and never gets captcha'd.
+    const isGoogleSearch = /https?:\/\/(www\.)?google\..*\/search/.test(url);
+    if (isGoogleSearch) {
+      const query = new URL(url).searchParams.get('q') || url;
+      const llmRes = await base44.integrations.Core.InvokeLLM({
+        prompt: `Search Google for: "${query}". Return the top organic search results as a structured list. For each result, include: title, URL, and a brief snippet/description. Also note any local business listings (Google Business Profile results) with their name, rating, and phone if visible. Return up to 20 results.`,
+        add_context_from_internet: true,
+        model: 'gemini_3_flash',
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            results: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  title: { type: 'string' },
+                  url: { type: 'string' },
+                  snippet: { type: 'string' },
+                  is_local_business: { type: 'boolean' },
+                  rating: { type: 'number' },
+                  phone: { type: 'string' }
+                }
+              }
+            },
+            summary: { type: 'string' }
+          }
+        }
+      });
+      pageText = JSON.stringify(llmRes, null, 2);
+      meta = { method: 'llm_web_search', query };
+    } else if (stealth || action === 'stealth') {
       const result = await browseStealth(url, { maxChars: 40000, country: body?.country || null });
       pageText = result.text;
       meta = { attempts: result.attempts, sessionId: result.sessionId };
     } else {
       pageText = await browseSession(url, 40000);
+    }
+
+    // Detect captcha / anti-bot block pages
+    const captchaHit = /unusual traffic from your computer network|captcha|are you a robot|Our systems have detected unusual traffic/i.test(pageText);
+    if (captchaHit) {
+      return Response.json({
+        url,
+        textChars: pageText.length,
+        error: 'Anti-bot block detected (captcha). This site is blocking the cloud browser. Try the stealth action or use a different source.',
+        blocked: true,
+        ...meta
+      });
     }
 
     if (!pageText || pageText.length < 50) {
