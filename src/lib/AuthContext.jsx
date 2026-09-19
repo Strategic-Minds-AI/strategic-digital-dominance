@@ -19,6 +19,19 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const checkAppState = async () => {
+    // Early redirect: if we have a pending postOAuthRedirect (e.g. the MCP
+    // consent page) from a Google OAuth round-trip, send the user there
+    // before any API calls. The consent page does its own server-side auth
+    // check — if the session isn't valid, it redirects to login with the
+    // correct returnTo, so the user comes back here after signing in.
+    const pending = sessionStorage.getItem("postOAuthRedirect");
+    if (pending) {
+      sessionStorage.removeItem("postOAuthRedirect");
+      if (pending !== window.location.pathname + window.location.search) {
+        window.location.href = pending;
+        return;
+      }
+    }
     try {
       setIsLoadingPublicSettings(true);
       setAuthError(null);
@@ -98,14 +111,6 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
       setIsLoadingAuth(false);
       setAuthChecked(true);
-
-      // Redirect to the stored destination after Google OAuth (the SDK's
-      // fromUrl param doesn't always survive the OAuth round-trip)
-      const postOAuthRedirect = sessionStorage.getItem("postOAuthRedirect");
-      if (postOAuthRedirect && postOAuthRedirect !== window.location.pathname) {
-        sessionStorage.removeItem("postOAuthRedirect");
-        window.location.href = postOAuthRedirect;
-      }
     } catch (error) {
       console.error('User auth check failed:', error);
       setIsLoadingAuth(false);
