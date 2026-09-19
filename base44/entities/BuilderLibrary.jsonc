@@ -1,0 +1,169 @@
+{
+  "name": "BuilderLibrary",
+  "type": "object",
+  "properties": {
+    "item_id": {
+      "type": "string",
+      "description": "Stable deterministic ID (CAP-001, AGENT-001, FN-001, WF-001)"
+    },
+    "item_type": {
+      "type": "string",
+      "enum": [
+        "capability",
+        "agent",
+        "function",
+        "workflow"
+      ],
+      "description": "What kind of library item this is"
+    },
+    "name": {
+      "type": "string",
+      "description": "Display name"
+    },
+    "phase": {
+      "type": "string",
+      "enum": [
+        "foundation",
+        "backend_data",
+        "frontend_ui",
+        "ai_agents",
+        "integrations",
+        "security_testing",
+        "delivery_provisioning",
+        "orchestrator",
+        "executor",
+        "validator",
+        "provisioner",
+        "generator",
+        "intelligence",
+        "delivery"
+      ],
+      "description": "Phase (for capabilities) or category (for functions)"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 5000,
+      "description": "Full description of what this item does"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "generating",
+        "validating",
+        "completed",
+        "failed",
+        "active"
+      ],
+      "default": "pending",
+      "description": "Current build/execution status"
+    },
+    "acceptance_test_id": {
+      "type": "string",
+      "description": "Linked acceptance test (for capabilities)"
+    },
+    "generator_function": {
+      "type": "string",
+      "description": "Backend function that generates this item"
+    },
+    "validator_function": {
+      "type": "string",
+      "description": "Backend function that validates this item"
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Item IDs this item depends on"
+    },
+    "output_artifact": {
+      "type": "string",
+      "description": "What this item produces"
+    },
+    "model_policy": {
+      "type": "string",
+      "enum": [
+        "reasoning",
+        "coding"
+      ],
+      "description": "For agents \u2014 which LLM model policy to use"
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "For agents \u2014 available tools"
+    },
+    "permissions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "For agents \u2014 permission scopes"
+    },
+    "trigger": {
+      "type": "string",
+      "description": "For functions/workflows \u2014 what triggers execution"
+    },
+    "execution_count": {
+      "type": "integer",
+      "default": 0,
+      "description": "How many times this item has been executed"
+    },
+    "last_executed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_result": {
+      "type": "string",
+      "maxLength": 3000,
+      "description": "Result of last execution"
+    },
+    "quality_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "default": 0,
+      "description": "Quality score from validation (0-100)"
+    },
+    "order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order within phase"
+    }
+  },
+  "required": [
+    "item_id",
+    "item_type",
+    "name",
+    "phase",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
