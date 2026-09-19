@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -209,6 +209,36 @@
   .xa-electric-btn:hover {
     animation: xa-electric-flow 1.8s ease-in-out infinite;
   }
+}
+
+@layer utilities {
+  /* === Dominance Sandbox — Tactical Command Center === */
+  .ds-font-mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .ds-display { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 32px; line-height: 1.1; text-transform: uppercase; letter-spacing: -0.02em; font-weight: 700; }
+  .ds-section-title { font-size: 18px; line-height: 1.2; font-weight: 600; }
+  .ds-body { font-size: 14px; line-height: 1.4; font-weight: 400; }
+  .ds-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; }
+  .ds-card { background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 4px; }
+  .ds-card-header { padding: 12px 16px; border-bottom: 1px solid #E4E4E7; display: flex; align-items: center; gap: 8px; }
+  .ds-rail { background: #09090B; }
+  .ds-canvas { background: #FAFAFA; }
+  .ds-tab-active { color: #D97706; border-bottom: 2px solid #D97706; }
+  .ds-tab-idle { color: #71717A; border-bottom: 2px solid transparent; }
+  .ds-tab-idle:hover { color: #09090B; }
+  .ds-pulse-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; animation: ds-pulse 1.5s ease-in-out infinite; }
+  @keyframes ds-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .ds-badge { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.04em; padding: 2px 8px; border-radius: 3px; display: inline-flex; align-items: center; gap: 4px; }
+  .ds-step-pill { padding: 4px 10px; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; }
+  .ds-step-pill.active { background: #D97706; color: #fff; box-shadow: 0 0 12px -2px #F59E0B; }
+  .ds-step-pill.done { background: #16A34A; color: #fff; }
+  .ds-step-pill.pending { background: #F4F4F5; color: #71717A; }
+  .ds-input { width: 100%; height: 38px; border: 1px solid #E4E4E7; border-radius: 4px; padding: 0 12px; font-size: 14px; color: #09090B; background: #fff; outline: none; transition: border-color 0.15s; }
+  .ds-input:focus { border-color: #D97706; }
+  .ds-btn-primary { background: #D97706; color: #fff; border: 1px solid #D97706; border-radius: 4px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s; display: inline-flex; align-items: center; gap: 6px; }
+  .ds-btn-primary:hover { background: #B45309; }
+  .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .ds-btn-ghost { background: #fff; color: #09090B; border: 1px solid #E4E4E7; border-radius: 4px; padding: 8px 16px; font-size: 13px; font-weight: 500; cursor: pointer; transition: border-color 0.15s; display: inline-flex; align-items: center; gap: 6px; }
+  .ds-btn-ghost:hover { border-color: #D97706; color: #D97706; }
 }
 
 @layer components {

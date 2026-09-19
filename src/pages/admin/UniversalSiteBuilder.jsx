@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Crown, Check } from "lucide-react";
+import { Crown, Check, Rocket } from "lucide-react";
+import { Link } from "react-router-dom";
 import IndustryPicker from "@/components/site-builder/IndustryPicker";
 import BrandingStudio from "@/components/site-builder/BrandingStudio";
 import ContentStudio from "@/components/site-builder/ContentStudio";
@@ -44,6 +45,9 @@ export default function UniversalSiteBuilder() {
             Pick an industry → customize branding → generate content → find the best URL → launch the full admin tool pipeline
           </p>
         </div>
+        <Link to="/admin/dominance-sandbox" className="ml-auto flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-400 text-sm font-semibold hover:bg-amber-500/30 transition-colors shrink-0">
+          <Rocket className="h-4 w-4" /> Dominance Sandbox
+        </Link>
       </div>
 
       {/* Step Progress */}
