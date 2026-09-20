@@ -1,0 +1,98 @@
+{
+  "name": "Recursive Production Readiness Engine",
+  "description": "Every 30 minutes, runs the recursive healing engine that chains AutoComplete (validate \u2192 gap \u2192 repair) with Alpha Prime (benchmarks \u2192 distance \u2192 repair factory \u2192 postcondition validate) in a recursive loop. Each iteration pushes the system closer to VERIFIED_100. The engine runs up to 5 iterations per cycle, stopping early if the system reaches production readiness or the score plateaus. This is the deterministic autonomous system that operates until the entire system is fully production ready, end to end.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "*/30 * * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "recursive_production_readiness_engine",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_recursive_healing": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "recursiveHealingEngine",
+            "args": {
+              "system_id": "epoxyquotenearme",
+              "max_iterations": 5
+            }
+          },
+          "then": "check_result",
+          "x-base44": {
+            "title": "Run recursive healing engine",
+            "description": "AutoComplete + Alpha Prime recursive loop, up to 5 iterations"
+          }
+        }
+      },
+      {
+        "check_result": {
+          "switch": [
+            {
+              "when": "${ .run_recursive_healing.verified_100 == true }",
+              "then": "log_verified"
+            },
+            {
+              "when": "${ true }",
+              "then": "log_in_progress"
+            }
+          ],
+          "x-base44": {
+            "title": "Check healing result",
+            "description": "Branch on verified_100 vs still healing"
+          }
+        }
+      },
+      {
+        "log_verified": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "autoComplete",
+            "args": {
+              "action": "status"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Log verified status",
+            "description": "System reached VERIFIED_100 \u2014 record final status"
+          }
+        }
+      },
+      {
+        "log_in_progress": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "autoComplete",
+            "args": {
+              "action": "status"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Log in-progress status",
+            "description": "System still healing \u2014 next cron tick continues the loop"
+          }
+        }
+      }
+    ]
+  }
+}

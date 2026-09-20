@@ -6,7 +6,9 @@ import { Zap, Loader2, Shield, AlertCircle, CheckCircle2, XCircle, Clock, Activi
 export default function AutoComplete() {
   const queryClient = useQueryClient();
   const [running, setRunning] = useState(false);
+  const [runningRecursive, setRunningRecursive] = useState(false);
   const [cycleResult, setCycleResult] = useState(null);
+  const [recursiveResult, setRecursiveResult] = useState(null);
   const [error, setError] = useState("");
   const [expandedSystem, setExpandedSystem] = useState(null);
 
@@ -33,6 +35,23 @@ export default function AutoComplete() {
       setError(e.message || "Cycle failed");
     }
     setRunning(false);
+  };
+
+  const runRecursiveHealing = async () => {
+    setRunningRecursive(true);
+    setError("");
+    setRecursiveResult(null);
+    try {
+      const res = await base44.functions.invoke("recursiveHealingEngine", {
+        system_id: "epoxyquotenearme",
+        max_iterations: 5,
+      });
+      setRecursiveResult(res.data || res);
+      queryClient.invalidateQueries(["autocomplete-status"]);
+    } catch (e) {
+      setError(e.message || "Recursive healing failed");
+    }
+    setRunningRecursive(false);
   };
 
   const runValidation = async (systemId) => {
@@ -68,14 +87,24 @@ export default function AutoComplete() {
               Every 30 minutes autonomously.
             </p>
           </div>
-          <button
-            onClick={runCycle}
-            disabled={running}
-            className="shrink-0 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-b from-amber-300 to-amber-600 text-stone-900 font-bold text-sm border border-amber-700 shadow-lg shadow-amber-500/30 hover:brightness-110 transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {running ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
-            {running ? "Running Cycle..." : "Run Full Cycle"}
-          </button>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={runRecursiveHealing}
+              disabled={runningRecursive}
+              className="inline-flex items-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-b from-stone-800 to-black text-amber-400 font-bold text-sm border border-amber-700 shadow-lg shadow-amber-500/20 hover:brightness-125 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {runningRecursive ? <Loader2 className="h-4 w-4 animate-spin" /> : <Cpu className="h-4 w-4" />}
+              {runningRecursive ? "Healing..." : "Recursive Healing"}
+            </button>
+            <button
+              onClick={runCycle}
+              disabled={running}
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-b from-amber-300 to-amber-600 text-stone-900 font-bold text-sm border border-amber-700 shadow-lg shadow-amber-500/30 hover:brightness-110 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {running ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
+              {running ? "Running..." : "Run Cycle"}
+            </button>
+          </div>
         </div>
 
         {/* Inline portfolio score bar */}
@@ -201,6 +230,58 @@ export default function AutoComplete() {
           </div>
         )}
       </div>
+
+      {/* Recursive Healing Result */}
+      {recursiveResult && (
+        <div className="rounded-2xl border border-stone-200 bg-white overflow-hidden">
+          <div className="flex items-center gap-2 px-5 py-4 bg-gradient-to-r from-stone-900 to-stone-800 border-b border-stone-700">
+            <Cpu className="h-4 w-4 text-amber-400" />
+            <h2 className="font-bold text-white">Recursive Healing Engine</h2>
+            <span className="ml-auto text-xs text-stone-400 font-mono">{recursiveResult.engine_id}</span>
+          </div>
+          <div className="p-5 space-y-4">
+            <div className="grid grid-cols-4 gap-2">
+              <div className="text-center p-3 rounded-xl bg-stone-50 border border-stone-100">
+                <div className="text-xl font-black text-stone-800">{recursiveResult.iterations_run}</div>
+                <div className="text-[10px] text-stone-400 uppercase tracking-wide mt-0.5">Iterations</div>
+              </div>
+              <div className="text-center p-3 rounded-xl bg-amber-50 border border-amber-100">
+                <div className="text-xl font-black text-amber-600">{recursiveResult.best_score}</div>
+                <div className="text-[10px] text-stone-400 uppercase tracking-wide mt-0.5">Best Score</div>
+              </div>
+              <div className={`text-center p-3 rounded-xl border ${recursiveResult.verified_100 ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100'}`}>
+                <div className={`text-xl font-black ${recursiveResult.verified_100 ? 'text-green-600' : 'text-red-600'}`}>
+                  {recursiveResult.verified_100 ? 'YES' : 'NO'}
+                </div>
+                <div className="text-[10px] text-stone-400 uppercase tracking-wide mt-0.5">Verified 100</div>
+              </div>
+              <div className="text-center p-3 rounded-xl bg-stone-50 border border-stone-100">
+                <div className="text-xs font-bold text-stone-700 leading-tight">{recursiveResult.final_state?.split('—')[0]?.trim() || 'Unknown'}</div>
+                <div className="text-[10px] text-stone-400 uppercase tracking-wide mt-0.5">Final State</div>
+              </div>
+            </div>
+            <div className="space-y-2">
+              {recursiveResult.iterations?.map((it, i) => (
+                <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-stone-50 border border-stone-100">
+                  <span className="grid place-items-center w-7 h-7 rounded-full bg-stone-800 text-white text-xs font-bold shrink-0">{it.iteration}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3 text-xs">
+                      <span className="font-semibold text-stone-700">Score: <span className="text-amber-600 font-bold">{it.score_final || it.score_after_autocomplete || 0}</span></span>
+                      <span className="text-stone-400">Gaps: P0={it.p0_gaps || 0} P1={it.p1_gaps || 0}</span>
+                      <span className="text-stone-400">Repairs: {it.active_repair_jobs || 0}</span>
+                    </div>
+                    <div className="text-[10px] text-stone-400 mt-0.5">
+                      AC: {it.steps?.find(s => s.step === 'autocomplete_cycle')?.ok ? '✓' : '✗'} · AP: {it.steps?.find(s => s.step === 'alpha_prime_cycle')?.ok ? '✓' : '✗'} · {it.duration_ms}ms
+                    </div>
+                  </div>
+                  {it.verified_100 && <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0" />}
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-stone-500 leading-relaxed">{recursiveResult.final_state}</p>
+          </div>
+        </div>
+      )}
 
       {/* System Scorecard */}
       <div className="rounded-2xl border border-stone-200 bg-white overflow-hidden">
