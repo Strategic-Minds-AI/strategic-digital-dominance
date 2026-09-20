@@ -131,20 +131,15 @@ export default function MetaAgent() {
     setRunningCmd(null);
   }, [sessionData, loadSession]);
 
-  const handleConverge = useCallback(async () => {
+  const handleAutoCompleteCycle = useCallback(async () => {
     if (!sessionData?.session?.session_id) return;
-    setRunningCmd("CONVERGE");
+    setRunningCmd("AUTOCOMPLETE");
     setError("");
     try {
-      const res = await base44.functions.invoke("metaAgent", {
-        action: "command",
-        session_id: sessionData.session.session_id,
-        command: "CONVERGE",
+      await base44.functions.invoke("autoComplete", {
+        action: "cycle",
+        system_id: "epoxyquotenearme",
       });
-      const data = res.data || res;
-      if (data.result) {
-        setError("");
-      }
       await loadSession(sessionData.session.session_id);
       await loadSessions();
     } catch (e) {
@@ -153,7 +148,7 @@ export default function MetaAgent() {
     setRunningCmd(null);
   }, [sessionData, loadSession, loadSessions]);
 
-  const convergeRunning = runningCmd === "CONVERGE";
+  const cycleRunning = runningCmd === "AUTOCOMPLETE";
 
   return (
     <div className="space-y-6">
@@ -192,33 +187,33 @@ export default function MetaAgent() {
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-3">
               <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-amber-500 text-white shadow-lg">
-                {convergeRunning ? <Loader2 className="h-6 w-6 animate-spin" /> : <Rocket className="h-6 w-6" />}
-              </div>
-              <div>
-                <h3 className="text-base font-bold text-stone-900">Run Full Convergence Pipeline</h3>
+                {cycleRunning ? <Loader2 className="h-6 w-6 animate-spin" /> : <Rocket className="h-6 w-6" />}
+                </div>
+                <div>
+                <h3 className="text-base font-bold text-stone-900">Run Full AutoComplete Cycle</h3>
                 <p className="text-xs text-stone-600 mt-0.5">
-                  Executes the entire XACE cycle: DISCOVER → AUDIT → SCORE → DIAGNOSE → PLAN → REPAIR → TEST → VALIDATE → HARDEN → OPTIMIZE → CHAOS → RESCORE → PRESERVE
+                  Executes the full production-readiness cycle: REGISTER → CONSTITUTE → BASELINE → GAP → REPAIR → VALIDATE → VERIFY
                 </p>
-              </div>
-            </div>
-            <button
-              onClick={handleConverge}
-              disabled={convergeRunning || runningCmd !== null}
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-amber-500 text-white text-sm font-bold hover:bg-amber-600 transition disabled:opacity-50 shadow-md"
-            >
-              {convergeRunning ? (
-                <><Loader2 className="h-4 w-4 animate-spin" /> Running Pipeline...</>
-              ) : (
-                <><Rocket className="h-4 w-4" /> Run Pipeline & Complete</>
-              )}
-            </button>
-          </div>
-          {sessionData?.session?.status === "COMPLETE" && (
-            <div className="mt-3 flex items-center gap-2 text-sm text-green-700 font-semibold">
-              <CheckCircle2 className="h-4 w-4" />
-              System reached VERIFIED_100 — pipeline complete
-            </div>
-          )}
+                </div>
+                </div>
+                <button
+                onClick={handleAutoCompleteCycle}
+                disabled={cycleRunning || runningCmd !== null}
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-amber-500 text-white text-sm font-bold hover:bg-amber-600 transition disabled:opacity-50 shadow-md"
+                >
+                {cycleRunning ? (
+                <><Loader2 className="h-4 w-4 animate-spin" /> Running Cycle...</>
+                ) : (
+                <><Rocket className="h-4 w-4" /> Run Full Cycle</>
+                )}
+                </button>
+                </div>
+                {sessionData?.session?.status === "COMPLETE" && (
+                <div className="mt-3 flex items-center gap-2 text-sm text-green-700 font-semibold">
+                <CheckCircle2 className="h-4 w-4" />
+                System reached VERIFIED_100 — cycle complete
+                </div>
+                )}
         </div>
       )}
 
