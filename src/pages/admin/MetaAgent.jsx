@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
-import { Brain, Loader2, AlertCircle, RefreshCw, History, Sparkles } from "lucide-react";
+import { Brain, Loader2, AlertCircle, RefreshCw, History, Sparkles, Rocket, CheckCircle2 } from "lucide-react";
 import GoalInput from "@/components/meta-agent/GoalInput";
 import AnalysisResult from "@/components/meta-agent/AnalysisResult";
 import WorkPacketList from "@/components/meta-agent/WorkPacketList";
@@ -131,6 +131,30 @@ export default function MetaAgent() {
     setRunningCmd(null);
   }, [sessionData, loadSession]);
 
+  const handleConverge = useCallback(async () => {
+    if (!sessionData?.session?.session_id) return;
+    setRunningCmd("CONVERGE");
+    setError("");
+    try {
+      const res = await base44.functions.invoke("metaAgent", {
+        action: "command",
+        session_id: sessionData.session.session_id,
+        command: "CONVERGE",
+      });
+      const data = res.data || res;
+      if (data.result) {
+        setError("");
+      }
+      await loadSession(sessionData.session.session_id);
+      await loadSessions();
+    } catch (e) {
+      setError(e.message);
+    }
+    setRunningCmd(null);
+  }, [sessionData, loadSession, loadSessions]);
+
+  const convergeRunning = runningCmd === "CONVERGE";
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -159,6 +183,42 @@ export default function MetaAgent() {
           <AlertCircle className="h-4 w-4 shrink-0" />
           {error}
           <button onClick={() => setError("")} className="ml-auto text-red-400 hover:text-red-600">✕</button>
+        </div>
+      )}
+
+      {/* Full Pipeline Runner */}
+      {sessionData?.session?.session_id && (
+        <div className="rounded-2xl border-2 border-amber-300 bg-gradient-to-r from-amber-50 to-orange-50 p-5 shadow-sm">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-amber-500 text-white shadow-lg">
+                {convergeRunning ? <Loader2 className="h-6 w-6 animate-spin" /> : <Rocket className="h-6 w-6" />}
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-stone-900">Run Full Convergence Pipeline</h3>
+                <p className="text-xs text-stone-600 mt-0.5">
+                  Executes the entire XACE cycle: DISCOVER → AUDIT → SCORE → DIAGNOSE → PLAN → REPAIR → TEST → VALIDATE → HARDEN → OPTIMIZE → CHAOS → RESCORE → PRESERVE
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={handleConverge}
+              disabled={convergeRunning || runningCmd !== null}
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-amber-500 text-white text-sm font-bold hover:bg-amber-600 transition disabled:opacity-50 shadow-md"
+            >
+              {convergeRunning ? (
+                <><Loader2 className="h-4 w-4 animate-spin" /> Running Pipeline...</>
+              ) : (
+                <><Rocket className="h-4 w-4" /> Run Pipeline & Complete</>
+              )}
+            </button>
+          </div>
+          {sessionData?.session?.status === "COMPLETE" && (
+            <div className="mt-3 flex items-center gap-2 text-sm text-green-700 font-semibold">
+              <CheckCircle2 className="h-4 w-4" />
+              System reached VERIFIED_100 — pipeline complete
+            </div>
+          )}
         </div>
       )}
 

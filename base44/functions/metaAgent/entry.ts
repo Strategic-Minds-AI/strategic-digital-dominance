@@ -855,6 +855,62 @@ export default async function (req: Request): Promise<Response> {
             break;
           }
 
+          case 'CONVERGE': {
+            // Run the full convergence pipeline (XACE) on the target system
+            const targetSystemId = body.parameters?.system_id || body.system_id || 'epoxyquotenearme';
+            try {
+              const convergeRes = await base44.functions.invoke('convergenceEngine', {
+                action: 'cycle',
+                system_id: targetSystemId,
+              });
+              const convergeData = convergeRes.data || convergeRes;
+              resultSummary = `/CONVERGE: Full pipeline executed on ${targetSystemId}. Score ${convergeData.baseline_score} → ${convergeData.final_score}, verified=${convergeData.verified_100}, phases=${convergeData.phases?.length || 0}, duration=${(convergeData.total_duration_ms / 1000).toFixed(1)}s`;
+
+              // Update session with convergence results
+              await svc.entities.MetaSession.update(session.id, {
+                status: convergeData.verified_100 ? 'COMPLETE' : 'IN_PROGRESS',
+                current_phase: convergeData.verified_100 ? 'COMPLETE' : 'VALIDATING',
+                next_action: convergeData.verified_100
+                  ? 'System reached VERIFIED_100 — pipeline complete'
+                  : `Score ${convergeData.final_score}/100. ${convergeData.next_action || 'Run /CONVERGE again to continue convergence'}`,
+              });
+
+              // Create validation receipts from convergence scorecard
+              const scorecard = convergeData.scorecard || {};
+              const categories = scorecard.categories || [];
+              for (const cat of categories) {
+                if (cat.status === 'pass' || cat.status === 'fail') {
+                  const receiptId = deterministicId(body.session_id, 'CONVERGE', cat.id);
+                  const existingR = await svc.entities.ValidationReceipt.filter({ receipt_id: receiptId }, '-timestamp', 1);
+                  if (!existingR || existingR.length === 0) {
+                    await svc.entities.ValidationReceipt.create({
+                      receipt_id: receiptId,
+                      session_id: body.session_id,
+                      work_packet_id: `CONVERGE-${targetSystemId}`,
+                      check_name: cat.name || cat.id,
+                      expected: cat.pass_condition || '',
+                      actual: cat.status,
+                      status: cat.status === 'pass' ? 'PASS' : 'FAIL',
+                      evidence: `Convergence Engine ${cat.id} — ${cat.status}`,
+                      validator: 'convergenceEngine',
+                      category: (cat as any).category || 'operations_documentation',
+                      points_possible: cat.weight || 1,
+                      points_verified: cat.status === 'pass' ? (cat.weight || 1) : 0,
+                      timestamp: new Date().toISOString(),
+                    });
+                  }
+                }
+              }
+
+              // Recalculate readiness score from new receipts
+              const updatedScore = await calculateReadinessScore(svc, body.session_id);
+              await svc.entities.MetaSession.update(session.id, { readiness_score: updatedScore });
+            } catch (cerr: any) {
+              resultSummary = `/CONVERGE: FAILED — ${cerr.message}`;
+            }
+            break;
+          }
+
           default:
             resultSummary = `Unknown command: ${body.command}`;
         }
