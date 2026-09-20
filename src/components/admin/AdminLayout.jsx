@@ -15,6 +15,7 @@ const navGroups = [
   {
     label: "Dominance Engines",
     items: [
+      { to: "/admin/meta-agent", icon: Brain, label: "Meta Agent" },
       { to: "/admin/site-builder", icon: Crown, label: "Site Builder" },
       { to: "/admin/dominance-sandbox", icon: Rocket, label: "Sandbox" },
       { to: "/admin/builder-library", icon: Sparkles, label: "Builder Library" },

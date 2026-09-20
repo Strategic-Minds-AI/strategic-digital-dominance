@@ -1,0 +1,132 @@
+{
+  "name": "DiscoveryJob",
+  "type": "object",
+  "properties": {
+    "discovery_id": {
+      "type": "string",
+      "description": "Deterministic discovery job ID"
+    },
+    "session_id": {
+      "type": "string",
+      "description": "Parent MetaSession ID"
+    },
+    "query": {
+      "type": "string",
+      "description": "What to discover"
+    },
+    "category": {
+      "type": "string",
+      "description": "Capability category"
+    },
+    "reason": {
+      "type": "string",
+      "maxLength": 2000,
+      "description": "Why this discovery is needed"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "QUEUED",
+        "RUNNING",
+        "COMPLETED",
+        "FAILED",
+        "BLOCKED"
+      ],
+      "default": "QUEUED"
+    },
+    "source_requirements": {
+      "type": "object",
+      "properties": {
+        "official_sources_preferred": {
+          "type": "boolean",
+          "default": true
+        },
+        "github_allowed": {
+          "type": "boolean",
+          "default": true
+        },
+        "open_source_only": {
+          "type": "boolean",
+          "default": false
+        },
+        "commercial_use_required": {
+          "type": "boolean",
+          "default": true
+        },
+        "free_only": {
+          "type": "boolean",
+          "default": false
+        },
+        "maximum_results": {
+          "type": "integer",
+          "default": 10
+        },
+        "freshness_requirement": {
+          "type": "string",
+          "description": "e.g. 30d, 90d, 1y"
+        },
+        "validation_requirements": {
+          "type": "string"
+        }
+      }
+    },
+    "preferred_executor": {
+      "type": "string",
+      "enum": [
+        "XTREME_CLOUD_BROWSER",
+        "BASE44",
+        "EXTERNAL_MCP",
+        "HUMAN"
+      ],
+      "default": "XTREME_CLOUD_BROWSER"
+    },
+    "results": {
+      "type": "string",
+      "maxLength": 10000,
+      "description": "Serialized discovery results when completed"
+    },
+    "result_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "error": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "discovery_id",
+    "session_id",
+    "query",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "name": "ValidationReceipt",
+  "type": "object",
+  "properties": {
+    "receipt_id": {
+      "type": "string",
+      "description": "Deterministic receipt ID"
+    },
+    "session_id": {
+      "type": "string"
+    },
+    "work_packet_id": {
+      "type": "string"
+    },
+    "check_name": {
+      "type": "string",
+      "description": "Name of the validation check"
+    },
+    "expected": {
+      "type": "string",
+      "maxLength": 2000,
+      "description": "Expected state"
+    },
+    "actual": {
+      "type": "string",
+      "maxLength": 2000,
+      "description": "Actual measured state"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PASS",
+        "FAIL",
+        "BLOCKED",
+        "MISSING_EVIDENCE",
+        "PENDING"
+      ],
+      "default": "PENDING"
+    },
+    "evidence": {
+      "type": "string",
+      "maxLength": 5000,
+      "description": "Evidence supporting the result"
+    },
+    "validator": {
+      "type": "string",
+      "description": "Which validator produced this"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "source_truth",
+        "architecture",
+        "code_quality",
+        "data_integrity",
+        "security",
+        "testing",
+        "reliability",
+        "performance",
+        "ux_accessibility",
+        "operations_documentation"
+      ]
+    },
+    "points_possible": {
+      "type": "number",
+      "default": 0
+    },
+    "points_verified": {
+      "type": "number",
+      "default": 0
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "receipt_id",
+    "work_packet_id",
+    "check_name",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

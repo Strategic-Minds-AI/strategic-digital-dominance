@@ -1,0 +1,88 @@
+{
+  "name": "ApprovalRequest",
+  "type": "object",
+  "properties": {
+    "approval_id": {
+      "type": "string",
+      "description": "Deterministic approval ID"
+    },
+    "session_id": {
+      "type": "string"
+    },
+    "work_packet_id": {
+      "type": "string"
+    },
+    "action": {
+      "type": "string",
+      "description": "What action needs approval"
+    },
+    "reason": {
+      "type": "string",
+      "maxLength": 2000,
+      "description": "Why approval is needed"
+    },
+    "risk_class": {
+      "type": "string",
+      "enum": [
+        "READ",
+        "DRAFT",
+        "BRANCH_WRITE",
+        "PROTECTED"
+      ],
+      "default": "PROTECTED"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "APPROVED",
+        "DENIED",
+        "EXPIRED"
+      ],
+      "default": "PENDING"
+    },
+    "requested_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "resolved_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "resolved_by": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 2000
+    }
+  },
+  "required": [
+    "approval_id",
+    "work_packet_id",
+    "action",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

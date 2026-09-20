@@ -1,0 +1,340 @@
+{
+  "name": "MetaSession",
+  "type": "object",
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "description": "Deterministic session ID"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "Owner user ID"
+    },
+    "goal": {
+      "type": "string",
+      "maxLength": 5000,
+      "description": "Natural language goal from the user"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "NEW",
+        "ANALYZING",
+        "MATCHING",
+        "GAP_ANALYSIS",
+        "PLANNED",
+        "WAITING_APPROVAL",
+        "READY",
+        "IN_PROGRESS",
+        "VALIDATING",
+        "BLOCKED",
+        "COMPLETE"
+      ],
+      "default": "NEW"
+    },
+    "intent_types": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "DISCOVERY",
+          "AUDIT",
+          "ARCHITECTURE",
+          "BUILD",
+          "COMPLETE",
+          "REPAIR",
+          "HEAL",
+          "HARDEN",
+          "OPTIMIZE",
+          "MIGRATE",
+          "REFACTOR",
+          "INTEGRATE",
+          "PACKAGE",
+          "DOCUMENT",
+          "TEST",
+          "VALIDATE",
+          "RELEASE_PREP",
+          "RESEARCH"
+        ]
+      },
+      "default": []
+    },
+    "system_types": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "WEBSITE",
+          "WEB_APP",
+          "SAAS",
+          "MOBILE_APP",
+          "PWA",
+          "API",
+          "MCP_SERVER",
+          "AI_AGENT",
+          "AGENT_SWARM",
+          "WORKFLOW",
+          "AUTOMATION",
+          "GENERATOR",
+          "SCRAPER",
+          "BROWSER_AGENT",
+          "DATA_PIPELINE",
+          "RAG",
+          "MEMORY_SYSTEM",
+          "BUSINESS_SYSTEM",
+          "MARKETING_SYSTEM",
+          "SEO_SYSTEM",
+          "LEAD_SYSTEM",
+          "ECOMMERCE",
+          "ADMIN_PORTAL",
+          "CLIENT_PORTAL",
+          "DEVELOPER_TOOL",
+          "OTHER"
+        ]
+      },
+      "default": []
+    },
+    "summary": {
+      "type": "string",
+      "maxLength": 5000,
+      "description": "AI-generated analysis summary of what was understood"
+    },
+    "recommended_architecture": {
+      "type": "string",
+      "maxLength": 10000,
+      "description": "Recommended architecture composition"
+    },
+    "matched_assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "item_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "item_type": {
+            "type": "string"
+          },
+          "relevance": {
+            "type": "number"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "default": []
+    },
+    "matched_prompts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "relevance": {
+            "type": "number"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "default": []
+    },
+    "capability_map": {
+      "type": "object",
+      "description": "Capability matrix by category with status",
+      "properties": {
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "category": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "AVAILABLE",
+                  "PARTIAL",
+                  "MISSING",
+                  "UNVERIFIED"
+                ]
+              },
+              "available_count": {
+                "type": "integer"
+              },
+              "needed_count": {
+                "type": "integer"
+              }
+            }
+          },
+          "default": []
+        }
+      }
+    },
+    "capability_gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "needed": {
+            "type": "string"
+          },
+          "found": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "AVAILABLE",
+              "PARTIAL",
+              "MISSING",
+              "UNVERIFIED",
+              "DEPRECATED",
+              "BLOCKED"
+            ]
+          },
+          "action": {
+            "type": "string"
+          }
+        }
+      },
+      "default": []
+    },
+    "readiness_score": {
+      "type": "object",
+      "properties": {
+        "verified_score": {
+          "type": "number",
+          "default": 0
+        },
+        "unverified_points": {
+          "type": "number",
+          "default": 0
+        },
+        "failed_points": {
+          "type": "number",
+          "default": 0
+        },
+        "blockers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "breakdown": {
+          "type": "object",
+          "properties": {
+            "source_truth": {
+              "type": "number",
+              "default": 0
+            },
+            "architecture": {
+              "type": "number",
+              "default": 0
+            },
+            "code_quality": {
+              "type": "number",
+              "default": 0
+            },
+            "data_integrity": {
+              "type": "number",
+              "default": 0
+            },
+            "security": {
+              "type": "number",
+              "default": 0
+            },
+            "testing": {
+              "type": "number",
+              "default": 0
+            },
+            "reliability": {
+              "type": "number",
+              "default": 0
+            },
+            "performance": {
+              "type": "number",
+              "default": 0
+            },
+            "ux_accessibility": {
+              "type": "number",
+              "default": 0
+            },
+            "operations_documentation": {
+              "type": "number",
+              "default": 0
+            }
+          }
+        }
+      }
+    },
+    "current_phase": {
+      "type": "string",
+      "default": "INTENT_ANALYSIS"
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": [
+        "READ",
+        "DRAFT",
+        "BRANCH_WRITE",
+        "PROTECTED"
+      ],
+      "default": "READ"
+    },
+    "work_packet_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "next_action": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "session_id",
+    "user_id",
+    "goal",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

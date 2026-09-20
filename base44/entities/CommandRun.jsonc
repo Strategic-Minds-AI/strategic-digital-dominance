@@ -1,0 +1,99 @@
+{
+  "name": "CommandRun",
+  "type": "object",
+  "properties": {
+    "command_id": {
+      "type": "string",
+      "description": "Deterministic command run ID"
+    },
+    "session_id": {
+      "type": "string"
+    },
+    "command": {
+      "type": "string",
+      "enum": [
+        "DISCOVER",
+        "PROMPTS",
+        "PACKAGE",
+        "AUDIT",
+        "HEAL",
+        "UPGRADE",
+        "COMPLETE",
+        "HARDEN",
+        "MIGRATE",
+        "MCP",
+        "AGENTS",
+        "WORKFLOWS",
+        "VALIDATE",
+        "SCORE",
+        "ANALYZE"
+      ]
+    },
+    "parameters": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Command parameters"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "QUEUED",
+        "RUNNING",
+        "COMPLETED",
+        "FAILED",
+        "BLOCKED"
+      ],
+      "default": "QUEUED"
+    },
+    "result_summary": {
+      "type": "string",
+      "maxLength": 5000
+    },
+    "work_packets_created": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "error": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "command_id",
+    "session_id",
+    "command",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

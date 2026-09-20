@@ -1,0 +1,265 @@
+{
+  "name": "WorkPacket",
+  "type": "object",
+  "properties": {
+    "packet_id": {
+      "type": "string",
+      "description": "Deterministic packet ID"
+    },
+    "session_id": {
+      "type": "string",
+      "description": "Parent MetaSession ID"
+    },
+    "title": {
+      "type": "string"
+    },
+    "objective": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 5000
+    },
+    "phase": {
+      "type": "string",
+      "enum": [
+        "DISCOVER_SOURCE_TRUTH",
+        "AUDIT_ARCHITECTURE",
+        "DATABASE_MIGRATION_PLAN",
+        "BACKEND_MIGRATION",
+        "FRONTEND_INTEGRATION",
+        "TEST",
+        "SECURITY",
+        "PRODUCTION_READINESS",
+        "DISCOVERY",
+        "BUILD",
+        "REPAIR",
+        "HARDEN",
+        "OPTIMIZE",
+        "MIGRATE",
+        "PACKAGE",
+        "DOCUMENT",
+        "VALIDATE",
+        "OTHER"
+      ],
+      "default": "OTHER"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "DRAFT",
+        "READY",
+        "BLOCKED",
+        "WAITING_DEPENDENCY",
+        "WAITING_APPROVAL",
+        "QUEUED",
+        "RUNNING",
+        "VALIDATING",
+        "FAILED",
+        "REPAIR_REQUIRED",
+        "PASSED",
+        "COMPLETE"
+      ],
+      "default": "DRAFT"
+    },
+    "risk_class": {
+      "type": "string",
+      "enum": [
+        "READ",
+        "DRAFT",
+        "BRANCH_WRITE",
+        "PROTECTED"
+      ],
+      "default": "READ"
+    },
+    "inputs": {
+      "type": "string",
+      "maxLength": 3000,
+      "description": "Required inputs"
+    },
+    "outputs": {
+      "type": "string",
+      "maxLength": 3000,
+      "description": "Expected outputs"
+    },
+    "source_truth": {
+      "type": "string",
+      "description": "Source of truth reference"
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Other packet IDs this depends on"
+    },
+    "parallel_safe": {
+      "type": "boolean",
+      "default": false
+    },
+    "acceptance_criteria": {
+      "type": "string",
+      "maxLength": 3000
+    },
+    "validation_requirements": {
+      "type": "string",
+      "maxLength": 3000
+    },
+    "allowed_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "forbidden_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "recommended_assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "item_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "relationship": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low"
+            ]
+          }
+        }
+      },
+      "default": []
+    },
+    "recommended_prompts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "default": []
+    },
+    "recommended_tools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "recommended_executor": {
+      "type": "string",
+      "enum": [
+        "BASE44",
+        "CODEX",
+        "GITHUB_AGENT",
+        "VERCEL",
+        "SUPABASE",
+        "RAILWAY",
+        "XTREME_CLOUD_BROWSER",
+        "XTREME_COMMUNICATIONS",
+        "XTREME_SEO_GENERATOR",
+        "VISION_CORTEX",
+        "EXTERNAL_MCP",
+        "HUMAN"
+      ],
+      "default": "BASE44"
+    },
+    "fallback_executor": {
+      "type": "string",
+      "enum": [
+        "BASE44",
+        "CODEX",
+        "GITHUB_AGENT",
+        "VERCEL",
+        "SUPABASE",
+        "RAILWAY",
+        "XTREME_CLOUD_BROWSER",
+        "XTREME_COMMUNICATIONS",
+        "XTREME_SEO_GENERATOR",
+        "VISION_CORTEX",
+        "EXTERNAL_MCP",
+        "HUMAN"
+      ],
+      "default": "HUMAN"
+    },
+    "affected_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "affected_systems": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "rollback_requirements": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Execution order in dependency chain"
+    }
+  },
+  "required": [
+    "packet_id",
+    "session_id",
+    "title",
+    "phase",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
