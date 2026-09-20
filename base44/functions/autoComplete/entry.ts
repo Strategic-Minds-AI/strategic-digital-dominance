@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.48';
 import { VALIDATION_CONSTITUTION, getHardGates, computeWeightedScore, isVerified100, PATH_TO_100 } from '../../shared/validationConstitution.ts';
 import { getUniversalBenchmarks } from '../../shared/universalBenchmarkPacks.ts';
+import { runAllValidators } from '../../shared/autoCompleteValidators.ts';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // autoComplete — Universal AutoComplete orchestrator.
@@ -117,7 +118,7 @@ export default async function (req: Request): Promise<Response> {
         });
       }
 
-      // ── VALIDATE: Run BASELINE step for a system ──
+      // ── VALIDATE: Run BASELINE step for a system with REAL validators ──
       case 'validate': {
         if (!body.system_id) return Response.json({ error: 'system_id required' }, { status: 400 });
 
@@ -126,33 +127,85 @@ export default async function (req: Request): Promise<Response> {
 
         const cycleId = `cycle-${Date.now()}`;
         const now = new Date().toISOString();
+
+        // Determine app URL from system domains or base44 app
+        const appUrl = system.domains?.[0] || (system.base44_app_slug ? `https://${system.base44_app_slug}.base44.app` : '');
+
+        // Run REAL validators
+        const validatorResults = await runAllValidators({
+          system_id: body.system_id,
+          app_url: appUrl,
+          base44_app_id: system.base44_app_id,
+          system_type: system.system_type,
+          repository: system.repository,
+          svc,
+        });
+
+        // Map validator results to constitution dimensions and create BenchmarkResults
         const validationResults: any[] = [];
+        let gapsCreated = 0;
 
-        // Run each validation dimension
         for (const dim of VALIDATION_CONSTITUTION) {
+          const vr = validatorResults.find(r => r.dimension === dim.dimension) || { status: 'unknown', actual: 'Not measured', details: '', failure_reasons: [] };
           const benchmarkId = `AC-${dim.dimension.toUpperCase()}-${body.system_id}`;
-          let status = 'unknown';
-          let actual = 'Not yet measured';
-          let details = '';
 
-          // Check existing benchmark results for this dimension
-          const existing = await svc.entities.BenchmarkResult.filter({
+          // Create BenchmarkResult record
+          await svc.entities.BenchmarkResult.create({
             benchmark_id: benchmarkId,
             system_id: body.system_id,
-          }, '-created_date', 1);
+            cycle_id: cycleId,
+            target: dim.pass_condition,
+            actual: vr.actual,
+            delta: vr.status === 'pass' ? '0' : 'N/A',
+            status: vr.status,
+            severity: dim.gate === 'HARD' ? 'P0' : 'P2',
+            mandatory: dim.gate === 'HARD',
+            evidence_receipt_id: '',
+            measured_at: now,
+            validator: 'autoComplete',
+            details: vr.details,
+            failure_reasons: vr.failure_reasons || [],
+          });
 
-          if (existing && existing.length > 0) {
-            const lastResult = existing[0];
-            const ageHours = (Date.now() - new Date(lastResult.measured_at || lastResult.created_date).getTime()) / 3600000;
-            const maxAge = dim.freshness_default.includes('h') ? parseInt(dim.freshness_default) : 24;
-            if (ageHours > maxAge) {
-              status = 'stale';
-              actual = lastResult.actual || 'Stale evidence';
-              details = `Evidence ${ageHours.toFixed(1)}h old (max ${maxAge}h)`;
+          // Create OptimizationGap for FAIL/UNKNOWN on mandatory dimensions
+          if ((vr.status === 'fail' || vr.status === 'unknown') && dim.gate === 'HARD') {
+            const gapId = `${body.system_id}:${benchmarkId}`;
+            const existingGap = await svc.entities.OptimizationGap.filter({ gap_id: gapId, status: 'open' }, '-created_date', 1);
+            if (!existingGap || existingGap.length === 0) {
+              const severity = dim.weight >= 15 ? 'P0' : 'P1';
+              const priorityScore = (dim.weight * 10) + (vr.status === 'fail' ? 50 : 20);
+              await svc.entities.OptimizationGap.create({
+                gap_id: gapId,
+                system_id: body.system_id,
+                benchmark_id: benchmarkId,
+                cycle_id: cycleId,
+                target: dim.pass_condition,
+                actual: vr.actual,
+                delta: vr.details,
+                severity: severity as any,
+                business_impact: dim.weight >= 15 ? 'critical' : 'high',
+                confidence: 0.9,
+                estimated_effort: 'medium',
+                estimated_cost: 'low',
+                change_risk: 'low',
+                dependencies: [],
+                repair_priority_score: priorityScore,
+                status: 'open',
+                last_seen: now,
+                occurrence_count: 1,
+                latest_cycle: cycleId,
+                latest_evidence: vr.evidence || vr.actual,
+                created_at: now,
+              });
+              gapsCreated++;
             } else {
-              status = lastResult.status;
-              actual = lastResult.actual || '';
-              details = lastResult.details || '';
+              // Update occurrence count on existing gap
+              await svc.entities.OptimizationGap.update(existingGap[0].id, {
+                last_seen: now,
+                occurrence_count: (existingGap[0].occurrence_count || 1) + 1,
+                latest_cycle: cycleId,
+                latest_evidence: vr.actual,
+              });
             }
           }
 
@@ -160,10 +213,11 @@ export default async function (req: Request): Promise<Response> {
             dimension: dim.dimension,
             weight: dim.weight,
             gate: dim.gate,
-            status,
-            actual,
-            details,
+            status: vr.status,
+            actual: vr.actual,
+            details: vr.details,
             pass_condition: dim.pass_condition,
+            failure_reasons: vr.failure_reasons || [],
           });
         }
 
@@ -178,9 +232,9 @@ export default async function (req: Request): Promise<Response> {
           benchmark_id: `AC-VALIDATION-${body.system_id}`,
           cycle_id: cycleId,
           evidence_type: 'function_output',
-          evidence_url: '',
-          evidence_description: `AutoComplete validation cycle for ${body.system_id}`,
-          evidence_data: JSON.stringify({ cycleId, weightedScore, verified, dimensions: validationResults }),
+          evidence_url: appUrl,
+          evidence_description: `AutoComplete validation cycle for ${body.system_id} — ${validationResults.length} dimensions checked`,
+          evidence_data: JSON.stringify({ cycleId, weightedScore, verified, dimensions: validationResults, gapsCreated }),
           verified_at: now,
           verified_by: 'autoComplete',
           valid: true,
@@ -194,6 +248,7 @@ export default async function (req: Request): Promise<Response> {
           weighted_score: weightedScore,
           verified_100: verified,
           dimensions: validationResults,
+          gaps_created: gapsCreated,
           receipt_id: receiptId,
         });
       }
@@ -295,14 +350,60 @@ export default async function (req: Request): Promise<Response> {
             detail: `weighted_score=${validation.weighted_score}, verified=${validation.verified_100}`,
           });
 
-          // STEP 4: GAP — Check open gaps
+          // STEP 4: GAP — Check open gaps and create RepairJobs from P0/P1 gaps
           const openGaps = await svc.entities.OptimizationGap.filter({ system_id: system.system_id, status: 'open' }, '-repair_priority_score', 50);
           const p0Gaps = openGaps.filter(g => g.severity === 'P0');
           const p1Gaps = openGaps.filter(g => g.severity === 'P1');
+          let repairsCreated = 0;
+
+          // Create RepairJobs from P0/P1 gaps that don't have one yet
+          for (const gap of [...p0Gaps, ...p1Gaps]) {
+            if (gap.repair_job_id) continue; // already has a repair job
+            const fingerprint = `${gap.system_id}:${gap.benchmark_id}:${gap.gap_id}`;
+            const repairId = `repair-${Math.abs(fingerprint.split('').reduce((h, c) => ((h << 5) - h + c.charCodeAt(0)) | 0, 0)).toString(36)}`;
+            const existingRepair = await svc.entities.RepairJob.filter({ repair_id: repairId, system_id: gap.system_id }, '-created_date', 1);
+            if (existingRepair && existingRepair.length > 0) continue;
+
+            await svc.entities.RepairJob.create({
+              repair_id: repairId,
+              system_id: gap.system_id,
+              benchmark_id: gap.benchmark_id,
+              gap_id: gap.gap_id,
+              failure_fingerprint: fingerprint,
+              root_cause: gap.delta || 'Root cause analysis pending',
+              affected_system: gap.system_id,
+              affected_files: [],
+              affected_entities: [],
+              reproduction_steps: `Validate benchmark ${gap.benchmark_id} on system ${gap.system_id}`,
+              expected_state: gap.target,
+              observed_state: gap.actual,
+              implementation_plan: `Fix ${gap.benchmark_id} failure: ${gap.delta || gap.actual}`,
+              assigned_specialist: gap.severity === 'P0' ? 'software_engineer' : 'seo_specialist',
+              risk: 'low',
+              rollback: 'Revert the specific change that caused the failure',
+              acceptance_test: `Re-run autoComplete validate for ${gap.benchmark_id} and confirm PASS`,
+              regression_test: `Ensure no other benchmarks regress after fix`,
+              postcondition_validator: 'autoComplete',
+              status: 'queued',
+              approval_required: false,
+              attempt_count: 0,
+              occurrence_count: gap.occurrence_count || 1,
+              created_at: now,
+              updated_at: now,
+            });
+
+            // Link gap to repair job
+            await svc.entities.OptimizationGap.update(gap.id, {
+              repair_job_id: repairId,
+              status: 'in_repair',
+            });
+            repairsCreated++;
+          }
+
           systemSteps.push({
             step: 'GAP',
             pass: true,
-            detail: `${openGaps.length} open gaps (${p0Gaps.length} P0, ${p1Gaps.length} P1)`,
+            detail: `${openGaps.length} open gaps (${p0Gaps.length} P0, ${p1Gaps.length} P1), ${repairsCreated} repair jobs created`,
           });
 
           // STEP 5: REPAIR — Check repair jobs
@@ -310,7 +411,7 @@ export default async function (req: Request): Promise<Response> {
           systemSteps.push({
             step: 'REPAIR',
             pass: true,
-            detail: `${activeRepairs.length} active repair jobs`,
+            detail: `${activeRepairs.length} active repair jobs (${repairsCreated} new this cycle)`,
           });
 
           // STEP 6: VALIDATE — Check validated repairs
@@ -386,6 +487,41 @@ export default async function (req: Request): Promise<Response> {
           avg_score: results.length > 0 ? Math.round(results.reduce((sum, r) => sum + r.weighted_score, 0) / results.length) : 0,
           results,
         });
+      }
+
+      // ── REGISTER_SELF: Register this app as a FleetSystem ──
+      case 'register_self': {
+        const systemId = body.system_id || 'epoxyquotenearme';
+        const existing = await svc.entities.FleetSystem.filter({ system_id: systemId }, '-created_date', 1);
+
+        const data = {
+          system_id: systemId,
+          name: body.name || 'Epoxy Quote Near Me',
+          description: body.description || 'Epoxy garage floor estimate funnel and national dominance platform',
+          system_type: body.system_type || 'lead_generation',
+          business_purpose: body.business_purpose || 'Generate and convert epoxy garage floor leads nationally',
+          repository: body.repository || 'XTREME-SYSTEMS/epoxyquotenearme',
+          default_branch: 'main',
+          domains: body.domains || ['https://epoxyquotenearme.base44.app'],
+          base44_app_id: body.base44_app_id || '6a77f4491f0bf92de9a3ed8b',
+          base44_app_slug: body.base44_app_slug || 'epoxyquotenearme',
+          priority: 'critical',
+          lifecycle: 'completion_sprint',
+          current_mode: 'completion_sprint',
+          migration_status: 'native',
+          local_alpha_controller: 'alphaPrimeOptimizationCycle',
+          local_alpha_health: 'unknown',
+          active: true,
+          registered_at: new Date().toISOString(),
+        };
+
+        if (existing && existing.length > 0) {
+          await svc.entities.FleetSystem.update(existing[0].id, data);
+          return Response.json({ ok: true, action: 'updated', system_id: systemId, id: existing[0].id });
+        } else {
+          const created = await svc.entities.FleetSystem.create(data);
+          return Response.json({ ok: true, action: 'created', system_id: systemId, id: created.id });
+        }
       }
 
       default:

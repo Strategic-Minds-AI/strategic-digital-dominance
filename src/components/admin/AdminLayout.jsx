@@ -34,6 +34,7 @@ const navGroups = [
       { to: "/admin/system-map", icon: Boxes, label: "System Map" },
       { to: "/admin/platform", icon: Cpu, label: "Platform" },
       { to: "/admin/system-health", icon: Gauge, label: "System Health" },
+      { to: "/admin/autocomplete", icon: Zap, label: "AutoComplete" },
     ],
   },
   {
