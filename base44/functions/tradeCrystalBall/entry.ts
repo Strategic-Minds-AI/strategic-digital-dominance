@@ -137,7 +137,8 @@ function getVerdict(score: number, empCAGR: number): string {
 export default async function (req: Request): Promise<Response> {
   try {
     const body = await req.json().catch(() => ({}));
-    const { action, years } = body;
+    const action = body.action || "analyze";
+    const { years } = body;
     const projectionYears = Math.min(Math.max(years || 5, 1), 15);
 
     if (action === "analyze") {
