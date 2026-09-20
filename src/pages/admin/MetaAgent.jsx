@@ -1,175 +1,107 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
-import { Brain, Loader2, AlertCircle, RefreshCw, History, Sparkles, Rocket, CheckCircle2 } from "lucide-react";
-import GoalInput from "@/components/meta-agent/GoalInput";
-import AnalysisResult from "@/components/meta-agent/AnalysisResult";
-import WorkPacketList from "@/components/meta-agent/WorkPacketList";
-import CapabilityMap from "@/components/meta-agent/CapabilityMap";
-import ValidationCenter from "@/components/meta-agent/ValidationCenter";
-import CommandCenter from "@/components/meta-agent/CommandCenter";
-import ReadinessScore from "@/components/meta-agent/ReadinessScore";
+import { Loader2, AlertCircle, RefreshCw, Zap, CheckCircle2, XCircle, ArrowRight } from "lucide-react";
+
+const STATE_COLORS = {
+  UNDISCOVERED: "text-stone-400 bg-stone-100",
+  DISCOVERING: "text-blue-600 bg-blue-50",
+  BASELINED: "text-stone-600 bg-stone-100",
+  DEGRADED: "text-amber-600 bg-amber-50",
+  COMPLETION_SPRINT: "text-amber-600 bg-amber-50",
+  VALIDATING: "text-blue-600 bg-blue-50",
+  VERIFIED_100: "text-green-700 bg-green-50",
+  PRESERVATION: "text-green-700 bg-green-50",
+  BLOCKED_PROTECTED: "text-red-600 bg-red-50",
+  BLOCKED_EXTERNAL: "text-red-600 bg-red-50",
+  QUARANTINED: "text-red-600 bg-red-50",
+};
+
+const STEP_ICONS = {
+  REGISTER: "📋",
+  CONSTITUTE: "⚖️",
+  BASELINE: "📏",
+  GAP: "🔍",
+  REPAIR: "🔧",
+  VALIDATE: "✅",
+  VERIFY: "🎯",
+};
+
+function ScoreRing({ score, verified }) {
+  const radius = 70;
+  const circ = 2 * Math.PI * radius;
+  const offset = circ - (score / 100) * circ;
+  return (
+    <div className="relative w-44 h-44 flex items-center justify-center">
+      <svg className="absolute inset-0 -rotate-90" viewBox="0 0 160 160">
+        <circle cx="80" cy="80" r={radius} fill="none" stroke="#E4E4E7" strokeWidth="12" />
+        <circle
+          cx="80" cy="80" r={radius} fill="none"
+          stroke={verified ? "#16A34A" : score >= 80 ? "#D97706" : score >= 50 ? "#F59E0B" : "#EF4444"}
+          strokeWidth="12" strokeLinecap="round"
+          strokeDasharray={circ} strokeDashoffset={offset}
+          style={{ transition: "stroke-dashoffset 0.8s ease" }}
+        />
+      </svg>
+      <div className="flex flex-col items-center">
+        <span className="text-4xl font-black text-stone-900">{score}</span>
+        <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider">/ 100</span>
+      </div>
+    </div>
+  );
+}
 
 export default function MetaAgent() {
-  const [goal, setGoal] = useState("");
-  const [analyzing, setAnalyzing] = useState(false);
+  const [status, setStatus] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [running, setRunning] = useState(false);
   const [error, setError] = useState("");
-  const [analysis, setAnalysis] = useState(null);
-  const [sessionData, setSessionData] = useState(null);
-  const [sessions, setSessions] = useState([]);
-  const [showHistory, setShowHistory] = useState(false);
-  const [runningCmd, setRunningCmd] = useState(null);
-  const [activeTab, setActiveTab] = useState("result");
+  const [lastRun, setLastRun] = useState(null);
 
-  const loadSessions = useCallback(async () => {
+  const loadStatus = useCallback(async () => {
     try {
-      const res = await base44.functions.invoke("metaAgent", { action: "list" });
-      setSessions((res.data || res).sessions || []);
+      const res = await base44.functions.invoke("autoComplete", { action: "status" });
+      setStatus(res.data || res);
     } catch (e) {
-      console.error(e);
+      setError(e.message);
     }
+    setLoading(false);
   }, []);
 
-  useEffect(() => { loadSessions(); }, [loadSessions]);
+  useEffect(() => { loadStatus(); }, [loadStatus]);
 
-  const loadSession = useCallback(async (sessionId) => {
-    try {
-      const res = await base44.functions.invoke("metaAgent", { action: "session", session_id: sessionId });
-      const data = res.data || res;
-      setSessionData(data);
-      setAnalysis({
-        summary: data.session.summary,
-        architecture: data.session.recommended_architecture,
-        intents: data.session.intent_types,
-        system_types: data.session.system_types,
-        matched_assets: data.session.matched_assets,
-        capability_gaps: data.session.capability_gaps,
-        work_packets: data.work_packets,
-        readiness_score: data.session.readiness_score,
-        next_action: data.session.next_action,
-      });
-    } catch (e) {
-      setError(e.message);
-    }
-  }, []);
-
-  const handleAnalyze = useCallback(async () => {
-    if (!goal.trim()) return;
-    setAnalyzing(true);
+  const handleRun = useCallback(async () => {
+    setRunning(true);
     setError("");
-    setAnalysis(null);
-    setSessionData(null);
+    setLastRun(null);
     try {
-      const res = await base44.functions.invoke("metaAgent", { action: "analyze", goal });
+      const res = await base44.functions.invoke("autoComplete", { action: "cycle", system_id: "epoxyquotenearme" });
       const data = res.data || res;
-      setAnalysis(data);
-      await loadSession(data.session_id);
-      await loadSessions();
-    } catch (e) {
-      setError(e.message || "Analysis failed");
-    }
-    setAnalyzing(false);
-  }, [goal, loadSession, loadSessions]);
-
-  const handleCommand = useCallback(async (cmd) => {
-    if (!sessionData?.session?.session_id) return;
-    setRunningCmd(cmd);
-    try {
-      await base44.functions.invoke("metaAgent", {
-        action: "command",
-        session_id: sessionData.session.session_id,
-        command: cmd,
-      });
-      await loadSession(sessionData.session.session_id);
+      setLastRun(data);
+      await loadStatus();
     } catch (e) {
       setError(e.message);
     }
-    setRunningCmd(null);
-  }, [sessionData, loadSession]);
+    setRunning(false);
+  }, [loadStatus]);
 
-  const handleApprove = useCallback(async (packetId, decision) => {
-    try {
-      await base44.functions.invoke("metaAgent", {
-        action: "approve",
-        work_packet_id: packetId,
-        decision,
-      });
-      if (sessionData?.session?.session_id) {
-        await loadSession(sessionData.session.session_id);
-      }
-    } catch (e) {
-      setError(e.message);
-    }
-  }, [sessionData, loadSession]);
+  const portfolio = status?.portfolio || {};
+  const system = status?.systems?.find(s => s.system_id === "epoxyquotenearme") || status?.systems?.[0] || {};
+  const score = system.score ?? portfolio.avg_score ?? 0;
+  const verified = system.verified ?? false;
+  const stateLabel = verified ? "VERIFIED_100" : score >= 80 ? "COMPLETION_SPRINT" : score > 0 ? "DEGRADED" : "UNDISCOVERED";
 
-  const handleValidate = useCallback(async () => {
-    if (!sessionData?.session?.session_id) return;
-    setRunningCmd("VALIDATE");
-    try {
-      await base44.functions.invoke("metaAgent", {
-        action: "validate",
-        session_id: sessionData.session.session_id,
-      });
-      await loadSession(sessionData.session.session_id);
-    } catch (e) {
-      setError(e.message);
-    }
-    setRunningCmd(null);
-  }, [sessionData, loadSession]);
-
-  const handleScore = useCallback(async () => {
-    if (!sessionData?.session?.session_id) return;
-    setRunningCmd("SCORE");
-    try {
-      await base44.functions.invoke("metaAgent", {
-        action: "score",
-        session_id: sessionData.session.session_id,
-      });
-      await loadSession(sessionData.session.session_id);
-    } catch (e) {
-      setError(e.message);
-    }
-    setRunningCmd(null);
-  }, [sessionData, loadSession]);
-
-  const handleAutoCompleteCycle = useCallback(async () => {
-    if (!sessionData?.session?.session_id) return;
-    setRunningCmd("AUTOCOMPLETE");
-    setError("");
-    try {
-      await base44.functions.invoke("autoComplete", {
-        action: "cycle",
-        system_id: "epoxyquotenearme",
-      });
-      await loadSession(sessionData.session.session_id);
-      await loadSessions();
-    } catch (e) {
-      setError(e.message);
-    }
-    setRunningCmd(null);
-  }, [sessionData, loadSession, loadSessions]);
-
-  const cycleRunning = runningCmd === "AUTOCOMPLETE";
+  const steps = lastRun?.results?.[0]?.steps || [];
+  const lastResult = lastRun?.results?.[0];
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-stone-900 flex items-center gap-2">
-            <Brain className="h-6 w-6 text-amber-500" />
-            Meta Agent
-          </h1>
-          <p className="text-sm text-stone-500 mt-1">
-            Deterministic intent-to-work-packet intelligence router
-          </p>
-        </div>
-        <button
-          onClick={() => { setShowHistory(!showHistory); loadSessions(); }}
-          className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-stone-200 bg-white text-sm text-stone-600 hover:border-amber-400 hover:text-amber-600 transition"
-        >
-          <History className="h-4 w-4" />
-          {showHistory ? "Hide History" : "Session History"}
-        </button>
+    <div className="max-w-3xl mx-auto space-y-6">
+      {/* Title */}
+      <div className="text-center pt-2">
+        <h1 className="text-2xl font-black text-stone-900 flex items-center justify-center gap-2">
+          <Zap className="h-6 w-6 text-amber-500" />
+          Auto Convergence Engine
+        </h1>
+        <p className="text-sm text-stone-500 mt-1">One button. Full production readiness. VERIFIED_100.</p>
       </div>
 
       {/* Error */}
@@ -181,167 +113,104 @@ export default function MetaAgent() {
         </div>
       )}
 
-      {/* Full Pipeline Runner */}
-      {sessionData?.session?.session_id && (
-        <div className="rounded-2xl border-2 border-amber-300 bg-gradient-to-r from-amber-50 to-orange-50 p-5 shadow-sm">
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-amber-500 text-white shadow-lg">
-                {cycleRunning ? <Loader2 className="h-6 w-6 animate-spin" /> : <Rocket className="h-6 w-6" />}
+      {/* Main Panel */}
+      <div className="rounded-3xl border border-stone-200 bg-white p-8 shadow-sm">
+        {/* Score + Status */}
+        <div className="flex flex-col items-center gap-4">
+          {loading ? (
+            <Loader2 className="h-8 w-8 text-amber-500 animate-spin" />
+          ) : (
+            <>
+              <ScoreRing score={score} verified={verified} />
+
+              {/* State badge */}
+              <div className={`px-4 py-1.5 rounded-full text-sm font-bold ${STATE_COLORS[stateLabel] || "text-stone-500 bg-stone-100"}`}>
+                {stateLabel.replace(/_/g, " ")}
+              </div>
+
+              {/* Quick stats */}
+              <div className="flex gap-6 text-center">
+                <div>
+                  <div className="text-2xl font-black text-red-500">{system.p0_count ?? 0}</div>
+                  <div className="text-xs text-stone-400 font-semibold uppercase">P0</div>
                 </div>
                 <div>
-                <h3 className="text-base font-bold text-stone-900">Run Full AutoComplete Cycle</h3>
-                <p className="text-xs text-stone-600 mt-0.5">
-                  Executes the full production-readiness cycle: REGISTER → CONSTITUTE → BASELINE → GAP → REPAIR → VALIDATE → VERIFY
-                </p>
+                  <div className="text-2xl font-black text-amber-500">{system.p1_count ?? 0}</div>
+                  <div className="text-xs text-stone-400 font-semibold uppercase">P1</div>
                 </div>
+                <div>
+                  <div className="text-2xl font-black text-stone-700">{system.passing_benchmarks ?? 0}</div>
+                  <div className="text-xs text-stone-400 font-semibold uppercase">Passing</div>
                 </div>
-                <button
-                onClick={handleAutoCompleteCycle}
-                disabled={cycleRunning || runningCmd !== null}
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-amber-500 text-white text-sm font-bold hover:bg-amber-600 transition disabled:opacity-50 shadow-md"
-                >
-                {cycleRunning ? (
-                <><Loader2 className="h-4 w-4 animate-spin" /> Running Cycle...</>
-                ) : (
-                <><Rocket className="h-4 w-4" /> Run Full Cycle</>
-                )}
-                </button>
+                <div>
+                  <div className="text-2xl font-black text-stone-400">{system.failing_benchmarks ?? 0}</div>
+                  <div className="text-xs text-stone-400 font-semibold uppercase">Failing</div>
                 </div>
-                {sessionData?.session?.status === "COMPLETE" && (
-                <div className="mt-3 flex items-center gap-2 text-sm text-green-700 font-semibold">
-                <CheckCircle2 className="h-4 w-4" />
-                System reached VERIFIED_100 — cycle complete
-                </div>
-                )}
-        </div>
-      )}
-
-      {/* Session History */}
-      {showHistory && (
-        <div className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-stone-500 mb-3">Past Sessions</h3>
-          {sessions.length === 0 ? (
-            <p className="text-sm text-stone-400 text-center py-4">No sessions yet</p>
-          ) : (
-            <div className="space-y-1 max-h-64 overflow-y-auto">
-              {sessions.map((s) => (
-                <button
-                  key={s.session_id}
-                  onClick={() => { loadSession(s.session_id); setShowHistory(false); }}
-                  className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-stone-50 border border-stone-100 text-left transition"
-                >
-                  <Sparkles className="h-4 w-4 text-amber-400 shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-stone-700 truncate">{s.goal}</p>
-                    <p className="text-xs text-stone-400">
-                      {s.status} · {(s.intent_types || []).join(", ")} · {s.work_packet_ids?.length || 0} packets
-                    </p>
-                  </div>
-                </button>
-              ))}
-            </div>
+              </div>
+            </>
           )}
         </div>
-      )}
 
-      {/* Goal Input */}
-      <GoalInput goal={goal} setGoal={setGoal} onSubmit={handleAnalyze} loading={analyzing} />
+        {/* THE Button */}
+        {!loading && (
+          <button
+            onClick={handleRun}
+            disabled={running}
+            className="mt-8 w-full py-4 rounded-2xl bg-amber-500 text-white text-lg font-black hover:bg-amber-600 transition disabled:opacity-50 shadow-lg flex items-center justify-center gap-3"
+          >
+            {running ? (
+              <><Loader2 className="h-6 w-6 animate-spin" /> Converging...</>
+            ) : (
+              <><Zap className="h-6 w-6" /> Run Auto Convergence</>
+            )}
+          </button>
+        )}
 
-      {/* Loading State */}
-      {analyzing && (
-        <div className="flex flex-col items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 text-amber-500 animate-spin mb-3" />
-          <p className="text-sm text-stone-500">Analyzing goal, searching Arsenal, detecting gaps, generating work packets...</p>
-        </div>
-      )}
+        {/* Verified banner */}
+        {verified && !running && (
+          <div className="mt-4 flex items-center justify-center gap-2 text-green-700 font-bold">
+            <CheckCircle2 className="h-5 w-5" />
+            System reached VERIFIED_100 — production ready
+          </div>
+        )}
+      </div>
 
-      {/* Results */}
-      {analysis && !analyzing && (
-        <>
-          {/* Tabs */}
-          <div className="flex gap-1 border-b border-stone-200">
-            {["result", "packets", "capabilities", "validation", "commands"].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 text-sm font-semibold border-b-2 transition capitalize ${
-                  activeTab === tab
-                    ? "border-amber-500 text-amber-600"
-                    : "border-transparent text-stone-400 hover:text-stone-600"
-                }`}
-              >
-                {tab === "result" && "Analysis"}
-                {tab === "packets" && "Work Packets"}
-                {tab === "capabilities" && "Capability Map"}
-                {tab === "validation" && "Validation"}
-                {tab === "commands" && "Commands"}
-              </button>
+      {/* Last Run Results */}
+      {lastResult && (
+        <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-stone-500 mb-4">Last Run</h3>
+          <div className="space-y-2">
+            {steps.map((step, i) => (
+              <div key={i} className="flex items-center gap-3 py-1.5">
+                {step.pass ? (
+                  <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
+                ) : (
+                  <XCircle className="h-4 w-4 text-red-500 shrink-0" />
+                )}
+                <span className="text-sm font-bold text-stone-700 w-24">{step.step}</span>
+                <span className="text-sm text-stone-400 truncate">{step.detail}</span>
+              </div>
             ))}
           </div>
-
-          {/* Tab Content */}
-          {activeTab === "result" && (
-            <div className="space-y-4">
-              <AnalysisResult result={analysis} />
-              <ReadinessScore score={analysis.readiness_score} />
-            </div>
-          )}
-
-          {activeTab === "packets" && (
-            <WorkPacketList
-              packets={sessionData?.work_packets || analysis.work_packets || []}
-              onApprove={handleApprove}
-            />
-          )}
-
-          {activeTab === "capabilities" && (
-            <CapabilityMap capabilityMap={sessionData?.session?.capability_map || analysis.capability_map} />
-          )}
-
-          {activeTab === "validation" && (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={handleValidate}
-                  disabled={runningCmd === "VALIDATE"}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-white text-sm font-bold hover:bg-amber-600 transition disabled:opacity-50"
-                >
-                  {runningCmd === "VALIDATE" ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-                  Run Validation
-                </button>
-                <button
-                  onClick={handleScore}
-                  disabled={runningCmd === "SCORE"}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-stone-800 text-white text-sm font-bold hover:bg-stone-900 transition disabled:opacity-50"
-                >
-                  {runningCmd === "SCORE" ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-                  Recalculate Score
-                </button>
-              </div>
-              <ValidationCenter receipts={sessionData?.validation_receipts || []} />
-              <ReadinessScore score={sessionData?.session?.readiness_score || analysis.readiness_score} />
-            </div>
-          )}
-
-          {activeTab === "commands" && (
-            <CommandCenter
-              sessionId={sessionData?.session?.session_id}
-              onCommand={handleCommand}
-              running={runningCmd}
-            />
-          )}
-        </>
+          <div className="mt-4 pt-4 border-t border-stone-100 flex items-center justify-between text-sm">
+            <span className="text-stone-500">Score: <span className="font-bold text-stone-900">{lastResult.weighted_score}</span></span>
+            <span className={lastResult.verified_100 ? "text-green-600 font-bold" : "text-amber-600 font-bold"}>
+              {lastResult.verified_100 ? "VERIFIED_100 ✓" : `${lastResult.open_gaps} gaps remain`}
+            </span>
+          </div>
+        </div>
       )}
 
-      {/* Empty State */}
-      {!analysis && !analyzing && !error && (
-        <div className="flex flex-col items-center justify-center py-12 text-center">
-          <Brain className="h-12 w-12 text-stone-200 mb-3" />
-          <p className="text-sm text-stone-400 font-medium">Submit a goal to begin analysis</p>
-          <p className="text-xs text-stone-400 mt-1 max-w-md">
-            The Meta Agent will decompose your goal into intents, match Arsenal assets, detect capability gaps, and generate executable Work Packets.
-          </p>
+      {/* Refresh */}
+      {!loading && !running && (
+        <div className="text-center">
+          <button
+            onClick={loadStatus}
+            className="inline-flex items-center gap-2 text-sm text-stone-400 hover:text-stone-600 transition"
+          >
+            <RefreshCw className="h-3.5 w-3.5" />
+            Refresh Status
+          </button>
         </div>
       )}
     </div>
