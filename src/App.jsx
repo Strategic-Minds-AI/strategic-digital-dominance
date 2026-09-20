@@ -85,6 +85,7 @@ import UniversalSiteBuilder from '@/pages/admin/UniversalSiteBuilder';
 import DominanceSandbox from '@/pages/admin/DominanceSandbox';
 import BuilderLibrary from '@/pages/admin/BuilderLibrary';
 import MetaAgent from '@/pages/admin/MetaAgent';
+import ConvergenceEngine from '@/pages/admin/ConvergenceEngine';
 import WebsiteEmpire from '@/pages/admin/WebsiteEmpire';
 import SiteHealthMonitor from '@/pages/admin/SiteHealthMonitor';
 import UrlStrategy from '@/pages/admin/UrlStrategy';
@@ -240,6 +241,7 @@ const AuthenticatedApp = () => {
         <Route path="dominance-sandbox" element={<DominanceSandbox />} />
         <Route path="builder-library" element={<BuilderLibrary />} />
         <Route path="meta-agent" element={<MetaAgent />} />
+        <Route path="convergence" element={<ConvergenceEngine />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
       <Route path="/:state/:citySlug" element={<LocationSeoPage />} />

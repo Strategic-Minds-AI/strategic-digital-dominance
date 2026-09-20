@@ -1,0 +1,121 @@
+{
+  "name": "ProgressLedger",
+  "type": "object",
+  "properties": {
+    "entry_id": {
+      "type": "string",
+      "description": "Deterministic entry ID"
+    },
+    "system_id": {
+      "type": "string"
+    },
+    "cycle_id": {
+      "type": "string"
+    },
+    "cycle_number": {
+      "type": "integer",
+      "description": "Sequential cycle number"
+    },
+    "score_before": {
+      "type": "number",
+      "default": 0
+    },
+    "failure": {
+      "type": "string",
+      "maxLength": 2000,
+      "description": "What failure was addressed"
+    },
+    "failure_fingerprint": {
+      "type": "string"
+    },
+    "root_cause": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "action_taken": {
+      "type": "string",
+      "maxLength": 2000,
+      "description": "What repair/action was performed"
+    },
+    "repair_level": {
+      "type": "string",
+      "enum": [
+        "L1_MICRO",
+        "L2_COMPONENT",
+        "L3_REBUILD",
+        "L4_SUBSYSTEM",
+        "L5_ARCHITECTURAL"
+      ],
+      "description": "Escalation level used"
+    },
+    "validation_result": {
+      "type": "string",
+      "enum": [
+        "PASS",
+        "FAIL",
+        "BLOCKED",
+        "PENDING",
+        "SKIPPED"
+      ],
+      "default": "PENDING"
+    },
+    "validation_receipt_id": {
+      "type": "string"
+    },
+    "score_after": {
+      "type": "number",
+      "default": 0
+    },
+    "duration_ms": {
+      "type": "integer",
+      "default": 0
+    },
+    "receipt_id": {
+      "type": "string"
+    },
+    "regressions_introduced": {
+      "type": "integer",
+      "default": 0
+    },
+    "regressions_caught": {
+      "type": "integer",
+      "default": 0
+    },
+    "stagnation_detected": {
+      "type": "boolean",
+      "default": false
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "entry_id",
+    "system_id",
+    "cycle_id",
+    "cycle_number"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

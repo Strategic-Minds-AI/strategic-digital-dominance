@@ -1,0 +1,321 @@
+{
+  "name": "SystemManifest",
+  "type": "object",
+  "properties": {
+    "manifest_id": {
+      "type": "string",
+      "description": "Deterministic manifest ID (hash of system_id + revision)"
+    },
+    "system_id": {
+      "type": "string",
+      "description": "Owning system ID from FleetSystem"
+    },
+    "revision": {
+      "type": "string",
+      "description": "Source SHA or configuration revision this manifest describes"
+    },
+    "purpose": {
+      "type": "string",
+      "maxLength": 5000,
+      "description": "What the system is for"
+    },
+    "intended_users": {
+      "type": "string",
+      "maxLength": 2000,
+      "description": "Who the system serves"
+    },
+    "system_archetype": {
+      "type": "string",
+      "enum": [
+        "website",
+        "saas",
+        "marketplace",
+        "ecommerce",
+        "crm",
+        "dashboard",
+        "mobile_pwa",
+        "api_platform",
+        "mcp_server",
+        "browser_automation",
+        "communications_platform",
+        "ai_agent_platform",
+        "multi_agent_swarm",
+        "autonomous_workflow",
+        "data_pipeline",
+        "lead_generation_engine",
+        "seo_system",
+        "scraper",
+        "analytics_system",
+        "internal_business_system",
+        "fintech_system",
+        "property_system",
+        "industrial_construction_system",
+        "content_platform",
+        "template_factory",
+        "app_factory",
+        "website_factory",
+        "generator",
+        "infrastructure_control_plane",
+        "other"
+      ],
+      "default": "website"
+    },
+    "industry": {
+      "type": "string",
+      "description": "Industry vertical"
+    },
+    "criticality": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low"
+      ],
+      "default": "medium"
+    },
+    "risk_class": {
+      "type": "string",
+      "enum": [
+        "READ",
+        "DRAFT",
+        "BRANCH_WRITE",
+        "PROTECTED"
+      ],
+      "default": "READ"
+    },
+    "canonical_repository": {
+      "type": "string",
+      "description": "GitHub repo (owner/repo)"
+    },
+    "canonical_branch": {
+      "type": "string",
+      "default": "main"
+    },
+    "canonical_source_sha": {
+      "type": "string",
+      "description": "Current verified source SHA"
+    },
+    "deployment_provider": {
+      "type": "string",
+      "description": "Vercel, Railway, Base44, etc."
+    },
+    "deployment_identifier": {
+      "type": "string",
+      "description": "Project ID or deployment URL"
+    },
+    "environments": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "production, staging, preview, etc."
+    },
+    "domains": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "backend_services": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "databases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "schemas": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Entity/schema names"
+    },
+    "storage_systems": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "queue_systems": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "workflows": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "agents": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "apis": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "mcp_servers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "integrations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "auth_system": {
+      "type": "string",
+      "description": "Authentication system type"
+    },
+    "authz_model": {
+      "type": "string",
+      "description": "Authorization model description"
+    },
+    "tenants": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "schedulers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "external_dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "expected_user_journeys": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "critical_business_rules": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "availability_requirements": {
+      "type": "string"
+    },
+    "performance_requirements": {
+      "type": "string"
+    },
+    "security_requirements": {
+      "type": "string"
+    },
+    "compliance_requirements": {
+      "type": "string"
+    },
+    "current_release": {
+      "type": "string"
+    },
+    "previous_known_good_release": {
+      "type": "string"
+    },
+    "rollback_location": {
+      "type": "string"
+    },
+    "config_revision": {
+      "type": "string"
+    },
+    "discovery_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "discovering",
+        "discovered",
+        "failed",
+        "stale"
+      ],
+      "default": "pending"
+    },
+    "discovery_evidence": {
+      "type": "string",
+      "maxLength": 10000,
+      "description": "Serialized evidence from discovery process"
+    },
+    "unverified_fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Fields that could not be verified (marked UNKNOWN)"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "manifest_id",
+    "system_id",
+    "system_archetype",
+    "discovery_status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

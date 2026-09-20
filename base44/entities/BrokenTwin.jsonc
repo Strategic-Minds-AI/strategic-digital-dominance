@@ -1,0 +1,217 @@
+{
+  "name": "BrokenTwin",
+  "type": "object",
+  "properties": {
+    "twin_id": {
+      "type": "string",
+      "description": "Deterministic twin ID"
+    },
+    "system_id": {
+      "type": "string",
+      "description": "Target system this twin mirrors"
+    },
+    "source_snapshot_sha": {
+      "type": "string",
+      "description": "SHA of the clean source snapshot the twin was created from"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "faults_injected",
+        "discovering",
+        "repairing",
+        "validating",
+        "passed",
+        "failed",
+        "reset"
+      ],
+      "default": "pending"
+    },
+    "fault_manifest": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "fault_id": {
+            "type": "string"
+          },
+          "deterministic_seed": {
+            "type": "string"
+          },
+          "injection_timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "scenario": {
+            "type": "string",
+            "description": "broken build, lint failure, type error, etc."
+          },
+          "expected_detector": {
+            "type": "string"
+          },
+          "expected_classification": {
+            "type": "string"
+          },
+          "expected_repair_path": {
+            "type": "string"
+          },
+          "expected_validation": {
+            "type": "string"
+          },
+          "expected_recovery": {
+            "type": "string"
+          },
+          "expected_rollback_behavior": {
+            "type": "string"
+          },
+          "expected_score_impact": {
+            "type": "number"
+          },
+          "detected": {
+            "type": "boolean",
+            "default": false
+          },
+          "detected_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "repair_attempted": {
+            "type": "boolean",
+            "default": false
+          },
+          "repair_succeeded": {
+            "type": "boolean",
+            "default": false
+          },
+          "validated": {
+            "type": "boolean",
+            "default": false
+          },
+          "rollback_proven": {
+            "type": "boolean",
+            "default": false
+          },
+          "actual_detector": {
+            "type": "string"
+          },
+          "actual_classification": {
+            "type": "string"
+          },
+          "actual_repair_path": {
+            "type": "string"
+          },
+          "ttd_seconds": {
+            "type": "number"
+          },
+          "ttdg_seconds": {
+            "type": "number"
+          },
+          "ttr_seconds": {
+            "type": "number"
+          },
+          "ttv_seconds": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "fault_id",
+          "scenario"
+        ]
+      },
+      "default": []
+    },
+    "total_faults_injected": {
+      "type": "integer",
+      "default": 0
+    },
+    "total_faults_detected": {
+      "type": "integer",
+      "default": 0
+    },
+    "total_faults_repaired": {
+      "type": "integer",
+      "default": 0
+    },
+    "total_faults_validated": {
+      "type": "integer",
+      "default": 0
+    },
+    "total_faults_missed": {
+      "type": "integer",
+      "default": 0
+    },
+    "false_verified_states": {
+      "type": "integer",
+      "default": 0
+    },
+    "final_score": {
+      "type": "number",
+      "default": 0
+    },
+    "twin_reached_verified_100": {
+      "type": "boolean",
+      "default": false
+    },
+    "engine_self_repaired": {
+      "type": "boolean",
+      "default": false
+    },
+    "rerun_from_clean_snapshot": {
+      "type": "boolean",
+      "default": false
+    },
+    "mttr_seconds": {
+      "type": "number",
+      "description": "Mean Time To Repair across suite"
+    },
+    "mttd_seconds": {
+      "type": "number",
+      "description": "Mean Time To Detect"
+    },
+    "ttc_seconds": {
+      "type": "number",
+      "description": "Time To Convergence"
+    },
+    "result_summary": {
+      "type": "string",
+      "maxLength": 10000,
+      "description": "Full Broken Twin experiment results"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "twin_id",
+    "system_id",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

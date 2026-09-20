@@ -1,0 +1,302 @@
+{
+  "name": "ConvergenceCycle",
+  "type": "object",
+  "properties": {
+    "cycle_id": {
+      "type": "string",
+      "description": "Deterministic cycle ID"
+    },
+    "system_id": {
+      "type": "string",
+      "description": "Target system ID"
+    },
+    "manifest_id": {
+      "type": "string",
+      "description": "SystemManifest ID used for this cycle"
+    },
+    "revision": {
+      "type": "string",
+      "description": "Source/config/deployment revision"
+    },
+    "phase": {
+      "type": "string",
+      "enum": [
+        "DISCOVER",
+        "MODEL",
+        "AUDIT",
+        "SCORE",
+        "DIAGNOSE",
+        "PLAN",
+        "REPAIR",
+        "TEST",
+        "VALIDATE",
+        "HARDEN",
+        "OPTIMIZE",
+        "CHAOS_TEST",
+        "RESCORE",
+        "PRESERVE",
+        "BLOCKED",
+        "COMPLETE"
+      ],
+      "default": "DISCOVER"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "running",
+        "completed",
+        "failed",
+        "blocked",
+        "stale"
+      ],
+      "default": "running"
+    },
+    "baseline_score": {
+      "type": "number",
+      "default": 0,
+      "description": "Starting score at cycle start"
+    },
+    "current_score": {
+      "type": "number",
+      "default": 0,
+      "description": "Current mandatory benchmark score"
+    },
+    "distance_to_100": {
+      "type": "number",
+      "default": 100
+    },
+    "verified_100": {
+      "type": "boolean",
+      "default": false
+    },
+    "p0_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "p1_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "unknown_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "blocked_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "stale_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "active_repairs": {
+      "type": "integer",
+      "default": 0
+    },
+    "validation_queue_depth": {
+      "type": "integer",
+      "default": 0
+    },
+    "validation_queue_age_seconds": {
+      "type": "integer",
+      "default": 0
+    },
+    "repair_queue_depth": {
+      "type": "integer",
+      "default": 0
+    },
+    "repair_queue_age_seconds": {
+      "type": "integer",
+      "default": 0
+    },
+    "regressions_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "worker_health": {
+      "type": "string",
+      "maxLength": 3000,
+      "description": "Serialized worker health by capability"
+    },
+    "ttd_seconds": {
+      "type": "number",
+      "description": "Time To Detect"
+    },
+    "ttdg_seconds": {
+      "type": "number",
+      "description": "Time To Diagnose"
+    },
+    "ttp_seconds": {
+      "type": "number",
+      "description": "Time To Produce Repair Plan"
+    },
+    "ttr_seconds": {
+      "type": "number",
+      "description": "Time To Repair"
+    },
+    "ttv_seconds": {
+      "type": "number",
+      "description": "Time To Validate"
+    },
+    "ttc_seconds": {
+      "type": "number",
+      "description": "Time To Convergence"
+    },
+    "recursive_cycles": {
+      "type": "integer",
+      "default": 0
+    },
+    "repair_attempts": {
+      "type": "integer",
+      "default": 0
+    },
+    "false_positives": {
+      "type": "integer",
+      "default": 0
+    },
+    "false_negatives": {
+      "type": "integer",
+      "default": 0
+    },
+    "tokens_consumed": {
+      "type": "integer",
+      "default": 0
+    },
+    "model_cost": {
+      "type": "number",
+      "default": 0
+    },
+    "last_verified_change": {
+      "type": "string",
+      "description": "Exact artifact/receipt of last verified change"
+    },
+    "next_action": {
+      "type": "string",
+      "description": "One exact next convergence action"
+    },
+    "scorecard": {
+      "type": "string",
+      "maxLength": 10000,
+      "description": "Full serialized scorecard with all benchmark categories"
+    },
+    "change_summary": {
+      "type": "string",
+      "maxLength": 5000,
+      "description": "Exactly what changed this cycle"
+    },
+    "preserved_components": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "repaired_components": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "rebuilt_components": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "quarantined_components": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "blocked_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "item": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "classification": {
+            "type": "string",
+            "enum": [
+              "VERIFIED",
+              "INFERRED",
+              "COULD_NOT_VERIFY",
+              "BLOCKED"
+            ]
+          }
+        }
+      },
+      "default": []
+    },
+    "protected_approvals_needed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "risk_class": {
+            "type": "string"
+          }
+        }
+      },
+      "default": []
+    },
+    "convergence_engine_version": {
+      "type": "string",
+      "default": "1.0"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "duration_ms": {
+      "type": "integer",
+      "default": 0
+    }
+  },
+  "required": [
+    "cycle_id",
+    "system_id",
+    "phase",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
