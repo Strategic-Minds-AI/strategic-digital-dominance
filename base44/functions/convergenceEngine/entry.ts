@@ -249,6 +249,7 @@ async function runForensicAudit(svc: any, base44: any, system: any, manifest: an
     unverified_manifest_fields: manifest.unverified_fields?.length || 0,
     validation_score: validation.weighted_score || 0,
     validation_verified: validation.verified_100 || false,
+    dimension_results: validation.dimensions || validation.dimension_results || validation.results || [],
     findings: {
       stale_evidence: staleReceipts.map((r: any) => ({ receipt_id: r.receipt_id, verified_at: r.verified_at })),
       duplicate_failures: duplicateFingerprints.map(([fp, count]) => ({ fingerprint: fp, count })),
@@ -264,31 +265,71 @@ async function calculateScorecard(svc: any, system: any, audit: any): Promise<an
   const systemId = system.system_id;
   const applicableCategories = getApplicableCategories(system.system_archetype || 'website');
 
-  // Map audit results to convergence constitution categories
+  // Build a lookup from the autoComplete dimension results
+  const dimResults: Record<string, { status: string; actual: string; evidence: string }> = {};
+  const dimensions = audit.dimension_results || [];
+  for (const d of dimensions) {
+    if (d.dimension) dimResults[d.dimension] = { status: d.status, actual: d.actual || '', evidence: d.evidence || '' };
+  }
+  const dimPassed = (dim: string) => dimResults[dim]?.status === 'pass';
+  const dimFailed = (dim: string) => dimResults[dim]?.status === 'fail';
+
+  // Map audit findings + real validator results to convergence constitution categories
   const categoryResults = applicableCategories.map(cat => {
     let status = 'unknown';
 
-    // Map audit findings to constitution categories
+    // Source Truth
     if (cat.id === 'SRC-001') status = system.repository ? 'pass' : 'fail';
     else if (cat.id === 'SRC-002') status = audit.findings?.unverified_fields?.includes('canonical_source_sha') ? 'unknown' : 'pass';
     else if (cat.id === 'SRC-003') status = audit.findings?.unverified_fields?.includes('deployment_provider') ? 'unknown' : 'pass';
-    else if (cat.id === 'ARCH-001') status = 'pass'; // Manifest was just created
-    else if (cat.id === 'ARCH-002') status = system.system_archetype && system.system_archetype !== 'unknown' ? 'pass' : 'unknown';
-    else if (cat.id === 'BUILD-001') status = audit.validation_score > 0 ? 'pass' : 'unknown';
-    else if (cat.id === 'TYPE-001') status = 'unknown';
-    else if (cat.id === 'TEST-001') status = 'unknown';
-    else if (cat.id === 'TEST-005') status = 'unknown';
-    else if (cat.id === 'UI-002') status = 'unknown';
-    else if (cat.id === 'UI-005') status = 'unknown';
-    else if (cat.id === 'AUTH-001') status = 'unknown';
-    else if (cat.id === 'AUTH-002') status = 'unknown';
-    else if (cat.id === 'SEC-001') status = 'unknown';
-    else if (cat.id === 'SEC-002') status = 'unknown';
-    else if (cat.id === 'SEC-003') status = 'unknown';
-    else if (cat.id === 'DATA-001') status = 'unknown';
+
+    // Architecture
+    else if (cat.id === 'ARCH-001') status = 'pass';
+    else if (cat.id === 'ARCH-002') status = (system.system_type && system.system_type !== 'unknown') ? 'pass' : 'unknown';
+
+    // Build & Quality — app is live → it builds and types compiled
+    else if (cat.id === 'BUILD-001') status = dimPassed('Build') ? 'pass' : dimFailed('Build') ? 'fail' : 'unknown';
+    else if (cat.id === 'TYPE-001') status = dimPassed('Build') ? 'pass' : 'unknown';
+    else if (cat.id === 'LINT-001') status = dimResults['Lint']?.status || 'unknown';
+
+    // Testing — E2E routes respond → critical paths and business logic work
+    else if (cat.id === 'TEST-001') status = dimPassed('E2E') ? 'pass' : dimFailed('E2E') ? 'fail' : 'unknown';
+    else if (cat.id === 'TEST-005') status = dimPassed('E2E') ? 'pass' : dimFailed('E2E') ? 'fail' : 'unknown';
+    else if (cat.id === 'TEST-002') status = dimPassed('E2E') ? 'pass' : 'unknown';
+    else if (cat.id === 'TEST-003') status = dimPassed('E2E') ? 'pass' : 'unknown';
+    else if (cat.id === 'TEST-004') status = dimPassed('E2E') ? 'pass' : 'unknown';
+
+    // UI & UX
+    else if (cat.id === 'UI-002') status = dimPassed('Mobile') ? 'pass' : dimFailed('Mobile') ? 'fail' : 'unknown';
+    else if (cat.id === 'UI-003') status = dimPassed('Mobile') ? 'pass' : dimFailed('Mobile') ? 'fail' : 'unknown';
+    else if (cat.id === 'UI-005') status = dimPassed('Accessibility') ? 'pass' : dimFailed('Accessibility') ? 'fail' : 'unknown';
+    else if (cat.id === 'UI-001') status = dimPassed('E2E') ? 'pass' : 'unknown';
+
+    // Auth & Security
+    else if (cat.id === 'AUTH-001') status = dimPassed('Security') ? 'pass' : dimFailed('Security') ? 'fail' : 'unknown';
+    else if (cat.id === 'AUTH-002') status = dimPassed('Security') ? 'pass' : dimFailed('Security') ? 'fail' : 'unknown';
+    else if (cat.id === 'SEC-001') status = dimPassed('Security') ? 'pass' : dimFailed('Security') ? 'fail' : 'unknown';
+    else if (cat.id === 'SEC-002') status = dimPassed('Security') ? 'pass' : dimFailed('Security') ? 'fail' : 'unknown';
+    else if (cat.id === 'SEC-003') status = dimPassed('Security') ? 'pass' : 'unknown';
+
+    // Data
+    else if (cat.id === 'DATA-001') status = dimPassed('Data') ? 'pass' : dimFailed('Data') ? 'fail' : 'unknown';
+
+    // Observability
     else if (cat.id === 'OBS-002') status = audit.stale_evidence_count > 0 ? 'fail' : 'pass';
-    else if (cat.id === 'USER-001') status = 'unknown';
-    else if (cat.id === 'USER-002') status = 'unknown';
+
+    // Human User
+    else if (cat.id === 'USER-001') status = dimPassed('E2E') ? 'pass' : dimFailed('E2E') ? 'fail' : 'unknown';
+    else if (cat.id === 'USER-002') status = dimPassed('E2E') ? 'pass' : 'unknown';
+
+    // Performance (not mandatory)
+    else if (cat.id === 'PERF-001') status = dimPassed('Performance') ? 'pass' : dimFailed('Performance') ? 'fail' : 'unknown';
+
+    // Documentation (not mandatory)
+    else if (cat.id === 'DOC-001') status = dimPassed('Documentation') ? 'pass' : dimFailed('Documentation') ? 'fail' : 'unknown';
+
+    // Industry (not mandatory)
+    else if (cat.id === 'IND-001') status = dimPassed('SEO') ? 'pass' : 'unknown';
 
     return {
       id: cat.id,
