@@ -4,10 +4,12 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Phone, MessageSquare, RefreshCw, Search, Plus, Trash2,
   Send, CheckCircle2, AlertCircle, Loader2, ArrowRight, ArrowLeft,
-  Activity, ShieldCheck, Layers, Edit3, X,
+  Activity, ShieldCheck, Layers, Edit3, X, Zap,
 } from "lucide-react";
+import AutonomousSetupTab from "@/components/telnyx/AutonomousSetupTab";
 
 const TABS = [
+  { id: "setup", label: "Autonomous Setup", icon: Zap },
   { id: "dashboard", label: "Dashboard", icon: Activity },
   { id: "numbers", label: "Phone Numbers", icon: Phone },
   { id: "messages", label: "Messages", icon: MessageSquare },
@@ -244,6 +246,8 @@ export default function TelnyxManager() {
       )}
 
       <div className="rounded-2xl border border-stone-200 bg-white p-5">
+        {tab === "setup" && <AutonomousSetupTab />}
+
         {tab === "dashboard" && (
           <div className="space-y-5">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">

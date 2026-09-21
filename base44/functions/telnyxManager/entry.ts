@@ -272,6 +272,106 @@ export default async function (req: Request): Promise<Response> {
         break;
       }
 
+      // ── Compliance Audit ──
+      case 'getAudit': {
+        const numbersRes = await telnyxFetch('/phone_numbers?records_per_page=100');
+        const profilesRes = await telnyxFetch('/messaging_profiles?records_per_page=50');
+        const brandsRes = await telnyxFetch('/10dlc/brand');
+
+        const numbers = (numbersRes.data || []).map((n: any) => ({
+          id: n.id, phone: n.phone_number, type: n.phone_number_type, status: n.status,
+          messaging_profile_id: n.messaging_profile_id, messaging_profile_name: n.messaging_profile_name,
+          country: n.country_iso_alpha2,
+        }));
+        const profiles = (profilesRes.data || []).map((p: any) => ({ id: p.id, name: p.name, enabled: p.enabled, webhook_url: p.webhook_url }));
+        const brands = (brandsRes.records || brandsRes.data?.records || []).map((b: any) => ({
+          brandId: b.brandId, tcrBrandId: b.tcrBrandId, companyName: b.companyName, displayName: b.displayName,
+          identityStatus: b.identityStatus, status: b.status, assignedCampaignsCount: b.assignedCampaignsCount,
+        }));
+
+        // Campaigns for verified brands
+        const verifiedBrands = brands.filter((b: any) => b.identityStatus === 'VERIFIED');
+        let campaigns: any[] = [];
+        for (const brand of verifiedBrands) {
+          try {
+            const campRes = await telnyxFetch(`/10dlc/campaign?brandId=${brand.brandId}&records_per_page=50`);
+            campaigns.push(...(campRes.records || campRes.data?.records || []).map((c: any) => ({
+              campaignId: c.campaignId, tcrCampaignId: c.tcrCampaignId, usecase: c.usecase, status: c.status,
+            })));
+          } catch { /* skip */ }
+        }
+
+        // Toll-free verifications
+        let tollfreeVerifications: any[] = [];
+        try {
+          const tfvRes = await telnyxFetch('/messaging_tollfree/verification/requests?page=1&page_size=50');
+          tollfreeVerifications = (tfvRes.records || tfvRes.data?.records || []).map((v: any) => ({
+            id: v.id, businessName: v.businessName, verificationStatus: v.verificationStatus,
+            reason: v.reason, phoneNumbers: (v.phoneNumbers || []).map((p: any) => p.phoneNumber),
+          }));
+        } catch { /* skip */ }
+
+        result = { numbers, profiles, brands, verifiedBrands, campaigns, tollfreeVerifications };
+        break;
+      }
+
+      // ── 10DLC Campaign ──
+      case 'createCampaign': {
+        if (!body.brandId) return Response.json({ error: 'brandId is required' }, { status: 400 });
+        const data = await telnyxFetch('/10dlc/campaignBuilder', {
+          method: 'POST',
+          body: JSON.stringify({ brandId: body.brandId, ...body.campaignData }),
+        });
+        result = data.data;
+        await logSop(svc, 'campaign_created', `Created 10DLC campaign`, JSON.stringify(body.campaignData).slice(0, 200));
+        break;
+      }
+
+      case 'assignNumberToCampaign': {
+        if (!body.phoneNumber || !body.campaignId) return Response.json({ error: 'phoneNumber and campaignId are required' }, { status: 400 });
+        const data = await telnyxFetch('/10dlc/phoneNumberCampaign', {
+          method: 'POST',
+          body: JSON.stringify({ phoneNumber: body.phoneNumber, campaignId: body.campaignId }),
+        });
+        result = data.data;
+        await logSop(svc, 'number_assigned_campaign', `Assigned ${body.phoneNumber} to campaign ${body.campaignId}`, '');
+        break;
+      }
+
+      // ── Toll-Free Verification ──
+      case 'listTollFreeVerifications': {
+        const data = await telnyxFetch('/messaging_tollfree/verification/requests?page=1&page_size=50');
+        result = {
+          verifications: (data.data?.records || []).map((v: any) => ({
+            id: v.id, businessName: v.businessName, verificationStatus: v.verificationStatus,
+            reason: v.reason, phoneNumbers: (v.phoneNumbers || []).map((p: any) => p.phoneNumber),
+            useCase: v.useCase, createdAt: v.createdAt,
+          })),
+        };
+        break;
+      }
+
+      case 'submitTollFreeVerification': {
+        const data = await telnyxFetch('/messaging_tollfree/verification/requests', {
+          method: 'POST',
+          body: JSON.stringify(body.verificationData),
+        });
+        result = data.data;
+        await logSop(svc, 'tfv_submitted', 'Submitted toll-free verification', JSON.stringify(body.verificationData).slice(0, 200));
+        break;
+      }
+
+      case 'updateTollFreeVerification': {
+        if (!body.verificationId) return Response.json({ error: 'verificationId is required' }, { status: 400 });
+        const data = await telnyxFetch(`/messaging_tollfree/verification/requests/${body.verificationId}`, {
+          method: 'PATCH',
+          body: JSON.stringify(body.verificationData),
+        });
+        result = data.data;
+        await logSop(svc, 'tfv_updated', `Updated toll-free verification ${body.verificationId}`, JSON.stringify(body.verificationData).slice(0, 200));
+        break;
+      }
+
       default:
         return Response.json({ error: `Unknown action: ${action}` }, { status: 400 });
     }
