@@ -98,7 +98,30 @@ export default function WebsiteEmpire() {
     setStepStatus((s) => ({ ...s, [stepNum]: "running" }));
     try {
       if (stepNum === 1) {
-        await base44.functions.invoke("xtremeComms", { action: "activate_tenant", tenant_id: "6a9b71b0d35335afb9198955" });
+        // Verify the API key connection, then check for a provisioned phone
+        // number. If none exists, search and buy one so SMS follow-up works.
+        const statusRes = await base44.functions.invoke("xtremeComms", { action: "getStatus" });
+        const connected = statusRes?.data?.result?.connected ?? statusRes?.result?.connected;
+        if (!connected && statusRes?.data?.result?.error) {
+          throw new Error(`Connection check failed: ${statusRes.data.result.error}`);
+        }
+        const listRes = await base44.functions.invoke("xtremeComms", { action: "listNumbers" });
+        const numbers = listRes?.data?.result?.numbers ?? listRes?.result?.numbers ?? [];
+        if (!numbers || numbers.length === 0) {
+          const searchRes = await base44.functions.invoke("xtremeComms", {
+            action: "searchNumbers",
+            country: "US",
+            features: "sms,voice",
+            limit: 5,
+          });
+          const found = searchRes?.data?.result?.numbers ?? searchRes?.result?.numbers ?? [];
+          if (found && found.length > 0) {
+            await base44.functions.invoke("xtremeComms", {
+              action: "buyNumber",
+              phoneNumber: found[0].e164 || found[0].phone_number,
+            });
+          }
+        }
       } else if (stepNum === 2) {
         for (const c of FL_CITIES) {
           const slug = `epoxy-${slugify(c.city)}-${c.state.toLowerCase()}`;
