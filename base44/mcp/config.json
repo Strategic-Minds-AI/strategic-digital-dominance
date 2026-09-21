@@ -1,3 +1,134 @@
 {
-  "auth": "oauth"
+  "auth": "oauth",
+  "tools": {
+    "functions": [
+      {
+        "name": "generate_vision",
+        "title": "Generate AI-Assisted Vision",
+        "description": "Takes a rough business idea and returns a fully articulated vision with target market, core capabilities, scale scope, and success metrics. Use when the user describes what they want to build but needs help articulating it.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "action": { "type": "string", "description": "Always 'assist'" },
+            "raw_idea": { "type": "string", "description": "The user's rough business idea or vision description" },
+            "feedback": { "type": "string", "description": "Optional feedback for regeneration" }
+          },
+          "required": ["action", "raw_idea"]
+        },
+        "handler": "visionEngine",
+        "annotations": { "read_only_hint": false, "destructive_hint": false, "idempotent_hint": false }
+      },
+      {
+        "name": "generate_strategies",
+        "title": "Generate 10 Business Strategies",
+        "description": "Takes an approved vision and generates 10 distinct strategies with business names, domain suggestions (with live availability checking), target cities, monetization models, and recommended agents. Use when the user has an approved vision and needs actionable strategies.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "action": { "type": "string", "description": "Always 'strategies'" },
+            "vision": { "type": "string", "description": "The approved vision statement" },
+            "angle": { "type": "string", "description": "Optional strategic angle for regeneration" }
+          },
+          "required": ["action", "vision"]
+        },
+        "handler": "visionEngine",
+        "annotations": { "read_only_hint": false, "destructive_hint": false, "idempotent_hint": false }
+      },
+      {
+        "name": "build_agent_fleet",
+        "title": "Build Agent Fleet from Vision",
+        "description": "Analyzes a vision and generates a complete agent fleet with master prompts, capabilities, actions, and project structure. Use when the user has a strategy and wants to auto-generate all agents needed to operate the system 24/7.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "action": { "type": "string", "description": "'analyze' to get recommendations, 'generate' to create agents, 'launch' to validate" },
+            "vision": { "type": "string", "description": "The vision or strategy description" },
+            "recommended_agents": { "type": "array", "items": { "type": "object" }, "description": "Required for 'generate' action — the agent recommendations from 'analyze'" }
+          },
+          "required": ["action"]
+        },
+        "handler": "agentBuilderEngine",
+        "annotations": { "read_only_hint": false, "destructive_hint": false, "idempotent_hint": false }
+      },
+      {
+        "name": "run_dominance_campaign",
+        "title": "Run Digital Dominance Campaign",
+        "description": "Launches and executes a digital dominance campaign: branding, domain, infrastructure, content flood, persona fame, SEO, and AI search optimization. Use when the user wants to deploy a website with full SEO and content automation.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "action": { "type": "string", "description": "'launch' to start, 'status' to check, 'list' to see all campaigns" },
+            "niche": { "type": "string", "description": "Target industry niche" },
+            "city": { "type": "string", "description": "Target city" },
+            "state": { "type": "string", "description": "Target state" },
+            "keyword": { "type": "string", "description": "Seed keyword" }
+          },
+          "required": ["action"]
+        },
+        "handler": "dominanceEngine",
+        "annotations": { "read_only_hint": false, "destructive_hint": false, "idempotent_hint": false }
+      },
+      {
+        "name": "orchestrate_system",
+        "title": "Orchestrate System Operations",
+        "description": "Unified entry point for system health checks, agent activity monitoring, auto-healing, and running any operation. Use for system status, health checks, self-healing, and delegating commands to the right subsystem.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "action": { "type": "string", "description": "'health' for system status, 'activity' for agent activity, 'heal' for auto-repair, 'operate' to run a command" },
+            "command": { "type": "string", "description": "Natural language command for 'operate' action" }
+          },
+          "required": ["action"]
+        },
+        "handler": "systemOrchestrator",
+        "annotations": { "read_only_hint": false, "destructive_hint": false, "idempotent_hint": true }
+      },
+      {
+        "name": "scan_competitors",
+        "title": "Scan Competitors for SEO",
+        "description": "Researches competitors in a niche and location, identifying their pricing, services, strengths, gaps, and backlink opportunities. Use when the user needs competitive intelligence for SEO strategy.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "niche": { "type": "string", "description": "Industry niche to scan" },
+            "location": { "type": "string", "description": "Geographic location" }
+          },
+          "required": []
+        },
+        "handler": "scanCompetitors",
+        "annotations": { "read_only_hint": true, "destructive_hint": false, "idempotent_hint": true }
+      },
+      {
+        "name": "analyze_industry_trends",
+        "title": "Analyze Industry Trends",
+        "description": "Analyzes trade industry growth using real BLS employment and wage data with deterministic projections. Use when the user needs industry forecasting and growth analysis.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "action": { "type": "string", "description": "'analyze' for specific industry, 'industries' to list all" },
+            "industry": { "type": "string", "description": "Industry to analyze" },
+            "years": { "type": "number", "description": "Projection years (1-15)" }
+          },
+          "required": ["action"]
+        },
+        "handler": "tradeCrystalBall",
+        "annotations": { "read_only_hint": true, "destructive_hint": false, "idempotent_hint": true }
+      },
+      {
+        "name": "validate_system",
+        "title": "Validate System Readiness",
+        "description": "Runs the AutoComplete convergence cycle to validate system benchmarks, identify gaps, and auto-repair issues toward VERIFIED_100 status. Use when the user wants to check or improve system production readiness.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "action": { "type": "string", "description": "'status' for current state, 'cycle' to run validation, 'full_cycle' for complete convergence" },
+            "system_id": { "type": "string", "description": "Target system ID" }
+          },
+          "required": ["action"]
+        },
+        "handler": "autoComplete",
+        "annotations": { "read_only_hint": false, "destructive_hint": false, "idempotent_hint": false }
+      }
+    ]
+  }
 }

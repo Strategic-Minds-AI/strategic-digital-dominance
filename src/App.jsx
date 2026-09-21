@@ -69,6 +69,8 @@ import AutoComplete from '@/pages/admin/AutoComplete';
 import AdminResults from '@/pages/admin/Results';
 import AgentBuilder from '@/pages/admin/AgentBuilder';
 import VisionStudio from '@/pages/admin/VisionStudio';
+import CommandCenter from '@/pages/admin/CommandCenter';
+import Connect from '@/pages/Connect';
 import AgentMaster from '@/pages/admin/AgentMaster';
 import VisionStrategy from '@/pages/admin/VisionStrategy';
 import Intelligence from '@/pages/admin/Intelligence';
@@ -212,6 +214,7 @@ const AuthenticatedApp = () => {
         <Route path="results" element={<AdminResults />} />
         <Route path="agent-builder" element={<AgentBuilder />} />
         <Route path="vision-studio" element={<VisionStudio />} />
+        <Route path="command-center" element={<CommandCenter />} />
         <Route path="agent-master" element={<AgentMaster />} />
         <Route path="vision-strategy" element={<VisionStrategy />} />
         <Route path="intelligence" element={<Intelligence />} />
@@ -253,6 +256,7 @@ const AuthenticatedApp = () => {
       <Route path="/portal" element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         <Route index element={<CustomerPortal />} />
       </Route>
+      <Route path="/connect" element={<Connect />} />
       <Route path="/acquire" element={<Acquire />} />
       <Route path="/contractor" element={<ContractorApp />} />
       <Route path="/contractor/bid" element={<ContractorBid />} />
