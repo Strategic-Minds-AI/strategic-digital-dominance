@@ -38,10 +38,10 @@ export default function XtremeComms() {
 
   // Forms state
   const [forms, setForms] = useState({
-    sms: { to: "", message: "", mediaUrls: "" },
+    sms: { to: "+17722090266", from: "+18337001239", message: "✅ Test from Xtreme Communications — your SMS pipeline is live! Reply STOP to opt out. — Strategic Minds AI", mediaUrls: "" },
     mms: { to: "", message: "", mediaUrls: "", subject: "" },
     whatsapp: { to: "", message: "", template: "", mediaUrls: "" },
-    voice: { to: "", from: "", systemPrompt: "", agentId: "" },
+    voice: { to: "+17722090266", from: "", systemPrompt: "", agentId: "" },
     numbers: { areaCode: "", country: "US", phoneNumber: "" },
     campaign: { contacts: "", message: "", channels: "sms", campaignName: "" },
     leads: { industry: "", keyword: "", location: "", radius: 25, limit: 50 },
