@@ -90,6 +90,7 @@ import BuilderLibrary from '@/pages/admin/BuilderLibrary';
 import MetaAgent from '@/pages/admin/MetaAgent';
 import ConvergenceEngine from '@/pages/admin/ConvergenceEngine';
 import WebsiteEmpire from '@/pages/admin/WebsiteEmpire';
+import X1Company from '@/pages/admin/X1Company';
 import SiteHealthMonitor from '@/pages/admin/SiteHealthMonitor';
 import UrlStrategy from '@/pages/admin/UrlStrategy';
 import VoiceAssistant from '@/pages/admin/VoiceAssistant';
@@ -231,6 +232,7 @@ const AuthenticatedApp = () => {
         <Route path="operator" element={<SystemOperator />} />
         <Route path="code-studio" element={<CodeStudio />} />
         <Route path="empire" element={<WebsiteEmpire />} />
+        <Route path="x1-company" element={<X1Company />} />
         <Route path="site-health" element={<SiteHealthMonitor />} />
         <Route path="url-strategy" element={<UrlStrategy />} />
         <Route path="voice-assistant" element={<VoiceAssistant />} />

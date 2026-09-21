@@ -1,0 +1,135 @@
+{
+  "name": "AgentDepartment",
+  "type": "object",
+  "properties": {
+    "owner_id": {
+      "type": "string",
+      "description": "User ID who owns this department (multi-tenant isolation)"
+    },
+    "department_id": {
+      "type": "string",
+      "description": "Deterministic department ID (DEPT-EXEC, DEPT-ENG, etc.)"
+    },
+    "name": {
+      "type": "string",
+      "description": "Department display name (Engineering, Marketing, etc.)"
+    },
+    "description": {
+      "type": "string",
+      "description": "What this department does"
+    },
+    "department_type": {
+      "type": "string",
+      "enum": [
+        "executive",
+        "engineering",
+        "qa",
+        "marketing",
+        "sales",
+        "communications",
+        "reputation",
+        "operations",
+        "infrastructure",
+        "product",
+        "custom"
+      ],
+      "default": "custom"
+    },
+    "agent_config_names": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "In-app agent config names from base44/agents/"
+    },
+    "agent_persona_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "AgentPersona entity IDs assigned to this department"
+    },
+    "lead_agent_config": {
+      "type": "string",
+      "description": "Agent config name of the department head"
+    },
+    "responsibilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "kpi_targets": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Department KPIs and targets"
+    },
+    "integrations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Connected services: supabase, vercel, drive, xtreme_comms, cloud_browser"
+    },
+    "task_count": {
+      "type": "integer",
+      "default": 0,
+      "description": "Total tasks assigned to this department"
+    },
+    "completed_count": {
+      "type": "integer",
+      "default": 0,
+      "description": "Tasks completed by this department"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "owner_id",
+    "department_id",
+    "name",
+    "department_type"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": null,
+    "update": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

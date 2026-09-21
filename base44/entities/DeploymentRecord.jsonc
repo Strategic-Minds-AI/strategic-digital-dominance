@@ -1,0 +1,154 @@
+{
+  "name": "DeploymentRecord",
+  "type": "object",
+  "properties": {
+    "owner_id": {
+      "type": "string",
+      "description": "User ID who owns this deployment (multi-tenant isolation)"
+    },
+    "deployment_id": {
+      "type": "string",
+      "description": "Deterministic deployment ID"
+    },
+    "session_id": {
+      "type": "string",
+      "description": "CodeSandboxSession that produced this deployment"
+    },
+    "department_id": {
+      "type": "string",
+      "description": "Department responsible for this deployment"
+    },
+    "task_description": {
+      "type": "string",
+      "description": "What was deployed"
+    },
+    "file_path": {
+      "type": "string",
+      "description": "File path of the deployed code"
+    },
+    "code_snapshot": {
+      "type": "string",
+      "maxLength": 50000,
+      "description": "The exact code that was deployed"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "deploying",
+        "deployed",
+        "failed",
+        "rolled_back",
+        "monitoring"
+      ],
+      "default": "pending"
+    },
+    "target_environment": {
+      "type": "string",
+      "enum": [
+        "sandbox",
+        "staging",
+        "production",
+        "vercel",
+        "base44"
+      ],
+      "default": "base44"
+    },
+    "vercel_deployment_id": {
+      "type": "string",
+      "description": "Vercel deployment ID if deployed to Vercel"
+    },
+    "vercel_url": {
+      "type": "string",
+      "description": "Vercel deployment URL"
+    },
+    "health_status": {
+      "type": "string",
+      "enum": [
+        "healthy",
+        "degraded",
+        "unhealthy",
+        "unknown"
+      ],
+      "default": "unknown"
+    },
+    "health_score": {
+      "type": "integer",
+      "default": 0,
+      "description": "0-100 health score from monitoring"
+    },
+    "health_notes": {
+      "type": "string",
+      "maxLength": 5000
+    },
+    "validation_score": {
+      "type": "integer",
+      "default": 0,
+      "description": "0-100 validation score from closed-loop tester"
+    },
+    "deployed_by": {
+      "type": "string",
+      "description": "Agent or user that triggered the deployment"
+    },
+    "rollback_reason": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "deployed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_health_check": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "owner_id",
+    "deployment_id",
+    "session_id",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": null,
+    "update": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

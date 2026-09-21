@@ -1,0 +1,63 @@
+{
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "x1_autonomous_company_cycle",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_cycle": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "companyOrchestrator",
+            "args": {
+              "action": "run_company_cycle"
+            }
+          },
+          "then": "health_check",
+          "x-base44": {
+            "title": "Run Company Cycle",
+            "description": "Process pending coding tasks through departments"
+          }
+        }
+      },
+      {
+        "health_check": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "closedLoopTester",
+            "args": {
+              "action": "run_health_check"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "System Health Check",
+            "description": "Monitor all integrations and pipeline health"
+          }
+        }
+      }
+    ]
+  },
+  "name": "X1 Autonomous Company Cycle",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 * * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "description": "Processes pending coding tasks through the closed-loop pipeline and runs system health checks every hour. The autonomous AI company runs itself \u2014 routing goals to departments, generating code in the sandbox, validating, deploying, and monitoring health."
+}

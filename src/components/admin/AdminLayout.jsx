@@ -10,6 +10,7 @@ const navGroups = [
     label: null,
     items: [
       { to: "/admin/command-center", icon: Crown, label: "Command Center" },
+      { to: "/admin/x1-company", icon: Building2, label: "X1 AI Company" },
       { to: "/admin", end: true, icon: LayoutDashboard, label: "Dashboard" },
       { to: "/admin/vision-studio", icon: Wand2, label: "Vision Studio" },
     ],

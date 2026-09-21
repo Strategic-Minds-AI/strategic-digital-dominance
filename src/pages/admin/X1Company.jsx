@@ -1,0 +1,449 @@
+import React, { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { base44 } from "@/api/base44Client";
+import {
+  Building2, Cpu, Rocket, CheckCircle2, AlertCircle, Clock,
+  Activity, Zap, Target, Users, Globe, Database, Cloud, Monitor,
+  MessageSquare, Mail, BarChart3, Play, RefreshCw, Loader2,
+  Server, Shield, GitBranch, Box, ArrowRight, Sparkles, Brain,
+  Network, Wrench, Eye, TestTube, Crown
+} from "lucide-react";
+
+const DEPT_ICONS = {
+  executive: Crown,
+  engineering: Cpu,
+  qa: TestTube,
+  marketing: BarChart3,
+  sales: Target,
+  communications: MessageSquare,
+  reputation: Shield,
+  operations: Network,
+  infrastructure: Server,
+  product: Brain,
+  custom: Box
+};
+
+const STATUS_COLORS = {
+  healthy: "bg-green-100 text-green-700 border-green-300",
+  degraded: "bg-amber-100 text-amber-700 border-amber-300",
+  unhealthy: "bg-red-100 text-red-700 border-red-300",
+  unknown: "bg-stone-100 text-stone-500 border-stone-300"
+};
+
+const SESSION_STATUS_COLORS = {
+  planning: "bg-stone-100 text-stone-600",
+  generating: "bg-blue-100 text-blue-700",
+  testing: "bg-purple-100 text-purple-700",
+  validating: "bg-amber-100 text-amber-700",
+  deploying: "bg-cyan-100 text-cyan-700",
+  completed: "bg-green-100 text-green-700",
+  failed: "bg-red-100 text-red-700",
+  needs_repair: "bg-orange-100 text-orange-700",
+  repairing: "bg-orange-100 text-orange-700"
+};
+
+const INTEGRATION_ICONS = {
+  supabase: Database,
+  vercel: Cloud,
+  drive: Globe,
+  xtreme_comms: MessageSquare,
+  cloud_browser: Monitor,
+  gmail: Mail,
+  hubspot: BarChart3
+};
+
+export default function X1Company() {
+  const queryClient = useQueryClient();
+  const [goal, setGoal] = useState("");
+  const [routing, setRouting] = useState(null);
+  const [actionLoading, setActionLoading] = useState(null);
+  const [pipelineResult, setPipelineResult] = useState(null);
+
+  const { data: statusData, isLoading: statusLoading } = useQuery({
+    queryKey: ["x1-company-status"],
+    queryFn: () => base44.functions.invoke("companyOrchestrator", { action: "get_company_status" }),
+    refetchInterval: 15000
+  });
+
+  const { data: deptsData } = useQuery({
+    queryKey: ["x1-departments"],
+    queryFn: () => base44.functions.invoke("companyOrchestrator", { action: "get_departments" })
+  });
+
+  const { data: sessionsData } = useQuery({
+    queryKey: ["x1-sessions"],
+    queryFn: () => base44.functions.invoke("autonomousCodingEngine", { action: "list_sessions", limit: 20 }),
+    refetchInterval: 5000
+  });
+
+  const { data: healthData } = useQuery({
+    queryKey: ["x1-health"],
+    queryFn: () => base44.functions.invoke("closedLoopTester", { action: "run_health_check" }),
+    refetchInterval: 30000
+  });
+
+  const refresh = () => {
+    queryClient.invalidateQueries({ queryKey: ["x1-company-status"] });
+    queryClient.invalidateQueries({ queryKey: ["x1-departments"] });
+    queryClient.invalidateQueries({ queryKey: ["x1-sessions"] });
+    queryClient.invalidateQueries({ queryKey: ["x1-health"] });
+  };
+
+  const handleSeed = async () => {
+    setActionLoading("seed");
+    try {
+      await base44.functions.invoke("companyOrchestrator", { action: "seed_departments" });
+      refresh();
+    } catch (e) { console.error(e); }
+    setActionLoading(null);
+  };
+
+  const handleRouteGoal = async () => {
+    if (!goal.trim()) return;
+    setActionLoading("route");
+    try {
+      const res = await base44.functions.invoke("companyOrchestrator", { action: "route_goal", goal });
+      setRouting(res?.data);
+      setGoal("");
+      refresh();
+    } catch (e) { console.error(e); }
+    setActionLoading(null);
+  };
+
+  const handleRunCycle = async () => {
+    setActionLoading("cycle");
+    try {
+      await base44.functions.invoke("companyOrchestrator", { action: "run_company_cycle" });
+      refresh();
+    } catch (e) { console.error(e); }
+    setActionLoading(null);
+  };
+
+  const handleRunPipeline = async () => {
+    setActionLoading("pipeline");
+    setPipelineResult(null);
+    try {
+      const res = await base44.functions.invoke("autonomousCodingEngine", {
+        action: "run_full_pipeline",
+        task_description: "Create a React dashboard widget that shows real-time system metrics with animated counters and a health score gauge.",
+        task_type: "create_component",
+        department_id: "DEPT-ENG",
+        file_path: "src/components/SystemMetricsWidget.jsx"
+      });
+      setPipelineResult(res?.data);
+      refresh();
+    } catch (e) { console.error(e); }
+    setActionLoading(null);
+  };
+
+  const status = statusData?.data;
+  const departments = deptsData?.data?.departments || [];
+  const sessions = sessionsData?.data?.sessions || [];
+  const health = healthData?.data;
+  const company = status?.company || {};
+  const pipeline = status?.pipeline || {};
+  const integrations = status?.integrations || {};
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="rounded-2xl bg-gradient-to-br from-stone-950 via-stone-900 to-stone-950 p-6 text-white border border-amber-500/20">
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 rounded-xl bg-amber-500 grid place-items-center">
+              <Building2 className="h-7 w-7 text-stone-950" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-extrabold tracking-tight">X1 AI Hub — Autonomous Company</h1>
+              <p className="text-stone-400 text-sm mt-0.5">A self-operating AI software, marketing, and orchestration company with department-based agent teams</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            {health && (
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl border border-amber-500/30 bg-stone-900/50">
+                <Activity className={`h-5 w-5 ${health.overall_status === "healthy" ? "text-green-400" : "text-amber-400"}`} />
+                <div>
+                  <div className="text-2xl font-bold text-amber-400">{health.overall_score}%</div>
+                  <div className="text-[10px] uppercase tracking-wide text-stone-500">System Health</div>
+                </div>
+              </div>
+            )}
+            <button onClick={refresh} className="p-2 rounded-lg border border-stone-700 hover:border-amber-500 transition">
+              <RefreshCw className="h-5 w-5 text-stone-400" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Row */}
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+        <StatCard icon={Building2} label="Departments" value={company.total_departments || 0} tone="amber" />
+        <StatCard icon={Users} label="Agent Employees" value={company.total_agents || 0} tone="blue" />
+        <StatCard icon={Target} label="Total Tasks" value={company.total_tasks || 0} tone="purple" />
+        <StatCard icon={CheckCircle2} label="Completed" value={company.completed_tasks || 0} tone="green" />
+        <StatCard icon={Rocket} label="Deployments" value={pipeline.total_deployments || 0} tone="cyan" />
+        <StatCard icon={Activity} label="Active Sessions" value={pipeline.active_sessions || 0} tone="stone" />
+      </div>
+
+      {/* Control Panel */}
+      <div className="rounded-2xl border border-stone-200 bg-white p-5">
+        <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2 mb-4">
+          <Zap className="h-5 w-5 text-amber-500" /> Autonomous Control Panel
+        </h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Goal Router */}
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-stone-700">Route a Goal to a Department</label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={goal}
+                onChange={(e) => setGoal(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleRouteGoal()}
+                placeholder="e.g. Generate 10 SEO-optimized city pages for epoxy flooring..."
+                className="flex-1 h-10 px-3 rounded-lg border border-stone-200 text-sm focus:border-amber-500 outline-none"
+              />
+              <button
+                onClick={handleRouteGoal}
+                disabled={actionLoading === "route" || !goal.trim()}
+                className="inline-flex items-center gap-2 px-4 h-10 rounded-lg bg-amber-500 text-stone-950 text-sm font-bold hover:bg-amber-400 disabled:opacity-60"
+              >
+                {actionLoading === "route" ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
+                Route
+              </button>
+            </div>
+            {routing?.routing && (
+              <div className="mt-2 p-3 rounded-lg bg-amber-50 border border-amber-200 text-sm">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-bold text-amber-700">Routed to: {routing.department}</span>
+                  <span className="text-xs px-2 py-0.5 rounded bg-amber-200 text-amber-800">{routing.routing.priority}</span>
+                </div>
+                <p className="text-stone-600 text-xs">{routing.routing.reasoning}</p>
+                {routing.routing.sub_tasks && (
+                  <ul className="mt-2 space-y-1">
+                    {routing.routing.sub_tasks.slice(0, 4).map((t, i) => (
+                      <li key={i} className="text-xs text-stone-500 flex items-start gap-1.5">
+                        <span className="text-amber-500 mt-0.5">→</span> {t}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-stone-700">Autonomous Actions</label>
+            <div className="grid grid-cols-2 gap-2">
+              <ActionButton onClick={handleSeed} loading={actionLoading === "seed"} icon={Building2} label="Seed Departments" />
+              <ActionButton onClick={handleRunCycle} loading={actionLoading === "cycle"} icon={RefreshCw} label="Run Company Cycle" />
+              <ActionButton onClick={handleRunPipeline} loading={actionLoading === "pipeline"} icon={Cpu} label="Run Coding Pipeline" />
+              <ActionButton onClick={refresh} loading={false} icon={Activity} label="Refresh Status" />
+            </div>
+            {pipelineResult && (
+              <div className="mt-2 p-3 rounded-lg bg-green-50 border border-green-200 text-sm">
+                <div className="flex items-center gap-2 mb-1">
+                  <CheckCircle2 className="h-4 w-4 text-green-600" />
+                  <span className="font-bold text-green-700">Pipeline {pipelineResult.status}</span>
+                  {pipelineResult.session?.validation_score && (
+                    <span className="text-xs px-2 py-0.5 rounded bg-green-200 text-green-800">Score: {pipelineResult.session.validation_score}/100</span>
+                  )}
+                </div>
+                <p className="text-stone-600 text-xs">{pipelineResult.session?.task_description}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Departments Grid */}
+      <div className="rounded-2xl border border-stone-200 bg-white p-5">
+        <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2 mb-4">
+          <Building2 className="h-5 w-5 text-amber-500" /> Company Departments
+          <span className="text-sm font-normal text-stone-400">({departments.length} departments, {company.total_agents || 0} agent employees)</span>
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {departments.length === 0 ? (
+            <div className="col-span-full text-center py-8 text-stone-400">
+              <Building2 className="h-10 w-10 mx-auto mb-2 opacity-30" />
+              <p className="text-sm">No departments yet. Click "Seed Departments" to create the company org chart.</p>
+            </div>
+          ) : departments.map((dept) => {
+            const Icon = DEPT_ICONS[dept.type] || Box;
+            return (
+              <div key={dept.id} className="rounded-xl border border-stone-200 p-4 hover:border-amber-400 transition group">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="h-9 w-9 rounded-lg bg-amber-50 border border-amber-200 grid place-items-center group-hover:bg-amber-100 transition">
+                    <Icon className="h-5 w-5 text-amber-600" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm font-bold text-stone-900 truncate">{dept.name}</div>
+                    <div className="text-[10px] text-stone-400 uppercase tracking-wide">{dept.type}</div>
+                  </div>
+                </div>
+                <p className="text-xs text-stone-500 mb-2 line-clamp-2">{dept.description}</p>
+                <div className="flex flex-wrap gap-1 mb-2">
+                  {dept.agents?.map((a, i) => (
+                    <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 text-stone-600 font-medium">{a}</span>
+                  ))}
+                </div>
+                <div className="flex items-center justify-between text-[11px] text-stone-400">
+                  <span className="flex items-center gap-1"><Target className="h-3 w-3" /> {dept.task_count || 0} tasks</span>
+                  <span className="flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> {dept.completed_count || 0} done</span>
+                </div>
+                {dept.integrations?.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    {dept.integrations.map((intg, i) => {
+                      const IntIcon = INTEGRATION_ICONS[intg] || Globe;
+                      return <IntIcon key={i} className="h-3 w-3 text-stone-400" />;
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Sandbox Pipeline */}
+      <div className="rounded-2xl border border-stone-200 bg-white p-5">
+        <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2 mb-4">
+          <Cpu className="h-5 w-5 text-amber-500" /> Autonomous Coding Sandbox
+          <span className="text-sm font-normal text-stone-400">({sessions.length} sessions)</span>
+        </h2>
+        {sessions.length === 0 ? (
+          <div className="text-center py-8 text-stone-400">
+            <Cpu className="h-10 w-10 mx-auto mb-2 opacity-30" />
+            <p className="text-sm">No coding sessions yet. Route a goal or run the coding pipeline to start.</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {sessions.slice(0, 10).map((s) => (
+              <div key={s.id || s.session_id} className="flex items-center gap-3 p-3 rounded-xl border border-stone-200 hover:border-amber-300 transition">
+                <div className={`h-2 w-2 rounded-full ${s.status === "completed" ? "bg-green-500" : s.status === "failed" ? "bg-red-500" : "bg-blue-500 animate-pulse"}`} />
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium text-stone-900 truncate">{s.task_description}</div>
+                  <div className="text-[11px] text-stone-400 flex items-center gap-2">
+                    <span>{s.department_id}</span>
+                    <span>•</span>
+                    <span>{s.task_type}</span>
+                    {s.repair_attempts > 0 && <><span>•</span><span className="text-orange-500">{s.repair_attempts} repairs</span></>}
+                  </div>
+                </div>
+                <span className={`text-[10px] font-bold px-2 py-1 rounded ${SESSION_STATUS_COLORS[s.status] || "bg-stone-100 text-stone-600"}`}>
+                  {s.status?.toUpperCase()}
+                </span>
+                {s.validation_score > 0 && (
+                  <span className="text-xs font-bold text-stone-600">{s.validation_score}/100</span>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Integration Health */}
+      {health && (
+        <div className="rounded-2xl border border-stone-200 bg-white p-5">
+          <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2 mb-4">
+            <GitBranch className="h-5 w-5 text-amber-500" /> Integration Health
+            <span className={`text-xs font-bold px-2 py-1 rounded border ${STATUS_COLORS[health.overall_status]}`}>
+              {health.overall_score}% — {health.overall_status?.toUpperCase()}
+            </span>
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+            {health.checks?.map((check, i) => {
+              const Icon = INTEGRATION_ICONS[check.name.toLowerCase().split(" ")[0]] || Server;
+              return (
+                <div key={i} className="flex items-center gap-2 p-3 rounded-lg border border-stone-200">
+                  <Icon className="h-4 w-4 text-stone-500 shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <div className="text-xs font-semibold text-stone-700 truncate">{check.name}</div>
+                    <div className="text-[10px] text-stone-400 truncate">{check.details}</div>
+                  </div>
+                  <span className={`h-2 w-2 rounded-full shrink-0 ${check.status === "healthy" ? "bg-green-500" : check.status === "degraded" ? "bg-amber-500" : "bg-red-500"}`} />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Pipeline Architecture */}
+      <div className="rounded-2xl border border-stone-900 bg-stone-950 p-6 text-white">
+        <h2 className="text-lg font-bold flex items-center gap-2 mb-4 text-amber-500">
+          <Sparkles className="h-5 w-5" /> Closed-Loop Pipeline Architecture
+        </h2>
+        <div className="flex items-center gap-2 flex-wrap text-xs">
+          {[
+            { label: "Goal Intake", icon: Target, color: "text-amber-400" },
+            { label: "Route to Dept", icon: Building2, color: "text-blue-400" },
+            { label: "Sandbox Session", icon: Box, color: "text-purple-400" },
+            { label: "Generate Code", icon: Cpu, color: "text-cyan-400" },
+            { label: "Validate (8 dims)", icon: TestTube, color: "text-green-400" },
+            { label: "Deploy", icon: Rocket, color: "text-amber-400" },
+            { label: "Monitor Health", icon: Activity, color: "text-pink-400" },
+            { label: "Repair Loop", icon: Wrench, color: "text-orange-400" }
+          ].map((step, i, arr) => (
+            <React.Fragment key={i}>
+              <div className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-stone-700 bg-stone-900">
+                <step.icon className={`h-4 w-4 ${step.color}`} />
+                <span className="text-stone-300 font-medium">{step.label}</span>
+              </div>
+              {i < arr.length - 1 && <ArrowRight className="h-4 w-4 text-stone-600" />}
+            </React.Fragment>
+          ))}
+        </div>
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="rounded-lg border border-stone-700 bg-stone-900 p-3">
+            <Eye className="h-4 w-4 text-amber-500 mb-1" />
+            <div className="text-sm font-bold text-white mb-0.5">Deterministic Builds</div>
+            <div className="text-xs text-stone-400">Same task + same model = same output. Strategy locked before generation, cached via session hash.</div>
+          </div>
+          <div className="rounded-lg border border-stone-700 bg-stone-900 p-3">
+            <Shield className="h-4 w-4 text-amber-500 mb-1" />
+            <div className="text-sm font-bold text-white mb-0.5">8-Dimension Validation</div>
+            <div className="text-xs text-stone-400">Syntax, imports, logic, React, security, performance, requirements, standards — adversarial model review.</div>
+          </div>
+          <div className="rounded-lg border border-stone-700 bg-stone-900 p-3">
+            <RefreshCw className="h-4 w-4 text-amber-500 mb-1" />
+            <div className="text-sm font-bold text-white mb-0.5">Self-Healing Loop</div>
+            <div className="text-xs text-stone-400">Failed validation → repair instructions → regenerate → re-validate. Up to 3 repair attempts per session.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StatCard({ icon: Icon, label, value, tone }) {
+  const tones = {
+    amber: "border-amber-200 bg-amber-50 text-amber-700",
+    green: "border-green-200 bg-green-50 text-green-700",
+    blue: "border-blue-200 bg-blue-50 text-blue-700",
+    purple: "border-purple-200 bg-purple-50 text-purple-700",
+    cyan: "border-cyan-200 bg-cyan-50 text-cyan-700",
+    stone: "border-stone-200 bg-stone-50 text-stone-700"
+  };
+  return (
+    <div className={`rounded-xl border p-4 ${tones[tone] || tones.stone}`}>
+      <Icon className="h-5 w-5 mb-2 opacity-80" />
+      <div className="text-2xl font-extrabold">{value}</div>
+      <div className="text-[11px] font-semibold uppercase tracking-wide opacity-80">{label}</div>
+    </div>
+  );
+}
+
+function ActionButton({ onClick, loading, icon: Icon, label }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={loading}
+      className="inline-flex items-center gap-2 px-3 h-10 rounded-lg border border-stone-200 text-stone-700 text-sm font-semibold hover:border-amber-400 hover:text-amber-600 disabled:opacity-60 transition"
+    >
+      {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Icon className="h-4 w-4" />}
+      {label}
+    </button>
+  );
+}

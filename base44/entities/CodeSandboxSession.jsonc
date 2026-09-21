@@ -1,0 +1,178 @@
+{
+  "name": "CodeSandboxSession",
+  "type": "object",
+  "properties": {
+    "owner_id": {
+      "type": "string",
+      "description": "User ID who owns this session (multi-tenant isolation)"
+    },
+    "session_id": {
+      "type": "string",
+      "description": "Deterministic session ID (hash of task + owner + timestamp bucket)"
+    },
+    "department_id": {
+      "type": "string",
+      "description": "Department that owns this coding task"
+    },
+    "task_description": {
+      "type": "string",
+      "maxLength": 5000,
+      "description": "What the code should do"
+    },
+    "task_type": {
+      "type": "string",
+      "enum": [
+        "create_page",
+        "create_function",
+        "create_entity",
+        "create_workflow",
+        "create_component",
+        "fix_bug",
+        "refactor",
+        "create_agent",
+        "create_integration",
+        "custom"
+      ],
+      "default": "custom"
+    },
+    "task_hash": {
+      "type": "string",
+      "description": "SHA hash of task description for deduplication and caching"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "planning",
+        "generating",
+        "testing",
+        "validating",
+        "deploying",
+        "completed",
+        "failed",
+        "needs_repair",
+        "repairing"
+      ],
+      "default": "planning"
+    },
+    "strategy_snapshot": {
+      "type": "string",
+      "maxLength": 20000,
+      "description": "Frozen strategy from LLM analysis \u2014 generation reads from this"
+    },
+    "generated_code": {
+      "type": "string",
+      "maxLength": 50000,
+      "description": "The generated code"
+    },
+    "code_language": {
+      "type": "string",
+      "default": "javascript"
+    },
+    "file_path": {
+      "type": "string",
+      "description": "Target file path for the code (e.g. src/pages/MyPage.jsx)"
+    },
+    "test_code": {
+      "type": "string",
+      "maxLength": 20000,
+      "description": "Generated test cases"
+    },
+    "test_results": {
+      "type": "string",
+      "maxLength": 10000,
+      "description": "JSON of test results"
+    },
+    "validation_result": {
+      "type": "string",
+      "maxLength": 10000,
+      "description": "JSON of validation results"
+    },
+    "validation_passed": {
+      "type": "boolean",
+      "default": false
+    },
+    "validation_score": {
+      "type": "integer",
+      "default": 0,
+      "description": "0-100 score from validation"
+    },
+    "deployment_id": {
+      "type": "string",
+      "description": "DeploymentRecord ID once deployed"
+    },
+    "repair_attempts": {
+      "type": "integer",
+      "default": 0
+    },
+    "max_repair_attempts": {
+      "type": "integer",
+      "default": 3
+    },
+    "llm_model_used": {
+      "type": "string",
+      "description": "Which LLM model was used for generation"
+    },
+    "seed_value": {
+      "type": "string",
+      "description": "Deterministic seed for reproducibility"
+    },
+    "error_log": {
+      "type": "string",
+      "maxLength": 10000
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "owner_id",
+    "session_id",
+    "task_description",
+    "task_type",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": null,
+    "update": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
