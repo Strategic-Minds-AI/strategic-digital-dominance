@@ -372,6 +372,23 @@ export default async function(req) {
           results.all_connected = false;
         }
 
+        // Add verify URLs for each connection so the UI can link directly to the account
+        const verifyUrls: Record<string, string> = {
+          github: `https://github.com/orgs/${COMPANY.github_org}/repositories`,
+          supabase: `${COMPANY.supabase_url}/project/default`,
+          vercel: `https://vercel.com/${COMPANY.vercel_team}`,
+          railway: `https://railway.com/project/${COMPANY.railway_project_id}`,
+          telnyx: "https://portal.telnyx.com/#/app/phone-numbers",
+          xtreme_cloud_browser: COMPANY.cloud_browser_url,
+          google_workspace: "https://drive.google.com/drive/my-drive",
+          hubspot: "https://app.hubspot.com/contacts/default"
+        };
+        for (const [key, url] of Object.entries(verifyUrls)) {
+          if (results.connections[key]) {
+            results.connections[key].verify_url = url;
+          }
+        }
+
         const connectedCount = Object.values(results.connections).filter((c: any) => c.connected).length;
         const totalCount = Object.keys(results.connections).length;
         results.proof = results.all_connected

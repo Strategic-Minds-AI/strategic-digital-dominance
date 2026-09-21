@@ -6,7 +6,7 @@ import {
   Activity, Zap, Target, Users, Globe, Database, Cloud, Monitor,
   MessageSquare, Mail, BarChart3, Play, RefreshCw, Loader2,
   Server, Shield, GitBranch, Box, ArrowRight, Sparkles, Brain,
-  Network, Wrench, Eye, TestTube, Crown
+  Network, Wrench, Eye, TestTube, Crown, ExternalLink
 } from "lucide-react";
 
 const DEPT_ICONS = {
@@ -222,6 +222,12 @@ export default function X1Company() {
                     <span className={`ml-auto h-2 w-2 rounded-full ${conn.connected ? "bg-green-500" : "bg-red-500"}`} />
                   </div>
                   <p className="text-xs text-stone-500">{conn.details}</p>
+                  {conn.verify_url && (
+                    <a href={conn.verify_url} target="_blank" rel="noopener noreferrer"
+                      className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-amber-600 hover:text-amber-700">
+                      <ExternalLink className="h-3 w-3" /> Open Account
+                    </a>
+                  )}
                   {conn.repos_found !== undefined && <p className="text-xs text-stone-400 mt-1">{conn.repos_found} repos found</p>}
                   {conn.projects_found !== undefined && <p className="text-xs text-stone-400 mt-1">{conn.projects_found} projects</p>}
                   {conn.phone_numbers !== undefined && <p className="text-xs text-stone-400 mt-1">{conn.phone_numbers} phone numbers</p>}
