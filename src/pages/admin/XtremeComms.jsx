@@ -175,6 +175,27 @@ export default function XtremeComms() {
                 {loading === "mms" ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Image className="h-4 w-4" />} Send MMS
               </button>
             </div>
+            {/* Inline status feedback */}
+            {(loading === "sms" || loading === "mms") && (
+              <div className="flex items-center gap-2 p-3 rounded-lg bg-blue-50 border border-blue-200 text-sm text-blue-700">
+                <RefreshCw className="h-4 w-4 animate-spin" /> Sending message to {forms.sms.to}…
+              </div>
+            )}
+            {results && (results.message_id || results.result?.message_id) && (
+              <div className="p-3 rounded-lg bg-green-50 border border-green-200">
+                <div className="flex items-center gap-2 text-sm font-bold text-green-700">
+                  <CheckCircle2 className="h-4 w-4" /> Message sent!
+                </div>
+                <div className="text-xs text-stone-600 mt-1">
+                  To: {forms.sms.to} · Status: {results.status || results.result?.status || "queued"} · ID: {results.message_id || results.result?.message_id}
+                </div>
+              </div>
+            )}
+            {error && (
+              <div className="p-3 rounded-lg bg-red-50 border border-red-200 flex items-start gap-2 text-sm text-red-700">
+                <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" /> {error}
+              </div>
+            )}
             <p className="text-xs text-stone-400">Tip: templates use {"{placeholders}"} — replace them with the lead's real details before sending.</p>
           </div>
         )}
