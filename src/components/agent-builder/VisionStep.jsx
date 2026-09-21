@@ -54,6 +54,76 @@ const VISION_PROMPTS = [
     icon: '🔮',
     prompt: 'Build a scalability prediction system that analyzes any business model and identifies exactly which processes can be automated by AI agents, projecting the deterministic path from current revenue to 10x scale with an execution roadmap.',
   },
+  {
+    label: 'Niche Discovery',
+    icon: '🔬',
+    prompt: 'Create an AI niche discovery engine that scans thousands of micro-niches daily, identifies ones with high search volume and low competition, and automatically builds profit-pulling landing pages and lead funnels for each one.',
+  },
+  {
+    label: 'SaaS Factory',
+    icon: '🏭',
+    prompt: 'Build an autonomous SaaS factory that identifies software gaps in any industry, generates the full application with AI agents, deploys it, and launches marketing — creating a new revenue-generating SaaS product every week.',
+  },
+  {
+    label: 'Real Estate Finder',
+    icon: '🏠',
+    prompt: 'Design an AI real estate deal finder that scans MLS, foreclosure listings, and off-market properties nationwide, identifies undervalued opportunities with 20%+ equity spread, and automatically analyzes cash flow and ROI for each.',
+  },
+  {
+    label: 'Social Dominator',
+    icon: '📱',
+    prompt: 'Build an autonomous social media growth engine that creates viral content, posts across all platforms, engages with followers, and grows audiences organically — turning followers into customers with AI-driven conversion funnels.',
+  },
+  {
+    label: 'SEO Autopilot',
+    icon: '🌐',
+    prompt: 'Create a self-optimizing SEO system that researches keywords, writes content, builds backlinks, and ranks pages automatically — dominating Google search results for any niche with zero human intervention.',
+  },
+  {
+    label: 'Crypto Trading',
+    icon: '₿',
+    prompt: 'Design an autonomous crypto trading system with AI agents that analyze on-chain data, social sentiment, and market patterns to execute profitable trades 24/7 with built-in risk management and portfolio rebalancing.',
+  },
+  {
+    label: 'Franchise Cloner',
+    icon: '📋',
+    prompt: 'Build a business cloning system that analyzes any successful business model, extracts its core processes, and creates a franchise-ready playbook with AI agents that replicate the model in new markets automatically.',
+  },
+  {
+    label: 'Influencer Matcher',
+    icon: '⭐',
+    prompt: 'Create an AI-powered influencer marketing platform that matches brands with micro-influencers based on audience demographics and engagement, automatically negotiates deals, and tracks ROI for every campaign.',
+  },
+  {
+    label: 'Review Engine',
+    icon: '💬',
+    prompt: 'Build an autonomous reputation management system that collects reviews from happy customers, responds to negative feedback, monitors all review platforms, and generates a steady stream of 5-star reviews for any business.',
+  },
+  {
+    label: 'Appointment Setter',
+    icon: '📅',
+    prompt: 'Design an AI appointment setting system that engages inbound leads instantly via SMS, email, and voice, qualifies them, and books them directly onto your calendar — capturing every opportunity before competitors respond.',
+  },
+  {
+    label: 'Voice Sales Agent',
+    icon: '🎙️',
+    prompt: 'Build an autonomous AI voice agent that makes outbound sales calls, handles objections, qualifies prospects, and books appointments — operating 24/7 with natural conversation that prospects can\'t distinguish from a human.',
+  },
+  {
+    label: 'Data Scraper',
+    icon: '📊',
+    prompt: 'Create a public data scraping empire with AI agents that collect, clean, and monetize data across industries — selling datasets, generating reports, and building lead lists for any niche market.',
+  },
+  {
+    label: 'Subscription Builder',
+    icon: '🔄',
+    prompt: 'Build a system that identifies recurring-revenue opportunities in any market, creates the subscription product, sets up billing, and launches customer acquisition funnels — generating passive monthly income on autopilot.',
+  },
+  {
+    label: 'Local Biz Dominator',
+    icon: '📍',
+    prompt: 'Create an AI system that helps local businesses dominate their area — automatically managing their Google Business Profile, collecting reviews, running local SEO, and generating leads from nearby customers searching for their services.',
+  },
 ];
 
 const HISTORY_KEY = 'agent-builder-vision-history';
@@ -207,7 +277,7 @@ Output ONLY the vision statement text, no preamble or explanation.`,
       {/* 10 Vision Prompt Buttons */}
       <div className="mt-5">
         <p className="text-xs font-bold text-stone-500 uppercase mb-2.5">
-          Vision Prompts — Top 10 Entrepreneur Strategies
+          Vision Prompts — 25 Entrepreneur & Wealth-Building Strategies
         </p>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
           {VISION_PROMPTS.map((p, i) => (
