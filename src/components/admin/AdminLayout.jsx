@@ -104,6 +104,7 @@ const navGroups = [
     label: "Communications",
     items: [
       { to: "/admin/xtreme-comms", icon: MessageSquare, label: "Xtreme Comms" },
+      { to: "/admin/telnyx", icon: Smartphone, label: "Telnyx Manager" },
       { to: "/admin/voice-assistant", icon: PhoneCall, label: "AI Voice" },
       { to: "/admin/social-studio", icon: Share2, label: "Social Studio" },
     ],

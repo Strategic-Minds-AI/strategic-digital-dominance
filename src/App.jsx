@@ -63,6 +63,7 @@ import AppFactory from '@/pages/admin/AppFactory';
 import NationalLaunch from '@/pages/admin/NationalLaunch';
 import SeoGenerator from '@/pages/admin/SeoGenerator';
 import XtremeComms from '@/pages/admin/XtremeComms';
+import TelnyxManager from '@/pages/admin/TelnyxManager';
 import LeadScraper from '@/pages/admin/LeadScraper';
 import SkipTraceSystem from '@/pages/admin/SkipTraceSystem';
 import AutoComplete from '@/pages/admin/AutoComplete';
@@ -210,6 +211,7 @@ const AuthenticatedApp = () => {
         <Route path="national-launch" element={<NationalLaunch />} />
         <Route path="seo-generator" element={<SeoGenerator />} />
         <Route path="xtreme-comms" element={<XtremeComms />} />
+        <Route path="telnyx" element={<TelnyxManager />} />
         <Route path="lead-scraper" element={<LeadScraper />} />
         <Route path="skip-trace" element={<SkipTraceSystem />} />
         <Route path="autocomplete" element={<AutoComplete />} />
