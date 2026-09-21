@@ -49,7 +49,12 @@ const INTEGRATION_ICONS = {
   xtreme_comms: MessageSquare,
   cloud_browser: Monitor,
   gmail: Mail,
-  hubspot: BarChart3
+  hubspot: BarChart3,
+  github: GitBranch,
+  railway: Server,
+  telnyx: MessageSquare,
+  google_workspace: Globe,
+  xtreme_cloud_browser: Monitor
 };
 
 export default function X1Company() {
@@ -58,6 +63,7 @@ export default function X1Company() {
   const [routing, setRouting] = useState(null);
   const [actionLoading, setActionLoading] = useState(null);
   const [pipelineResult, setPipelineResult] = useState(null);
+  const [infraResult, setInfraResult] = useState(null);
 
   const { data: statusData, isLoading: statusLoading } = useQuery({
     queryKey: ["x1-company-status"],
@@ -92,8 +98,18 @@ export default function X1Company() {
   const handleSeed = async () => {
     setActionLoading("seed");
     try {
-      await base44.functions.invoke("companyOrchestrator", { action: "seed_departments" });
+      await base44.functions.invoke("strategicMindsSetup", { action: "seed_company" });
       refresh();
+    } catch (e) { console.error(e); }
+    setActionLoading(null);
+  };
+
+  const handleVerifyInfra = async () => {
+    setActionLoading("verify");
+    setInfraResult(null);
+    try {
+      const res = await base44.functions.invoke("strategicMindsSetup", { action: "verify_infrastructure" });
+      setInfraResult(res?.data);
     } catch (e) { console.error(e); }
     setActionLoading(null);
   };
@@ -154,8 +170,9 @@ export default function X1Company() {
               <Building2 className="h-7 w-7 text-stone-950" />
             </div>
             <div>
-              <h1 className="text-3xl font-extrabold tracking-tight">X1 AI Hub — Autonomous Company</h1>
-              <p className="text-stone-400 text-sm mt-0.5">A self-operating AI software, marketing, and orchestration company with department-based agent teams</p>
+              <h1 className="text-3xl font-extrabold tracking-tight">Strategic Minds AI LLC</h1>
+              <p className="text-amber-500 text-xs font-bold tracking-wide mt-0.5">AUTONOMOUS AI SOFTWARE • MARKETING • DATA ACQUISITION</p>
+              <p className="text-stone-400 text-sm mt-0.5">Owned by @Strategic-Minds • GitHub • Supabase • Vercel • Railway • Telnyx • XtremeCloudBrowser</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -184,6 +201,60 @@ export default function X1Company() {
         <StatCard icon={Rocket} label="Deployments" value={pipeline.total_deployments || 0} tone="cyan" />
         <StatCard icon={Activity} label="Active Sessions" value={pipeline.active_sessions || 0} tone="stone" />
       </div>
+
+      {/* Infrastructure Verification */}
+      {infraResult && (
+        <div className="rounded-2xl border border-stone-200 bg-white p-5">
+          <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2 mb-4">
+            <Server className="h-5 w-5 text-amber-500" /> Strategic Minds AI — Infrastructure Verification
+            <span className={`text-xs font-bold px-2 py-1 rounded border ${infraResult.all_connected ? "bg-green-100 text-green-700 border-green-300" : "bg-amber-100 text-amber-700 border-amber-300"}`}>
+              {infraResult.all_connected ? "ALL VERIFIED" : "NEEDS ATTENTION"}
+            </span>
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {Object.entries(infraResult.connections).map(([key, conn]) => {
+              const Icon = INTEGRATION_ICONS[key] || Server;
+              return (
+                <div key={key} className={`rounded-xl border p-3 ${conn.connected ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}`}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Icon className={`h-4 w-4 ${conn.connected ? "text-green-600" : "text-red-600"}`} />
+                    <span className="text-sm font-bold text-stone-900 capitalize">{key.replace(/_/g, " ")}</span>
+                    <span className={`ml-auto h-2 w-2 rounded-full ${conn.connected ? "bg-green-500" : "bg-red-500"}`} />
+                  </div>
+                  <p className="text-xs text-stone-500">{conn.details}</p>
+                  {conn.repos_found !== undefined && <p className="text-xs text-stone-400 mt-1">{conn.repos_found} repos found</p>}
+                  {conn.projects_found !== undefined && <p className="text-xs text-stone-400 mt-1">{conn.projects_found} projects</p>}
+                  {conn.phone_numbers !== undefined && <p className="text-xs text-stone-400 mt-1">{conn.phone_numbers} phone numbers</p>}
+                  {conn.repo_names && conn.repo_names.length > 0 && (
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {conn.repo_names.map((r, i) => (
+                        <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 text-stone-600 font-mono">{r}</span>
+                      ))}
+                    </div>
+                  )}
+                  {conn.project_names && conn.project_names.length > 0 && (
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {conn.project_names.map((p, i) => (
+                        <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 text-stone-600 font-mono">{p}</span>
+                      ))}
+                    </div>
+                  )}
+                  {conn.number_samples && conn.number_samples.length > 0 && (
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {conn.number_samples.map((n, i) => (
+                        <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 text-stone-600 font-mono">{n}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-3 p-3 rounded-lg bg-stone-900 text-amber-400 text-sm font-mono">
+            {infraResult.proof}
+          </div>
+        </div>
+      )}
 
       {/* Control Panel */}
       <div className="rounded-2xl border border-stone-200 bg-white p-5">
@@ -236,10 +307,10 @@ export default function X1Company() {
           <div className="space-y-2">
             <label className="text-sm font-semibold text-stone-700">Autonomous Actions</label>
             <div className="grid grid-cols-2 gap-2">
-              <ActionButton onClick={handleSeed} loading={actionLoading === "seed"} icon={Building2} label="Seed Departments" />
+              <ActionButton onClick={handleVerifyInfra} loading={actionLoading === "verify"} icon={Server} label="Verify Infrastructure" />
+              <ActionButton onClick={handleSeed} loading={actionLoading === "seed"} icon={Building2} label="Seed Company" />
               <ActionButton onClick={handleRunCycle} loading={actionLoading === "cycle"} icon={RefreshCw} label="Run Company Cycle" />
               <ActionButton onClick={handleRunPipeline} loading={actionLoading === "pipeline"} icon={Cpu} label="Run Coding Pipeline" />
-              <ActionButton onClick={refresh} loading={false} icon={Activity} label="Refresh Status" />
             </div>
             {pipelineResult && (
               <div className="mt-2 p-3 rounded-lg bg-green-50 border border-green-200 text-sm">
