@@ -7,6 +7,7 @@ import {
   Clock, TrendingUp, Zap, Crown, Bot, Network, Shield, Brain,
   Check, ChevronDown, ChevronUp, Wand2, Target, Lightbulb,
 } from 'lucide-react';
+import VisionPrompts from '@/components/vision-studio/VisionPrompts';
 
 const DIFFICULTY_COLORS = {
   low: 'bg-green-100 text-green-700 border-green-300',
@@ -247,6 +248,9 @@ export default function VisionStudio() {
               </button>
             </div>
           </div>
+
+          {/* 20 Vision Prompt Buttons + AI Assist */}
+          <VisionPrompts onPromptSelect={(text) => setRawIdea(text)} />
 
           {/* AI-Refined Vision Result */}
           {visionResult && (
