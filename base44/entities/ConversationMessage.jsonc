@@ -1,0 +1,54 @@
+{
+  "name": "ConversationMessage",
+  "type": "object",
+  "properties": {
+    "conversation_id": {
+      "type": "string",
+      "description": "Conversation this message belongs to"
+    },
+    "sender_type": {
+      "type": "string",
+      "enum": [
+        "user",
+        "agent"
+      ],
+      "default": "user"
+    },
+    "sender_id": {
+      "type": "string",
+      "description": "User ID or AgentPersona ID of the sender"
+    },
+    "sender_name": {
+      "type": "string",
+      "description": "Display name of the sender"
+    },
+    "content": {
+      "type": "string",
+      "maxLength": 5000
+    },
+    "mentioned_agent_id": {
+      "type": "string",
+      "description": "Agent explicitly mentioned in this message (if any)"
+    },
+    "agent_persona_id": {
+      "type": "string",
+      "description": "If sender is an agent, the AgentPersona ID"
+    }
+  },
+  "required": [
+    "conversation_id",
+    "sender_type",
+    "sender_name",
+    "content"
+  ],
+  "rls": {
+    "read": null,
+    "create": null,
+    "update": null,
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "name": "Conversation",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Channel name (like a Slack channel)"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "group",
+        "direct"
+      ],
+      "default": "group"
+    },
+    "description": {
+      "type": "string"
+    },
+    "member_user_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "User IDs who are members of this conversation"
+    },
+    "member_agent_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "AgentPersona IDs who are members of this conversation"
+    },
+    "members": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "member_type": {
+            "type": "string",
+            "enum": [
+              "user",
+              "agent"
+            ]
+          },
+          "member_id": {
+            "type": "string"
+          },
+          "member_name": {
+            "type": "string"
+          }
+        }
+      },
+      "default": []
+    },
+    "is_private": {
+      "type": "boolean",
+      "default": false
+    },
+    "last_message_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_message_preview": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "type"
+  ],
+  "rls": {
+    "read": null,
+    "create": null,
+    "update": null,
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

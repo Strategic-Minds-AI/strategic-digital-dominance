@@ -114,6 +114,7 @@ import Shadow from '@/pages/admin/Shadow';
 import Acquire from '@/pages/Acquire';
 import GraphConsole from '@/pages/admin/GraphConsole';
 import CustomerPortal from '@/pages/CustomerPortal';
+import Conversations from '@/pages/Conversations';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import ContractorApp from '@/pages/ContractorApp';
@@ -256,6 +257,7 @@ const AuthenticatedApp = () => {
       <Route path="/portal" element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         <Route index element={<CustomerPortal />} />
       </Route>
+      <Route path="/conversations" element={<Conversations />} />
       <Route path="/connect" element={<Connect />} />
       <Route path="/acquire" element={<Acquire />} />
       <Route path="/contractor" element={<ContractorApp />} />
