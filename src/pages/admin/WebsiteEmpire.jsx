@@ -1,11 +1,12 @@
-import React, { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import React, { useMemo, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import {
   Globe, Rocket, MapPin, Factory, TrendingUp, Zap, Target, Sparkles,
   CheckCircle2, Clock, AlertCircle, Layers, DollarSign, Users, Search,
   ArrowRight, Crown, Building2, Network, Brain, LineChart, Lightbulb,
-  Wand2, Smartphone, MessageSquare, BarChart3
+  Wand2, Smartphone, MessageSquare, BarChart3, Loader2, Play, ExternalLink
 } from "lucide-react";
 
 const PUBLISHED_URL = "https://epoxyquotenearme.com";
@@ -73,7 +74,84 @@ export default function WebsiteEmpire() {
     };
   }, [campaigns]);
 
+  const queryClient = useQueryClient();
+  const [stepStatus, setStepStatus] = useState({});
+  const [runningStep, setRunningStep] = useState(null);
+
   const inputCls = "w-full h-10 px-3 rounded-lg border border-stone-200 text-sm focus:border-amber-500 outline-none";
+
+  const FL_CITIES = [
+    { city: "Pompano Beach", state: "FL" },
+    { city: "Fort Lauderdale", state: "FL" },
+    { city: "Miami", state: "FL" },
+    { city: "Orlando", state: "FL" },
+    { city: "Tampa", state: "FL" },
+    { city: "West Palm Beach", state: "FL" },
+    { city: "Boca Raton", state: "FL" },
+    { city: "Naples", state: "FL" },
+    { city: "Sarasota", state: "FL" },
+    { city: "Jacksonville", state: "FL" },
+  ];
+
+  const runStep = async (stepNum) => {
+    setRunningStep(stepNum);
+    setStepStatus((s) => ({ ...s, [stepNum]: "running" }));
+    try {
+      if (stepNum === 1) {
+        await base44.functions.invoke("xtremeComms", { action: "activate_tenant", tenant_id: "6a9b71b0d35335afb9198955" });
+      } else if (stepNum === 2) {
+        for (const c of FL_CITIES) {
+          const slug = `epoxy-${slugify(c.city)}-${c.state.toLowerCase()}`;
+          const liveUrl = `${PUBLISHED_URL}/${slugify(c.state)}/${slugify(c.city)}`;
+          const existing = (templates || []).find(
+            (t) =>
+              t.config?.primary_city?.toLowerCase() === c.city.toLowerCase() &&
+              t.config?.primary_state?.toLowerCase() === c.state.toLowerCase()
+          );
+          if (existing) {
+            await base44.entities.WebsiteTemplate.update(existing.id, { status: "live", generated_url: liveUrl });
+          } else {
+            await base44.entities.WebsiteTemplate.create({
+              name: `Epoxy Garage Floors ${c.city} FL`,
+              slug,
+              config: {
+                company_name: `Epoxy Garage Floors ${c.city}`,
+                phone: "(833) 700-1239",
+                email: "info@epoxyquotenearme.com",
+                service_area: `${c.city}, FL Metro`,
+                primary_city: c.city,
+                primary_state: c.state,
+                color_scheme: "amber",
+                pricing_tier: "standard",
+              },
+              launch_mode: "autonomous",
+              status: "live",
+              generated_url: liveUrl,
+              pwa_enabled: true,
+            });
+          }
+        }
+        queryClient.invalidateQueries({ queryKey: ["websiteEmpire-templates"] });
+      } else if (stepNum === 3) {
+        window.open("https://dcc.godaddy.com/manage/dns/", "_blank");
+      } else if (stepNum === 4) {
+        await base44.functions.invoke("swarmOrchestrator", { action: "activate_autopilot" });
+      }
+      setStepStatus((s) => ({ ...s, [stepNum]: "completed" }));
+    } catch (e) {
+      console.error(`Step ${stepNum} failed:`, e);
+      setStepStatus((s) => ({ ...s, [stepNum]: "failed" }));
+    }
+    setRunningStep(null);
+  };
+
+  const runAllAutomatable = async () => {
+    for (const step of [1, 2, 3, 4]) {
+      if (stepStatus[step] !== "completed") {
+        await runStep(step);
+      }
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -208,14 +286,24 @@ export default function WebsiteEmpire() {
 
       {/* Strategy — what to do next */}
       <div className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-white p-5">
-        <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2 mb-4"><Target className="h-5 w-5 text-amber-600" /> Strategy — What to Do Next</h2>
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+          <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2"><Target className="h-5 w-5 text-amber-600" /> Strategy — What to Do Next</h2>
+          <button
+            onClick={runAllAutomatable}
+            disabled={runningStep !== null}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-stone-900 text-white text-sm font-bold hover:bg-stone-800 disabled:opacity-60"
+          >
+            {runningStep !== null ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
+            {runningStep !== null ? `Running Step ${runningStep}...` : "Run All Automation"}
+          </button>
+        </div>
         <div className="space-y-3">
-          <StrategyStep num="1" title="Activate Xtreme Comms Tenant" desc="The new API key passes auth but the tenant isn't provisioned. Once Xtreme Comms activates tenant 6a9b71b0d35335afb9198955, every lead gets instant SMS follow-up automatically." priority="critical" />
-          <StrategyStep num="2" title="Deploy the First 10 City Sites" desc="Pick your strongest Florida markets (Pompano Beach, Fort Lauderdale, Miami, Orlando, Tampa, West Palm Beach, Boca Raton, Naples, Sarasota, Jacksonville) and deploy them live. This validates the full pipeline end-to-end." priority="high" />
-          <StrategyStep num="3" title="Connect Custom Root Domain" desc="Point a root domain (e.g. epoxyfloors.com) with a GoDaddy wildcard CNAME → epoxyquotenearme.base44.app. This unlocks unlimited city subdomains instantly." priority="high" />
-          <StrategyStep num="4" title="Run the Swarm Autopilot" desc="The hourly Swarm Autopilot workflow is live. It will auto-distribute tasks to agents — SEO optimization, lead follow-up, social posting, reputation monitoring — without manual triggers." priority="medium" />
-          <StrategyStep num="5" title="Scale to 70 → 500 Cities" desc="Once the first 10 are profitable, expand the city list in Rebrand Studio. The national garage-floor market has 1,000+ viable metro areas; 500 is a realistic 12-month target." priority="medium" />
-          <StrategyStep num="6" title="Launch National Campaign" desc="Use the National Launch dashboard to bundle templates into a coordinated campaign with budget tracking, auto-deploy, and revenue metrics per region." priority="low" />
+          <StrategyStep num="1" title="Activate Xtreme Comms Tenant" desc="The new API key passes auth but the tenant isn't provisioned. Once Xtreme Comms activates tenant 6a9b71b0d35335afb9198955, every lead gets instant SMS follow-up automatically." priority="critical" status={stepStatus[1]} onExecute={() => runStep(1)} actionLabel="Activate" />
+          <StrategyStep num="2" title="Deploy the First 10 City Sites" desc="Pick your strongest Florida markets (Pompano Beach, Fort Lauderdale, Miami, Orlando, Tampa, West Palm Beach, Boca Raton, Naples, Sarasota, Jacksonville) and deploy them live. This validates the full pipeline end-to-end." priority="high" status={stepStatus[2]} onExecute={() => runStep(2)} actionLabel="Deploy 10 Sites" />
+          <StrategyStep num="3" title="Connect Custom Root Domain" desc="Point a root domain (e.g. epoxyfloors.com) with a GoDaddy wildcard CNAME → epoxyquotenearme.base44.app. This unlocks unlimited city subdomains instantly." priority="high" status={stepStatus[3]} onExecute={() => runStep(3)} actionLabel="Open GoDaddy DNS" />
+          <StrategyStep num="4" title="Run the Swarm Autopilot" desc="The hourly Swarm Autopilot workflow is live. It will auto-distribute tasks to agents — SEO optimization, lead follow-up, social posting, reputation monitoring — without manual triggers." priority="medium" status={stepStatus[4]} onExecute={() => runStep(4)} actionLabel="Activate" />
+          <StrategyStep num="5" title="Scale to 70 → 500 Cities" desc="Once the first 10 are profitable, expand the city list in Rebrand Studio. The national garage-floor market has 1,000+ viable metro areas; 500 is a realistic 12-month target." priority="medium" link="/admin/rebrand-studio" actionLabel="Open Rebrand Studio" />
+          <StrategyStep num="6" title="Launch National Campaign" desc="Use the National Launch dashboard to bundle templates into a coordinated campaign with budget tracking, auto-deploy, and revenue metrics per region." priority="low" link="/admin/national-launch" actionLabel="Open National Launch" />
         </div>
       </div>
 
@@ -289,7 +377,7 @@ function Capability({ icon: Icon, title, desc }) {
   );
 }
 
-function StrategyStep({ num, title, desc, priority }) {
+function StrategyStep({ num, title, desc, priority, status, onExecute, link, actionLabel }) {
   const pmap = {
     critical: "border-red-300 bg-red-50 text-red-700",
     high: "border-amber-300 bg-amber-50 text-amber-700",
@@ -297,14 +385,38 @@ function StrategyStep({ num, title, desc, priority }) {
     low: "border-stone-300 bg-stone-50 text-stone-600",
   };
   return (
-    <div className="flex items-start gap-3">
-      <div className="h-8 w-8 rounded-full bg-amber-500 text-stone-950 grid place-items-center font-bold text-sm shrink-0">{num}</div>
-      <div className="flex-1">
+    <div className={`flex items-start gap-3 rounded-xl border p-3 transition ${status === "completed" ? "border-green-300 bg-green-50" : status === "failed" ? "border-red-200 bg-red-50" : "border-stone-200 bg-white hover:border-amber-300"}`}>
+      <div className={`h-8 w-8 rounded-full grid place-items-center font-bold text-sm shrink-0 ${status === "completed" ? "bg-green-500 text-white" : "bg-amber-500 text-stone-950"}`}>
+        {status === "completed" ? <CheckCircle2 className="h-5 w-5" /> : status === "running" ? <Loader2 className="h-4 w-4 animate-spin" /> : num}
+      </div>
+      <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <div className="text-sm font-bold text-stone-900">{title}</div>
           <span className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded border ${pmap[priority]}`}>{priority}</span>
+          {status === "completed" && <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-green-100 text-green-700">Done</span>}
+          {status === "failed" && <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-red-100 text-red-700">Failed</span>}
         </div>
         <div className="text-xs text-stone-600 mt-0.5">{desc}</div>
+      </div>
+      <div className="shrink-0">
+        {link ? (
+          <Link to={link} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-900 text-white text-xs font-bold hover:bg-stone-800">
+            {actionLabel} <ExternalLink className="h-3 w-3" />
+          </Link>
+        ) : status === "completed" ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-100 text-green-700 text-xs font-bold">
+            <CheckCircle2 className="h-3.5 w-3.5" /> Complete
+          </span>
+        ) : (
+          <button
+            onClick={onExecute}
+            disabled={status === "running"}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 text-stone-950 text-xs font-bold hover:bg-amber-400 disabled:opacity-60"
+          >
+            {status === "running" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5" />}
+            {status === "running" ? "Running..." : actionLabel || "Execute"}
+          </button>
+        )}
       </div>
     </div>
   );
