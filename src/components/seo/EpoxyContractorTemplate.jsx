@@ -2,7 +2,8 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSettings } from "@/lib/useSettings";
 import { trackEvent } from "@/lib/tracking";
-import { Phone, Star, Shield, Clock, MapPin, ChevronRight, ArrowRight } from "lucide-react";
+import { Phone, Clock, MapPin, ChevronRight, ArrowRight, Calculator, BadgeCheck, ShieldCheck } from "lucide-react";
+import { motion } from "framer-motion";
 import Nav from "@/components/home/Nav";
 import BeforeAfterShowcase from "@/components/home/BeforeAfterShowcase";
 import FloorTypeGallery from "@/components/home/FloorTypeGallery";
@@ -39,63 +40,43 @@ export default function EpoxyContractorTemplate({ city, stateCode, stateName, se
     <div className="bg-white">
       <Nav settings={settings} />
 
-      {/* === City-specific hero === */}
-      <section className="relative bg-stone-950 text-white overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src="https://images.unsplash.com/photo-1632669415034-3b3c3c3c3c3c?w=1600&q=80"
-            alt=""
-            className="w-full h-full object-cover opacity-30"
-            onError={(e) => { e.target.style.display = "none"; }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-stone-950 via-stone-950/90 to-stone-950/40" />
-        </div>
-        <div className="relative max-w-5xl mx-auto px-6 py-20 md:py-28">
-          <div className="flex items-center gap-2 text-amber-400 text-sm font-semibold mb-4">
-            <MapPin className="h-4 w-4" /> {cityState}
-          </div>
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-tight">
-            Epoxy Garage Floors in {city}, {stateName}
-          </h1>
-          <p className="mt-5 text-lg md:text-xl text-stone-300 max-w-2xl leading-relaxed">
-            Premium garage floor coating installation in {city}. Get a personalized price range in about 60 seconds —
-            before you talk to anyone. No obligation, no pressure.
-          </p>
-
-          {/* Trust badges */}
-          <div className="mt-7 flex flex-wrap items-center gap-5 text-sm">
-            <div className="flex items-center gap-1.5">
-              <div className="flex">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
-                ))}
+      {/* === City-specific hero — matches the main site Hero exactly === */}
+      <section className="relative h-[82vh] min-h-[620px] bg-stone-950 overflow-hidden border-b-2 border-amber-500">
+        <img
+          src={settings.hero_image_url}
+          alt={`Premium epoxy garage floor installation in ${city}, ${stateName}`}
+          className="absolute inset-0 w-full h-full object-cover object-[center_75%]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-stone-950/85 via-stone-950/55 to-transparent" />
+        <div className="absolute inset-0 flex items-start md:items-center pt-28 md:pt-24">
+          <div className="w-full max-w-6xl mx-auto px-6">
+            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="max-w-2xl">
+              <div className="flex items-center gap-2 text-amber-400 text-sm font-semibold mb-3">
+                <MapPin className="h-4 w-4" /> {cityState}
               </div>
-              <span className="text-stone-300">{rating} ({reviewCount} reviews)</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-stone-300">
-              <Shield className="h-4 w-4 text-amber-400" /> Licensed & Insured
-            </div>
-            <div className="flex items-center gap-1.5 text-stone-300">
-              <Clock className="h-4 w-4 text-amber-400" /> Same-Day Estimates
-            </div>
+              <h1 className="mt-4 md:mt-5 font-display text-3xl md:text-6xl font-extrabold tracking-tight text-white leading-[1.05] drop-shadow-[0_3px_12px_rgba(0,0,0,0.9)]">
+                Epoxy Garage Floors in {city}, {stateName}
+              </h1>
+              <p className="mt-4 text-lg md:text-xl text-stone-300 max-w-2xl leading-relaxed drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+                Premium garage floor coating installation in {city}. Get a personalized price range in about 60 seconds —
+                before you talk to anyone. No obligation, no pressure.
+              </p>
+              <Link to="/funnel" className="mt-6 md:mt-8 inline-flex w-full sm:w-auto items-center justify-center gap-3 h-14 md:h-16 px-8 md:px-10 rounded-xl bg-amber-500 hover:bg-amber-400 transition text-stone-950 text-base font-bold tracking-wide shadow-lg shadow-amber-500/30 border border-white/80">
+                <Calculator className="h-5 w-5" /> Price My Floor + Visualize It
+              </Link>
+              <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-white/90 font-medium drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+                <span>
+                  <span className="inline-flex items-center gap-1.5"><BadgeCheck className="h-4 w-4" /> Free estimate</span>
+                  {" • "}
+                  <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-4 w-4" /> No obligation</span>
+                  {" • "}
+                  <span className="inline-flex items-center gap-1.5"><Clock className="h-4 w-4" /> Takes about 60 seconds</span>
+                </span>
+                <span className="hidden md:inline text-white/40">|</span>
+                <span className="hidden md:inline text-white/80">{settings.service_area}</span>
+              </div>
+            </motion.div>
           </div>
-
-          {/* CTAs */}
-          <div className="mt-8 flex flex-col sm:flex-row gap-3">
-            <Link
-              to="/funnel"
-              className="inline-flex h-14 px-8 items-center justify-center rounded-xl bg-amber-500 hover:bg-amber-400 transition text-stone-950 font-bold tracking-wide text-base"
-            >
-              GET MY FREE ESTIMATE
-            </Link>
-            <a
-              href={`tel:${phone.replace(/[^0-9+]/g, "")}`}
-              className="inline-flex h-14 px-8 items-center justify-center gap-2 rounded-xl border-2 border-stone-600 hover:border-amber-400 transition text-white font-bold text-base"
-            >
-              <Phone className="h-5 w-5" /> {phone}
-            </a>
-          </div>
-          <p className="mt-3 text-xs text-stone-500">Free estimate • No obligation • Takes about 60 seconds</p>
         </div>
       </section>
 
