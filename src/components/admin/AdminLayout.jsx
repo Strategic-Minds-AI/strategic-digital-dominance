@@ -35,6 +35,8 @@ const navGroups = [
       { to: "/admin/alpha-prime", icon: Crown, label: "Alpha Prime" },
       { to: "/admin/fleet", icon: Layers, label: "Fleet" },
       { to: "/admin/vision-cortex", icon: Eye, label: "Vision Cortex" },
+      { to: "/admin/vision-cortex-v2", icon: Sparkles, label: "Vision Cortex V2" },
+      { to: "/admin/meta-architecture", icon: Compass, label: "Meta Architecture" },
       { to: "/admin/shadow", icon: EyeOff, label: "Shadow" },
       { to: "/admin/system-map", icon: Boxes, label: "System Map" },
       { to: "/admin/platform", icon: Cpu, label: "Platform" },
