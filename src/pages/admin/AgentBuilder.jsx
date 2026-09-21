@@ -9,6 +9,8 @@ import {
   Palette, FileText, Wrench, Calendar, BarChart3, Train, Share2,
   MessageCircle, GraduationCap, EyeOff, Lock,
 } from 'lucide-react';
+import VisionStep from '@/components/agent-builder/VisionStep';
+import GoogleSearchTool from '@/components/agent-builder/GoogleSearchTool';
 
 const ICON_MAP = {
   Network, Compass, Eye, Calendar, Cpu, Code, Palette, Database,
@@ -43,6 +45,46 @@ const SYNC_ICONS = {
   github: Code,
   railway: Train,
 };
+
+// ── StepBadge and StepCard MUST be outside the component ──
+// If defined inside, every keystroke re-creates them as new component types,
+// causing React to remount the subtree — the textarea loses focus and the
+// screen jumps. Defining them at module level fixes this.
+function StepBadge({ num, status }) {
+  const styles = {
+    complete: 'bg-green-500 text-white border-green-500',
+    running: 'bg-amber-500 text-white border-amber-500',
+    pending: 'bg-white text-stone-300 border-stone-200',
+  };
+  return (
+    <div className={`relative z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 font-black text-lg transition ${styles[status]}`}>
+      {status === 'complete' ? <CheckCircle2 className="h-6 w-6" /> :
+       status === 'running' ? <Loader2 className="h-5 w-5 animate-spin" /> : num}
+    </div>
+  );
+}
+
+function StepCard({ num, status, icon: Icon, title, subtitle, children, locked }) {
+  return (
+    <div className="flex gap-4">
+      <div className="flex flex-col items-center">
+        <StepBadge num={num} status={status} />
+        <div className="w-0.5 flex-1 bg-stone-200 mt-2 mb-2" />
+      </div>
+      <div className={`flex-1 pb-8 ${locked ? 'opacity-40 pointer-events-none' : ''}`}>
+        <div className="flex items-center gap-2 mb-1">
+          {Icon && <Icon className={`h-5 w-5 ${status === 'complete' ? 'text-green-500' : status === 'running' ? 'text-amber-500' : 'text-stone-400'}`} />}
+          <h2 className="text-lg font-black text-stone-900">{title}</h2>
+          {status === 'pending' && locked && <Lock className="h-3.5 w-3.5 text-stone-300" />}
+        </div>
+        {subtitle && <p className="text-sm text-stone-500 mb-4">{subtitle}</p>}
+        <div className="rounded-2xl border border-stone-200 bg-white shadow-sm overflow-hidden">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function AgentBuilder() {
   const [vision, setVision] = useState('');
@@ -141,7 +183,6 @@ export default function AgentBuilder() {
     setError('');
   };
 
-  // Step status helpers
   const step1Done = !!strategy;
   const step2Done = !!genResult;
   const step3Done = !!bootstrapResult;
@@ -152,42 +193,6 @@ export default function AgentBuilder() {
     if (running) return 'running';
     return 'pending';
   };
-
-  const StepBadge = ({ num, status }) => {
-    const styles = {
-      complete: 'bg-green-500 text-white border-green-500',
-      running: 'bg-amber-500 text-white border-amber-500',
-      pending: 'bg-white text-stone-300 border-stone-200',
-    };
-    return (
-      <div className={`relative z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 font-black text-lg transition ${styles[status]}`}>
-        {status === 'complete' ? <CheckCircle2 className="h-6 w-6" /> :
-         status === 'running' ? <Loader2 className="h-5 w-5 animate-spin" /> : num}
-      </div>
-    );
-  };
-
-  const StepCard = ({ num, status, icon: Icon, title, subtitle, children, locked }) => (
-    <div className="flex gap-4">
-      {/* Left rail: number + connector line */}
-      <div className="flex flex-col items-center">
-        <StepBadge num={num} status={status} />
-        <div className="w-0.5 flex-1 bg-stone-200 mt-2 mb-2" />
-      </div>
-      {/* Right content */}
-      <div className={`flex-1 pb-8 ${locked ? 'opacity-40 pointer-events-none' : ''}`}>
-        <div className="flex items-center gap-2 mb-1">
-          {Icon && <Icon className={`h-5 w-5 ${status === 'complete' ? 'text-green-500' : status === 'running' ? 'text-amber-500' : 'text-stone-400'}`} />}
-          <h2 className="text-lg font-black text-stone-900">{title}</h2>
-          {status === 'pending' && locked && <Lock className="h-3.5 w-3.5 text-stone-300" />}
-        </div>
-        {subtitle && <p className="text-sm text-stone-500 mb-4">{subtitle}</p>}
-        <div className="rounded-2xl border border-stone-200 bg-white shadow-sm overflow-hidden">
-          {children}
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <div className="max-w-4xl mx-auto px-1">
@@ -219,27 +224,16 @@ export default function AgentBuilder() {
         title="Define Your Vision"
         subtitle="Describe the autonomous system or AI team you want to build."
       >
-        <div className="p-6">
-          <textarea
-            value={vision}
-            onChange={(e) => setVision(e.target.value)}
-            placeholder="e.g. Build X1 AI Hub — a platform where users connect their ChatGPT, Claude, and Gemini accounts to access AI tools, workflows, a prediction system, no-code crypto creator, and autonomous agent swarms..."
-            className="w-full h-36 rounded-xl border border-stone-200 p-4 text-sm text-stone-800 focus:border-amber-500 outline-none resize-none"
-            maxLength={2000}
-          />
-          <div className="flex items-center justify-between mt-3">
-            <span className="text-xs text-stone-400">{vision.length}/2000</span>
-            <button
-              onClick={handleAnalyze}
-              disabled={!vision.trim() || analyzing}
-              className="flex items-center gap-2 rounded-xl bg-amber-500 px-6 py-3 text-sm font-bold text-white hover:bg-amber-600 transition disabled:opacity-50 shadow-md"
-            >
-              {analyzing ? <Loader2 className="h-5 w-5 animate-spin" /> : <Sparkles className="h-5 w-5" />}
-              {analyzing ? 'Analyzing...' : 'Analyze Vision'}
-            </button>
-          </div>
-        </div>
+        <VisionStep
+          vision={vision}
+          setVision={setVision}
+          onAnalyze={handleAnalyze}
+          analyzing={analyzing}
+        />
       </StepCard>
+
+      {/* Google Search Tool — below the vision step */}
+      <GoogleSearchTool />
 
       {/* ── STEP 2: STRATEGY ── */}
       <StepCard
