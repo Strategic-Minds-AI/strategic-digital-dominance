@@ -213,11 +213,34 @@ export default async function (req: Request): Promise<Response> {
         await logSop(svc, 'email_sent', `Email sent to ${body.to}`, body.subject);
         break;
 
-      // ── Verification ──
-      case 'verifyNumber':
+      // ── Verification (via Telnyx directly) ──
+      case 'verifyNumber': {
         if (!body.phoneNumber) return Response.json({ error: 'phoneNumber is required' }, { status: 400 });
-        result = await gatewayCall('gatewayVerify', { phone_number: body.phoneNumber });
+        const telnyxKey = secrets.get('TELNYX_API_KEY');
+        if (!telnyxKey) throw new Error('TELNYX_API_KEY not set');
+        const verifyRes = await fetch('https://api.telnyx.com/v2/phone_number_validation', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${telnyxKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ phone_number: body.phoneNumber }),
+          signal: AbortSignal.timeout(10000),
+        });
+        const verifyData = await verifyRes.json().catch(() => ({}));
+        const vr = verifyData.data || {};
+        result = {
+          phone: body.phoneNumber,
+          verified: vr.valid !== false,
+          carrier: vr.carrier?.name || vr.carrier_name || 'unknown',
+          status: vr.valid !== false ? 'valid' : 'invalid',
+          country: vr.country_code || 'unknown',
+          lineType: vr.line_type || 'unknown',
+          portability: vr.portability_status || 'unknown',
+        };
+        await logSop(svc, 'number_validated', `Validated ${body.phoneNumber} — ${result.status}`, JSON.stringify(vr).slice(0, 200));
         break;
+      }
 
       // ── Content Generation ──
       case 'generateContent': {
