@@ -2,18 +2,19 @@ import React, { useState, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
-  Sparkles, Crown, Zap, Loader2, CheckCircle2, XCircle, ArrowRight,
+  Sparkles, Loader2, CheckCircle2,
   Eye, Rocket, RefreshCw, AlertCircle, Bot, Network, Shield,
-  Brain, Search, TrendingUp, Globe, MessageSquare, PhoneCall, DollarSign,
-  Code, Palette, Database, FileText, Wrench, Copy, Calendar, Users,
-  Compass, EyeOff, Key, GraduationCap, BarChart3, Cpu, MessageCircle, Train, Share2,
+  Compass, Database, Code, Copy, Users, Globe, Key, Cpu,
+  Brain, Search, TrendingUp, MessageSquare, PhoneCall, DollarSign,
+  Palette, FileText, Wrench, Calendar, BarChart3, Train, Share2,
+  MessageCircle, GraduationCap, EyeOff, Lock,
 } from 'lucide-react';
 
 const ICON_MAP = {
-  Network, Crown, Compass, Eye, Calendar, Cpu, Code, Palette, Database, Cpu,
-  Search, TrendingUp, Zap, Share2, MessageSquare, MessageCircle, PhoneCall,
-  Calendar, Eye, BarChart3, TrendingUp, DollarSign, Search, Wrench, FileText,
-  GraduationCap, Copy, Users, Globe, Globe, EyeOff, Shield, Key, Network,
+  Network, Compass, Eye, Calendar, Cpu, Code, Palette, Database,
+  Search, TrendingUp, Zap: Sparkles, Share2, MessageSquare, MessageCircle, PhoneCall,
+  BarChart3, DollarSign, Wrench, FileText, GraduationCap, Copy, Users, Globe,
+  EyeOff, Shield, Key, Brain,
 };
 
 const CATEGORY_COLORS = {
@@ -44,7 +45,6 @@ const SYNC_ICONS = {
 };
 
 export default function AgentBuilder() {
-  const [step, setStep] = useState(1); // 1=vision, 2=strategy, 3=generate, 4=launch
   const [vision, setVision] = useState('');
   const [analyzing, setAnalyzing] = useState(false);
   const [strategy, setStrategy] = useState(null);
@@ -70,14 +70,15 @@ export default function AgentBuilder() {
     setAnalyzing(true);
     setError('');
     setStrategy(null);
+    setGenResult(null);
+    setBootstrapResult(null);
+    setLaunchResult(null);
     try {
       const res = await base44.functions.invoke('agentBuilderEngine', {
         action: 'analyze',
         vision: vision.trim(),
       });
-      const data = res.data || res;
-      setStrategy(data);
-      setStep(2);
+      setStrategy(res.data || res);
     } catch (e) {
       setError(e.message);
     }
@@ -96,7 +97,6 @@ export default function AgentBuilder() {
         recommended_agents: strategy.recommended_agents,
       });
       setGenResult(res.data || res);
-      setStep(3);
       queryClient.invalidateQueries({ queryKey: ['agent-personas'] });
     } catch (e) {
       setError(e.message);
@@ -126,7 +126,6 @@ export default function AgentBuilder() {
     try {
       const res = await base44.functions.invoke('agentBuilderEngine', { action: 'launch' });
       setLaunchResult(res.data || res);
-      setStep(4);
     } catch (e) {
       setError(e.message);
     }
@@ -134,7 +133,6 @@ export default function AgentBuilder() {
   }, []);
 
   const reset = () => {
-    setStep(1);
     setVision('');
     setStrategy(null);
     setGenResult(null);
@@ -143,67 +141,90 @@ export default function AgentBuilder() {
     setError('');
   };
 
+  // Step status helpers
+  const step1Done = !!strategy;
+  const step2Done = !!genResult;
+  const step3Done = !!bootstrapResult;
+  const step4Done = !!launchResult;
+
+  const stepStatus = (done, running) => {
+    if (done) return 'complete';
+    if (running) return 'running';
+    return 'pending';
+  };
+
+  const StepBadge = ({ num, status }) => {
+    const styles = {
+      complete: 'bg-green-500 text-white border-green-500',
+      running: 'bg-amber-500 text-white border-amber-500',
+      pending: 'bg-white text-stone-300 border-stone-200',
+    };
+    return (
+      <div className={`relative z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 font-black text-lg transition ${styles[status]}`}>
+        {status === 'complete' ? <CheckCircle2 className="h-6 w-6" /> :
+         status === 'running' ? <Loader2 className="h-5 w-5 animate-spin" /> : num}
+      </div>
+    );
+  };
+
+  const StepCard = ({ num, status, icon: Icon, title, subtitle, children, locked }) => (
+    <div className="flex gap-4">
+      {/* Left rail: number + connector line */}
+      <div className="flex flex-col items-center">
+        <StepBadge num={num} status={status} />
+        <div className="w-0.5 flex-1 bg-stone-200 mt-2 mb-2" />
+      </div>
+      {/* Right content */}
+      <div className={`flex-1 pb-8 ${locked ? 'opacity-40 pointer-events-none' : ''}`}>
+        <div className="flex items-center gap-2 mb-1">
+          {Icon && <Icon className={`h-5 w-5 ${status === 'complete' ? 'text-green-500' : status === 'running' ? 'text-amber-500' : 'text-stone-400'}`} />}
+          <h2 className="text-lg font-black text-stone-900">{title}</h2>
+          {status === 'pending' && locked && <Lock className="h-3.5 w-3.5 text-stone-300" />}
+        </div>
+        {subtitle && <p className="text-sm text-stone-500 mb-4">{subtitle}</p>}
+        <div className="rounded-2xl border border-stone-200 bg-white shadow-sm overflow-hidden">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="max-w-4xl mx-auto px-1">
       {/* Header */}
-      <div className="text-center pt-2">
-        <h1 className="text-2xl font-black text-stone-900 flex items-center justify-center gap-2">
+      <div className="mb-6">
+        <h1 className="text-2xl font-black text-stone-900 flex items-center gap-2">
           <Bot className="h-7 w-7 text-amber-500" />
-          Agent Builder Engine
+          Agent Builder Pipeline
         </h1>
         <p className="text-sm text-stone-500 mt-1">
-          Vision → Strategy → Agents → Production. Deterministic. 24/7. Full-spectrum capabilities.
+          Vision → Strategy → Agents → Bootstrap → Launch. Complete the full pipeline top to bottom.
         </p>
-      </div>
-
-      {/* Pipeline Steps */}
-      <div className="flex items-center justify-center gap-2 text-xs font-bold">
-        {[
-          { n: 1, label: 'Vision', icon: Eye },
-          { n: 2, label: 'Strategy', icon: Compass },
-          { n: 3, label: 'Generate', icon: Sparkles },
-          { n: 4, label: 'Launch', icon: Rocket },
-        ].map((s, i) => {
-          const Icon = s.icon;
-          const active = step === s.n;
-          const done = step > s.n;
-          return (
-            <React.Fragment key={s.n}>
-              <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 transition ${
-                active ? 'border-amber-500 bg-amber-50 text-amber-700' :
-                done ? 'border-green-500 bg-green-50 text-green-700' :
-                'border-stone-200 bg-white text-stone-400'
-              }`}>
-                <Icon className="h-3.5 w-3.5" />
-                {s.label}
-              </div>
-              {i < 3 && <ArrowRight className="h-3 w-3 text-stone-300" />}
-            </React.Fragment>
-          );
-        })}
       </div>
 
       {/* Error */}
       {error && (
-        <div className="flex items-center gap-2 p-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-600">
+        <div className="flex items-center gap-2 p-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-600 mb-4">
           <AlertCircle className="h-4 w-4 shrink-0" />
           {error}
           <button onClick={() => setError('')} className="ml-auto text-red-400 hover:text-red-600">✕</button>
         </div>
       )}
 
-      {/* Step 1: Vision Input */}
-      {step === 1 && (
-        <div className="rounded-2xl border border-stone-200 bg-white p-8 shadow-sm">
-          <h2 className="text-lg font-bold text-stone-800 mb-2">Describe Your Vision</h2>
-          <p className="text-sm text-stone-500 mb-4">
-            What autonomous system do you want to build? The engine will analyze your vision and produce a complete agent strategy.
-          </p>
+      {/* ── STEP 1: VISION ── */}
+      <StepCard
+        num={1}
+        status={stepStatus(step1Done, analyzing)}
+        icon={Eye}
+        title="Define Your Vision"
+        subtitle="Describe the autonomous system or AI team you want to build."
+      >
+        <div className="p-6">
           <textarea
             value={vision}
             onChange={(e) => setVision(e.target.value)}
-            placeholder="e.g. Build a digital dominance engine that acquires SEO-optimized websites across emergency service industries, deploys them nationally, and operates 24/7 with autonomous agents handling SEO, content, social media, lead generation, and customer communication..."
-            className="w-full h-40 rounded-xl border border-stone-200 p-4 text-sm text-stone-800 focus:border-amber-500 outline-none resize-none"
+            placeholder="e.g. Build X1 AI Hub — a platform where users connect their ChatGPT, Claude, and Gemini accounts to access AI tools, workflows, a prediction system, no-code crypto creator, and autonomous agent swarms..."
+            className="w-full h-36 rounded-xl border border-stone-200 p-4 text-sm text-stone-800 focus:border-amber-500 outline-none resize-none"
             maxLength={2000}
           />
           <div className="flex items-center justify-between mt-3">
@@ -214,42 +235,43 @@ export default function AgentBuilder() {
               className="flex items-center gap-2 rounded-xl bg-amber-500 px-6 py-3 text-sm font-bold text-white hover:bg-amber-600 transition disabled:opacity-50 shadow-md"
             >
               {analyzing ? <Loader2 className="h-5 w-5 animate-spin" /> : <Sparkles className="h-5 w-5" />}
-              {analyzing ? 'Analyzing Vision...' : 'Analyze & Produce Strategy'}
+              {analyzing ? 'Analyzing...' : 'Analyze Vision'}
             </button>
           </div>
         </div>
-      )}
+      </StepCard>
 
-      {/* Step 2: Strategy */}
-      {step === 2 && strategy && (
-        <div className="space-y-4">
-          {/* Executive Summary */}
-          <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-bold text-stone-800 mb-3 flex items-center gap-2">
-              <Compass className="h-5 w-5 text-amber-500" />
-              Strategy Analysis
-            </h2>
-            <p className="text-sm text-stone-700 mb-4">{strategy.executive_summary}</p>
+      {/* ── STEP 2: STRATEGY ── */}
+      <StepCard
+        num={2}
+        status={stepStatus(step2Done, generating)}
+        icon={Compass}
+        title="Strategy & Architecture"
+        subtitle="AI analysis of your vision — recommended agents, capabilities, and sync targets."
+        locked={!step1Done}
+      >
+        {step1Done && strategy ? (
+          <div className="p-6 space-y-4">
+            <div>
+              <p className="text-xs font-bold text-stone-500 uppercase mb-1">Executive Summary</p>
+              <p className="text-sm text-stone-700">{strategy.executive_summary}</p>
+            </div>
             <div className="rounded-xl bg-stone-50 p-4">
               <p className="text-xs font-bold text-stone-500 uppercase mb-1">Recommended Architecture</p>
               <p className="text-sm text-stone-700">{strategy.architecture}</p>
             </div>
-            {/* Key Capabilities */}
             {strategy.key_capabilities?.length > 0 && (
-              <div className="mt-4">
+              <div>
                 <p className="text-xs font-bold text-stone-500 uppercase mb-2">Key Capabilities</p>
                 <div className="flex flex-wrap gap-2">
                   {strategy.key_capabilities.map((c, i) => (
-                    <span key={i} className="rounded-lg bg-amber-50 border border-amber-200 px-3 py-1 text-xs text-amber-700 font-medium">
-                      {c}
-                    </span>
+                    <span key={i} className="rounded-lg bg-amber-50 border border-amber-200 px-3 py-1 text-xs text-amber-700 font-medium">{c}</span>
                   ))}
                 </div>
               </div>
             )}
-            {/* Sync Targets */}
             {strategy.sync_targets?.length > 0 && (
-              <div className="mt-4">
+              <div>
                 <p className="text-xs font-bold text-stone-500 uppercase mb-2">Sync Targets</p>
                 <div className="flex flex-wrap gap-2">
                   {strategy.sync_targets.map((s) => {
@@ -264,95 +286,77 @@ export default function AgentBuilder() {
                 </div>
               </div>
             )}
-          </div>
-
-          {/* Recommended Agents */}
-          <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-stone-800">
-                Recommended Agents ({strategy.recommended_agents?.length || 0})
-              </h3>
-              <button
-                onClick={handleGenerate}
-                disabled={generating}
-                className="flex items-center gap-2 rounded-xl bg-amber-500 px-5 py-2.5 text-sm font-bold text-white hover:bg-amber-600 transition disabled:opacity-50 shadow-md"
-              >
-                {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-                {generating ? `Generating ${strategy.recommended_agents?.length || 0} Agents...` : 'Generate All Agents'}
-              </button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {strategy.recommended_agents?.map((agent, i) => {
-                const archetype = archetypes.find(a => a.id === agent.archetype_id) || {};
-                const Icon = ICON_MAP[archetype.icon] || Bot;
-                return (
-                  <div key={i} className={`rounded-xl border-2 p-4 ${CATEGORY_COLORS[archetype.category] || CATEGORY_COLORS.technical}`}>
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <Icon className="h-5 w-5" />
-                        <div>
-                          <p className="font-bold text-sm">{archetype.name || agent.archetype_id}</p>
-                          <p className="text-[10px] uppercase tracking-wide opacity-70">{archetype.category}</p>
-                        </div>
-                      </div>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${PRIORITY_COLORS[agent.priority] || PRIORITY_COLORS.medium}`}>
-                        {agent.priority}
-                      </span>
-                    </div>
-                    <p className="text-xs opacity-80 mb-2">{agent.reason}</p>
-                    {agent.responsibilities?.length > 0 && (
-                      <ul className="text-xs space-y-0.5 opacity-70">
-                        {agent.responsibilities.slice(0, 3).map((r, j) => (
-                          <li key={j} className="flex items-start gap-1">
-                            <span className="mt-0.5">•</span> {r}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <button onClick={() => setStep(1)} className="text-sm text-stone-400 hover:text-stone-600 flex items-center gap-1">
-            ← Edit Vision
-          </button>
-        </div>
-      )}
-
-      {/* Step 3: Generate Results */}
-      {step === 3 && (
-        <div className="space-y-4">
-          <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-stone-800 flex items-center gap-2">
-                <CheckCircle2 className="h-5 w-5 text-green-500" />
-                Agents Generated ({genResult?.agents_created || 0})
-              </h2>
-              <div className="flex gap-2">
+            {/* Recommended agents preview */}
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-bold text-stone-500 uppercase">
+                  Recommended Agents ({strategy.recommended_agents?.length || 0})
+                </p>
                 <button
-                  onClick={handleBootstrap}
-                  disabled={bootstrapping}
-                  className="flex items-center gap-2 rounded-xl bg-stone-800 px-4 py-2.5 text-sm font-bold text-white hover:bg-stone-900 transition disabled:opacity-50"
-                >
-                  {bootstrapping ? <Loader2 className="h-4 w-4 animate-spin" /> : <Database className="h-4 w-4" />}
-                  {bootstrapping ? 'Bootstrapping...' : 'Bootstrap Project'}
-                </button>
-                <button
-                  onClick={handleLaunch}
-                  disabled={launching}
+                  onClick={handleGenerate}
+                  disabled={generating}
                   className="flex items-center gap-2 rounded-xl bg-amber-500 px-5 py-2.5 text-sm font-bold text-white hover:bg-amber-600 transition disabled:opacity-50 shadow-md"
                 >
-                  {launching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Rocket className="h-4 w-4" />}
-                  {launching ? 'Validating...' : 'Validate & Launch'}
+                  {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                  {generating ? `Generating ${strategy.recommended_agents?.length || 0} Agents...` : 'Generate All Agents'}
                 </button>
               </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {strategy.recommended_agents?.map((agent, i) => {
+                  const archetype = archetypes.find(a => a.id === agent.archetype_id) || {};
+                  const Icon = ICON_MAP[archetype.icon] || Bot;
+                  return (
+                    <div key={i} className={`rounded-xl border-2 p-3 ${CATEGORY_COLORS[archetype.category] || CATEGORY_COLORS.technical}`}>
+                      <div className="flex items-start justify-between mb-1">
+                        <div className="flex items-center gap-2">
+                          <Icon className="h-4 w-4" />
+                          <p className="font-bold text-sm">{archetype.name || agent.archetype_id}</p>
+                        </div>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${PRIORITY_COLORS[agent.priority] || PRIORITY_COLORS.medium}`}>
+                          {agent.priority}
+                        </span>
+                      </div>
+                      <p className="text-xs opacity-80">{agent.reason}</p>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
+          </div>
+        ) : (
+          <div className="p-8 text-center text-sm text-stone-400">
+            {analyzing ? 'Analyzing your vision...' : 'Complete Step 1 to unlock strategy analysis.'}
+          </div>
+        )}
+      </StepCard>
 
-            {/* Agent Grid */}
+      {/* ── STEP 3: AGENTS GENERATED ── */}
+      <StepCard
+        num={3}
+        status={stepStatus(step3Done, bootstrapping)}
+        icon={Bot}
+        title="Agent Fleet & Bootstrap"
+        subtitle="Generated agents are bootstrapped into a project manifest with folder structure."
+        locked={!step2Done}
+      >
+        {step2Done && genResult ? (
+          <div className="p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold text-stone-700 flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5 text-green-500" />
+                {genResult.agents_created || 0} Agents Generated
+              </h3>
+              <button
+                onClick={handleBootstrap}
+                disabled={bootstrapping}
+                className="flex items-center gap-2 rounded-xl bg-stone-800 px-4 py-2.5 text-sm font-bold text-white hover:bg-stone-900 transition disabled:opacity-50"
+              >
+                {bootstrapping ? <Loader2 className="h-4 w-4 animate-spin" /> : <Database className="h-4 w-4" />}
+                {bootstrapping ? 'Bootstrapping...' : 'Bootstrap Project'}
+              </button>
+            </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {genResult?.agents?.map((agent, i) => {
+              {genResult.agents?.map((agent, i) => {
                 const archetype = archetypes.find(a => a.id === agent.archetype_id) || {};
                 const Icon = ICON_MAP[archetype.icon] || Bot;
                 return (
@@ -365,136 +369,125 @@ export default function AgentBuilder() {
                 );
               })}
             </div>
-
-            {genResult?.errors?.length > 0 && (
-              <div className="mt-4 rounded-xl bg-amber-50 border border-amber-200 p-3">
+            {genResult.errors?.length > 0 && (
+              <div className="rounded-xl bg-amber-50 border border-amber-200 p-3">
                 <p className="text-xs font-bold text-amber-700 mb-1">Partial Errors:</p>
                 {genResult.errors.map((e, i) => (
                   <p key={i} className="text-xs text-amber-600">{e}</p>
                 ))}
               </div>
             )}
-          </div>
-
-          {/* Bootstrap Result */}
-          {bootstrapResult && (
-            <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-stone-500 mb-3">Project Manifest</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-                <div className="rounded-xl bg-stone-50 p-3 text-center">
-                  <p className="text-2xl font-black text-stone-800">{bootstrapResult.manifest?.agent_count || 0}</p>
-                  <p className="text-xs text-stone-400 uppercase">Agents</p>
+            {bootstrapResult && (
+              <div className="rounded-xl bg-stone-50 p-4 border border-stone-200">
+                <p className="text-xs font-bold text-stone-500 uppercase mb-3">Project Manifest</p>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                  <div className="rounded-lg bg-white p-3 text-center border border-stone-200">
+                    <p className="text-2xl font-black text-stone-800">{bootstrapResult.manifest?.agent_count || 0}</p>
+                    <p className="text-xs text-stone-400 uppercase">Agents</p>
+                  </div>
+                  <div className="rounded-lg bg-white p-3 text-center border border-stone-200">
+                    <p className="text-2xl font-black text-stone-800">{bootstrapResult.manifest?.structure?.total_files || 0}</p>
+                    <p className="text-xs text-stone-400 uppercase">Files</p>
+                  </div>
+                  <div className="rounded-lg bg-white p-3 text-center border border-stone-200">
+                    <p className="text-2xl font-black text-stone-800">{bootstrapResult.manifest?.sync_targets?.length || 0}</p>
+                    <p className="text-xs text-stone-400 uppercase">Sync Targets</p>
+                  </div>
+                  <div className="rounded-lg bg-white p-3 text-center border border-stone-200">
+                    <p className="text-2xl font-black text-green-600">{bootstrapResult.manifest?.validation?.all_agents_created ? '✓' : '✗'}</p>
+                    <p className="text-xs text-stone-400 uppercase">Validated</p>
+                  </div>
                 </div>
-                <div className="rounded-xl bg-stone-50 p-3 text-center">
-                  <p className="text-2xl font-black text-stone-800">{bootstrapResult.manifest?.structure?.total_files || 0}</p>
-                  <p className="text-xs text-stone-400 uppercase">Files</p>
-                </div>
-                <div className="rounded-xl bg-stone-50 p-3 text-center">
-                  <p className="text-2xl font-black text-stone-800">{bootstrapResult.manifest?.sync_targets?.length || 0}</p>
-                  <p className="text-xs text-stone-400 uppercase">Sync Targets</p>
-                </div>
-                <div className="rounded-xl bg-stone-50 p-3 text-center">
-                  <p className="text-2xl font-black text-green-600">{bootstrapResult.manifest?.validation?.all_agents_created ? '✓' : '✗'}</p>
-                  <p className="text-xs text-stone-400 uppercase">Validated</p>
-                </div>
-              </div>
-              <div className="rounded-xl bg-stone-50 p-3">
-                <p className="text-xs font-bold text-stone-500 uppercase mb-2">Folder Structure</p>
-                <div className="font-mono text-xs text-stone-600 space-y-0.5 max-h-40 overflow-y-auto">
+                <div className="font-mono text-xs text-stone-600 space-y-0.5 max-h-32 overflow-y-auto">
                   {bootstrapResult.manifest?.structure?.folders?.map((f, i) => (
                     <div key={i}>{f}</div>
                   ))}
                 </div>
               </div>
-            </div>
-          )}
-
-          {/* Launch Result */}
-          {launchResult && (
-            <div className={`rounded-2xl border-2 p-6 shadow-sm ${launchResult.ready ? 'border-green-500 bg-green-50' : 'border-amber-500 bg-amber-50'}`}>
-              <div className="flex items-center gap-3 mb-4">
-                {launchResult.ready ? (
-                  <CheckCircle2 className="h-8 w-8 text-green-500" />
-                ) : (
-                  <AlertCircle className="h-8 w-8 text-amber-500" />
-                )}
-                <div>
-                  <h3 className="text-lg font-bold text-stone-800">
-                    {launchResult.ready ? 'System is LIVE' : 'Validation Issues'}
-                  </h3>
-                  <p className="text-sm text-stone-600">{launchResult.message}</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div className="rounded-lg bg-white p-3 text-center border border-stone-200">
-                  <p className="text-xl font-black text-stone-800">{launchResult.validation?.total_agents}</p>
-                  <p className="text-xs text-stone-400 uppercase">Total Agents</p>
-                </div>
-                <div className="rounded-lg bg-white p-3 text-center border border-stone-200">
-                  <p className="text-xl font-black text-green-600">{launchResult.validation?.agents_with_prompts}</p>
-                  <p className="text-xs text-stone-400 uppercase">With Prompts</p>
-                </div>
-                <div className="rounded-lg bg-white p-3 text-center border border-stone-200">
-                  <p className="text-xl font-black text-blue-600">{launchResult.validation?.agents_with_actions}</p>
-                  <p className="text-xs text-stone-400 uppercase">With Actions</p>
-                </div>
-                <div className="rounded-lg bg-white p-3 text-center border border-stone-200">
-                  <p className="text-xl font-black text-amber-600">{launchResult.validation?.agents_with_browser}</p>
-                  <p className="text-xs text-stone-400 uppercase">Browser Capable</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <button onClick={reset} className="text-sm text-stone-400 hover:text-stone-600 flex items-center gap-1">
-            <RefreshCw className="h-3.5 w-3.5" /> Start New Vision
-          </button>
-        </div>
-      )}
-
-      {/* Step 4: Launch Complete */}
-      {step === 4 && launchResult && (
-        <div className="space-y-4">
-          <div className={`rounded-2xl border-2 p-8 shadow-sm text-center ${launchResult.ready ? 'border-green-500 bg-green-50' : 'border-amber-500 bg-amber-50'}`}>
-            {launchResult.ready ? (
-              <Rocket className="h-16 w-16 text-green-500 mx-auto mb-4" />
-            ) : (
-              <AlertCircle className="h-16 w-16 text-amber-500 mx-auto mb-4" />
             )}
-            <h2 className="text-2xl font-black text-stone-800 mb-2">
-              {launchResult.ready ? 'Agent Fleet is LIVE' : 'Needs Attention'}
-            </h2>
-            <p className="text-sm text-stone-600 mb-6">{launchResult.message}</p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-2xl mx-auto">
-              <div className="rounded-lg bg-white p-3 text-center border border-stone-200">
-                <p className="text-xl font-black text-stone-800">{launchResult.validation?.total_agents}</p>
-                <p className="text-xs text-stone-400 uppercase">Agents</p>
-              </div>
-              <div className="rounded-lg bg-white p-3 text-center border border-stone-200">
-                <p className="text-xl font-black text-green-600">{launchResult.validation?.agents_with_prompts}</p>
-                <p className="text-xs text-stone-400 uppercase">Prompted</p>
-              </div>
-              <div className="rounded-lg bg-white p-3 text-center border border-stone-200">
-                <p className="text-xl font-black text-blue-600">{launchResult.validation?.agents_with_actions}</p>
-                <p className="text-xs text-stone-400 uppercase">Actions</p>
-              </div>
-              <div className="rounded-lg bg-white p-3 text-center border border-stone-200">
-                <p className="text-xl font-black text-purple-600">{launchResult.validation?.agents_with_memory}</p>
-                <p className="text-xs text-stone-400 uppercase">Memory</p>
-              </div>
-            </div>
           </div>
-          <div className="flex justify-center gap-3">
-            <button onClick={reset} className="flex items-center gap-2 rounded-xl border border-stone-200 bg-white px-5 py-2.5 text-sm font-bold text-stone-700 hover:border-amber-500 hover:text-amber-600 transition">
-              <RefreshCw className="h-4 w-4" /> New Vision
-            </button>
+        ) : (
+          <div className="p-8 text-center text-sm text-stone-400">
+            {generating ? 'Generating agents...' : 'Complete Step 2 to generate your agent fleet.'}
           </div>
-        </div>
-      )}
+        )}
+      </StepCard>
 
-      {/* Archetype Catalog */}
-      {step === 1 && archetypes.length > 0 && (
-        <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
+      {/* ── STEP 4: LAUNCH ── */}
+      <StepCard
+        num={4}
+        status={stepStatus(step4Done, launching)}
+        icon={Rocket}
+        title="Validate & Launch"
+        subtitle="Final validation and deployment of your autonomous agent fleet."
+        locked={!step3Done}
+      >
+        {step3Done ? (
+          <div className="p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-stone-600">Run final validation and launch your fleet.</p>
+              <button
+                onClick={handleLaunch}
+                disabled={launching}
+                className="flex items-center gap-2 rounded-xl bg-amber-500 px-6 py-3 text-sm font-bold text-white hover:bg-amber-600 transition disabled:opacity-50 shadow-md"
+              >
+                {launching ? <Loader2 className="h-5 w-5 animate-spin" /> : <Rocket className="h-5 w-5" />}
+                {launching ? 'Validating...' : 'Validate & Launch'}
+              </button>
+            </div>
+            {launchResult && (
+              <div className={`rounded-xl border-2 p-5 ${launchResult.ready ? 'border-green-500 bg-green-50' : 'border-amber-500 bg-amber-50'}`}>
+                <div className="flex items-center gap-3 mb-4">
+                  {launchResult.ready ? (
+                    <Rocket className="h-8 w-8 text-green-500" />
+                  ) : (
+                    <AlertCircle className="h-8 w-8 text-amber-500" />
+                  )}
+                  <div>
+                    <h3 className="text-lg font-bold text-stone-800">
+                      {launchResult.ready ? 'Agent Fleet is LIVE' : 'Validation Issues'}
+                    </h3>
+                    <p className="text-sm text-stone-600">{launchResult.message}</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="rounded-lg bg-white p-3 text-center border border-stone-200">
+                    <p className="text-xl font-black text-stone-800">{launchResult.validation?.total_agents}</p>
+                    <p className="text-xs text-stone-400 uppercase">Total Agents</p>
+                  </div>
+                  <div className="rounded-lg bg-white p-3 text-center border border-stone-200">
+                    <p className="text-xl font-black text-green-600">{launchResult.validation?.agents_with_prompts}</p>
+                    <p className="text-xs text-stone-400 uppercase">With Prompts</p>
+                  </div>
+                  <div className="rounded-lg bg-white p-3 text-center border border-stone-200">
+                    <p className="text-xl font-black text-blue-600">{launchResult.validation?.agents_with_actions}</p>
+                    <p className="text-xs text-stone-400 uppercase">With Actions</p>
+                  </div>
+                  <div className="rounded-lg bg-white p-3 text-center border border-stone-200">
+                    <p className="text-xl font-black text-purple-600">{launchResult.validation?.agents_with_memory}</p>
+                    <p className="text-xs text-stone-400 uppercase">Memory</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            {step4Done && (
+              <div className="flex justify-center pt-2">
+                <button onClick={reset} className="flex items-center gap-2 rounded-xl border border-stone-200 bg-white px-5 py-2.5 text-sm font-bold text-stone-700 hover:border-amber-500 hover:text-amber-600 transition">
+                  <RefreshCw className="h-4 w-4" /> Start New Vision
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="p-8 text-center text-sm text-stone-400">
+            {launching ? 'Validating fleet...' : 'Complete Step 3 to unlock launch.'}
+          </div>
+        )}
+      </StepCard>
+
+      {/* Archetype Catalog (reference, always visible at bottom) */}
+      {archetypes.length > 0 && (
+        <div className="mt-2 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
           <h3 className="text-sm font-bold uppercase tracking-wider text-stone-500 mb-3">
             Available Archetypes ({archetypes.length})
           </h3>
