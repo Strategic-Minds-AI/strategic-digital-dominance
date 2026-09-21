@@ -122,6 +122,8 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import ContractorApp from '@/pages/ContractorApp';
 import ContractorBid from '@/pages/ContractorBid';
 import CodeStudio from '@/pages/admin/CodeStudio';
+import MetaArchitecture from '@/pages/admin/MetaArchitecture';
+import VisionCortexV2 from '@/pages/admin/VisionCortexV2';
 import DynamicPageView from '@/pages/DynamicPageView';
 import CodeInjector from '@/components/codestudio/CodeInjector';
 
@@ -233,6 +235,8 @@ const AuthenticatedApp = () => {
         <Route path="architecture" element={<DeepArchitecture />} />
         <Route path="operator" element={<SystemOperator />} />
         <Route path="code-studio" element={<CodeStudio />} />
+        <Route path="meta-architecture" element={<MetaArchitecture />} />
+        <Route path="vision-cortex-v2" element={<VisionCortexV2 />} />
         <Route path="empire" element={<WebsiteEmpire />} />
         <Route path="x1-company" element={<X1Company />} />
         <Route path="site-health" element={<SiteHealthMonitor />} />
