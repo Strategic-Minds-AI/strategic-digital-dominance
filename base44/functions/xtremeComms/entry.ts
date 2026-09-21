@@ -125,6 +125,73 @@ export default async function (req: Request): Promise<Response> {
         await logSop(svc, 'number_released', `Released ${body.phoneNumber}`, '');
         break;
 
+      // ── List + Validate + Log all my numbers (via Telnyx directly) ──
+      case 'getMyNumbers': {
+        const telnyxKey = secrets.get('TELNYX_API_KEY');
+        if (!telnyxKey) throw new Error('TELNYX_API_KEY not set');
+
+        // List all provisioned numbers from Telnyx
+        const telnyxRes = await fetch('https://api.telnyx.com/v2/phone_numbers?status=enabled&records_per_page=50', {
+          headers: {
+            'Authorization': `Bearer ${telnyxKey}`,
+            'Content-Type': 'application/json',
+          },
+          signal: AbortSignal.timeout(15000),
+        });
+        if (!telnyxRes.ok) {
+          const errData = await telnyxRes.json().catch(() => ({}));
+          throw new Error(`Telnyx API error (${telnyxRes.status}): ${errData.errors?.[0]?.detail || telnyxRes.statusText}`);
+        }
+        const telnyxData = await telnyxRes.json();
+        const rawNumbers = telnyxData.data || [];
+
+        // Validate each number and log to system
+        const validated = [];
+        for (const num of rawNumbers) {
+          const phone = num.phone_number;
+          if (!phone) continue;
+          const features = num.features ? Object.keys(num.features).filter(k => num.features[k] !== false) : ['sms', 'voice'];
+          try {
+            // Validate via Telnyx phone number validation API
+            const verifyRes = await fetch('https://api.telnyx.com/v2/phone_number_validation', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${telnyxKey}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ phone_number: phone }),
+              signal: AbortSignal.timeout(10000),
+            });
+            const verifyData = await verifyRes.json().catch(() => ({}));
+            const vr = verifyData.data || {};
+            const isValid = vr.valid !== false;
+            validated.push({
+              phone,
+              verified: isValid,
+              carrier: vr.carrier?.name || vr.carrier_name || 'unknown',
+              status: isValid ? 'valid' : 'invalid',
+              country: vr.country_code || num.country_code || 'US',
+              features,
+              lineType: vr.line_type || 'unknown',
+              portability: vr.portability_status || 'unknown',
+            });
+            await logSop(svc, 'number_validated', `Validated ${phone} — ${isValid ? 'valid' : 'invalid'} (${vr.carrier?.name || 'unknown'})`, JSON.stringify(vr).slice(0, 200));
+          } catch (e) {
+            validated.push({
+              phone,
+              verified: false,
+              error: e.message,
+              country: num.country_code || 'US',
+              features,
+            });
+            await logSop(svc, 'number_validation_failed', `Validation failed for ${phone}`, e.message);
+          }
+        }
+
+        result = { numbers: validated, total: validated.length, verified_count: validated.filter(n => n.verified).length };
+        break;
+      }
+
       // ── Campaigns ──
       case 'sendCampaign':
         if (!body.contacts || !body.message) return Response.json({ error: 'contacts and message are required' }, { status: 400 });

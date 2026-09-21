@@ -92,6 +92,14 @@ export default function XtremeComms() {
     queryFn: () => base44.entities.SopLog.filter({ category: "integration" }, "-created_date", 10),
   });
 
+  // Fetch + validate all provisioned phone numbers for dropdowns
+  const { data: phoneNumbersData, refetch: refetchNumbers, isLoading: numbersLoading } = useQuery({
+    queryKey: ["comms-phone-numbers"],
+    queryFn: () => base44.functions.invoke("xtremeComms", { action: "getMyNumbers" }),
+    staleTime: 120000,
+  });
+  const phoneNumbers = phoneNumbersData?.data?.result?.numbers || [];
+
   const runAction = async (action, payload, label) => {
     setLoading(label);
     setError(null);
@@ -150,7 +158,12 @@ export default function XtremeComms() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <input type="tel" placeholder="To (+1 555-123-4567)" value={forms.sms.to} onChange={(e) => updateForm("sms", "to", e.target.value)} className={inputCls} />
-              <input type="text" placeholder="From (your automation #, optional)" value={forms.sms.from || ""} onChange={(e) => updateForm("sms", "from", e.target.value)} className={inputCls} />
+              <select value={forms.sms.from || ""} onChange={(e) => updateForm("sms", "from", e.target.value)} className={inputCls}>
+                <option value="">— Select sender number —</option>
+                {phoneNumbers.map((n) => (
+                  <option key={n.phone} value={n.phone}>{n.phone} {n.verified ? "✓ verified" : "⚠ unverified"}</option>
+                ))}
+              </select>
             </div>
             <textarea placeholder="Message..." value={forms.sms.message} onChange={(e) => updateForm("sms", "message", e.target.value)} rows={4} className={textareaCls} />
             <input type="text" placeholder="Media URLs (comma-separated, for MMS)" value={forms.sms.mediaUrls} onChange={(e) => updateForm("sms", "mediaUrls", e.target.value)} className={inputCls} />
@@ -289,7 +302,12 @@ export default function XtremeComms() {
             <h3 className="font-bold text-stone-900">AI Voice Call</h3>
             <div className="grid grid-cols-2 gap-3">
               <input type="tel" placeholder="To (+1 555-123-4567)" value={forms.voice.to} onChange={(e) => updateForm("voice", "to", e.target.value)} className={inputCls} />
-              <input type="tel" placeholder="From (your number)" value={forms.voice.from} onChange={(e) => updateForm("voice", "from", e.target.value)} className={inputCls} />
+              <select value={forms.voice.from} onChange={(e) => updateForm("voice", "from", e.target.value)} className={inputCls}>
+                <option value="">— Select from number —</option>
+                {phoneNumbers.map((n) => (
+                  <option key={n.phone} value={n.phone}>{n.phone} {n.verified ? "✓ verified" : "⚠ unverified"}</option>
+                ))}
+              </select>
             </div>
             <input type="text" placeholder="Agent ID (optional)" value={forms.voice.agentId} onChange={(e) => updateForm("voice", "agentId", e.target.value)} className={inputCls} />
             <textarea placeholder="System prompt for the AI agent..." value={forms.voice.systemPrompt} onChange={(e) => updateForm("voice", "systemPrompt", e.target.value)} rows={4} className={textareaCls} />
@@ -331,6 +349,47 @@ export default function XtremeComms() {
               <button onClick={() => runAction("listNumbers", {}, "list")} disabled={loading !== null} className={btnCls + " w-full mt-2"}>
                 {loading === "list" ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Smartphone className="h-4 w-4" />} List My Numbers
               </button>
+            </div>
+            <div className="border-t border-stone-100 pt-4">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-bold text-stone-900 flex items-center gap-2"><ShieldCheck className="h-5 w-5 text-amber-500" /> Provisioned & Validated Numbers</h3>
+                <button onClick={() => refetchNumbers()} disabled={numbersLoading} className="h-8 px-3 rounded-lg border border-stone-200 text-xs font-semibold text-stone-600 hover:border-amber-500 hover:text-amber-600 flex items-center gap-1.5 disabled:opacity-50">
+                  {numbersLoading ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />} Refresh & Validate
+                </button>
+              </div>
+              {numbersLoading ? (
+                <div className="flex items-center gap-2 text-sm text-stone-400 py-4">
+                  <RefreshCw className="h-4 w-4 animate-spin" /> Loading and validating numbers…
+                </div>
+              ) : phoneNumbers.length === 0 ? (
+                <p className="text-sm text-stone-400 py-4">No numbers provisioned yet. Search and buy a number above.</p>
+              ) : (
+                <div className="space-y-2">
+                  <div className="text-xs text-stone-500 mb-2">
+                    {phoneNumbers.filter(n => n.verified).length} of {phoneNumbers.length} numbers verified
+                  </div>
+                  {phoneNumbers.map((n) => (
+                    <div key={n.phone} className={`rounded-lg border p-3 flex items-center gap-3 ${n.verified ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}`}>
+                      <div className={`h-8 w-8 rounded-lg grid place-items-center ${n.verified ? "bg-green-100" : "bg-red-100"}`}>
+                        {n.verified ? <CheckCircle2 className="h-5 w-5 text-green-600" /> : <AlertCircle className="h-5 w-5 text-red-600" />}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-bold text-stone-900 font-mono">{n.phone}</div>
+                        <div className="text-xs text-stone-500">
+                          {n.verified ? (
+                            <>{n.carrier} · {n.status} · {(n.features || []).join(", ")}</>
+                          ) : (
+                            <>Validation failed: {n.error}</>
+                          )}
+                        </div>
+                      </div>
+                      <span className={`text-[10px] font-bold px-2 py-1 rounded ${n.verified ? "bg-green-200 text-green-800" : "bg-red-200 text-red-800"}`}>
+                        {n.verified ? "VERIFIED" : "FAILED"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}
