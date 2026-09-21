@@ -7,6 +7,8 @@ import { FLOOR_SYSTEM_DATA } from "@/data/colorData";
 import { AI_DISCLOSURE } from "@/lib/brand";
 import Disclosure from "@/components/vq/Disclosure";
 import GlitterSwatch from "@/components/ui/GlitterSwatch";
+import BackButton from "@/components/BackButton";
+import Logo from "@/components/Logo";
 
 // Sample garage photo — a plain concrete garage interior
 const SAMPLE_PHOTO = "https://images.unsplash.com/photo-1605152276897-4296181db00d?w=1200&q=80";
@@ -97,6 +99,10 @@ export default function VisualizerTest() {
   return (
     <div className="min-h-screen bg-stone-50 p-4 sm:p-8">
       <div className="max-w-5xl mx-auto">
+        <div className="flex items-center gap-3 mb-6">
+          <BackButton className="text-stone-600 hover:text-amber-600" />
+          <Logo />
+        </div>
         <h1 className="text-2xl font-bold text-stone-900 mb-2">Visualizer Test — AI Render</h1>
         <p className="text-sm text-stone-500 mb-6">
           Upload a photo, pick a system + color + finish, then generate an AI-rendered preview.

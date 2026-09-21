@@ -215,6 +215,7 @@ export default function AdminLayout() {
           <button onClick={() => setMobileOpen(true)} className="text-stone-400 hover:text-white">
             <Menu className="h-6 w-6" />
           </button>
+          <BackButton className="text-stone-400 hover:text-white px-2" showLabel={false} />
           <img src={XTREME_AI_ICON_URL} alt="Xtreme AI" className="h-7 w-7 object-contain" />
           <span className="text-sm font-bold text-white">Command Center</span>
         </div>

@@ -21,6 +21,7 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import { LOGO_URL } from "@/components/Logo";
+import BackButton from "@/components/BackButton";
 import { usePwaInstall } from "@/lib/usePwaInstall";
 import ContractorVisualizer from "@/components/contractor/ContractorVisualizer";
 
@@ -87,6 +88,7 @@ export default function EpoxyProAssistant() {
         {/* Main header row */}
         <div className="flex items-center justify-between h-14 px-3">
           <div className="flex items-center gap-2 shrink-0">
+            <BackButton className="text-stone-600 hover:text-amber-600" showLabel={false} />
             <img src={LOGO_URL} alt="XPS" className="h-8 w-8 object-contain" />
             <div className="flex flex-col leading-none">
               <span className="text-[12px] font-extrabold text-black font-heading tracking-tight">

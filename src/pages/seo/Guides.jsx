@@ -4,6 +4,8 @@ import { base44 } from "@/api/base44Client";
 import { trackEvent } from "@/lib/tracking";
 import { BookOpen, ArrowRight, MapPin } from "lucide-react";
 import { SEO_LOCATIONS, locationPath } from "@/lib/seoConfig";
+import BackButton from "@/components/BackButton";
+import Logo from "@/components/Logo";
 import Footer from "@/components/home/Footer";
 
 export default function Guides() {
@@ -22,6 +24,13 @@ export default function Guides() {
     <div className="bg-white min-h-screen">
       <section className="bg-stone-950 text-white px-6 pt-16 pb-14">
         <div className="max-w-5xl mx-auto">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <BackButton className="text-stone-300 hover:text-white" showLabel={false} />
+              <Logo />
+            </div>
+            <Link to="/funnel" className="text-sm text-amber-400 hover:text-amber-300 font-semibold">Free Estimate →</Link>
+          </div>
           <div className="inline-flex items-center gap-2 text-xs font-bold tracking-[0.25em] text-amber-400">
             <BookOpen className="h-4 w-4" /> GUIDES
           </div>

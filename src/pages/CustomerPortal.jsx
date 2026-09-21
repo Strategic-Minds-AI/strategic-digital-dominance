@@ -8,6 +8,7 @@ import {
   Sparkles, Palette, Gift, Phone, ChevronRight, Tag
 } from "lucide-react";
 import Logo, { XTREME_AI_ICON_URL } from "@/components/Logo";
+import BackButton from "@/components/BackButton";
 import PortalDashboard from "@/components/portal/PortalDashboard";
 import PortalTimeline from "@/components/portal/PortalTimeline";
 import PortalMaintenance from "@/components/portal/PortalMaintenance";
@@ -77,7 +78,10 @@ export default function CustomerPortal() {
       <div className="min-h-screen bg-stone-50 flex flex-col">
         <header className="bg-stone-950 text-white">
           <div className="max-w-2xl mx-auto px-6 py-5 flex items-center justify-between">
-            <Logo />
+            <div className="flex items-center gap-3">
+              <BackButton className="text-stone-300 hover:text-white" showLabel={false} />
+              <Logo />
+            </div>
           </div>
         </header>
 

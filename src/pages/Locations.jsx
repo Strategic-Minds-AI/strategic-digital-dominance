@@ -19,6 +19,8 @@ import {
   NEP_INFO
 } from "@/lib/brandLocations";
 import { trackEvent } from "@/lib/tracking";
+import BackButton from "@/components/BackButton";
+import Logo from "@/components/Logo";
 import Footer from "@/components/home/Footer";
 
 // Group the XPS Xpress stores by state for a readable listing.
@@ -74,6 +76,13 @@ export default function Locations() {
       {/* Hero */}
       <section className="bg-stone-950 text-white px-6 pt-16 pb-14">
         <div className="max-w-5xl mx-auto">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <BackButton className="text-stone-300 hover:text-white" showLabel={false} />
+              <Logo />
+            </div>
+            <Link to="/funnel" className="text-sm text-amber-400 hover:text-amber-300 font-semibold">Free Estimate →</Link>
+          </div>
           <div className="inline-flex items-center gap-2 text-xs font-bold tracking-[0.25em] text-amber-400">
             <MapPin className="h-4 w-4" /> OUR LOCATIONS
           </div>

@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { UserPlus, Mail, Lock, MapPin, Loader2, ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { LOGO_URL } from "@/components/Logo";
+import BackButton from "@/components/BackButton";
 import { toast } from "@/components/ui/use-toast";
 
 const PERKS = [
@@ -90,10 +91,13 @@ export default function AppOnboarding() {
       {/* Header */}
       <header className="border-b border-amber-500/20 bg-stone-950/80 backdrop-blur sticky top-0 z-20">
         <div className="max-w-md mx-auto px-5 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <img src={LOGO_URL} alt="XPS" className="h-8 w-8 object-contain" />
-            <span className="text-white font-bold text-sm">Epoxy Pro App</span>
-          </Link>
+          <div className="flex items-center gap-3">
+            <BackButton className="text-stone-400 hover:text-white" showLabel={false} />
+            <Link to="/" className="flex items-center gap-2">
+              <img src={LOGO_URL} alt="XPS" className="h-8 w-8 object-contain" />
+              <span className="text-white font-bold text-sm">Epoxy Pro App</span>
+            </Link>
+          </div>
           <Link to="/funnel" className="text-xs text-stone-400 hover:text-amber-500 transition">
             Skip for now
           </Link>

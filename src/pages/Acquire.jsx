@@ -4,6 +4,8 @@ import { base44 } from "@/api/base44Client";
 import { TrendingUp, Search, Zap, Award, ArrowRight, CheckCircle2, Building2, Globe2 } from "lucide-react";
 import ListingCard from "@/components/marketplace/ListingCard";
 import AcquireLeadForm from "@/components/marketplace/AcquireLeadForm";
+import BackButton from "@/components/BackButton";
+import Logo from "@/components/Logo";
 
 export default function Acquire() {
   const { data: listings = [], isLoading } = useQuery({
@@ -27,7 +29,13 @@ export default function Acquire() {
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-stone-950 via-stone-900 to-stone-950" />
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4" />
-        <div className="relative max-w-6xl mx-auto px-5 pt-20 pb-16">
+        <div className="relative max-w-6xl mx-auto px-5 pt-8 pb-16">
+          <div className="flex items-center justify-between mb-10">
+            <div className="flex items-center gap-3">
+              <BackButton className="text-stone-400 hover:text-white" showLabel={false} />
+              <Logo colorClass="text-white" />
+            </div>
+          </div>
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-wider mb-6">
             <Award className="h-3.5 w-3.5" /> Acquisition Marketplace
           </div>
