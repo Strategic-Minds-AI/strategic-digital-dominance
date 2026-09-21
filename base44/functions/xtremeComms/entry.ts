@@ -73,12 +73,40 @@ export default async function (req: Request): Promise<Response> {
     let result;
 
     switch (action) {
-      // ── Messaging ──
-      case 'sendSms':
+      // ── Messaging (sent directly via Telnyx for real delivery) ──
+      case 'sendSms': {
         if (!body.to || !body.message) return Response.json({ error: 'to and message are required' }, { status: 400 });
-        result = await gatewayCall('gatewayMessages', { channel: 'sms', to: body.to, body: body.message, from: body.from, media_urls: body.mediaUrls });
-        await logSop(svc, 'sms_sent', `SMS sent to ${body.to}`, body.message.slice(0, 200));
+        const telnyxKey = secrets.get('TELNYX_API_KEY');
+        if (!telnyxKey) throw new Error('TELNYX_API_KEY not set');
+        const fromNum = body.from || '+18337001239'; // toll-free automation line — requires Telnyx toll-free verification
+        const txRes = await fetch('https://api.telnyx.com/v2/messages', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${telnyxKey}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            from: fromNum,
+            to: body.to,
+            text: body.message,
+            media_urls: body.mediaUrls || undefined,
+          }),
+          signal: AbortSignal.timeout(30000),
+        });
+        const txData = await txRes.json().catch(() => ({}));
+        if (!txRes.ok) {
+          const errMsg = txData.errors?.[0]?.detail || txData.errors?.[0]?.title || JSON.stringify(txData);
+          throw new Error(`Telnyx SMS error (${txRes.status}): ${errMsg}`);
+        }
+        const msg = txData.data || {};
+        result = {
+          message_id: msg.id,
+          status: msg.status || 'queued',
+          routed_via: 'telnyx',
+          to: msg.to,
+          from: msg.from,
+          text: msg.text,
+        };
+        await logSop(svc, 'sms_sent', `SMS sent to ${body.to} via Telnyx`, body.message.slice(0, 200));
         break;
+      }
 
       case 'sendMms':
         if (!body.to || !body.message) return Response.json({ error: 'to and message are required' }, { status: 400 });
