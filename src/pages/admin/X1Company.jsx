@@ -59,8 +59,10 @@ const INTEGRATION_ICONS = {
 
 export default function X1Company() {
   const queryClient = useQueryClient();
-  const [goal, setGoal] = useState("");
-  const [routing, setRouting] = useState(null);
+  const [vision, setVision] = useState("");
+  const [strategies, setStrategies] = useState(null);
+  const [selectedStrategy, setSelectedStrategy] = useState(null);
+  const [executionResult, setExecutionResult] = useState(null);
   const [actionLoading, setActionLoading] = useState(null);
   const [pipelineResult, setPipelineResult] = useState(null);
   const [infraResult, setInfraResult] = useState(null);
@@ -114,13 +116,30 @@ export default function X1Company() {
     setActionLoading(null);
   };
 
-  const handleRouteGoal = async () => {
-    if (!goal.trim()) return;
-    setActionLoading("route");
+  const handleAnalyzeVision = async () => {
+    if (!vision.trim()) return;
+    setActionLoading("analyze");
+    setStrategies(null);
+    setSelectedStrategy(null);
+    setExecutionResult(null);
     try {
-      const res = await base44.functions.invoke("companyOrchestrator", { action: "route_goal", goal });
-      setRouting(res?.data);
-      setGoal("");
+      const res = await base44.functions.invoke("companyOrchestrator", { action: "analyze_vision", vision });
+      setStrategies(res?.data);
+    } catch (e) { console.error(e); }
+    setActionLoading(null);
+  };
+
+  const handleExecuteStrategy = async () => {
+    if (!selectedStrategy) return;
+    setActionLoading("execute");
+    setExecutionResult(null);
+    try {
+      const res = await base44.functions.invoke("companyOrchestrator", {
+        action: "execute_strategy",
+        vision,
+        strategy: selectedStrategy
+      });
+      setExecutionResult(res?.data);
       refresh();
     } catch (e) { console.error(e); }
     setActionLoading(null);
@@ -268,43 +287,97 @@ export default function X1Company() {
           <Zap className="h-5 w-5 text-amber-500" /> Autonomous Control Panel
         </h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Goal Router */}
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-stone-700">Route a Goal to a Department</label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={goal}
-                onChange={(e) => setGoal(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleRouteGoal()}
-                placeholder="e.g. Generate 10 SEO-optimized city pages for epoxy flooring..."
-                className="flex-1 h-10 px-3 rounded-lg border border-stone-200 text-sm focus:border-amber-500 outline-none"
-              />
-              <button
-                onClick={handleRouteGoal}
-                disabled={actionLoading === "route" || !goal.trim()}
-                className="inline-flex items-center gap-2 px-4 h-10 rounded-lg bg-amber-500 text-stone-950 text-sm font-bold hover:bg-amber-400 disabled:opacity-60"
-              >
-                {actionLoading === "route" ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
-                Route
-              </button>
-            </div>
-            {routing?.routing && (
-              <div className="mt-2 p-3 rounded-lg bg-amber-50 border border-amber-200 text-sm">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="font-bold text-amber-700">Routed to: {routing.department}</span>
-                  <span className="text-xs px-2 py-0.5 rounded bg-amber-200 text-amber-800">{routing.routing.priority}</span>
-                </div>
-                <p className="text-stone-600 text-xs">{routing.routing.reasoning}</p>
-                {routing.routing.sub_tasks && (
-                  <ul className="mt-2 space-y-1">
-                    {routing.routing.sub_tasks.slice(0, 4).map((t, i) => (
-                      <li key={i} className="text-xs text-stone-500 flex items-start gap-1.5">
-                        <span className="text-amber-500 mt-0.5">→</span> {t}
-                      </li>
-                    ))}
-                  </ul>
+          {/* Vision → Orchestrator → Strategy */}
+          <div className="space-y-3">
+            <label className="text-sm font-semibold text-stone-700 flex items-center gap-1.5">
+              <Brain className="h-4 w-4 text-amber-500" /> Submit a Vision — Orchestrator generates strategies
+            </label>
+            <textarea
+              value={vision}
+              onChange={(e) => setVision(e.target.value)}
+              placeholder="e.g. Build an autonomous lead generation system that scrapes contractor listings, enriches them with property data, and sends personalized SMS outreach..."
+              className="w-full h-20 px-3 py-2 rounded-lg border border-stone-200 text-sm focus:border-amber-500 outline-none resize-none"
+            />
+            <button
+              onClick={handleAnalyzeVision}
+              disabled={actionLoading === "analyze" || !vision.trim()}
+              className="inline-flex items-center gap-2 px-4 h-10 rounded-lg bg-amber-500 text-stone-950 text-sm font-bold hover:bg-amber-400 disabled:opacity-60"
+            >
+              {actionLoading === "analyze" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+              Analyze Vision
+            </button>
+
+            {/* Strategy Options */}
+            {strategies?.strategies && strategies.strategies.length > 0 && (
+              <div className="space-y-2">
+                <div className="text-xs text-stone-500 italic">{strategies.vision_summary}</div>
+                <div className="text-sm font-semibold text-stone-700 mt-2">Choose a Strategy:</div>
+                {strategies.strategies.map((s) => {
+                  const isSelected = selectedStrategy?.strategy_id === s.strategy_id;
+                  const approachColors = {
+                    agile: "border-blue-300 bg-blue-50",
+                    comprehensive: "border-purple-300 bg-purple-50",
+                    innovative: "border-amber-300 bg-amber-50"
+                  };
+                  return (
+                    <button
+                      key={s.strategy_id}
+                      onClick={() => setSelectedStrategy(s)}
+                      className={`w-full text-left p-3 rounded-xl border-2 transition ${isSelected ? "border-amber-500 bg-amber-50 ring-2 ring-amber-200" : (approachColors[s.approach] || "border-stone-200 bg-white") + " hover:border-amber-300"}`}
+                    >
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-sm font-bold text-stone-900">{s.name}</span>
+                        <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-stone-900 text-white">{s.approach}</span>
+                        <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-stone-200 text-stone-600">{s.risk_level} risk</span>
+                        <span className="ml-auto text-xs text-stone-400">{s.timeline}</span>
+                      </div>
+                      <p className="text-xs text-stone-600 mb-2">{s.description}</p>
+                      <div className="flex flex-wrap gap-1 mb-2">
+                        {s.departments?.map((d, i) => (
+                          <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-white border border-stone-200 text-stone-600 font-medium">{d}</span>
+                        ))}
+                      </div>
+                      <div className="text-[11px] text-stone-500">
+                        <span className="font-semibold">Phases:</span> {s.phases?.join(" → ")}
+                      </div>
+                      <div className="text-[11px] text-stone-400 mt-1">
+                        <span className="font-semibold">Outcome:</span> {s.expected_outcome}
+                      </div>
+                    </button>
+                  );
+                })}
+                {selectedStrategy && (
+                  <button
+                    onClick={handleExecuteStrategy}
+                    disabled={actionLoading === "execute"}
+                    className="inline-flex items-center gap-2 px-4 h-10 rounded-lg bg-stone-900 text-amber-400 text-sm font-bold hover:bg-stone-800 disabled:opacity-60"
+                  >
+                    {actionLoading === "execute" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Rocket className="h-4 w-4" />}
+                    Execute "{selectedStrategy.name}"
+                  </button>
                 )}
+              </div>
+            )}
+
+            {/* Execution Result */}
+            {executionResult && (
+              <div className="p-3 rounded-lg bg-green-50 border border-green-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <CheckCircle2 className="h-4 w-4 text-green-600" />
+                  <span className="font-bold text-green-700">Strategy Executed — {executionResult.total_tasks} tasks routed</span>
+                </div>
+                <p className="text-xs text-stone-600 mb-2">{executionResult.execution_plan}</p>
+                <div className="space-y-1">
+                  {executionResult.sessions?.map((s, i) => (
+                    <div key={i} className="text-xs text-stone-700 flex items-center gap-2">
+                      <span className="text-amber-500">→</span>
+                      <span className="font-semibold">{s.department}</span>
+                      <span className="text-stone-400">—</span>
+                      <span>{s.task}</span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-stone-200 text-stone-600">{s.priority}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
@@ -454,9 +527,11 @@ export default function X1Company() {
         </h2>
         <div className="flex items-center gap-2 flex-wrap text-xs">
           {[
-            { label: "Goal Intake", icon: Target, color: "text-amber-400" },
-            { label: "Route to Dept", icon: Building2, color: "text-blue-400" },
-            { label: "Sandbox Session", icon: Box, color: "text-purple-400" },
+            { label: "Vision Input", icon: Target, color: "text-amber-400" },
+            { label: "Orchestrator", icon: Brain, color: "text-amber-400" },
+            { label: "Choose Strategy", icon: Sparkles, color: "text-purple-400" },
+            { label: "Route to Depts", icon: Building2, color: "text-blue-400" },
+            { label: "Sandbox Session", icon: Box, color: "text-cyan-400" },
             { label: "Generate Code", icon: Cpu, color: "text-cyan-400" },
             { label: "Validate (8 dims)", icon: TestTube, color: "text-green-400" },
             { label: "Deploy", icon: Rocket, color: "text-amber-400" },

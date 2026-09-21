@@ -170,65 +170,137 @@ export default async function(req) {
       }
 
       // ============================================================
-      // ROUTE GOAL — Determine which department handles a goal
+      // ANALYZE VISION — Orchestrator generates strategy options
       // ============================================================
-      case "route_goal": {
-        const { goal } = data;
-        if (!goal) return Response.json({ ok: false, error: "Goal required" }, { status: 400 });
+      case "analyze_vision": {
+        const { vision } = data;
+        if (!vision) return Response.json({ ok: false, error: "Vision required" }, { status: 400 });
 
         const llmResult = await svc.integrations.Core.InvokeLLM({
-          prompt: `You are the X1 AI Hub company router. Analyze this goal and determine which department should handle it.
+          prompt: `You are the X1 AI Hub Orchestrator for Strategic Minds AI LLC — an autonomous AI company with specialized departments.
+A user has submitted a vision. Analyze it and generate 3 distinct strategy options for achieving it.
 
-Available departments:
-${DEPARTMENTS.map(d => "- " + d.name + " (" + d.department_id + "): " + d.description).join("\n")}
+Company departments:
+${DEPARTMENTS.map(d => "- " + d.name + " (" + d.department_id + "): " + d.description + " — Capabilities: " + d.responsibilities.join(", ")).join("\n")}
 
-Goal: "${goal}"
+Vision: "${vision}"
 
-Return a JSON object with the department_id, reasoning, and suggested sub-tasks.`,
+Generate 3 strategy options with genuinely different approaches:
+1. AGILE — Fast, minimal viable execution, fewest steps
+2. COMPREHENSIVE — Thorough, multi-department, high-quality
+3. INNOVATIVE — Creative, experimental, cutting-edge
+
+Each strategy must specify which departments are involved, the key phases, and the expected outcome.
+Return a JSON object with the vision summary and an array of 3 strategies.`,
           response_json_schema: {
             type: "object",
             properties: {
-              department_id: { type: "string" },
-              department_name: { type: "string" },
-              reasoning: { type: "string" },
-              sub_tasks: { type: "array", items: { type: "string" } },
-              priority: { type: "string", enum: ["critical", "high", "medium", "low"] },
-              estimated_steps: { type: "integer" }
+              vision_summary: { type: "string" },
+              strategies: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    strategy_id: { type: "string" },
+                    name: { type: "string" },
+                    approach: { type: "string", enum: ["agile", "comprehensive", "innovative"] },
+                    description: { type: "string" },
+                    departments: { type: "array", items: { type: "string" } },
+                    phases: { type: "array", items: { type: "string" } },
+                    estimated_steps: { type: "integer" },
+                    timeline: { type: "string" },
+                    risk_level: { type: "string", enum: ["low", "medium", "high"] },
+                    expected_outcome: { type: "string" }
+                  }
+                }
+              }
             }
           }
         });
 
-        const routing = llmResult;
-        const dept = DEPARTMENTS.find(d => d.department_id === routing.department_id || d.name === routing.department_name);
-        const finalDeptId = dept ? dept.department_id : "DEPT-OPS";
+        return Response.json({
+          ok: true,
+          vision,
+          vision_summary: llmResult.vision_summary,
+          strategies: llmResult.strategies || []
+        });
+      }
 
-        // Create a sandbox session for this goal
-        const session = await svc.entities.CodeSandboxSession.create({
-          owner_id: user.id,
-          session_id: "SBOX-" + hashStr(goal + user.id + Date.now()),
-          department_id: finalDeptId,
-          task_description: goal,
-          task_type: "custom",
-          task_hash: hashStr(goal),
-          status: "planning",
-          strategy_snapshot: JSON.stringify(routing),
-          created_at: new Date().toISOString()
+      // ============================================================
+      // EXECUTE STRATEGY — Orchestrator routes chosen strategy to departments
+      // ============================================================
+      case "execute_strategy": {
+        const { vision, strategy } = data;
+        if (!strategy) return Response.json({ ok: false, error: "Strategy required" }, { status: 400 });
+
+        const llmResult = await svc.integrations.Core.InvokeLLM({
+          prompt: `You are the X1 AI Hub Orchestrator. The user has chosen a strategy to execute.
+Break it down into specific department tasks and route each to the appropriate department.
+
+Vision: "${vision}"
+Chosen Strategy: "${strategy.name}" — ${strategy.description}
+Approach: ${strategy.approach}
+Departments to involve: ${(strategy.departments || []).join(", ")}
+
+For each department involved, create a specific actionable task with sub-tasks.
+Return a JSON object with the execution plan and department tasks.`,
+          response_json_schema: {
+            type: "object",
+            properties: {
+              execution_plan: { type: "string" },
+              department_tasks: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    department_id: { type: "string" },
+                    department_name: { type: "string" },
+                    task_description: { type: "string" },
+                    sub_tasks: { type: "array", items: { type: "string" } },
+                    priority: { type: "string", enum: ["critical", "high", "medium", "low"] },
+                    task_type: { type: "string" }
+                  }
+                }
+              },
+              total_tasks: { type: "integer" }
+            }
+          }
         });
 
-        // Increment department task count
-        const deptRec = (await svc.entities.AgentDepartment.list(100)).find(d => d.department_id === finalDeptId);
-        if (deptRec) {
-          await svc.entities.AgentDepartment.update(deptRec.id, {
-            task_count: (deptRec.task_count || 0) + 1
+        // Create sandbox sessions for each department task
+        const sessions = [];
+        const allDepts = await svc.entities.AgentDepartment.list(100);
+        for (const task of (llmResult.department_tasks || [])) {
+          const dept = DEPARTMENTS.find(d => d.department_id === task.department_id || d.name === task.department_name);
+          const finalDeptId = dept ? dept.department_id : "DEPT-OPS";
+
+          const session = await svc.entities.CodeSandboxSession.create({
+            owner_id: user.id,
+            session_id: "SBOX-" + hashStr(task.task_description + user.id + Date.now()),
+            department_id: finalDeptId,
+            task_description: task.task_description,
+            task_type: task.task_type || "custom",
+            task_hash: hashStr(task.task_description),
+            status: "planning",
+            strategy_snapshot: JSON.stringify({ vision, strategy, task }),
+            created_at: new Date().toISOString()
           });
+          sessions.push({ session_id: session.session_id, department: dept?.name || "Operations", task: task.task_description, priority: task.priority });
+
+          const deptRec = allDepts.find(d => d.department_id === finalDeptId);
+          if (deptRec) {
+            await svc.entities.AgentDepartment.update(deptRec.id, {
+              task_count: (deptRec.task_count || 0) + 1
+            });
+          }
         }
 
         return Response.json({
           ok: true,
-          routing,
-          session_id: session.session_id,
-          session_db_id: session.id,
-          department: dept ? dept.name : "Operations"
+          execution_plan: llmResult.execution_plan,
+          department_tasks: llmResult.department_tasks,
+          total_tasks: llmResult.total_tasks,
+          sessions
         });
       }
 
