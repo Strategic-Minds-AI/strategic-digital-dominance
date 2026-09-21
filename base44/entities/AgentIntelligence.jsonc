@@ -2,13 +2,15 @@
   "name": "AgentIntelligence",
   "type": "object",
   "properties": {
-    "title": {
+    "owner_id": {
       "type": "string",
-      "description": "Name of this intelligence document"
+      "description": "User ID who owns this intelligence (multi-tenant isolation)"
+    },
+    "title": {
+      "type": "string"
     },
     "intelligence_id": {
-      "type": "string",
-      "description": "Stable deterministic ID"
+      "type": "string"
     },
     "category": {
       "type": "string",
@@ -28,50 +30,41 @@
         "training_material",
         "custom"
       ],
-      "default": "custom",
-      "description": "Intelligence category for routing to appropriate agents"
+      "default": "custom"
     },
     "content": {
       "type": "string",
-      "maxLength": 50000,
-      "description": "The intelligence content (text, structured data, or serialized document)"
+      "maxLength": 50000
     },
     "file_url": {
-      "type": "string",
-      "description": "URL to uploaded file (PDF, Excel, CSV, etc.) if content is file-based"
+      "type": "string"
     },
     "file_type": {
-      "type": "string",
-      "description": "Original file type (pdf, xlsx, csv, json, txt, md)"
+      "type": "string"
     },
     "source": {
-      "type": "string",
-      "description": "Where this intelligence came from (operator upload, agent research, external API, generated)"
+      "type": "string"
     },
     "source_url": {
-      "type": "string",
-      "description": "Original URL if sourced from the web"
+      "type": "string"
     },
     "assigned_agents": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "default": [],
-      "description": "Agent persona IDs that have this intelligence assigned"
+      "default": []
     },
     "assigned_categories": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "default": [],
-      "description": "Agent categories that can access this (e.g. ['sales', 'seo']) \u2014 empty = all agents"
+      "default": []
     },
     "is_shared": {
       "type": "boolean",
-      "default": true,
-      "description": "If true, this intelligence is shared across the swarm"
+      "default": true
     },
     "access_level": {
       "type": "string",
@@ -81,13 +74,11 @@
         "assigned_only",
         "owner_only"
       ],
-      "default": "all_agents",
-      "description": "Who can access this intelligence"
+      "default": "all_agents"
     },
     "embedding_vector": {
       "type": "string",
-      "maxLength": 5000,
-      "description": "Serialized embedding for semantic retrieval (Supabase RAG)"
+      "maxLength": 5000
     },
     "tags": {
       "type": "array",
@@ -103,8 +94,7 @@
       "default": 0.9
     },
     "freshness_requirement": {
-      "type": "string",
-      "description": "How often this intelligence needs refresh (e.g. 24h, 7d, 30d, never)"
+      "type": "string"
     },
     "last_refreshed_at": {
       "type": "string",
@@ -112,8 +102,7 @@
     },
     "auto_refresh": {
       "type": "boolean",
-      "default": false,
-      "description": "If true, agents can auto-refresh this intelligence from its source"
+      "default": false
     },
     "version": {
       "type": "string",
@@ -138,25 +127,42 @@
     "content"
   ],
   "rls": {
-    "create": {
-      "user_condition": {
-        "role": "admin"
-      }
-    },
     "read": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     },
+    "create": null,
     "update": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     },
     "delete": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     }
   }
 }

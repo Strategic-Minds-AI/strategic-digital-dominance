@@ -1,0 +1,115 @@
+{
+  "name": "PredictionModel",
+  "type": "object",
+  "properties": {
+    "owner_id": {
+      "type": "string"
+    },
+    "model_id": {
+      "type": "string",
+      "description": "Deterministic model ID"
+    },
+    "name": {
+      "type": "string",
+      "description": "What this model predicts (e.g. Revenue Forecast, BTC Price)"
+    },
+    "model_type": {
+      "type": "string",
+      "enum": [
+        "llm_based",
+        "regression",
+        "time_series",
+        "ensemble"
+      ],
+      "default": "llm_based"
+    },
+    "question": {
+      "type": "string",
+      "maxLength": 2000,
+      "description": "The prediction question"
+    },
+    "data_sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Data sources the model uses"
+    },
+    "input_data": {
+      "type": "string",
+      "maxLength": 20000,
+      "description": "Serialized input data for the prediction"
+    },
+    "output_schema": {
+      "type": "string",
+      "description": "JSON schema of the prediction output"
+    },
+    "accuracy_score": {
+      "type": "number",
+      "default": 0,
+      "description": "0-100 accuracy from backtesting"
+    },
+    "schedule_cron": {
+      "type": "string",
+      "description": "Cron expression for scheduled predictions"
+    },
+    "last_run_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "owner_id",
+    "model_id",
+    "name",
+    "model_type"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": null,
+    "update": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

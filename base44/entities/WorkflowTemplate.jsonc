@@ -1,0 +1,98 @@
+{
+  "name": "WorkflowTemplate",
+  "type": "object",
+  "properties": {
+    "template_id": {
+      "type": "string",
+      "description": "Deterministic template ID"
+    },
+    "name": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "lead_automation",
+        "seo",
+        "social_media",
+        "crypto",
+        "content",
+        "monitoring",
+        "communication",
+        "custom"
+      ]
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 5000
+    },
+    "workflow_json": {
+      "type": "string",
+      "maxLength": 50000,
+      "description": "Full workflow JSONC definition"
+    },
+    "trigger_config": {
+      "type": "string",
+      "description": "JSON trigger configuration"
+    },
+    "steps_summary": {
+      "type": "string",
+      "description": "Human-readable summary of workflow steps"
+    },
+    "install_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "is_featured": {
+      "type": "boolean",
+      "default": false
+    },
+    "pricing_tier": {
+      "type": "string",
+      "enum": [
+        "free",
+        "pro",
+        "enterprise"
+      ],
+      "default": "free"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "sort_order": {
+      "type": "integer",
+      "default": 0
+    }
+  },
+  "required": [
+    "template_id",
+    "name",
+    "category"
+  ],
+  "rls": {
+    "read": null,
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

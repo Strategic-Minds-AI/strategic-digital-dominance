@@ -2,6 +2,10 @@
   "name": "AgentAction",
   "type": "object",
   "properties": {
+    "owner_id": {
+      "type": "string",
+      "description": "User ID who owns this action (multi-tenant isolation)"
+    },
     "action_id": {
       "type": "string",
       "description": "Stable deterministic action ID"
@@ -11,17 +15,14 @@
       "description": "Agent persona ID assigned to this action"
     },
     "agent_short_name": {
-      "type": "string",
-      "description": "Short name of the agent (A-1, A-2)"
+      "type": "string"
     },
     "title": {
-      "type": "string",
-      "description": "Action title"
+      "type": "string"
     },
     "description": {
       "type": "string",
-      "maxLength": 5000,
-      "description": "Detailed description of what this action does"
+      "maxLength": 5000
     },
     "action_category": {
       "type": "string",
@@ -50,8 +51,7 @@
         "scheduling",
         "custom"
       ],
-      "default": "custom",
-      "description": "Category of action for filtering and checkboxes"
+      "default": "custom"
     },
     "action_type": {
       "type": "string",
@@ -64,16 +64,13 @@
         "composite",
         "manual"
       ],
-      "default": "function_invoke",
-      "description": "How this action is executed"
+      "default": "function_invoke"
     },
     "target_function": {
-      "type": "string",
-      "description": "Backend function to invoke (if action_type is function_invoke)"
+      "type": "string"
     },
     "target_entity": {
-      "type": "string",
-      "description": "Entity to operate on (if action_type is entity_crud)"
+      "type": "string"
     },
     "entity_operation": {
       "type": "string",
@@ -84,12 +81,10 @@
         "delete",
         "list",
         "filter"
-      ],
-      "description": "CRUD operation if action_type is entity_crud"
+      ]
     },
     "parameters": {
       "type": "object",
-      "description": "Parameters to pass to the function or entity operation",
       "additionalProperties": true
     },
     "trigger_type": {
@@ -104,12 +99,10 @@
         "interval",
         "one_time"
       ],
-      "default": "manual",
-      "description": "What triggers this action"
+      "default": "manual"
     },
     "schedule_config": {
       "type": "object",
-      "description": "Scheduling configuration (when trigger_type is schedule or interval)",
       "properties": {
         "frequency": {
           "type": "string",
@@ -122,43 +115,36 @@
         },
         "interval_seconds": {
           "type": "integer",
-          "default": 0,
-          "description": "Seconds between executions (10s to infinite). 0 = no interval."
+          "default": 0
         },
         "cron_expression": {
-          "type": "string",
-          "description": "Cron expression for complex schedules"
+          "type": "string"
         },
         "start_at": {
           "type": "string",
-          "format": "date-time",
-          "description": "When the schedule starts"
+          "format": "date-time"
         },
         "end_at": {
           "type": "string",
-          "format": "date-time",
-          "description": "When the schedule ends (null = infinite)"
+          "format": "date-time"
         },
         "run_24_7": {
           "type": "boolean",
-          "default": false,
-          "description": "If true, runs continuously 24/7"
+          "default": false
         },
         "days_of_week": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "default": [],
-          "description": "Days to run (mon, tue, wed, thu, fri, sat, sun). Empty = all days."
+          "default": []
         },
         "hours_of_day": {
           "type": "array",
           "items": {
             "type": "integer"
           },
-          "default": [],
-          "description": "Hours to run (0-23). Empty = all hours."
+          "default": []
         },
         "timezone": {
           "type": "string",
@@ -167,12 +153,10 @@
       }
     },
     "trigger_condition": {
-      "type": "string",
-      "description": "Condition expression that triggers this action (when trigger_type is condition)"
+      "type": "string"
     },
     "trigger_entity": {
-      "type": "string",
-      "description": "Entity to watch for changes (when trigger_type is entity_change)"
+      "type": "string"
     },
     "trigger_event_type": {
       "type": "string",
@@ -180,8 +164,7 @@
         "create",
         "update",
         "delete"
-      ],
-      "description": "Entity event type that triggers this action"
+      ]
     },
     "priority": {
       "type": "string",
@@ -201,13 +184,11 @@
         "autonomous",
         "full_autonomous"
       ],
-      "default": "supervised",
-      "description": "Level of autonomy for this action"
+      "default": "supervised"
     },
     "requires_approval": {
       "type": "boolean",
-      "default": false,
-      "description": "If true, operator must approve before execution"
+      "default": false
     },
     "max_retries": {
       "type": "integer",
@@ -215,12 +196,10 @@
     },
     "timeout_seconds": {
       "type": "integer",
-      "default": 300,
-      "description": "Maximum execution time in seconds"
+      "default": 300
     },
     "rollback_action_id": {
-      "type": "string",
-      "description": "Action to execute if this one fails"
+      "type": "string"
     },
     "status": {
       "type": "string",
@@ -246,8 +225,7 @@
     },
     "last_result": {
       "type": "string",
-      "maxLength": 3000,
-      "description": "Result of the last execution"
+      "maxLength": 3000
     },
     "last_error": {
       "type": "string"
@@ -281,25 +259,42 @@
     "status"
   ],
   "rls": {
-    "create": {
-      "user_condition": {
-        "role": "admin"
-      }
-    },
     "read": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     },
+    "create": null,
     "update": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     },
     "delete": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     }
   }
 }

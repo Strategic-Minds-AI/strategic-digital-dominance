@@ -1,0 +1,92 @@
+{
+  "name": "UserWorkspace",
+  "type": "object",
+  "properties": {
+    "owner_id": {
+      "type": "string",
+      "description": "User ID who owns this workspace"
+    },
+    "name": {
+      "type": "string",
+      "description": "Workspace display name"
+    },
+    "plan": {
+      "type": "string",
+      "enum": [
+        "free",
+        "pro",
+        "enterprise"
+      ],
+      "default": "free"
+    },
+    "agent_limit": {
+      "type": "integer",
+      "default": 3
+    },
+    "tool_limit": {
+      "type": "integer",
+      "default": 5
+    },
+    "execution_limit_monthly": {
+      "type": "integer",
+      "default": 100
+    },
+    "executions_this_month": {
+      "type": "integer",
+      "default": 0
+    },
+    "llm_provider": {
+      "type": "string",
+      "description": "Default LLM provider for this workspace"
+    },
+    "settings": {
+      "type": "object",
+      "description": "Workspace-level settings",
+      "additionalProperties": true
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "owner_id",
+    "name"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": null,
+    "update": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

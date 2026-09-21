@@ -2,13 +2,21 @@
   "name": "AgentPersona",
   "type": "object",
   "properties": {
+    "owner_id": {
+      "type": "string",
+      "description": "User ID who owns this agent (multi-tenant isolation)"
+    },
+    "strategy_hash": {
+      "type": "string",
+      "description": "Hash of the BuildSession strategy that produced this agent (determinism tracing)"
+    },
     "name": {
       "type": "string",
-      "description": "Persona display name (e.g. 'Eden Skye \u2014 Sales')"
+      "description": "Persona display name (e.g. Eden Skye \u2014 Sales)"
     },
     "short_name": {
       "type": "string",
-      "description": "Compact tracking ID (e.g. 'A-1', 'A-2', 'AP-01')"
+      "description": "Compact tracking ID (e.g. A-1, A-2, AP-01)"
     },
     "persona_type": {
       "type": "string",
@@ -89,8 +97,7 @@
           "type": "string"
         },
         "email_alias": {
-          "type": "string",
-          "description": "Professional email alias (e.g. agent-name@thextremeteam.com)"
+          "type": "string"
         },
         "from_name": {
           "type": "string"
@@ -126,24 +133,21 @@
           "default": false
         },
         "calendar_id": {
-          "type": "string",
-          "description": "Google Calendar ID to sync events to"
+          "type": "string"
         },
         "tasks_enabled": {
           "type": "boolean",
           "default": false
         },
         "tasks_list_id": {
-          "type": "string",
-          "description": "Google Tasks list ID"
+          "type": "string"
         },
         "gmail_enabled": {
           "type": "boolean",
           "default": false
         },
         "gmail_label": {
-          "type": "string",
-          "description": "Gmail label for this agent's emails"
+          "type": "string"
         },
         "drive_enabled": {
           "type": "boolean",
@@ -221,24 +225,21 @@
         "limited",
         "custom"
       ],
-      "default": "limited",
-      "description": "API access level for this agent's generated API key"
+      "default": "limited"
     },
     "api_allowed_functions": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "default": [],
-      "description": "Whitelist of backend functions this agent can call via its API"
+      "default": []
     },
     "api_allowed_entities": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "default": [],
-      "description": "Whitelist of entities this agent can access via its API"
+      "default": []
     },
     "memory_categories": {
       "type": "array",
@@ -247,21 +248,23 @@
       },
       "default": [
         "general"
-      ],
-      "description": "Categories of memory this agent can access (e.g. sales, technical, client_history)"
+      ]
     },
     "intelligence_access": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "default": [],
-      "description": "Intelligence document IDs this agent can reference"
+      "default": []
     },
     "model_preference": {
       "type": "string",
-      "description": "Preferred LLM model for this agent (e.g. claude-sonnet-5, automatic)",
+      "description": "Preferred LLM model for this agent",
       "default": "automatic"
+    },
+    "llm_provider": {
+      "type": "string",
+      "description": "Which LLM provider to use (openai, anthropropic, google, base44)"
     },
     "max_autonomy": {
       "type": "string",
@@ -271,8 +274,16 @@
         "autonomous",
         "full_autonomous"
       ],
-      "default": "supervised",
-      "description": "Maximum autonomy level this agent can operate at"
+      "default": "supervised"
+    },
+    "version": {
+      "type": "integer",
+      "default": 1,
+      "description": "Current version number for versioning & rollback"
+    },
+    "previous_version_id": {
+      "type": "string",
+      "description": "ID of the previous AgentVersion snapshot"
     },
     "active": {
       "type": "boolean",
@@ -284,12 +295,10 @@
     },
     "is_template": {
       "type": "boolean",
-      "default": false,
-      "description": "If true, this persona is a template that can be cloned to other agents"
+      "default": false
     },
     "parent_agent_id": {
-      "type": "string",
-      "description": "If cloned, the ID of the source agent this was copied from"
+      "type": "string"
     },
     "last_active_at": {
       "type": "string",
@@ -301,25 +310,42 @@
     "persona_type"
   ],
   "rls": {
-    "create": {
-      "user_condition": {
-        "role": "admin"
-      }
-    },
     "read": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     },
+    "create": null,
     "update": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     },
     "delete": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     }
   }
 }

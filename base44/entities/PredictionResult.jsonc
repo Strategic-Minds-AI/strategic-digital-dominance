@@ -1,0 +1,90 @@
+{
+  "name": "PredictionResult",
+  "type": "object",
+  "properties": {
+    "owner_id": {
+      "type": "string"
+    },
+    "model_id": {
+      "type": "string",
+      "description": "PredictionModel this result belongs to"
+    },
+    "prediction_text": {
+      "type": "string",
+      "maxLength": 10000,
+      "description": "The forecast/prediction output"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.5,
+      "description": "Confidence score 0-1"
+    },
+    "input_snapshot": {
+      "type": "string",
+      "maxLength": 10000,
+      "description": "Input data used for this prediction"
+    },
+    "actual_outcome": {
+      "type": "string",
+      "description": "Actual outcome (filled in later for backtesting)"
+    },
+    "variance": {
+      "type": "number",
+      "description": "Difference between prediction and actual"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "owner_id",
+    "model_id",
+    "prediction_text"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": null,
+    "update": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

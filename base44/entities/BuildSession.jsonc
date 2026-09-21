@@ -1,0 +1,118 @@
+{
+  "name": "BuildSession",
+  "type": "object",
+  "properties": {
+    "owner_id": {
+      "type": "string"
+    },
+    "session_id": {
+      "type": "string",
+      "description": "Deterministic session ID (hash of vision + owner + timestamp bucket)"
+    },
+    "vision_text": {
+      "type": "string",
+      "maxLength": 10000,
+      "description": "Original vision input from the user"
+    },
+    "vision_hash": {
+      "type": "string",
+      "description": "SHA hash of vision text for deduplication"
+    },
+    "strategy_snapshot": {
+      "type": "string",
+      "maxLength": 50000,
+      "description": "Frozen JSON strategy from LLM analysis \u2014 generation reads from this, never re-asks LLM"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "analyzing",
+        "strategy_locked",
+        "generating",
+        "bootstrapping",
+        "launching",
+        "completed",
+        "failed"
+      ],
+      "default": "analyzing"
+    },
+    "agent_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "manifest": {
+      "type": "string",
+      "maxLength": 50000,
+      "description": "Project manifest from bootstrap step"
+    },
+    "validation_result": {
+      "type": "string",
+      "maxLength": 5000
+    },
+    "model_versions": {
+      "type": "string",
+      "description": "JSON of model versions used for this build"
+    },
+    "seed_value": {
+      "type": "string",
+      "description": "Deterministic seed for reproducible builds"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "owner_id",
+    "session_id",
+    "vision_text",
+    "vision_hash",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": null,
+    "update": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

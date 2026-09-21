@@ -1,0 +1,99 @@
+{
+  "name": "ToolRegistry",
+  "type": "object",
+  "properties": {
+    "tool_id": {
+      "type": "string",
+      "description": "Deterministic tool ID (TOOL-001, etc.)"
+    },
+    "name": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "ai_tools",
+        "automation",
+        "analytics",
+        "crypto",
+        "seo",
+        "communications",
+        "browser",
+        "data",
+        "prediction",
+        "custom"
+      ]
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 5000
+    },
+    "icon": {
+      "type": "string",
+      "description": "Icon name from lucide-react"
+    },
+    "pricing_tier": {
+      "type": "string",
+      "enum": [
+        "free",
+        "pro",
+        "enterprise"
+      ],
+      "default": "free"
+    },
+    "config_schema": {
+      "type": "string",
+      "description": "JSON schema for tool configuration"
+    },
+    "backend_function": {
+      "type": "string",
+      "description": "Backend function that executes this tool"
+    },
+    "install_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "is_featured": {
+      "type": "boolean",
+      "default": false
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "sort_order": {
+      "type": "integer",
+      "default": 0
+    }
+  },
+  "required": [
+    "tool_id",
+    "name",
+    "category"
+  ],
+  "rls": {
+    "read": null,
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

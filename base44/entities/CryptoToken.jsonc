@@ -1,0 +1,133 @@
+{
+  "name": "CryptoToken",
+  "type": "object",
+  "properties": {
+    "owner_id": {
+      "type": "string"
+    },
+    "token_name": {
+      "type": "string",
+      "description": "Full token name (e.g. Xtreme Coin)"
+    },
+    "symbol": {
+      "type": "string",
+      "description": "Token symbol (e.g. XTM)"
+    },
+    "supply": {
+      "type": "string",
+      "description": "Total supply (as string for large numbers)"
+    },
+    "decimals": {
+      "type": "integer",
+      "default": 18
+    },
+    "blockchain": {
+      "type": "string",
+      "enum": [
+        "ethereum",
+        "polygon",
+        "solana",
+        "base",
+        "arbitrum"
+      ],
+      "default": "ethereum"
+    },
+    "contract_address": {
+      "type": "string",
+      "description": "Deployed contract address (empty until deployed)"
+    },
+    "deployer_wallet": {
+      "type": "string",
+      "description": "Wallet address used for deployment"
+    },
+    "contract_code": {
+      "type": "string",
+      "maxLength": 50000,
+      "description": "Generated Solidity contract source code"
+    },
+    "abi": {
+      "type": "string",
+      "maxLength": 20000,
+      "description": "Contract ABI JSON"
+    },
+    "deployment_status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "code_generated",
+        "deploying",
+        "deployed",
+        "failed"
+      ],
+      "default": "draft"
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Token features: mintable, burnable, pausable, etc."
+    },
+    "deployment_tx_hash": {
+      "type": "string"
+    },
+    "network_rpc": {
+      "type": "string",
+      "description": "RPC URL for the blockchain network"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "deployed_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "owner_id",
+    "token_name",
+    "symbol",
+    "blockchain"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": null,
+    "update": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

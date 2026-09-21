@@ -1,0 +1,109 @@
+{
+  "name": "BuildManifest",
+  "type": "object",
+  "properties": {
+    "owner_id": {
+      "type": "string"
+    },
+    "manifest_id": {
+      "type": "string",
+      "description": "Deterministic manifest ID"
+    },
+    "session_id": {
+      "type": "string",
+      "description": "BuildSession this manifest belongs to"
+    },
+    "vision_text": {
+      "type": "string",
+      "maxLength": 10000
+    },
+    "strategy_json": {
+      "type": "string",
+      "maxLength": 50000,
+      "description": "Exact strategy JSON used for this build"
+    },
+    "archetype_list": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Archetype IDs selected for this build"
+    },
+    "model_versions": {
+      "type": "string",
+      "description": "JSON of exact model versions and parameters"
+    },
+    "seed_values": {
+      "type": "string",
+      "description": "JSON of seed values for reproducibility"
+    },
+    "agent_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "is_template": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, other users can install this build as a template"
+    },
+    "template_name": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "owner_id",
+    "manifest_id",
+    "session_id",
+    "vision_text"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "data.is_template": true
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": null,
+    "update": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

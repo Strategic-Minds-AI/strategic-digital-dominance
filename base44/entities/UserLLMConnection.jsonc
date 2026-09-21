@@ -1,0 +1,98 @@
+{
+  "name": "UserLLMConnection",
+  "type": "object",
+  "properties": {
+    "owner_id": {
+      "type": "string",
+      "description": "User ID who owns this connection"
+    },
+    "provider": {
+      "type": "string",
+      "enum": [
+        "openai",
+        "anthropic",
+        "google",
+        "base44"
+      ],
+      "description": "LLM provider"
+    },
+    "label": {
+      "type": "string",
+      "description": "User-friendly label for this connection"
+    },
+    "api_key": {
+      "type": "string",
+      "description": "Encrypted API key for the provider"
+    },
+    "default_model": {
+      "type": "string",
+      "description": "Default model to use (e.g. gpt-4o, claude-sonnet-4-20250514, gemini-1.5-pro)"
+    },
+    "available_models": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "tokens_used_this_month": {
+      "type": "integer",
+      "default": 0
+    },
+    "monthly_token_limit": {
+      "type": "integer",
+      "default": 1000000
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    },
+    "connected_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "owner_id",
+    "provider"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": null,
+    "update": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

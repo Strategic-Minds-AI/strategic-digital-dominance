@@ -1,0 +1,117 @@
+{
+  "name": "AgentExecutionLog",
+  "type": "object",
+  "properties": {
+    "owner_id": {
+      "type": "string"
+    },
+    "agent_id": {
+      "type": "string",
+      "description": "AgentPersona ID that executed"
+    },
+    "agent_name": {
+      "type": "string"
+    },
+    "action_id": {
+      "type": "string",
+      "description": "AgentAction that was executed"
+    },
+    "action_title": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "running",
+        "completed",
+        "failed",
+        "timeout"
+      ],
+      "default": "running"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "duration_ms": {
+      "type": "integer",
+      "default": 0
+    },
+    "result": {
+      "type": "string",
+      "maxLength": 5000,
+      "description": "Execution result or output"
+    },
+    "error": {
+      "type": "string",
+      "description": "Error message if failed"
+    },
+    "tokens_consumed": {
+      "type": "integer",
+      "default": 0
+    },
+    "credits_cost": {
+      "type": "number",
+      "default": 0
+    },
+    "trigger": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "schedule",
+        "event",
+        "agent_router",
+        "workflow"
+      ],
+      "default": "manual"
+    }
+  },
+  "required": [
+    "owner_id",
+    "agent_id",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": null,
+    "update": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

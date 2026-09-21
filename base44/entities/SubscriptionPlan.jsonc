@@ -1,0 +1,76 @@
+{
+  "name": "SubscriptionPlan",
+  "type": "object",
+  "properties": {
+    "plan_id": {
+      "type": "string",
+      "description": "Deterministic plan ID (PLAN-FREE, PLAN-PRO, PLAN-ENT)"
+    },
+    "name": {
+      "type": "string",
+      "description": "Display name (Free, Pro, Enterprise)"
+    },
+    "price_monthly": {
+      "type": "number",
+      "default": 0,
+      "description": "Monthly price in USD"
+    },
+    "agent_limit": {
+      "type": "integer",
+      "default": 3
+    },
+    "tool_limit": {
+      "type": "integer",
+      "default": 5
+    },
+    "execution_limit_monthly": {
+      "type": "integer",
+      "default": 100
+    },
+    "workflow_limit": {
+      "type": "integer",
+      "default": 3
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "product_id": {
+      "type": "string",
+      "description": "Base44 Payments product ID for checkout"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "sort_order": {
+      "type": "integer",
+      "default": 0
+    }
+  },
+  "required": [
+    "plan_id",
+    "name"
+  ],
+  "rls": {
+    "read": null,
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

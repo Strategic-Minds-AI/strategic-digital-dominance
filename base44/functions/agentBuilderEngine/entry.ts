@@ -28,6 +28,15 @@ function deterministicId(...parts: string[]): string {
   return `ab_${Math.abs(hash).toString(36)}`;
 }
 
+function visionHash(vision: string): string {
+  let hash = 0;
+  for (let i = 0; i < vision.length; i++) {
+    hash = ((hash << 5) - hash) + vision.charCodeAt(i);
+    hash |= 0;
+  }
+  return `vh_${Math.abs(hash).toString(36)}`;
+}
+
 function shortName(archetypeId: string, index: number): string {
   const arch = getArchetype(archetypeId);
   return arch?.short_name || `A${index}`;
@@ -151,7 +160,7 @@ Return ONLY the master prompt text, no JSON wrapper.`;
 }
 
 // ── Create a single agent from archetype ──────────────────────────────────
-async function createAgentFromArchetype(svc: any, base44: any, archetype: any, vision: string, responsibilities: string[], index: number) {
+async function createAgentFromArchetype(svc: any, base44: any, archetype: any, vision: string, responsibilities: string[], index: number, ownerId: string, strategyHash: string) {
   const agentId = deterministicId('agent', archetype.id, vision.slice(0, 100));
 
   // Check if already exists
@@ -165,6 +174,8 @@ async function createAgentFromArchetype(svc: any, base44: any, archetype: any, v
 
   // Create AgentPersona record
   const persona = await svc.entities.AgentPersona.create({
+    owner_id: ownerId,
+    strategy_hash: strategyHash,
     name: archetype.name,
     short_name: shortName(archetype.id, index),
     persona_type: archetype.persona_type,
@@ -215,6 +226,7 @@ async function createAgentFromArchetype(svc: any, base44: any, archetype: any, v
     try {
       const actionId = deterministicId('action', persona.id, action.title);
       const created = await svc.entities.AgentAction.create({
+        owner_id: ownerId,
         action_id: actionId,
         agent_id: persona.id,
         agent_short_name: persona.short_name,
@@ -304,7 +316,7 @@ export default async function (req: Request): Promise<Response> {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    if (user.role !== 'admin') return Response.json({ error: 'Forbidden — admin only' }, { status: 403 });
+    // Multi-tenant: any authenticated user can build their own agent fleet
 
     const svc = base44.asServiceRole;
     const body = await req.json().catch(() => ({}));
@@ -315,6 +327,44 @@ export default async function (req: Request): Promise<Response> {
       case 'analyze': {
         if (!body.vision) return Response.json({ error: 'vision required' }, { status: 400 });
         const vision = body.vision as string;
+        const vHash = visionHash(vision);
+
+        // DETERMINISM: Check for cached strategy — same vision → same strategy
+        const existingSessions = await svc.entities.BuildSession.filter(
+          { owner_id: user.id, vision_hash: vHash, status: 'strategy_locked' },
+          '-created_date',
+          1
+        ).catch(() => []);
+
+        if (existingSessions && existingSessions.length > 0) {
+          const cached = existingSessions[0];
+          const strategy = JSON.parse(cached.strategy_snapshot || '{}');
+          return Response.json({
+            ok: true,
+            vision,
+            session_id: cached.session_id,
+            strategy_hash: vHash,
+            cached: true,
+            executive_summary: strategy.executive_summary,
+            architecture: strategy.architecture,
+            recommended_agents: strategy.recommended_agents || [],
+            key_capabilities: strategy.key_capabilities || [],
+            sync_targets: strategy.sync_targets || ['google_drive', 'supabase', 'vercel', 'github'],
+            archetype_count: AGENT_TAXONOMY.length,
+          });
+        }
+
+        // Create BuildSession
+        const sessionId = deterministicId('session', user.id, vHash);
+        await svc.entities.BuildSession.create({
+          owner_id: user.id,
+          session_id: sessionId,
+          vision_text: vision,
+          vision_hash: vHash,
+          status: 'analyzing',
+          seed_value: vHash,
+          created_at: new Date().toISOString(),
+        });
 
         const analysis = await analyzeVision(base44, vision);
 
@@ -338,14 +388,35 @@ export default async function (req: Request): Promise<Response> {
           }
         }
 
-        return Response.json({
-          ok: true,
-          vision,
+        const finalStrategy = {
           executive_summary: analysis.executive_summary,
           architecture: analysis.architecture,
           recommended_agents: validAgents.slice(0, 20),
           key_capabilities: analysis.key_capabilities || [],
           sync_targets: analysis.sync_targets || ['google_drive', 'supabase', 'vercel', 'github'],
+        };
+
+        // Lock strategy in BuildSession (determinism — frozen snapshot)
+        const sessionRecords = await svc.entities.BuildSession.filter(
+          { owner_id: user.id, session_id: sessionId },
+          '-created_date',
+          1
+        );
+        if (sessionRecords && sessionRecords.length > 0) {
+          await svc.entities.BuildSession.update(sessionRecords[0].id, {
+            status: 'strategy_locked',
+            strategy_snapshot: JSON.stringify(finalStrategy),
+            model_versions: JSON.stringify({ analysis: 'gemini_3_flash', prompt: 'claude-sonnet-5' }),
+          });
+        }
+
+        return Response.json({
+          ok: true,
+          vision,
+          session_id: sessionId,
+          strategy_hash: vHash,
+          cached: false,
+          ...finalStrategy,
           archetype_count: AGENT_TAXONOMY.length,
         });
       }
@@ -372,7 +443,7 @@ export default async function (req: Request): Promise<Response> {
           }
 
           try {
-            const result = await createAgentFromArchetype(svc, base44, archetype, vision, rec.responsibilities || [], i);
+            const result = await createAgentFromArchetype(svc, base44, archetype, vision, rec.responsibilities || [], i, user.id, body.strategy_hash || '');
             created.push({
               id: result.agent.id,
               name: result.agent.name,
@@ -402,9 +473,28 @@ export default async function (req: Request): Promise<Response> {
         const vision = body.vision as string;
         const syncTargets = body.sync_targets || ['google_drive', 'supabase', 'vercel', 'github'];
 
-        // Get all agents created for this vision
-        const allAgents = await svc.entities.AgentPersona.list('-created_date', 100);
+        // Get all agents created for this vision (owner-scoped for multi-tenancy)
+        const allAgents = await svc.entities.AgentPersona.filter({ owner_id: user.id }, '-created_date', 100);
         const manifest = generateProjectManifest(vision, allAgents, syncTargets);
+
+        // Create BuildManifest for reproducibility
+        const manifestId = deterministicId('manifest', user.id, visionHash(vision));
+        try {
+          await svc.entities.BuildManifest.create({
+            owner_id: user.id,
+            manifest_id: manifestId,
+            session_id: body.session_id || deterministicId('session', user.id, visionHash(vision)),
+            vision_text: vision,
+            strategy_json: JSON.stringify(manifest),
+            archetype_list: (body.recommended_agents || []).map((a: any) => a.archetype_id),
+            model_versions: JSON.stringify({ analysis: 'gemini_3_flash', prompt: 'claude-sonnet-5' }),
+            seed_values: JSON.stringify({ vision_hash: visionHash(vision) }),
+            agent_ids: allAgents.map((a: any) => a.id),
+            created_at: new Date().toISOString(),
+          });
+        } catch (e) {
+          console.error('[agentBuilderEngine] BuildManifest creation failed:', e.message);
+        }
 
         // Create a BuilderLibrary entry for the agent builder system
         const libId = deterministicId('lib', 'agent_builder', vision.slice(0, 50));

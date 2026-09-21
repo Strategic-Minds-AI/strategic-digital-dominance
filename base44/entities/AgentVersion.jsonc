@@ -1,0 +1,83 @@
+{
+  "name": "AgentVersion",
+  "type": "object",
+  "properties": {
+    "owner_id": {
+      "type": "string"
+    },
+    "agent_id": {
+      "type": "string",
+      "description": "AgentPersona this version belongs to"
+    },
+    "version_number": {
+      "type": "integer",
+      "description": "Sequential version number"
+    },
+    "snapshot": {
+      "type": "string",
+      "maxLength": 50000,
+      "description": "Full JSON snapshot of agent config at this version"
+    },
+    "change_description": {
+      "type": "string",
+      "description": "What changed in this version"
+    },
+    "is_current": {
+      "type": "boolean",
+      "default": false
+    },
+    "created_by": {
+      "type": "string",
+      "description": "Who created this version (user id or system)"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "owner_id",
+    "agent_id",
+    "version_number",
+    "snapshot"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": null,
+    "update": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
