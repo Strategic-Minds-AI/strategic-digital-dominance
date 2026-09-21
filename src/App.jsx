@@ -68,6 +68,7 @@ import SkipTraceSystem from '@/pages/admin/SkipTraceSystem';
 import AutoComplete from '@/pages/admin/AutoComplete';
 import AdminResults from '@/pages/admin/Results';
 import AgentBuilder from '@/pages/admin/AgentBuilder';
+import VisionStudio from '@/pages/admin/VisionStudio';
 import AgentMaster from '@/pages/admin/AgentMaster';
 import VisionStrategy from '@/pages/admin/VisionStrategy';
 import Intelligence from '@/pages/admin/Intelligence';
@@ -210,6 +211,7 @@ const AuthenticatedApp = () => {
         <Route path="autocomplete" element={<AutoComplete />} />
         <Route path="results" element={<AdminResults />} />
         <Route path="agent-builder" element={<AgentBuilder />} />
+        <Route path="vision-studio" element={<VisionStudio />} />
         <Route path="agent-master" element={<AgentMaster />} />
         <Route path="vision-strategy" element={<VisionStrategy />} />
         <Route path="intelligence" element={<Intelligence />} />
