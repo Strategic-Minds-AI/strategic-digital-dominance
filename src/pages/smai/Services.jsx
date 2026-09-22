@@ -5,7 +5,6 @@ import SmaiNav from "@/components/smai/SmaiNav";
 import SmaiFooter from "@/components/smai/SmaiFooter";
 
 const IMG_FACE = "https://media.base44.com/images/public/6a77f4491f0bf92de9a3ed8b/34eb6d9be_images.jpg";
-const IMG_NEURAL = "https://media.base44.com/images/public/6a77f4491f0bf92de9a3ed8b/41aa58fee_pic7.jpg";
 
 const SERVICES = [
   {
@@ -51,7 +50,7 @@ export default function Services() {
       {/* Header — Dark */}
       <section className="border-b border-stone-800 bg-gradient-to-b from-stone-900/50 to-stone-950">
         <div className="max-w-7xl mx-auto px-6 py-16 md:py-20">
-          <p className="font-mono text-[10px] tracking-[0.3em] text-amber-500 uppercase mb-3">— OUR SERVICES —</p>
+          <p className="font-mono text-[10px] tracking-[0.3em] text-cyan-400 uppercase mb-3">— OUR SERVICES —</p>
           <h1 className="text-4xl md:text-5xl font-black text-white mb-4">What We Build</h1>
           <p className="text-lg text-stone-400 max-w-2xl">Three integrated service lines that take you from AI strategy to deployed systems to scaled growth — all under one roof.</p>
         </div>
@@ -64,11 +63,11 @@ export default function Services() {
           <section key={s.title} className={isWhite ? "bg-white py-16 md:py-20 border-b border-stone-200" : "bg-stone-950 py-16 md:py-20 border-b border-stone-800"}>
             <div className="max-w-7xl mx-auto px-6">
               <div className="flex items-start gap-5 mb-8">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-300 via-amber-500 to-amber-700 flex items-center justify-center shrink-0 shadow-lg shadow-amber-500/20">
+                <div className="w-14 h-14 rounded-2xl electric-bg flex items-center justify-center shrink-0 shadow-lg shadow-cyan-500/20 electric-glow">
                   <s.icon className="w-7 h-7 text-stone-950" />
                 </div>
                 <div>
-                  <div className="text-xs font-bold tracking-[0.14em] uppercase text-amber-500 mb-1">{s.tagline}</div>
+                  <div className="text-xs font-bold tracking-[0.14em] uppercase text-cyan-400 mb-1">{s.tagline}</div>
                   <h2 className={`text-3xl font-black ${isWhite ? "text-stone-950" : "text-white"}`}>{s.title}</h2>
                 </div>
               </div>
@@ -77,8 +76,8 @@ export default function Services() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
                 {s.features.map((f) => (
                   <div key={f.label} className={`flex items-start gap-3 rounded-xl border p-5 ${isWhite ? "border-stone-200 bg-stone-50" : "border-stone-800 bg-stone-950/50"}`}>
-                    <div className="w-10 h-10 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center shrink-0">
-                      <f.icon className="w-5 h-5 text-amber-500" />
+                    <div className="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center shrink-0">
+                      <f.icon className="w-5 h-5 text-cyan-400" />
                     </div>
                     <div>
                       <h4 className={`text-sm font-bold mb-1 ${isWhite ? "text-stone-950" : "text-white"}`}>{f.label}</h4>
@@ -88,12 +87,12 @@ export default function Services() {
                 ))}
               </div>
 
-              <div className={`rounded-xl border p-6 ${isWhite ? "border-amber-300 bg-amber-50" : "border-amber-500/20 bg-amber-500/5"}`}>
-                <h4 className="text-xs font-bold tracking-[0.14em] uppercase text-amber-600 mb-3">What You Get</h4>
+              <div className={`rounded-xl border p-6 ${isWhite ? "border-cyan-300 bg-cyan-50" : "border-cyan-400/20 bg-cyan-500/5"}`}>
+                <h4 className="text-xs font-bold tracking-[0.14em] uppercase text-blue-500 mb-3">What You Get</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   {s.deliverables.map((d) => (
                     <div key={d} className={`flex items-center gap-2 text-sm ${isWhite ? "text-stone-700" : "text-stone-300"}`}>
-                      <CheckCircle2 className="w-4 h-4 text-amber-600 shrink-0" />{d}
+                      <CheckCircle2 className="w-4 h-4 text-blue-500 shrink-0" />{d}
                     </div>
                   ))}
                 </div>
@@ -110,12 +109,12 @@ export default function Services() {
             <img src={IMG_FACE} alt="AI digital intelligence" className="w-full h-72 object-cover" />
           </div>
           <div>
-            <p className="font-mono text-[10px] tracking-[0.3em] text-amber-500 uppercase mb-3">— INTEGRATED APPROACH —</p>
+            <p className="font-mono text-[10px] tracking-[0.3em] text-cyan-400 uppercase mb-3">— INTEGRATED APPROACH —</p>
             <h3 className="text-2xl font-black text-white mb-4">All Three Services, Working Together</h3>
             <p className="text-stone-400 leading-relaxed mb-4">Most firms do one thing. We do all three — and they connect. Your AI strategy informs your marketing, which feeds your custom software, which generates data that refines your strategy. It's a flywheel.</p>
             <div className="flex flex-wrap gap-2">
               {["Strategy → Marketing", "Marketing → Software", "Software → Data", "Data → Strategy"].map((t) => (
-                <span key={t} className="text-xs px-3 py-1.5 rounded-full bg-stone-800 text-amber-400 border border-stone-700 font-mono">{t}</span>
+                <span key={t} className="text-xs px-3 py-1.5 rounded-full bg-stone-800 text-cyan-400 border border-stone-700 font-mono">{t}</span>
               ))}
             </div>
           </div>
@@ -124,11 +123,11 @@ export default function Services() {
 
       {/* CTA — Dark */}
       <section className="max-w-7xl mx-auto px-6 py-16">
-        <div className="rounded-3xl bg-gradient-to-br from-amber-500/20 via-stone-900 to-stone-950 border border-amber-500/30 p-10 md:p-14 text-center">
-          <Rocket className="w-10 h-10 text-amber-400 mx-auto mb-4" />
+        <div className="rounded-3xl bg-gradient-to-br from-cyan-500/20 via-stone-900 to-stone-950 border border-cyan-400/30 p-10 md:p-14 text-center electric-glow">
+          <Rocket className="w-10 h-10 text-cyan-400 mx-auto mb-4" />
           <h2 className="text-3xl font-black text-white mb-4">Let's Build Your AI System</h2>
           <p className="text-stone-400 max-w-2xl mx-auto mb-8">Tell us about your business and goals — we'll show you which services fit and what results to expect.</p>
-          <Link to="/smai/contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-amber-400 to-amber-600 text-stone-950 font-bold hover:from-amber-300 hover:to-amber-500 transition shadow-lg shadow-amber-500/30">
+          <Link to="/smai/contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-xl electric-bg text-stone-950 font-bold hover:opacity-90 transition shadow-lg shadow-cyan-500/30 electric-glow">
             Book a Strategy Call<ArrowRight className="w-4 h-4" />
           </Link>
         </div>

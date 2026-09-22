@@ -76,19 +76,19 @@ export default function Home() {
           </div>
           <div className="flex-1 flex items-center">
             <div className="max-w-[58vw] md:max-w-[46vw]">
-              <p className="font-mono text-[10px] md:text-xs text-amber-500 tracking-[0.3em] mb-8">
+              <p className="font-mono text-[10px] md:text-xs text-cyan-400 tracking-[0.3em] mb-8">
                 STRATEGIC MINDS AI — ADVISORY
               </p>
               <h1 className="font-heading text-[12vw] md:text-[8.5vw] leading-[0.9] tracking-tight text-white">
                 <span className="block overflow-hidden"><span className="block">WE TURN</span></span>
-                <span className="block overflow-hidden"><span className="block italic text-amber-400">AI INTO</span></span>
+                <span className="block overflow-hidden"><span className="block italic electric-text-animate">AI INTO</span></span>
                 <span className="block overflow-hidden"><span className="block">ADVANTAGE.</span></span>
               </h1>
               <p className="mt-6 font-mono text-[11px] md:text-xs text-stone-400 tracking-[0.18em] max-w-sm leading-[2]">
                 CONSULTING. MARKETING.<br />SOFTWARE CREATION.
               </p>
               <div className="mt-8 pointer-events-auto inline-block">
-                <Link to="/smai/contact" className="font-mono text-[11px] tracking-[0.25em] border border-amber-500 text-amber-400 px-7 py-3.5 hover:bg-amber-500 hover:text-stone-950 transition-colors duration-300">
+                <Link to="/smai/contact" className="font-mono text-[11px] tracking-[0.25em] border border-cyan-400 text-cyan-400 px-7 py-3.5 hover:bg-cyan-400 hover:text-stone-950 transition-colors duration-300 electric-glow">
                   BOOK A STRATEGY CALL →
                 </Link>
               </div>
@@ -96,7 +96,7 @@ export default function Home() {
           </div>
           <div className="flex justify-between items-center font-mono text-[10px] md:text-xs text-stone-500 tracking-[0.25em] pb-10">
             <span>STRATEGICMINDSAI.COM — EST. 2024</span>
-            <span className="animate-pulse text-amber-400">SCROLL ↓</span>
+            <span className="animate-pulse text-cyan-400">SCROLL ↓</span>
           </div>
         </div>
       </section>
@@ -107,7 +107,7 @@ export default function Home() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {STATS.map((s) => (
               <div key={s.label} className="text-center">
-                <div className="text-3xl md:text-4xl font-black bg-gradient-to-r from-amber-300 to-amber-600 bg-clip-text text-transparent">{s.value}</div>
+                <div className="text-3xl md:text-4xl font-black electric-text">{s.value}</div>
                 <div className="text-xs text-stone-500 mt-1 tracking-wide uppercase">{s.label}</div>
               </div>
             ))}
@@ -119,14 +119,14 @@ export default function Home() {
       <section className="bg-white py-20">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-14">
-            <p className="font-mono text-[10px] tracking-[0.3em] text-amber-600 uppercase mb-3">— WHAT WE DO —</p>
+            <p className="font-mono text-[10px] tracking-[0.3em] text-blue-500 uppercase mb-3">— WHAT WE DO —</p>
             <h2 className="text-3xl md:text-4xl font-black text-stone-950 mb-3">Three Services. One System.</h2>
             <p className="text-stone-500 max-w-2xl mx-auto">From AI strategy to deployed systems to scaled growth — all under one roof.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {SERVICES.map((s) => (
-              <div key={s.title} className="group rounded-2xl border border-stone-200 bg-stone-50 p-7 hover:border-amber-400 hover:shadow-xl transition">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-300 to-amber-600 flex items-center justify-center mb-5 shadow-lg shadow-amber-500/20">
+              <div key={s.title} className="group rounded-2xl border border-stone-200 bg-stone-50 p-7 hover:border-cyan-400 hover:shadow-xl transition">
+                <div className="w-12 h-12 rounded-xl electric-bg flex items-center justify-center mb-5 shadow-lg shadow-cyan-500/20 electric-glow">
                   <s.icon className="w-6 h-6 text-stone-950" />
                 </div>
                 <h3 className="text-xl font-bold text-stone-950 mb-2">{s.title}</h3>
@@ -134,7 +134,7 @@ export default function Home() {
                 <ul className="space-y-2">
                   {s.points.map((p) => (
                     <li key={p} className="flex items-center gap-2 text-sm text-stone-700">
-                      <CheckCircle2 className="w-4 h-4 text-amber-600 shrink-0" />{p}
+                      <CheckCircle2 className="w-4 h-4 text-blue-500 shrink-0" />{p}
                     </li>
                   ))}
                 </ul>
@@ -148,7 +148,7 @@ export default function Home() {
       <section className="bg-stone-950 py-20 border-y border-stone-800">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-14">
-            <p className="font-mono text-[10px] tracking-[0.3em] text-amber-500 uppercase mb-3">— DATA INTELLIGENCE —</p>
+            <p className="font-mono text-[10px] tracking-[0.3em] text-cyan-400 uppercase mb-3">— DATA INTELLIGENCE —</p>
             <h2 className="text-3xl md:text-4xl font-black text-white mb-3">The Intelligence Behind Our Systems</h2>
             <p className="text-stone-400 max-w-2xl mx-auto">We operate at the intersection of data, AI, and human strategy.</p>
           </div>
@@ -178,7 +178,7 @@ export default function Home() {
       <section className="bg-white py-20">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-14">
-            <p className="font-mono text-[10px] tracking-[0.3em] text-amber-600 uppercase mb-3">— COMPETITIVE INTELLIGENCE —</p>
+            <p className="font-mono text-[10px] tracking-[0.3em] text-blue-500 uppercase mb-3">— COMPETITIVE INTELLIGENCE —</p>
             <h2 className="text-3xl md:text-4xl font-black text-stone-950 mb-3">The Landscape We Navigate</h2>
             <p className="text-stone-500 max-w-2xl mx-auto">We've mapped the top players across AI consulting, data intelligence, and software development — so you don't have to.</p>
           </div>
@@ -186,17 +186,17 @@ export default function Home() {
             {COMPETITORS.map((cat) => (
               <div key={cat.category} className="rounded-2xl border border-stone-200 bg-stone-50 p-6">
                 <div className="flex items-center gap-2 mb-4">
-                  <Trophy className="w-5 h-5 text-amber-600" />
+                  <Trophy className="w-5 h-5 text-blue-500" />
                   <h3 className="text-base font-bold text-stone-950">{cat.category}</h3>
                 </div>
                 <div className="space-y-3">
                   {cat.companies.map((c, i) => (
                     <div key={c.name} className="flex items-start gap-3 pb-3 border-b border-stone-200 last:border-0 last:pb-0">
-                      <span className="text-xs font-mono font-bold text-amber-600 shrink-0 w-5">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="text-xs font-mono font-bold text-blue-500 shrink-0 w-5">{String(i + 1).padStart(2, "0")}</span>
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-bold text-stone-900 truncate">{c.name}</span>
-                          <a href={`https://${c.url}`} target="_blank" rel="noopener" className="text-xs text-amber-600 hover:underline shrink-0">{c.url}</a>
+                          <a href={`https://${c.url}`} target="_blank" rel="noopener" className="text-xs text-blue-500 hover:underline shrink-0">{c.url}</a>
                         </div>
                         <p className="text-xs text-stone-500 mt-0.5">{c.note}</p>
                       </div>
@@ -206,9 +206,9 @@ export default function Home() {
               </div>
             ))}
           </div>
-          <div className="mt-10 rounded-2xl bg-gradient-to-r from-amber-50 to-stone-100 border border-amber-200 p-6">
+          <div className="mt-10 rounded-2xl bg-gradient-to-r from-cyan-50 to-blue-50 border border-cyan-200 p-6">
             <div className="flex items-start gap-3">
-              <Search className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+              <Search className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
               <div>
                 <h4 className="text-sm font-bold text-stone-950 mb-1">Our Differentiator</h4>
                 <p className="text-sm text-stone-600">While the giants sell strategy decks and the boutiques ship one-off projects, Strategic Minds AI does both — our autonomous agent teams actually build and deploy your AI systems 24/7. No fragmented vendors. No strategy-only handoffs. Just outcomes.</p>
@@ -222,13 +222,13 @@ export default function Home() {
       <section className="bg-stone-900/30 border-y border-stone-800 py-20">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-14">
-            <p className="font-mono text-[10px] tracking-[0.3em] text-amber-500 uppercase mb-3">— HOW WE WORK —</p>
+            <p className="font-mono text-[10px] tracking-[0.3em] text-cyan-400 uppercase mb-3">— HOW WE WORK —</p>
             <h2 className="text-3xl md:text-4xl font-black text-white mb-3">A Proven 4-Phase Process</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {PROCESS.map((p) => (
               <div key={p.step}>
-                <div className="text-5xl font-black text-amber-500/20 mb-3">{p.step}</div>
+                <div className="text-5xl font-black text-cyan-500/20 mb-3">{p.step}</div>
                 <h3 className="text-lg font-bold text-white mb-2">{p.title}</h3>
                 <p className="text-sm text-stone-400 leading-relaxed">{p.desc}</p>
               </div>
@@ -241,13 +241,13 @@ export default function Home() {
       <section className="bg-stone-950 py-20">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
-            <p className="font-mono text-[10px] tracking-[0.3em] text-amber-500 uppercase mb-3">— DEPLOYED INTELLIGENCE —</p>
+            <p className="font-mono text-[10px] tracking-[0.3em] text-cyan-400 uppercase mb-3">— DEPLOYED INTELLIGENCE —</p>
             <h2 className="text-3xl font-black text-white mb-4">Your AI Systems, Running 24/7</h2>
             <p className="text-stone-400 leading-relaxed mb-6">We don't just advise — we build, deploy, and monitor autonomous AI systems that work around the clock. From data pipelines to customer-facing apps, your AI infrastructure runs continuously, learning and optimizing as it goes.</p>
             <div className="flex flex-wrap gap-4">
-              <div className="flex items-start gap-3"><Target className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" /><div><div className="text-sm font-bold text-white">Outcome-Driven</div><div className="text-xs text-stone-500">Tied to revenue and efficiency</div></div></div>
-              <div className="flex items-start gap-3"><Zap className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" /><div><div className="text-sm font-bold text-white">Autonomous</div><div className="text-xs text-stone-500">Agent teams execute 24/7</div></div></div>
-              <div className="flex items-start gap-3"><BarChart3 className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" /><div><div className="text-sm font-bold text-white">Full-Stack</div><div className="text-xs text-stone-500">Strategy + marketing + software</div></div></div>
+              <div className="flex items-start gap-3"><Target className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" /><div><div className="text-sm font-bold text-white">Outcome-Driven</div><div className="text-xs text-stone-500">Tied to revenue and efficiency</div></div></div>
+              <div className="flex items-start gap-3"><Zap className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" /><div><div className="text-sm font-bold text-white">Autonomous</div><div className="text-xs text-stone-500">Agent teams execute 24/7</div></div></div>
+              <div className="flex items-start gap-3"><BarChart3 className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" /><div><div className="text-sm font-bold text-white">Full-Stack</div><div className="text-xs text-stone-500">Strategy + marketing + software</div></div></div>
             </div>
           </div>
           <div className="rounded-2xl overflow-hidden border border-stone-800">
@@ -258,11 +258,11 @@ export default function Home() {
 
       {/* ═══ CTA — Dark ═══ */}
       <section className="max-w-7xl mx-auto px-6 pb-20">
-        <div className="rounded-3xl bg-gradient-to-br from-amber-500/20 via-stone-900 to-stone-950 border border-amber-500/30 p-10 md:p-16 text-center">
-          <Sparkles className="w-10 h-10 text-amber-400 mx-auto mb-4" />
+        <div className="rounded-3xl bg-gradient-to-br from-cyan-500/20 via-stone-900 to-stone-950 border border-cyan-400/30 p-10 md:p-16 text-center electric-glow">
+          <Sparkles className="w-10 h-10 text-cyan-400 mx-auto mb-4" />
           <h2 className="text-3xl md:text-4xl font-black text-white mb-4">Ready to Build Your AI Advantage?</h2>
           <p className="text-stone-400 max-w-2xl mx-auto mb-8">Book a free strategy call. We'll audit your business and show you exactly where AI can drive the biggest impact.</p>
-          <Link to="/smai/contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-amber-400 to-amber-600 text-stone-950 font-bold hover:from-amber-300 hover:to-amber-500 transition shadow-lg shadow-amber-500/30">
+          <Link to="/smai/contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-xl electric-bg text-stone-950 font-bold hover:opacity-90 transition shadow-lg shadow-cyan-500/30 electric-glow">
             Book Your Free Strategy Call<ArrowRight className="w-4 h-4" />
           </Link>
         </div>

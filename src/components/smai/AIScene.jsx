@@ -4,7 +4,7 @@ import * as THREE from "three";
 /**
  * AIScene — Three.js moving graphic adapted from the kinetic-monolith MonolithScene.
  * Particle nebula + wireframe icosahedron + orbiting nodes + floating data shards.
- * Recolored with gold/amber palette to match Strategic Minds AI brand.
+ * Recolored with electric blue gradient palette.
  */
 export default function AIScene() {
   const mountRef = useRef(null);
@@ -30,9 +30,9 @@ export default function AIScene() {
     const PARTICLE_COUNT = 3000;
     const positions = new Float32Array(PARTICLE_COUNT * 3);
     const colors = new Float32Array(PARTICLE_COUNT * 3);
-    const colorA = new THREE.Color(0xD4AF37); // gold
-    const colorB = new THREE.Color(0xB8860B); // dark gold
-    const colorC = new THREE.Color(0xFFF6D5); // light gold
+    const colorA = new THREE.Color(0x00E5FF); // light electric blue
+    const colorB = new THREE.Color(0x2196F3); // mid electric blue
+    const colorC = new THREE.Color(0xFFFFFF); // white hot
 
     for (let i = 0; i < PARTICLE_COUNT; i++) {
       const theta = Math.random() * Math.PI * 2;
@@ -64,7 +64,7 @@ export default function AIScene() {
     scene.add(nebula);
 
     // ── 2. GRID LINES ──
-    const gridHelper = new THREE.GridHelper(40, 28, 0xD4AF37, 0x8B6914);
+    const gridHelper = new THREE.GridHelper(40, 28, 0x00E5FF, 0x0040CC);
     gridHelper.position.y = -8;
     gridHelper.material.transparent = true;
     gridHelper.material.opacity = 0.15;
@@ -76,32 +76,32 @@ export default function AIScene() {
 
     const icoGeo = new THREE.IcosahedronGeometry(3.2, 1);
     const icoEdges = new THREE.EdgesGeometry(icoGeo);
-    const icoMat = new THREE.LineBasicMaterial({ color: 0xD4AF37, transparent: true, opacity: 0.55 });
+    const icoMat = new THREE.LineBasicMaterial({ color: 0x00E5FF, transparent: true, opacity: 0.55 });
     const icosphere = new THREE.LineSegments(icoEdges, icoMat);
     icoGroup.add(icosphere);
 
     const innerGeo = new THREE.IcosahedronGeometry(2.8, 1);
-    const innerMat = new THREE.MeshStandardMaterial({ color: 0x050810, metalness: 1.0, roughness: 0.1, transparent: true, opacity: 0.9 });
+    const innerMat = new THREE.MeshStandardMaterial({ color: 0x050a14, metalness: 1.0, roughness: 0.1, transparent: true, opacity: 0.9 });
     const innerSolid = new THREE.Mesh(innerGeo, innerMat);
     icoGroup.add(innerSolid);
 
     // Orbit rings
     const ringGeo = new THREE.TorusGeometry(4.2, 0.04, 8, 120);
-    const ringMat = new THREE.MeshBasicMaterial({ color: 0xD4AF37, transparent: true, opacity: 0.4 });
+    const ringMat = new THREE.MeshBasicMaterial({ color: 0x00E5FF, transparent: true, opacity: 0.4 });
     const ring1 = new THREE.Mesh(ringGeo, ringMat);
     ring1.rotation.x = Math.PI / 2;
     icoGroup.add(ring1);
 
     const ring2 = new THREE.Mesh(
       new THREE.TorusGeometry(5.6, 0.025, 8, 120),
-      new THREE.MeshBasicMaterial({ color: 0xB8860B, transparent: true, opacity: 0.25 })
+      new THREE.MeshBasicMaterial({ color: 0x2196F3, transparent: true, opacity: 0.25 })
     );
     ring2.rotation.x = Math.PI * 0.38;
     ring2.rotation.z = Math.PI * 0.15;
     icoGroup.add(ring2);
 
     // ── 4. ORBITING NODES ──
-    const nodeMat = new THREE.MeshBasicMaterial({ color: 0xD4AF37 });
+    const nodeMat = new THREE.MeshBasicMaterial({ color: 0x00E5FF });
     const nodes = [];
     for (let i = 0; i < 9; i++) {
       const angle = (i / 9) * Math.PI * 2;
@@ -115,8 +115,8 @@ export default function AIScene() {
     }
 
     // ── 5. FLOATING DATA SHARDS ──
-    const shardMat = new THREE.MeshStandardMaterial({ color: 0x0d1127, metalness: 0.95, roughness: 0.15 });
-    const shardEdgeMat = new THREE.LineBasicMaterial({ color: 0xD4AF37, transparent: true, opacity: 0.45 });
+    const shardMat = new THREE.MeshStandardMaterial({ color: 0x0a0a1a, metalness: 0.95, roughness: 0.15 });
+    const shardEdgeMat = new THREE.LineBasicMaterial({ color: 0x00E5FF, transparent: true, opacity: 0.45 });
     const shards = [];
     for (let i = 0; i < 14; i++) {
       const w = 0.15 + Math.random() * 1.1;
@@ -135,19 +135,19 @@ export default function AIScene() {
 
     // ── 6. LIGHTS ──
     scene.add(new THREE.AmbientLight(0xffffff, 0.12));
-    const goldLight = new THREE.PointLight(0xD4AF37, 60, 30);
-    goldLight.position.set(-5, 2, 8);
-    scene.add(goldLight);
-    const rimLight = new THREE.DirectionalLight(0xfff6d5, 3);
+    const electricLight = new THREE.PointLight(0x00E5FF, 60, 30);
+    electricLight.position.set(-5, 2, 8);
+    scene.add(electricLight);
+    const rimLight = new THREE.DirectionalLight(0xaaddff, 3);
     rimLight.position.set(6, 8, 4);
     scene.add(rimLight);
-    const backLight = new THREE.PointLight(0x8B6914, 40, 25);
+    const backLight = new THREE.PointLight(0x0040CC, 40, 25);
     backLight.position.set(0, -4, -8);
     scene.add(backLight);
 
     // ── 7. SCAN LINE ──
     const scanGeo = new THREE.PlaneGeometry(30, 0.03);
-    const scanMat = new THREE.MeshBasicMaterial({ color: 0xD4AF37, transparent: true, opacity: 0.35, side: THREE.DoubleSide });
+    const scanMat = new THREE.MeshBasicMaterial({ color: 0x00E5FF, transparent: true, opacity: 0.35, side: THREE.DoubleSide });
     const scanLine = new THREE.Mesh(scanGeo, scanMat);
     scene.add(scanLine);
     let scanY = -8;

@@ -27,7 +27,7 @@ export default function CaseStudies() {
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-stone-950/80 to-stone-950" />
         <div className="relative max-w-7xl mx-auto px-6 py-16 md:py-20">
-          <p className="font-mono text-[10px] tracking-[0.3em] text-amber-500 uppercase mb-3">— CASE STUDIES —</p>
+          <p className="font-mono text-[10px] tracking-[0.3em] text-cyan-400 uppercase mb-3">— CASE STUDIES —</p>
           <h1 className="text-4xl md:text-5xl font-black text-white mb-4">Real Results. Real Businesses.</h1>
           <p className="text-lg text-stone-400 max-w-2xl">Real businesses. Real AI systems. Real results. Here's what we've built and the impact we've driven.</p>
         </div>
@@ -38,19 +38,19 @@ export default function CaseStudies() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {CASES.map((c) => (
-              <div key={c.title} className="group rounded-2xl border border-stone-200 bg-stone-50 p-7 hover:border-amber-400 hover:shadow-xl transition flex flex-col">
+              <div key={c.title} className="group rounded-2xl border border-stone-200 bg-stone-50 p-7 hover:border-cyan-400 hover:shadow-xl transition flex flex-col">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-300 to-amber-600 flex items-center justify-center shadow-md shadow-amber-500/20">
+                  <div className="w-10 h-10 rounded-xl electric-bg flex items-center justify-center shadow-md shadow-cyan-500/20 electric-glow">
                     <c.icon className="w-5 h-5 text-stone-950" />
                   </div>
-                  <span className="text-xs font-bold tracking-[0.14em] uppercase text-amber-600">{c.category}</span>
+                  <span className="text-xs font-bold tracking-[0.14em] uppercase text-blue-500">{c.category}</span>
                 </div>
-                <h3 className="text-lg font-bold text-stone-950 mb-3 group-hover:text-amber-700 transition">{c.title}</h3>
+                <h3 className="text-lg font-bold text-stone-950 mb-3 group-hover:text-blue-600 transition">{c.title}</h3>
                 <p className="text-sm text-stone-600 leading-relaxed mb-5">{c.desc}</p>
                 <div className="grid grid-cols-3 gap-3 mb-5 mt-auto">
                   {c.metrics.map((m) => (
                     <div key={m.label} className="rounded-lg border border-stone-200 bg-white p-3 text-center">
-                      <div className="text-lg font-black bg-gradient-to-r from-amber-500 to-amber-700 bg-clip-text text-transparent">{m.value}</div>
+                      <div className="text-lg font-black electric-text">{m.value}</div>
                       <div className="text-[10px] text-stone-500 mt-0.5 uppercase tracking-wide">{m.label}</div>
                     </div>
                   ))}
@@ -68,10 +68,10 @@ export default function CaseStudies() {
 
       {/* CTA — Dark */}
       <section className="max-w-7xl mx-auto px-6 py-16">
-        <div className="rounded-3xl bg-gradient-to-br from-amber-500/20 via-stone-900 to-stone-950 border border-amber-500/30 p-10 md:p-14 text-center">
+        <div className="rounded-3xl bg-gradient-to-br from-cyan-500/20 via-stone-900 to-stone-950 border border-cyan-400/30 p-10 md:p-14 text-center electric-glow">
           <h2 className="text-3xl font-black text-white mb-4">Your Case Study Could Be Next</h2>
           <p className="text-stone-400 max-w-2xl mx-auto mb-8">Every great result starts with a conversation. Let's talk about what we can build for your business.</p>
-          <Link to="/smai/contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-amber-400 to-amber-600 text-stone-950 font-bold hover:from-amber-300 hover:to-amber-500 transition shadow-lg shadow-amber-500/30">
+          <Link to="/smai/contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-xl electric-bg text-stone-950 font-bold hover:opacity-90 transition shadow-lg shadow-cyan-500/30 electric-glow">
             Start Your Project<ArrowRight className="w-4 h-4" />
           </Link>
         </div>

@@ -209,6 +209,45 @@
   .xa-electric-btn:hover {
     animation: xa-electric-flow 1.8s ease-in-out infinite;
   }
+
+  /* === Electric Blue — electrified gradient === */
+  .electric-text {
+    background: linear-gradient(135deg, #00E5FF 0%, #2196F3 50%, #0040CC 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+  .electric-bg {
+    background: linear-gradient(135deg, #00E5FF 0%, #2196F3 50%, #0040CC 100%);
+  }
+  .electric-border {
+    border: 1px solid transparent;
+    background: linear-gradient(135deg, #00E5FF 0%, #2196F3 50%, #0040CC 100%) border-box;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+  @keyframes electric-pulse-glow {
+    0%, 100% { box-shadow: 0 0 8px -2px rgba(0, 212, 255, 0.4), 0 0 16px -4px rgba(33, 150, 243, 0.3); }
+    50% { box-shadow: 0 0 16px -2px rgba(0, 212, 255, 0.6), 0 0 32px -4px rgba(33, 150, 243, 0.4); }
+  }
+  .electric-glow {
+    animation: electric-pulse-glow 2.5s ease-in-out infinite;
+  }
+  @keyframes electric-text-shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+  .electric-text-animate {
+    background: linear-gradient(110deg, #0040CC 0%, #2196F3 25%, #00E5FF 50%, #2196F3 75%, #0040CC 100%);
+    background-size: 200% 100%;
+    animation: electric-text-shimmer 3s linear infinite;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
 }
 
 @layer utilities {
