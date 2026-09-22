@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import {
   Rocket, Loader2, AlertCircle, CheckCircle2, Eye, Compass,
-  Code2, Cloud, Sparkles, ArrowRight, ExternalLink, RotateCcw,
+  Code2, Cloud, Sparkles, ArrowRight, ExternalLink, RotateCcw, Wand2, RefreshCw,
 } from 'lucide-react';
 
 // Vision → Ship pipeline: takes a vision statement and runs it through
@@ -21,6 +21,7 @@ export default function VisionToShip() {
   const [results, setResults] = useState({});
   const [error, setError] = useState(null);
   const [shipped, setShipped] = useState(null);
+  const [assisting, setAssisting] = useState(false);
 
   const runPipeline = async () => {
     if (!vision.trim()) return;
@@ -89,6 +90,30 @@ export default function VisionToShip() {
     }
   };
 
+  const aiAssist = async () => {
+    setAssisting(true);
+    setError(null);
+    try {
+      const res = await base44.integrations.Core.InvokeLLM({
+        prompt: `You are a visionary prompt engineer. Generate ONE powerful, specific vision statement (2-4 sentences) for an autonomous full-stack AI system that a builder could ship. The system can create: SaaS apps, lead generation funnels, content factories, SEO dominators, agent swarms, prediction engines, and autonomous workflows — all powered by AI agents that analyze, plan, generate code, and deploy automatically.
+
+The vision should be ambitious, specific, and actionable — describing a real system that solves a real problem and creates value. Think about underserved markets, emerging trends, or wealth multiplication.
+
+Output ONLY the vision statement text, no preamble or explanation.`,
+        response_json_schema: {
+          type: 'object',
+          properties: { vision: { type: 'string' } },
+        },
+      });
+      const generated = res.vision || res.text || '';
+      if (generated) setVision(generated);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setAssisting(false);
+    }
+  };
+
   const reset = () => {
     setVision('');
     setResults({});
@@ -122,6 +147,24 @@ export default function VisionToShip() {
       <div className="flex items-center justify-between mt-3">
         <span className="text-xs text-stone-400">{vision.length}/3000</span>
         <div className="flex gap-2">
+          <button
+            onClick={aiAssist}
+            disabled={assisting || running}
+            title="AI Prompt Engineer — generate a vision"
+            className="flex items-center gap-1.5 rounded-lg border border-violet-300 bg-violet-50 px-3 py-2 text-xs font-bold text-violet-700 hover:border-violet-500 disabled:opacity-50 transition"
+          >
+            {assisting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Wand2 className="h-3.5 w-3.5" />}
+            {assisting ? 'Engineering...' : 'AI Assist'}
+          </button>
+          <button
+            onClick={aiAssist}
+            disabled={assisting || running}
+            title="Regenerate a new vision"
+            className="flex items-center gap-1.5 rounded-lg border border-stone-300 bg-white px-3 py-2 text-xs font-bold text-stone-600 hover:border-amber-500 disabled:opacity-50 transition"
+          >
+            {assisting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
+            Regenerate
+          </button>
           {(shipped || error) && (
             <button onClick={reset} className="flex items-center gap-1.5 rounded-lg border border-stone-300 bg-white px-3 py-2 text-xs font-bold text-stone-600 hover:border-amber-500">
               <RotateCcw className="h-3.5 w-3.5" /> Reset
