@@ -203,8 +203,14 @@ export default async function(req) {
     const action = body.action || "initialize";
 
     if (action === "initialize") return await initializeSystem(base44, user);
-    if (action === "seed_agents") return await seedAgents(base44, user);
-    if (action === "create_templates") return await createTemplates(base44);
+    if (action === "seed_agents") {
+      const result = await seedAgents(base44, user);
+      return Response.json(result);
+    }
+    if (action === "create_templates") {
+      const result = await createTemplates(base44);
+      return Response.json(result);
+    }
     if (action === "status") return await getStatus(base44);
 
     return Response.json({ error: "Unknown action: " + action }, { status: 400 });
@@ -403,34 +409,28 @@ async function createCalendarEvents(accessToken) {
 
 // ── Seed corporate agent team ──
 async function seedAgents(base44, user) {
-  try {
-    const all = await base44.asServiceRole.entities.AgentPersona.list("-created_date", 200);
-    const existingNames = new Set(all.map(a => a.name));
-    const toCreate = CORPORATE_AGENTS.filter(a => !existingNames.has(a.name));
+  const all = await base44.asServiceRole.entities.AgentPersona.list("-created_date", 50);
+  const existingNames = new Set(all.map(a => a.name));
+  const toCreate = CORPORATE_AGENTS.filter(a => !existingNames.has(a.name));
 
-    if (toCreate.length === 0) {
-      return { created: 0, skipped: CORPORATE_AGENTS.length, total: CORPORATE_AGENTS.length, message: "All agents already exist" };
-    }
-
-    // Use bulkCreate for efficiency
-    const records = toCreate.map(a => ({
-      name: a.name,
-      persona_type: a.persona_type,
-      system_prompt: a.system_prompt,
-      tone: a.tone,
-      assigned_context: a.assigned_context,
-      avatar_color: a.avatar_color,
-      max_autonomy: a.max_autonomy,
-      model_preference: a.model_preference,
-      active: true,
-    }));
-
-    const created = await base44.asServiceRole.entities.AgentPersona.bulkCreate(records);
-    return { created: created.length, skipped: existingNames.size, total: CORPORATE_AGENTS.length };
-  } catch (err) {
-    console.error("seedAgents error:", err.message, err.stack);
-    return { created: 0, error: err.message, total: CORPORATE_AGENTS.length };
+  if (toCreate.length === 0) {
+    return { created: 0, skipped: CORPORATE_AGENTS.length, total: CORPORATE_AGENTS.length, message: "All agents already exist" };
   }
+
+  const records = toCreate.map(a => ({
+    name: a.name,
+    persona_type: a.persona_type,
+    system_prompt: a.system_prompt,
+    tone: a.tone,
+    assigned_context: a.assigned_context,
+    avatar_color: a.avatar_color,
+    max_autonomy: a.max_autonomy,
+    model_preference: a.model_preference,
+    active: true,
+  }));
+
+  const created = await base44.asServiceRole.entities.AgentPersona.bulkCreate(records);
+  return { created: created.length, skipped: existingNames.size, total: CORPORATE_AGENTS.length };
 }
 
 // ── Create template documents in Drive ──
