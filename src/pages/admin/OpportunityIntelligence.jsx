@@ -4,6 +4,7 @@ import { Sparkles, Loader2 } from 'lucide-react';
 import CalendarWidget from '@/components/opportunity-intelligence/CalendarWidget';
 import ScannerGrid, { SCANNERS } from '@/components/opportunity-intelligence/ScannerGrid';
 import ScanResults from '@/components/opportunity-intelligence/ScanResults';
+import SavedOpportunities from '@/components/opportunity-intelligence/SavedOpportunities';
 
 export default function OpportunityIntelligence() {
   const [activeScan, setActiveScan] = useState(null);
@@ -53,6 +54,9 @@ export default function OpportunityIntelligence() {
 
       {/* Google Calendar — at the very top */}
       <CalendarWidget />
+
+      {/* Saved opportunities — right below calendar */}
+      <SavedOpportunities />
 
       {/* Scanner grid */}
       <ScannerGrid

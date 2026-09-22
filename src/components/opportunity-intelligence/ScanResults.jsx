@@ -1,5 +1,6 @@
 import React from 'react';
 import { Loader2, ExternalLink, TrendingUp, AlertCircle } from 'lucide-react';
+import SaveButton from './SaveButton';
 
 function ScoreBadge({ score }) {
   if (!score && score !== 0) return null;
@@ -7,12 +8,15 @@ function ScoreBadge({ score }) {
   return <span className={`text-xs font-black px-2 py-0.5 rounded-full ${color}`}>{score}/10</span>;
 }
 
-function FindingCard({ finding }) {
+function FindingCard({ finding, scannerKey, scannerLabel }) {
   return (
     <div className="rounded-xl border border-stone-200 bg-white p-4 hover:border-stone-300 transition">
       <div className="flex items-start justify-between gap-2 mb-2">
         <h4 className="text-sm font-bold text-stone-900 flex-1">{finding.title}</h4>
-        <ScoreBadge score={finding.score} />
+        <div className="flex items-center gap-2 shrink-0">
+          <SaveButton finding={finding} scannerKey={scannerKey} scannerLabel={scannerLabel} />
+          <ScoreBadge score={finding.score} />
+        </div>
       </div>
       {finding.description && (
         <p className="text-xs text-stone-600 mb-2">{finding.description}</p>
@@ -94,7 +98,7 @@ export default function ScanResults({ results, loading, activeScan, fullScanProg
                   {data.summary && <p className="text-xs text-stone-500 mb-3">{data.summary}</p>}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     {(data.findings || []).slice(0, 6).map((f, i) => (
-                      <FindingCard key={i} finding={f} />
+                      <FindingCard key={i} finding={f} scannerKey={key} scannerLabel={label} />
                     ))}
                   </div>
                 </>
@@ -123,7 +127,7 @@ export default function ScanResults({ results, loading, activeScan, fullScanProg
       )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {findings.map((f, i) => (
-          <FindingCard key={i} finding={f} />
+          <FindingCard key={i} finding={f} scannerKey={activeScan} scannerLabel={activeScan} />
         ))}
       </div>
       {findings.length === 0 && !results.error && (
