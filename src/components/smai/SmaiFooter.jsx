@@ -50,15 +50,15 @@ export default function SmaiFooter() {
             <ul className="space-y-3">
               <li className="flex items-center gap-2.5 text-sm text-stone-400">
                 <Mail className="w-4 h-4 text-cyan-400 shrink-0" />
-                <a href="mailto:hello@strategicmindsai.com" className="hover:text-cyan-400 transition">hello@strategicmindsai.com</a>
+                <a href="mailto:jeremy@strategicmindsai.com" className="hover:text-cyan-400 transition">jeremy@strategicmindsai.com</a>
               </li>
               <li className="flex items-center gap-2.5 text-sm text-stone-400">
                 <Phone className="w-4 h-4 text-cyan-400 shrink-0" />
-                <span>(888) 555-0142</span>
+                <span>(772) 209-0266</span>
               </li>
               <li className="flex items-center gap-2.5 text-sm text-stone-400">
                 <MapPin className="w-4 h-4 text-cyan-400 shrink-0" />
-                <span>Vero Beach, FL</span>
+                <span>Fort Lauderdale, FL</span>
               </li>
             </ul>
           </div>

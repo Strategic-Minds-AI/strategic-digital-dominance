@@ -7,6 +7,7 @@ const LINKS = [
   { to: "/smai/services", label: "Services" },
   { to: "/smai/about", label: "About" },
   { to: "/smai/case-studies", label: "Case Studies" },
+  { to: "/smai/portal", label: "Portal" },
   { to: "/smai/contact", label: "Contact" },
 ];
 

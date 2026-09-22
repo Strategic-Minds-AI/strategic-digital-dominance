@@ -6,7 +6,7 @@ import SmaiFooter from "@/components/smai/SmaiFooter";
 import AIScene from "@/components/smai/AIScene";
 
 // Uploaded images
-const IMG_AI_HEAD = "https://media.base44.com/images/public/6a77f4491f0bf92de9a3ed8b/f81e9d912_download3.jpg";
+const IMG_AI_HEAD = "https://media.base44.com/images/public/6a77f4491f0bf92de9a3ed8b/df1986b73_generated_image.png";
 const IMG_CIRCUIT = "https://media.base44.com/images/public/6a77f4491f0bf92de9a3ed8b/74b8b9512_images1.jpg";
 const IMG_FACE = "https://media.base44.com/images/public/6a77f4491f0bf92de9a3ed8b/34eb6d9be_images.jpg";
 const IMG_CORRIDOR = "https://media.base44.com/images/public/6a77f4491f0bf92de9a3ed8b/3f57fb33d_pic1.jpg";

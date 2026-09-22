@@ -22,13 +22,13 @@ export default function Contact() {
     try {
       const { base44 } = await import("@/api/base44Client");
       await base44.integrations.Core.SendEmail({
-        to: "hello@strategicmindsai.com",
+        to: "jeremy@strategicmindsai.com",
         subject: `New Strategy Call Request — ${form.name}${form.company ? ` (${form.company})` : ""}`,
         body: `Name: ${form.name}\nEmail: ${form.email}\nCompany: ${form.company || "N/A"}\nService: ${form.service || "Not specified"}\n\nMessage:\n${form.message}`,
       });
       setSubmitted(true);
     } catch (err) {
-      setError("Something went wrong. Please email us directly at hello@strategicmindsai.com.");
+      setError("Something went wrong. Please email us directly at jeremy@strategicmindsai.com.");
     }
     setSubmitting(false);
   };
@@ -114,7 +114,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <div className="text-xs text-stone-500 uppercase tracking-wide mb-0.5">Email</div>
-                    <a href="mailto:hello@strategicmindsai.com" className="text-sm text-white hover:text-cyan-400 transition">hello@strategicmindsai.com</a>
+                    <a href="mailto:jeremy@strategicmindsai.com" className="text-sm text-white hover:text-cyan-400 transition">jeremy@strategicmindsai.com</a>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -123,7 +123,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <div className="text-xs text-stone-500 uppercase tracking-wide mb-0.5">Phone</div>
-                    <span className="text-sm text-white">(888) 555-0142</span>
+                    <span className="text-sm text-white">(772) 209-0266</span>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -132,7 +132,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <div className="text-xs text-stone-500 uppercase tracking-wide mb-0.5">Location</div>
-                    <span className="text-sm text-white">Vero Beach, FL</span>
+                    <span className="text-sm text-white">Fort Lauderdale, FL</span>
                   </div>
                 </div>
               </div>
