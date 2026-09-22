@@ -22,6 +22,7 @@ const navGroups = [
       { to: "/admin/convergence", icon: Shield, label: "Convergence Engine" },
       { to: "/admin/site-builder", icon: Crown, label: "Site Builder" },
       { to: "/admin/dominance-sandbox", icon: Rocket, label: "Sandbox" },
+      { to: "/admin/digital-dominance", icon: Crown, label: "Digital Dominance" },
       { to: "/admin/builder-library", icon: Sparkles, label: "Builder Library" },
       { to: "/admin/domain-rush", icon: Crown, label: "Domain Rush" },
       { to: "/admin/crystal-ball", icon: Sparkles, label: "Crystal Ball" },
