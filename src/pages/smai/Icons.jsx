@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Check } from "lucide-react";
-import Image from "@/components/ui/image";
+import { Image } from "@/components/ui/image";
 import SmaiNav from "@/components/smai/SmaiNav";
 import SmaiFooter from "@/components/smai/SmaiFooter";
 
