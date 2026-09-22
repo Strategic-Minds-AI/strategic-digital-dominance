@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import AgentFleet, { AGENT_FLEET } from '@/components/vision-cortex/AgentFleet';
 import SandboxGrid, { SANDBOXES } from '@/components/vision-cortex/SandboxGrid';
+import VisionToShip from '@/components/vision-cortex/VisionToShip';
 
 const FREE_LLMS = [
   { name: 'Groq (Llama 3.1 70B)', tier: '30 RPM, 14,400 req/day', speed: 'ultra-fast', connected: true, icon: Zap },
@@ -168,6 +169,9 @@ Return JSON with:
           <div className="text-sm text-red-700">{error}</div>
         </div>
       )}
+
+      {/* Vision → Ship Pipeline */}
+      <VisionToShip />
 
       {/* Free LLM Status */}
       <div className="rounded-2xl border border-stone-200 bg-white p-5">
