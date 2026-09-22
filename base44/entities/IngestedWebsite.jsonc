@@ -1,0 +1,215 @@
+{
+  "name": "IngestedWebsite",
+  "type": "object",
+  "properties": {
+    "owner_id": {
+      "type": "string",
+      "description": "User ID who owns this ingested website"
+    },
+    "website_id": {
+      "type": "string",
+      "description": "Deterministic website ID"
+    },
+    "source_name": {
+      "type": "string",
+      "description": "Original file/zip name"
+    },
+    "source_url": {
+      "type": "string",
+      "description": "URL to the uploaded source zip/file"
+    },
+    "industry": {
+      "type": "string",
+      "description": "Detected or assigned industry"
+    },
+    "template_type": {
+      "type": "string",
+      "enum": [
+        "funnel",
+        "landing_page",
+        "full_site",
+        "service_page",
+        "location_page",
+        "gallery",
+        "ecommerce",
+        "portfolio",
+        "blog",
+        "restaurant",
+        "saas",
+        "agency",
+        "custom"
+      ],
+      "default": "custom"
+    },
+    "layout_style": {
+      "type": "string",
+      "description": "Detected layout style (modern, classic, minimal, bold, etc.)"
+    },
+    "raw_content": {
+      "type": "string",
+      "maxLength": 50000,
+      "description": "Raw extracted content from the source"
+    },
+    "cleaned_content": {
+      "type": "string",
+      "maxLength": 50000,
+      "description": "Stage 1: cleaned and sanitized content"
+    },
+    "parsed_structure": {
+      "type": "string",
+      "maxLength": 30000,
+      "description": "Stage 2: JSON of parsed page structure, sections, components"
+    },
+    "organized_data": {
+      "type": "string",
+      "maxLength": 30000,
+      "description": "Stage 3: JSON of categorized, tagged, scored organization"
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "uploaded",
+        "cleaning",
+        "cleaned",
+        "parsing",
+        "parsed",
+        "organizing",
+        "organized",
+        "categorized",
+        "rebranding",
+        "rebranded",
+        "deployed",
+        "failed"
+      ],
+      "default": "uploaded"
+    },
+    "quality_score": {
+      "type": "integer",
+      "default": 0,
+      "description": "0-100 overall quality score"
+    },
+    "design_score": {
+      "type": "integer",
+      "default": 0,
+      "description": "0-100 design quality"
+    },
+    "conversion_score": {
+      "type": "integer",
+      "default": 0,
+      "description": "0-100 conversion optimization"
+    },
+    "seo_score": {
+      "type": "integer",
+      "default": 0,
+      "description": "0-100 SEO optimization"
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "color_palette": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Extracted color hex values"
+    },
+    "fonts_detected": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "rebrand_config": {
+      "type": "string",
+      "maxLength": 10000,
+      "description": "JSON of rebrand configuration"
+    },
+    "rebranded_content": {
+      "type": "string",
+      "maxLength": 50000,
+      "description": "Rebranded and enhanced content"
+    },
+    "benchmark_references": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "BenchmarkCompany IDs used for enhancement"
+    },
+    "screenshot_url": {
+      "type": "string",
+      "description": "Screenshot of the original site"
+    },
+    "error_log": {
+      "type": "string",
+      "maxLength": 5000
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "processed_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "owner_id",
+    "website_id",
+    "source_name",
+    "stage"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": null,
+    "update": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

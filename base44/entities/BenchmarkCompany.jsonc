@@ -1,0 +1,154 @@
+{
+  "name": "BenchmarkCompany",
+  "type": "object",
+  "properties": {
+    "owner_id": {
+      "type": "string"
+    },
+    "company_id": {
+      "type": "string",
+      "description": "Deterministic company ID"
+    },
+    "company_name": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string",
+      "description": "Company website URL"
+    },
+    "industry": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "marketing_agency",
+        "web_design",
+        "saas",
+        "ecommerce",
+        "media",
+        "social_media",
+        "seo",
+        "content",
+        "funnel",
+        "branding",
+        "custom"
+      ],
+      "default": "custom"
+    },
+    "marketing_intelligence": {
+      "type": "string",
+      "maxLength": 20000,
+      "description": "Ingested marketing strategies, tactics, campaigns"
+    },
+    "design_intelligence": {
+      "type": "string",
+      "maxLength": 20000,
+      "description": "Design patterns, color theory, layout analysis"
+    },
+    "funnel_analysis": {
+      "type": "string",
+      "maxLength": 15000,
+      "description": "Funnel structure and conversion tactics"
+    },
+    "social_media_strategy": {
+      "type": "string",
+      "maxLength": 15000
+    },
+    "revenue_model": {
+      "type": "string",
+      "maxLength": 10000
+    },
+    "growth_tactics": {
+      "type": "string",
+      "maxLength": 10000
+    },
+    "content_strategy": {
+      "type": "string",
+      "maxLength": 15000
+    },
+    "benchmark_score": {
+      "type": "integer",
+      "default": 0,
+      "description": "0-100 overall benchmark score"
+    },
+    "ingested_content": {
+      "type": "string",
+      "maxLength": 30000,
+      "description": "Raw ingested content from cloud browser"
+    },
+    "screenshot_url": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "is_top_20": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is a top-20 benchmark company"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "owner_id",
+    "company_id",
+    "company_name",
+    "url",
+    "category"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": null,
+    "update": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

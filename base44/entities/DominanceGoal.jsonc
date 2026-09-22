@@ -1,0 +1,160 @@
+{
+  "name": "DominanceGoal",
+  "type": "object",
+  "properties": {
+    "owner_id": {
+      "type": "string"
+    },
+    "goal_id": {
+      "type": "string",
+      "description": "Deterministic goal ID"
+    },
+    "goal_type": {
+      "type": "string",
+      "enum": [
+        "revenue",
+        "followers",
+        "leads",
+        "campaigns",
+        "traffic",
+        "conversion",
+        "custom"
+      ],
+      "default": "custom"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "target_value": {
+      "type": "number",
+      "description": "Target number to reach"
+    },
+    "current_value": {
+      "type": "number",
+      "default": 0
+    },
+    "unit": {
+      "type": "string",
+      "description": "e.g. USD, followers, leads, campaigns"
+    },
+    "timeframe": {
+      "type": "string",
+      "enum": [
+        "monthly",
+        "quarterly",
+        "yearly",
+        "custom"
+      ],
+      "default": "yearly"
+    },
+    "deadline": {
+      "type": "string",
+      "format": "date"
+    },
+    "progress_percentage": {
+      "type": "number",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "on_track",
+        "behind",
+        "achieved",
+        "failed",
+        "paused"
+      ],
+      "default": "active"
+    },
+    "strategy_snapshot": {
+      "type": "string",
+      "maxLength": 20000,
+      "description": "Frozen AI-generated strategy for achieving this goal"
+    },
+    "autonomous_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "List of autonomous actions taken"
+    },
+    "benchmark_companies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "BenchmarkCompany IDs used as reference"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "normal",
+        "low"
+      ],
+      "default": "high"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "owner_id",
+    "goal_id",
+    "goal_type",
+    "title",
+    "target_value"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": null,
+    "update": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

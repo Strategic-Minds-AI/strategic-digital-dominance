@@ -1,0 +1,101 @@
+{
+  "description": "24/7 autonomous self-reflection cycle: audit \u2192 fix \u2192 heal \u2192 converge \u2192 learn. Runs every hour for 30 days to achieve digital dominance perfection.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 * * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "on_date",
+      "ends_on_date": "2026-10-22T23:59:00Z",
+      "ends_after_count": null
+    }
+  },
+  "name": "Autonomous Dominance 24/7 Cycle",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "autonomous_dominance_cycle",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_full_reflection_cycle": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "selfReflectionEngine",
+            "args": {
+              "action": "full_cycle"
+            }
+          },
+          "then": "check_convergence",
+          "x-base44": {
+            "title": "Run Full Self-Reflection Cycle",
+            "description": "Audit \u2192 Fix \u2192 Heal \u2192 Converge \u2192 Learn"
+          }
+        }
+      },
+      {
+        "check_convergence": {
+          "switch": [
+            {
+              "when": "${ .run_full_reflection_cycle.data.converge.convergence_score >= 95 }",
+              "then": "system_perfected"
+            },
+            {
+              "when": "${ .run_full_reflection_cycle.data.audit.issues > 0 }",
+              "then": "run_heal"
+            },
+            {
+              "when": "${ true }",
+              "then": "end"
+            }
+          ],
+          "x-base44": {
+            "title": "Check Convergence Score",
+            "description": "Branch based on system convergence"
+          }
+        }
+      },
+      {
+        "run_heal": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "selfReflectionEngine",
+            "args": {
+              "action": "heal"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Run Self-Heal",
+            "description": "Heal any issues found during audit"
+          }
+        }
+      },
+      {
+        "system_perfected": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "selfReflectionEngine",
+            "args": {
+              "action": "learn"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "System Perfected \u2014 Self-Learn",
+            "description": "Convergence achieved \u2014 continue learning for perfection"
+          }
+        }
+      }
+    ]
+  }
+}

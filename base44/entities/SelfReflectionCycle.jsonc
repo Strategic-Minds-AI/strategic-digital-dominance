@@ -1,0 +1,139 @@
+{
+  "name": "SelfReflectionCycle",
+  "type": "object",
+  "properties": {
+    "owner_id": {
+      "type": "string"
+    },
+    "cycle_id": {
+      "type": "string",
+      "description": "Deterministic cycle ID"
+    },
+    "cycle_type": {
+      "type": "string",
+      "enum": [
+        "audit",
+        "fix",
+        "heal",
+        "converge",
+        "complete",
+        "learn"
+      ],
+      "default": "audit"
+    },
+    "system_area": {
+      "type": "string",
+      "description": "Which system was audited (digital_dominance, vision_cortex, swarm, etc.)"
+    },
+    "findings": {
+      "type": "string",
+      "maxLength": 15000,
+      "description": "JSON of audit findings"
+    },
+    "issues_found": {
+      "type": "integer",
+      "default": 0
+    },
+    "actions_taken": {
+      "type": "string",
+      "maxLength": 15000,
+      "description": "JSON of actions taken to fix/heal"
+    },
+    "fixes_applied": {
+      "type": "integer",
+      "default": 0
+    },
+    "score_before": {
+      "type": "integer",
+      "default": 0,
+      "description": "System score before this cycle"
+    },
+    "score_after": {
+      "type": "integer",
+      "default": 0,
+      "description": "System score after this cycle"
+    },
+    "convergence_delta": {
+      "type": "integer",
+      "default": 0,
+      "description": "Score improvement"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "running",
+        "completed",
+        "failed",
+        "converged",
+        "blocked"
+      ],
+      "default": "running"
+    },
+    "lessons_learned": {
+      "type": "string",
+      "maxLength": 10000,
+      "description": "Self-learning insights for future cycles"
+    },
+    "next_cycle_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "autonomous": {
+      "type": "boolean",
+      "default": true
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "owner_id",
+    "cycle_id",
+    "cycle_type",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": null,
+    "update": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
