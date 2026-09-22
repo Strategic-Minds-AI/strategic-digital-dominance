@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
-import { RefreshCw, Loader2, AlertCircle, Crown, Activity, Zap, CheckCircle2, XCircle, Wrench } from 'lucide-react';
+import { RefreshCw, Loader2, AlertCircle, Crown, Activity, Zap, CheckCircle2, XCircle, Wrench, Shield } from 'lucide-react';
 import SystemHealth from '@/components/command-center/SystemHealth';
 import AgentActivity from '@/components/command-center/AgentActivity';
 import ConnectionStatus from '@/components/command-center/ConnectionStatus';
@@ -14,6 +14,8 @@ export default function CommandCenter() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
   const [healingRunning, setHealingRunning] = useState(false);
+  const [converging, setConverging] = useState(false);
+  const [convergenceResult, setConvergenceResult] = useState(null);
 
   const loadAll = useCallback(async () => {
     setRefreshing(true);
@@ -44,6 +46,20 @@ export default function CommandCenter() {
     setHealingRunning(false);
   }, []);
 
+  const handleConverge = useCallback(async () => {
+    setConverging(true);
+    setError('');
+    try {
+      const res = await base44.functions.invoke('autoComplete', { action: 'cycle' });
+      const data = res.data || res;
+      setConvergenceResult(data);
+      await loadAll();
+    } catch (e) {
+      setError(e.message);
+    }
+    setConverging(false);
+  }, [loadAll]);
+
   const connected = [
     { integration_type: 'googlecalendar' },
     { integration_type: 'gmail' },
@@ -71,6 +87,14 @@ export default function CommandCenter() {
         </div>
         <div className="flex items-center gap-2">
           <button
+            onClick={handleConverge}
+            disabled={converging}
+            className="flex items-center gap-2 rounded-xl bg-amber-500 px-4 py-2 text-sm font-bold text-stone-900 hover:bg-amber-400 transition disabled:opacity-50"
+          >
+            {converging ? <Loader2 className="h-4 w-4 animate-spin" /> : <Shield className="h-4 w-4" />}
+            {converging ? 'Converging...' : 'Run Convergence'}
+          </button>
+          <button
             onClick={handleHeal}
             disabled={healingRunning}
             className="flex items-center gap-2 rounded-xl bg-green-600 px-4 py-2 text-sm font-bold text-white hover:bg-green-700 transition disabled:opacity-50"
@@ -95,6 +119,39 @@ export default function CommandCenter() {
           <AlertCircle className="h-4 w-4 shrink-0" />
           {error}
           <button onClick={() => setError('')} className="ml-auto text-red-400 hover:text-red-600">✕</button>
+        </div>
+      )}
+
+      {/* Top Tools — front and center */}
+      <QuickActions />
+
+      {/* Convergence Result */}
+      {convergenceResult && (
+        <div className="rounded-2xl border border-amber-300 bg-amber-50 p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Shield className="h-5 w-5 text-amber-600" />
+            <h3 className="text-sm font-bold text-amber-800">
+              Convergence Cycle Complete — Avg Score: {convergenceResult.avg_score}/100
+            </h3>
+            <span className="text-xs text-amber-600 ml-auto">
+              {convergenceResult.verified_systems}/{convergenceResult.systems_processed} verified
+            </span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+            {convergenceResult.results?.map((r, i) => (
+              <div key={i} className="rounded-lg bg-white p-2.5 border border-amber-200">
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-xs font-bold text-stone-800 truncate">{r.name}</p>
+                  <span className={`text-xs font-black ${r.weighted_score >= 90 ? 'text-green-600' : r.weighted_score >= 50 ? 'text-amber-600' : 'text-red-600'}`}>
+                    {r.weighted_score}
+                  </span>
+                </div>
+                <p className="text-[10px] text-stone-500">
+                  {r.verified_100 ? '✅ Verified' : `${r.open_gaps || 0} gaps · ${r.active_repairs || 0} repairs`}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
@@ -136,10 +193,9 @@ export default function CommandCenter() {
 
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Left: Health + Quick Actions (2 cols) */}
+        {/* Left: Health (2 cols) */}
         <div className="lg:col-span-2 space-y-5">
           <SystemHealth health={health} loading={loading} />
-          <QuickActions />
         </div>
 
         {/* Right: Activity + Connections (1 col) */}
