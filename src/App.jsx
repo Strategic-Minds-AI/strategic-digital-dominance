@@ -128,6 +128,7 @@ import DigitalDominance from '@/pages/admin/DigitalDominance';
 import AutonomousDominance from '@/pages/admin/AutonomousDominance';
 import AutonomousRefactor from '@/pages/admin/AutonomousRefactor';
 import GeneratorSandbox from '@/pages/admin/GeneratorSandbox';
+import OpportunityIntelligence from '@/pages/admin/OpportunityIntelligence';
 import DynamicPageView from '@/pages/DynamicPageView';
 import CodeInjector from '@/components/codestudio/CodeInjector';
 
@@ -188,7 +189,8 @@ const AuthenticatedApp = () => {
       <Route path="/questionnaire" element={<Questionnaire />} />
       <Route path="/app-settings" element={<AppSettings />} />
       <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<GeneratorSandbox />} />
+        <Route index element={<OpportunityIntelligence />} />
+        <Route path="opportunity-intelligence" element={<OpportunityIntelligence />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="alpha-prime" element={<AlphaPrime />} />
         <Route path="fleet" element={<FleetDashboard />} />
