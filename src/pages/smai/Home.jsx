@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Brain, TrendingUp, Code2, ArrowRight, CheckCircle2, Target, Zap, BarChart3, Sparkles, Search, Trophy } from "lucide-react";
+import { Brain, TrendingUp, Code2, ArrowRight, CheckCircle2, Target, Zap, BarChart3, Sparkles, Search, Trophy, Database, Building2, Radar, Workflow, Eye } from "lucide-react";
 import SmaiNav from "@/components/smai/SmaiNav";
 import SmaiFooter from "@/components/smai/SmaiFooter";
 import AIScene from "@/components/smai/AIScene";
@@ -140,6 +140,43 @@ export default function Home() {
                 </ul>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ MORE SERVICES — WHITE section with black text ═══ */}
+      <section className="bg-white py-20">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <p className="font-mono text-[10px] tracking-[0.3em] text-blue-500 uppercase mb-3">— SPECIALIZED SERVICES —</p>
+            <h2 className="text-3xl md:text-4xl font-black text-stone-950 mb-3">Beyond the Core</h2>
+            <p className="text-stone-500 max-w-2xl mx-auto">10 specialized AI services that give you a data-driven edge — from acquisition to intelligence to visualization.</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+            {[
+              { icon: Database, label: "Data Acquisition" },
+              { icon: Sparkles, label: "Intelligence Enrichment" },
+              { icon: Search, label: "Skip Tracing" },
+              { icon: Building2, label: "Real Estate Data Intel" },
+              { icon: Target, label: "AI Lead Generation" },
+              { icon: Radar, label: "Market Intelligence" },
+              { icon: BarChart3, label: "Predictive Analytics" },
+              { icon: Workflow, label: "Custom Data Pipelines" },
+              { icon: Zap, label: "API & Integration" },
+              { icon: Eye, label: "Data Visualization" },
+            ].map((s) => (
+              <Link to="/smai/services" key={s.label} className="group flex flex-col items-center gap-3 p-5 rounded-2xl border border-stone-200 bg-stone-50 hover:border-cyan-400 hover:shadow-lg transition">
+                <div className="w-12 h-12 rounded-xl electric-bg flex items-center justify-center shadow-md shadow-cyan-500/20 electric-glow">
+                  <s.icon className="w-5 h-5 text-stone-950" />
+                </div>
+                <span className="text-xs font-bold text-stone-700 text-center">{s.label}</span>
+              </Link>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <Link to="/smai/services" className="inline-flex items-center gap-2 text-sm font-bold text-blue-500 hover:text-blue-600 transition">
+              View All Services <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
       </section>

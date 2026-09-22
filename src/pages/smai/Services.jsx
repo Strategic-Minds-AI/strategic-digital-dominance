@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Brain, TrendingUp, Code2, CheckCircle2, ArrowRight, Rocket, Search, FileText, Share2, Smartphone, Database, Workflow, Target, Zap, Bot } from "lucide-react";
+import { Brain, TrendingUp, Code2, CheckCircle2, ArrowRight, Rocket, Search, FileText, Share2, Smartphone, Database, Workflow, Target, Zap, Bot, Building2, BarChart3, Eye, Sparkles, Layers, Radar } from "lucide-react";
 import SmaiNav from "@/components/smai/SmaiNav";
 import SmaiFooter from "@/components/smai/SmaiFooter";
 
@@ -40,6 +40,19 @@ const SERVICES = [
     ],
     deliverables: ["Production-Ready App", "Agent System Architecture", "API Documentation", "Deployment & Hosting"],
   },
+];
+
+const ADDITIONAL_SERVICES = [
+  { icon: Database, title: "Data Acquisition", desc: "Collect, aggregate, and structure business data from hundreds of sources — public records, APIs, web scraping, and proprietary databases.", features: ["Web Data Extraction", "API Aggregation", "Public Records Mining", "Real-Time Data Feeds"] },
+  { icon: Sparkles, title: "Intelligence Enrichment", desc: "Enhance existing data with AI-powered enrichment — contact info, firmographics, demographics, behavioral signals, and predictive scores.", features: ["Contact Enrichment", "Firmographic Data", "Predictive Scoring", "Data Verification"] },
+  { icon: Search, title: "Skip Tracing", desc: "AI agents locate hard-to-find individuals and businesses — cross-referencing dozens of sources for current addresses, phones, and emails.", features: ["Multi-Source Cross-Reference", "Address Verification", "Phone & Email Discovery", "Batch Processing"] },
+  { icon: Building2, title: "Real Estate Data Intelligence", desc: "Transform property data into actionable intelligence — valuations, ownership records, market trends, and investment opportunities.", features: ["Property Valuations", "Ownership Records", "Market Trend Analysis", "Investment Scoring"] },
+  { icon: Target, title: "AI-Powered Lead Generation", desc: "Autonomous AI agents identify, qualify, and enrich leads 24/7 — scraping, verifying, and scoring prospects across every channel.", features: ["Autonomous Lead Scraping", "Lead Qualification Scoring", "Multi-Channel Sourcing", "CRM Integration"] },
+  { icon: Radar, title: "Market Intelligence & Competitor Analysis", desc: "Monitor competitors, track market shifts, and deliver actionable intelligence — pricing, positioning, content gaps, and growth opportunities.", features: ["Competitor Monitoring", "Pricing Intelligence", "Content Gap Analysis", "Trend Detection"] },
+  { icon: BarChart3, title: "Predictive Analytics & Forecasting", desc: "Custom predictive models that forecast demand, identify churn risk, optimize pricing, and predict outcomes from your data.", features: ["Demand Forecasting", "Churn Prediction", "Price Optimization", "Scenario Planning"] },
+  { icon: Workflow, title: "Custom Data Pipelines", desc: "Automated data pipelines that collect, transform, and deliver data where you need it — scheduled, monitored, and maintained 24/7.", features: ["ETL/ELT Pipelines", "Real-Time Streaming", "Quality Monitoring", "Scalable Architecture"] },
+  { icon: Zap, title: "API & Data Integration", desc: "Connect your systems and data sources with custom APIs, webhooks, and integrations — making data flow seamlessly across your stack.", features: ["Custom API Development", "Third-Party Integrations", "Webhook Systems", "Data Sync"] },
+  { icon: Eye, title: "Data Visualization & Reporting", desc: "Turn complex data into clear, actionable dashboards and reports — real-time visualizations for confident decision-making.", features: ["Interactive Dashboards", "Real-Time Metrics", "Automated Alerts", "Executive Summaries"] },
 ];
 
 export default function Services() {
@@ -101,6 +114,33 @@ export default function Services() {
           </section>
         );
       })}
+
+      {/* Additional Services Grid — WHITE section */}
+      <section className="bg-white py-16 border-b border-stone-200">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-10">
+            <p className="font-mono text-[10px] tracking-[0.3em] text-blue-500 uppercase mb-3">— SPECIALIZED SERVICES —</p>
+            <h2 className="text-3xl font-black text-stone-950 mb-3">10 More Ways We Power Your Business</h2>
+            <p className="text-stone-500 max-w-2xl mx-auto">From data acquisition to predictive analytics — specialized AI services that give you a data-driven edge.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {ADDITIONAL_SERVICES.map((s) => (
+              <div key={s.title} className="group rounded-2xl border border-stone-200 bg-stone-50 p-6 hover:border-cyan-400 hover:shadow-lg transition">
+                <div className="w-11 h-11 rounded-xl electric-bg flex items-center justify-center mb-4 shadow-md shadow-cyan-500/20 electric-glow">
+                  <s.icon className="w-5 h-5 text-stone-950" />
+                </div>
+                <h3 className="text-base font-bold text-stone-950 mb-2">{s.title}</h3>
+                <p className="text-sm text-stone-600 leading-relaxed mb-3">{s.desc}</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {s.features.map((f) => (
+                    <span key={f} className="text-xs px-2 py-1 rounded-full bg-stone-200 text-stone-600 border border-stone-300">{f}</span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Image band — Dark with uploaded image */}
       <section className="bg-stone-950 border-b border-stone-800 py-16">
