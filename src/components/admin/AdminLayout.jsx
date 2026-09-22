@@ -10,6 +10,7 @@ const navGroups = [
     label: null,
     items: [
       { to: "/admin", end: true, icon: Sparkles, label: "Opportunity Intelligence" },
+      { to: "/admin/google-workspace-os", icon: Globe, label: "Google Workspace OS" },
       { to: "/admin/command-center", icon: Crown, label: "Command Center" },
       { to: "/admin/vision-studio", icon: Wand2, label: "Vision Studio" },
     ],

@@ -129,6 +129,7 @@ import AutonomousDominance from '@/pages/admin/AutonomousDominance';
 import AutonomousRefactor from '@/pages/admin/AutonomousRefactor';
 import GeneratorSandbox from '@/pages/admin/GeneratorSandbox';
 import OpportunityIntelligence from '@/pages/admin/OpportunityIntelligence';
+import GoogleWorkspaceOS from '@/pages/admin/GoogleWorkspaceOS';
 import DynamicPageView from '@/pages/DynamicPageView';
 import CodeInjector from '@/components/codestudio/CodeInjector';
 
@@ -191,6 +192,7 @@ const AuthenticatedApp = () => {
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<OpportunityIntelligence />} />
         <Route path="opportunity-intelligence" element={<OpportunityIntelligence />} />
+        <Route path="google-workspace-os" element={<GoogleWorkspaceOS />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="alpha-prime" element={<AlphaPrime />} />
         <Route path="fleet" element={<FleetDashboard />} />
