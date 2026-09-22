@@ -19,9 +19,7 @@ export default function SmaiNav() {
     <header className="sticky top-0 z-50 bg-stone-950/95 backdrop-blur border-b border-stone-800">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         <Link to="/smai" className="flex items-center gap-2.5 group">
-          <div className="w-9 h-9 rounded-lg electric-bg flex items-center justify-center shadow-lg shadow-cyan-500/30 electric-glow">
-            <Brain className="w-5 h-5 text-stone-950" />
-          </div>
+          <img src="https://media.base44.com/images/public/6a77f4491f0bf92de9a3ed8b/27c3b4327_generated_image.png" alt="Strategic Minds AI" className="w-10 h-10 rounded-lg object-cover shadow-lg shadow-cyan-500/30 electric-glow" />
           <div className="leading-none">
             <div className="text-[10px] font-bold tracking-[0.18em] text-cyan-400 uppercase">Strategic Minds</div>
             <div className="text-sm font-bold text-white tracking-tight">AI Advisory</div>
