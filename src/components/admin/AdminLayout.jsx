@@ -24,6 +24,7 @@ const navGroups = [
       { to: "/admin/dominance-sandbox", icon: Rocket, label: "Sandbox" },
       { to: "/admin/digital-dominance", icon: Crown, label: "Digital Dominance" },
       { to: "/admin/autonomous-dominance", icon: Crown, label: "Autonomous Dominance" },
+      { to: "/admin/autonomous-refactor", icon: Wrench, label: "Autonomous Refactor" },
       { to: "/admin/builder-library", icon: Sparkles, label: "Builder Library" },
       { to: "/admin/domain-rush", icon: Crown, label: "Domain Rush" },
       { to: "/admin/crystal-ball", icon: Sparkles, label: "Crystal Ball" },

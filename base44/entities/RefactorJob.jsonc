@@ -1,0 +1,216 @@
+{
+  "name": "RefactorJob",
+  "type": "object",
+  "properties": {
+    "owner_id": {
+      "type": "string",
+      "description": "User ID who owns this refactor job"
+    },
+    "job_id": {
+      "type": "string",
+      "description": "Deterministic job ID"
+    },
+    "cycle_id": {
+      "type": "string",
+      "description": "ID of the scan cycle this job belongs to"
+    },
+    "job_type": {
+      "type": "string",
+      "enum": [
+        "scan",
+        "plan",
+        "execute",
+        "validate",
+        "full_cycle",
+        "learn"
+      ],
+      "default": "full_cycle"
+    },
+    "target_type": {
+      "type": "string",
+      "enum": [
+        "backend_function",
+        "entity",
+        "page",
+        "component",
+        "workflow",
+        "full_system"
+      ],
+      "default": "full_system"
+    },
+    "target_name": {
+      "type": "string",
+      "description": "Name of the target being refactored"
+    },
+    "issue_type": {
+      "type": "string",
+      "enum": [
+        "oversized_file",
+        "duplicated_code",
+        "unused_imports",
+        "complex_logic",
+        "missing_error_handling",
+        "inconsistent_pattern",
+        "dead_code",
+        "schema_issue",
+        "performance",
+        "security",
+        "consolidation",
+        "test_failure",
+        "broken_function",
+        "custom"
+      ],
+      "default": "custom"
+    },
+    "issue_description": {
+      "type": "string",
+      "maxLength": 5000,
+      "description": "What the issue is and why it needs refactoring"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low"
+      ],
+      "default": "medium"
+    },
+    "refactor_plan": {
+      "type": "string",
+      "maxLength": 20000,
+      "description": "JSON of the detailed refactoring plan from LLM"
+    },
+    "refactored_code": {
+      "type": "string",
+      "maxLength": 50000,
+      "description": "The generated refactored code"
+    },
+    "new_files": {
+      "type": "string",
+      "maxLength": 30000,
+      "description": "JSON of new files to create during refactoring"
+    },
+    "validation_result": {
+      "type": "string",
+      "maxLength": 10000,
+      "description": "JSON of validation results"
+    },
+    "validation_passed": {
+      "type": "boolean",
+      "default": false
+    },
+    "validation_score": {
+      "type": "integer",
+      "default": 0,
+      "description": "0-100 validation score"
+    },
+    "improvement_score": {
+      "type": "integer",
+      "default": 0,
+      "description": "0-100 improvement score (before vs after)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "scanning",
+        "identified",
+        "planning",
+        "planned",
+        "executing",
+        "executed",
+        "validating",
+        "validated",
+        "deployed",
+        "failed",
+        "rolled_back",
+        "converged",
+        "skipped"
+      ],
+      "default": "scanning"
+    },
+    "autonomous": {
+      "type": "boolean",
+      "default": true
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "normal",
+        "low"
+      ],
+      "default": "normal"
+    },
+    "error_log": {
+      "type": "string",
+      "maxLength": 5000
+    },
+    "lessons_learned": {
+      "type": "string",
+      "maxLength": 10000,
+      "description": "Self-learning insights from this refactoring"
+    },
+    "scan_data": {
+      "type": "string",
+      "maxLength": 10000,
+      "description": "JSON of raw scan data (response times, errors, etc.)"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "owner_id",
+    "job_id",
+    "job_type",
+    "target_type",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": null,
+    "update": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.owner_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

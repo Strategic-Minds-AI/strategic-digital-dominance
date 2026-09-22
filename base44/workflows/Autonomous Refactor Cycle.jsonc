@@ -1,0 +1,69 @@
+{
+  "description": "Runs the 5-phase autonomous refactor cycle every 6 hours: scan all backend functions, identify issues, generate plans, execute refactoring, and validate results.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 */6 * * *",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "name": "Autonomous Refactor Cycle",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "autonomous_refactor_cycle",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_full_refactor_cycle": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "autonomousRefactorEngine",
+            "args": {
+              "action": "full_cycle"
+            }
+          },
+          "then": "check_results",
+          "x-base44": {
+            "title": "Run Full Refactor Cycle",
+            "description": "Scan \u2192 Plan \u2192 Execute \u2192 Validate"
+          }
+        }
+      },
+      {
+        "check_results": {
+          "switch": [
+            {
+              "when": "${ .run_full_refactor_cycle.data.ok == true and .run_full_refactor_cycle.data.scan.jobs_created > 0 }",
+              "then": "end"
+            },
+            {
+              "when": "${ .run_full_refactor_cycle.data.ok == true }",
+              "then": "end"
+            },
+            {
+              "when": "${ true }",
+              "then": "end"
+            }
+          ],
+          "x-base44": {
+            "title": "Check Results",
+            "description": "Branch based on cycle outcome"
+          }
+        }
+      }
+    ]
+  }
+}

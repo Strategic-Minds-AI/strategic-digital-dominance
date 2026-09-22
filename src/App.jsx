@@ -126,6 +126,7 @@ import MetaArchitecture from '@/pages/admin/MetaArchitecture';
 import VisionCortexV2 from '@/pages/admin/VisionCortexV2';
 import DigitalDominance from '@/pages/admin/DigitalDominance';
 import AutonomousDominance from '@/pages/admin/AutonomousDominance';
+import AutonomousRefactor from '@/pages/admin/AutonomousRefactor';
 import DynamicPageView from '@/pages/DynamicPageView';
 import CodeInjector from '@/components/codestudio/CodeInjector';
 
@@ -241,6 +242,7 @@ const AuthenticatedApp = () => {
         <Route path="vision-cortex-v2" element={<VisionCortexV2 />} />
         <Route path="digital-dominance" element={<DigitalDominance />} />
         <Route path="autonomous-dominance" element={<AutonomousDominance />} />
+        <Route path="autonomous-refactor" element={<AutonomousRefactor />} />
         <Route path="empire" element={<WebsiteEmpire />} />
         <Route path="x1-company" element={<X1Company />} />
         <Route path="site-health" element={<SiteHealthMonitor />} />
