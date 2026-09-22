@@ -9,8 +9,9 @@ const navGroups = [
   {
     label: null,
     items: [
+      { to: "/admin", end: true, icon: Sparkles, label: "Opportunity Intelligence" },
       { to: "/admin/command-center", icon: Crown, label: "Command Center" },
-      { to: "/admin", end: true, icon: Sparkles, label: "Generator" },
+      { to: "/admin/vision-studio", icon: Wand2, label: "Vision Studio" },
     ],
   },
   {
