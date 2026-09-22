@@ -32,6 +32,16 @@
       "url": "https://epoxyquotenearme.com"
     }
     </script>
+    <!-- Google tag (gtag.js) — excluded on /admin routes -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-S9L2QREZJQ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      if (!window.location.pathname.startsWith('/admin')) {
+        gtag('config', 'G-S9L2QREZJQ');
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
