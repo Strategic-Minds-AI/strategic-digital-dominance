@@ -133,6 +133,11 @@ import GoogleWorkspaceOS from '@/pages/admin/GoogleWorkspaceOS';
 import InternalArchitecture from '@/pages/admin/InternalArchitecture';
 import GoogleCommandCenter from '@/pages/admin/GoogleCommandCenter';
 import DynamicPageView from '@/pages/DynamicPageView';
+import SmaiHome from '@/pages/smai/Home';
+import SmaiServices from '@/pages/smai/Services';
+import SmaiAbout from '@/pages/smai/About';
+import SmaiCaseStudies from '@/pages/smai/CaseStudies';
+import SmaiContact from '@/pages/smai/Contact';
 import CodeInjector from '@/components/codestudio/CodeInjector';
 
 
@@ -286,6 +291,11 @@ const AuthenticatedApp = () => {
       <Route path="/acquire" element={<Acquire />} />
       <Route path="/contractor" element={<ContractorApp />} />
       <Route path="/contractor/bid" element={<ContractorBid />} />
+      <Route path="/smai" element={<SmaiHome />} />
+      <Route path="/smai/services" element={<SmaiServices />} />
+      <Route path="/smai/about" element={<SmaiAbout />} />
+      <Route path="/smai/case-studies" element={<SmaiCaseStudies />} />
+      <Route path="/smai/contact" element={<SmaiContact />} />
       <Route path="/p/:slug" element={<DynamicPageView />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
