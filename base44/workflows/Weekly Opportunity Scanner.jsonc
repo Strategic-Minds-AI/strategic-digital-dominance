@@ -1,0 +1,98 @@
+{
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "weekly_opportunity_scanner",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "scan_trends": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "opportunityIntelligenceEngine",
+            "args": {
+              "action": "scan",
+              "scanner": "scan_google_trends"
+            }
+          },
+          "then": "scan_competitors",
+          "x-base44": {
+            "title": "Scan Google Trends",
+            "description": "Find trending problems and market gaps"
+          }
+        }
+      },
+      {
+        "scan_competitors": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "opportunityIntelligenceEngine",
+            "args": {
+              "action": "scan",
+              "scanner": "scan_competitor_intel"
+            }
+          },
+          "then": "scan_market_gaps",
+          "x-base44": {
+            "title": "Scan Competitors",
+            "description": "Analyze competitor weaknesses and gaps"
+          }
+        }
+      },
+      {
+        "scan_market_gaps": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "opportunityIntelligenceEngine",
+            "args": {
+              "action": "scan",
+              "scanner": "scan_market_gaps"
+            }
+          },
+          "then": "sync_to_drive",
+          "x-base44": {
+            "title": "Scan Market Gaps",
+            "description": "Find underserved niches and opportunities"
+          }
+        }
+      },
+      {
+        "sync_to_drive": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "googleWorkspaceOS",
+            "args": {
+              "action": "status"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Log to Drive",
+            "description": "Sync scan results to Research folder"
+          }
+        }
+      }
+    ]
+  },
+  "description": "Runs every Monday at 9 AM ET \u2014 scans Google Trends, competitor data, and market gaps for new business opportunities. Results saved as Opportunity entities and synced to Drive.",
+  "name": "Weekly Opportunity Scanner",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 9 * * 1",
+      "one_time_date": null,
+      "timezone": "America/New_York",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  }
+}

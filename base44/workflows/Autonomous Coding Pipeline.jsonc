@@ -1,0 +1,130 @@
+{
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "autonomous_coding_pipeline",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "generate_code": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "autonomousCodingEngine",
+            "args": {
+              "action": "generate"
+            }
+          },
+          "then": "validate_code",
+          "x-base44": {
+            "title": "Engineering Agent \u2014 Generate",
+            "description": "Generate code for pending tasks"
+          }
+        }
+      },
+      {
+        "validate_code": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "closedLoopTester",
+            "args": {
+              "action": "validate"
+            }
+          },
+          "then": "check_validation",
+          "x-base44": {
+            "title": "Validator \u2014 Review & Test",
+            "description": "Run regression tests and quality gates"
+          }
+        }
+      },
+      {
+        "check_validation": {
+          "switch": [
+            {
+              "when": "${ .validate_code.passed == true }",
+              "then": "deploy_code"
+            },
+            {
+              "when": "${ true }",
+              "then": "log_failure"
+            }
+          ],
+          "x-base44": {
+            "title": "Quality Gate",
+            "description": "Branch on validation result"
+          }
+        }
+      },
+      {
+        "deploy_code": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "vercelDeploy",
+            "args": {
+              "action": "deploy"
+            }
+          },
+          "then": "security_audit",
+          "x-base44": {
+            "title": "Deploy to Vercel",
+            "description": "Ship validated code to production"
+          }
+        }
+      },
+      {
+        "security_audit": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "systemAuditor",
+            "args": {
+              "action": "audit"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Security Agent \u2014 Audit",
+            "description": "Audit credentials and access"
+          }
+        }
+      },
+      {
+        "log_failure": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "autonomousCodingEngine",
+            "args": {
+              "action": "log_failure",
+              "validation_result": "${ .validate_code }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Log Failure",
+            "description": "Send failed validation back for repair"
+          }
+        }
+      }
+    ]
+  },
+  "description": "Runs every 2 hours \u2014 the Engineering Agent generates code, the Validator reviews and tests it, and the Security Agent audits credentials. Separate validator/QA cron ensures quality gates are enforced independently.",
+  "name": "Autonomous Coding Pipeline",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "interval",
+      "cron_expression": null,
+      "one_time_date": null,
+      "timezone": "UTC",
+      "interval_value": 2,
+      "interval_unit": "hours",
+      "interval_anchor": "2026-09-22T09:00:00Z",
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  }
+}
