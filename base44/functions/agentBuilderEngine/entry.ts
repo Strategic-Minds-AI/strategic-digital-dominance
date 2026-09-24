@@ -1,3 +1,4 @@
+import { invokeIndependentAi } from '../../shared/coreCompat.ts';
 // ═══════════════════════════════════════════════════════════════════════════
 // agentBuilderEngine — Deterministic Vision-to-Production Agent Builder.
 //
@@ -89,7 +90,7 @@ Return as JSON with this schema:
 
 Select at minimum: orchestrator, ceo, seo_agent, social_media, maintenance_agent, validator. Add others based on the vision. Do not exceed 20 agents.`;
 
-  const result = await base44.integrations.Core.InvokeLLM({
+  const result = await invokeIndependentAi(base44, {
     prompt,
     add_context_from_internet: true,
     model: 'gemini_3_flash',
@@ -151,7 +152,7 @@ The prompt should be 500-1500 words, production-grade, and written as direct ins
 
 Return ONLY the master prompt text, no JSON wrapper.`;
 
-  const result = await base44.integrations.Core.InvokeLLM({
+  const result = await invokeIndependentAi(base44, {
     prompt,
     model: 'claude-sonnet-5',
   });
