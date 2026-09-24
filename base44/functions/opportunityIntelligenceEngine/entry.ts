@@ -1,3 +1,4 @@
+import { invokeIndependentAi } from '../../shared/coreCompat.ts';
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.48";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -169,7 +170,7 @@ export default async function (req: Request): Promise<Response> {
       const results: Record<string, any> = {};
       for (const [key, config] of Object.entries(SCANS)) {
         try {
-          const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
+          const result = await invokeIndependentAi(base44, {
             prompt: config.prompt,
             add_context_from_internet: true,
             model: "gemini_3_flash",
@@ -188,7 +189,7 @@ export default async function (req: Request): Promise<Response> {
     if (!config) {
       return Response.json({ error: `Unknown action: ${action}` }, { status: 400 });
     }
-    const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
+    const result = await invokeIndependentAi(base44, {
       prompt: config.prompt,
       add_context_from_internet: true,
       model: "gemini_3_flash",
