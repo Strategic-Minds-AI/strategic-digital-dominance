@@ -2,7 +2,7 @@
   "redirects": [
     {
       "source": "/",
-      "destination": "/admin/digital-dominance",
+      "destination": "/smai",
       "permanent": false
     }
   ],
