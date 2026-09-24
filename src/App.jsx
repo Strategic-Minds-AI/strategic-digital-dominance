@@ -141,6 +141,10 @@ import SmaiContact from '@/pages/smai/Contact';
 import SmaiIcons from '@/pages/smai/Icons';
 import SmaiClientPortal from '@/pages/smai/ClientPortal';
 import SmaiAdminPortal from '@/pages/smai/AdminPortal';
+import SmaiSolutions from '@/pages/smai/Solutions';
+import SmaiSolutionPage from '@/pages/smai/SolutionPage';
+import SmaiCommand from '@/pages/smai/Command';
+import SmaiAgentOps from '@/pages/smai/AgentOps';
 import CodeInjector from '@/components/codestudio/CodeInjector';
 
 
@@ -311,6 +315,10 @@ const AuthenticatedApp = () => {
       <Route path="/smai/icons" element={<SmaiIcons />} />
       <Route path="/smai/portal" element={<SmaiClientPortal />} />
       <Route path="/smai/admin-portal" element={<SmaiAdminPortal />} />
+      <Route path="/smai/solutions" element={<SmaiSolutions />} />
+      <Route path="/smai/solutions/:solutionSlug" element={<SmaiSolutionPage />} />
+      <Route path="/smai/command" element={<SmaiCommand />} />
+      <Route path="/smai/ops" element={<SmaiAgentOps />} />
       <Route path="/p/:slug" element={<DynamicPageView />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
