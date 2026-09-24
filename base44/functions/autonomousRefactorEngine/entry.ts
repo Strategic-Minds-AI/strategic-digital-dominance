@@ -1,3 +1,4 @@
+import { invokeIndependentAi } from '../../shared/coreCompat.ts';
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.48';
 
 // ============================================================
@@ -86,7 +87,7 @@ async function scanSystem(base44: any): Promise<any> {
     all_functions: KNOWN_FUNCTIONS,
   };
 
-  const llmResponse = await base44.integrations.Core.InvokeLLM({
+  const llmResponse = await invokeIndependentAi(base44, {
     prompt: `You are an autonomous code refactoring analyst. Analyze this backend function scan results and identify the TOP refactoring opportunities.
 
 SCAN RESULTS:
@@ -173,7 +174,7 @@ async function planRefactor(base44: any, jobId: string): Promise<any> {
 
   await svc.entities.RefactorJob.update(job.id, { status: "planning" });
 
-  const planResponse = await base44.integrations.Core.InvokeLLM({
+  const planResponse = await invokeIndependentAi(base44, {
     prompt: `You are an autonomous refactoring planner. Generate a detailed refactoring plan for this issue:
 
 TARGET: ${job.target_name} (${job.target_type})
@@ -223,7 +224,7 @@ async function executeRefactor(base44: any, jobId: string): Promise<any> {
 
   await svc.entities.RefactorJob.update(job.id, { status: "executing" });
 
-  const codeResponse = await base44.integrations.Core.InvokeLLM({
+  const codeResponse = await invokeIndependentAi(base44, {
     prompt: `You are an autonomous code refactoring executor. Based on this refactoring plan, generate the refactored code.
 
 TARGET: ${job.target_name} (${job.target_type})
@@ -273,7 +274,7 @@ async function validateRefactor(base44: any, jobId: string): Promise<any> {
 
   await svc.entities.RefactorJob.update(job.id, { status: "validating" });
 
-  const validationResponse = await base44.integrations.Core.InvokeLLM({
+  const validationResponse = await invokeIndependentAi(base44, {
     prompt: `You are an autonomous code validation engine. Validate this refactored code.
 
 ORIGINAL ISSUE: ${job.issue_type} — ${job.issue_description}
