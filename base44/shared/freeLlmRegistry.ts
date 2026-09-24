@@ -1,3 +1,4 @@
+import { invokeIndependentAi } from './coreCompat.ts';
 // Free LLM Registry — zero-cost LLM endpoints for passive 24/7 operation.
 // Rotate between providers to stay within free tiers. Each has generous free limits.
 // Backend functions import this to avoid paid credits for high-volume autonomous work.
@@ -118,10 +119,10 @@ export async function callFreeLlm(base44, messages, options = {}) {
     }
   }
 
-  // Fallback: Base44 InvokeLLM (always available, uses integration credits)
-  const result = await base44.integrations.Core.InvokeLLM({
+  // Final fallback: Vercel AI Gateway. This stays independent of Base44 Core credits.
+  const result = await invokeIndependentAi(base44, {
     prompt: messages.map((m) => m.content).join('\n\n'),
     response_json_schema: options.jsonSchema || null,
   });
-  return { provider: 'base44', content: typeof result === 'string' ? result : JSON.stringify(result) };
+  return { provider: 'vercel-ai-gateway', content: typeof result === 'string' ? result : JSON.stringify(result) };
 }
