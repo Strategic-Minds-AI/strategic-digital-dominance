@@ -1,3 +1,4 @@
+import { invokeIndependentAi } from '../../shared/coreCompat.ts';
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.48';
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -126,7 +127,7 @@ export default async function (req: Request): Promise<Response> {
 
           // Call LLM with agent's system prompt + conversation history
           const systemPrompt = agent.system_prompt || `You are ${agent.name}, a helpful AI agent.`;
-          const llmResult = await base44.integrations.Core.InvokeLLM({
+          const llmResult = await invokeIndependentAi(base44, {
             prompt: `${systemPrompt}\n\n=== CONVERSATION ===\n${history}\n\n=== INSTRUCTIONS ===\nRespond to the conversation naturally and concisely as ${agent.name}. Stay in character. If the message is directed at you, respond helpfully. Keep responses under 200 words unless detail is needed.`,
           });
 
