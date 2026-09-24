@@ -1,3 +1,4 @@
+import { invokeIndependentAi } from '../../shared/coreCompat.ts';
 // ═══════════════════════════════════════════════════════════════════════════
 // metaAgent — Deterministic intent-to-work-packet router.
 //
@@ -647,7 +648,7 @@ export default async function (req: Request): Promise<Response> {
         let summary = '';
         let architecture = '';
         try {
-          const llmRes = await base44.integrations.Core.InvokeLLM({
+          const llmRes = await invokeIndependentAi(base44, {
             prompt: `Analyze this user goal and provide a structured summary.\n\nGoal: "${goal}"\n\nIntents detected: ${intents.join(', ')}\nSystem types: ${systemTypes.join(', ')}\nMatched arsenal assets: ${matchedAssets.length}\nCapability gaps: ${gaps.length}\n\nProvide:\n1. A 2-3 sentence summary of what the user wants to accomplish\n2. A recommended architecture in 2-3 sentences\n\nFormat as JSON: {"summary": "...", "architecture": "..."}`,
             response_json_schema: {
               type: 'object',
