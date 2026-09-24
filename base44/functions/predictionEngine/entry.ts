@@ -1,3 +1,4 @@
+import { invokeIndependentAi } from '../../shared/coreCompat.ts';
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.48';
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -71,7 +72,7 @@ CONFIDENCE: [0.0-1.0]
 REASONING: [brief explanation]
 FACTORS: [key variables]`;
 
-        const llmResult = await base44.integrations.Core.InvokeLLM({
+        const llmResult = await invokeIndependentAi(base44, {
           prompt,
           response_json_schema: {
             type: 'object',
