@@ -1,3 +1,4 @@
+import { invokeIndependentAi } from '../../shared/coreCompat.ts';
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.48';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -59,7 +60,7 @@ export default async function (req: Request): Promise<Response> {
     }
 
     const svc = base44.asServiceRole;
-    const result = await svc.integrations.Core.InvokeLLM({
+    const result = await invokeIndependentAi(base44, {
       prompt,
       response_json_schema: SCHEMAS[simulation_type],
     });
