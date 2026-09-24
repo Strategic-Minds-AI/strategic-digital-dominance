@@ -1,3 +1,4 @@
+import { invokeIndependentAi } from '../../shared/coreCompat.ts';
 // ═══════════════════════════════════════════════════════════════════════════
 // visionEngine — AI-Assisted Vision → 10 Strategies → Names + URLs → Agents
 //
@@ -104,7 +105,7 @@ Return as JSON:
   "clarifying_questions": ["string"]
 }`;
 
-        const result = await base44.integrations.Core.InvokeLLM({
+        const result = await invokeIndependentAi(base44, {
           prompt,
           add_context_from_internet: true,
           model: 'gemini_3_flash',
@@ -179,7 +180,7 @@ Return as JSON:
   ]
 }`;
 
-        const result = await base44.integrations.Core.InvokeLLM({
+        const result = await invokeIndependentAi(base44, {
           prompt,
           add_context_from_internet: true,
           model: 'gemini_3_flash',
@@ -277,7 +278,7 @@ Return as JSON:
   ]
 }`;
 
-        const result = await base44.integrations.Core.InvokeLLM({
+        const result = await invokeIndependentAi(base44, {
           prompt,
           add_context_from_internet: true,
           model: 'gemini_3_flash',
