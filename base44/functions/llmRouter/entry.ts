@@ -1,3 +1,4 @@
+import { invokeIndependentAi } from '../../shared/coreCompat.ts';
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.48';
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -37,7 +38,7 @@ export default async function (req: Request): Promise<Response> {
 
         if (!connections || connections.length === 0) {
           // Fall back to Base44 built-in InvokeLLM
-          const result = await base44.integrations.Core.InvokeLLM({
+          const result = await invokeIndependentAi(base44, {
             prompt: body.prompt,
             response_json_schema: body.response_json_schema || undefined,
             model: body.model || undefined,
@@ -113,7 +114,7 @@ export default async function (req: Request): Promise<Response> {
           tokensUsed = data.usageMetadata?.totalTokenCount || 0;
         } else {
           // Fall back to Base44
-          const result = await base44.integrations.Core.InvokeLLM({
+          const result = await invokeIndependentAi(base44, {
             prompt: body.prompt,
             response_json_schema: body.response_json_schema || undefined,
           });
