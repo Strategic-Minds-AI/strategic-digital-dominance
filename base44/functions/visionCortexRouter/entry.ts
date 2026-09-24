@@ -1,3 +1,4 @@
+import { invokeIndependentAi } from '../../shared/coreCompat.ts';
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.48';
 
 // ════════════════════════════════════════════════════════════════
@@ -189,7 +190,7 @@ export default async function (req: Request): Promise<Response> {
     // Retry with fallback models to avoid 500s from single-model unavailability
     for (const model of ['claude-sonnet-5', 'automatic']) {
       try {
-        llmRes = await svc.integrations.Core.InvokeLLM({
+        llmRes = await invokeIndependentAi(base44, {
           prompt: fullPrompt,
           model,
           response_json_schema: jsonSchema,
