@@ -144,6 +144,15 @@ import SmaiAdminPortal from '@/pages/smai/AdminPortal';
 import CodeInjector from '@/components/codestudio/CodeInjector';
 
 
+const RootRoute = () => {
+  const host = typeof window !== 'undefined' ? window.location.hostname.toLowerCase() : '';
+  const isDigitalDominanceHost = host.includes('strategic-digital-dominance');
+
+  return isDigitalDominanceHost
+    ? <Navigate to="/admin/digital-dominance" replace />
+    : <Home />;
+};
+
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
@@ -174,7 +183,7 @@ const AuthenticatedApp = () => {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/oauth/consent" element={<OAuthConsent />} />
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<RootRoute />} />
       <Route path="/estimate" element={<Estimator />} />
       <Route path="/funnel" element={<Funnel />} />
       <Route path="/results/:id" element={<Results />} />
