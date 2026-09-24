@@ -1,0 +1,15 @@
+{
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/smai",
+      "permanent": false
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
+  ]
+}
