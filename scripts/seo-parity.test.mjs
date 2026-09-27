@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { buildParitySnapshot, summarizeParity } from '../base44/shared/seoParity.mjs';
 
 const NOW = Date.parse('2026-09-27T18:30:00Z');
@@ -103,4 +104,13 @@ test('summary counts statuses exactly once', () => {
   assert.equal(summary.verified + summary.partial + summary.blocked, 8);
   assert.ok(summary.verified >= 3);
   assert.equal(summary.semrushVerifier.status, 'BLOCKED');
+});
+
+
+test('seoGenerator exposes the semrushParity runtime contract', async () => {
+  const source = await readFile(new URL('../base44/functions/seoGenerator/entry.ts', import.meta.url), 'utf8');
+  assert.match(source, /buildParitySnapshot/);
+  assert.match(source, /case 'semrushParity':/);
+  assert.match(source, /paidSemrushCalls:\s*0/);
+  assert.match(source, /refreshSources === true/);
 });
