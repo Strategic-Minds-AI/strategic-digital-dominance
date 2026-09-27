@@ -1,0 +1,21 @@
+{
+  "date": "2026-09-27",
+  "repository": "Strategic-Minds-AI/strategic-digital-dominance",
+  "baseSha": "c88bf10945237457c73a76c5c36510fea33f97d5",
+  "pilotDomain": "epoxyquotenearme.com",
+  "liveValidation": "BLOCKED",
+  "reason": "no_api_units",
+  "discoveryRequests": 3,
+  "executeReportRequests": 0,
+  "actualUnits": null,
+  "providerTraceIds": [
+    "f1147dbb81768e2c2462f670ef575f00",
+    "68fd62a8027d1d4335efcf37648eab48",
+    "f02961bfb451016717ea13233652ebdc"
+  ],
+  "localAdapterTests": { "passed": 14, "failed": 0, "fixtureOnly": true },
+  "existingAlphaPrimeChecks": { "passed": 9, "failed": 0 },
+  "independentValidation": "NOT_PERFORMED",
+  "productionChanged": false,
+  "rolloutEnabled": false
+}
