@@ -10,7 +10,8 @@
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc -p ./jsconfig.json",
     "test:alpha-prime": "node scripts/alpha-prime-regression.mjs",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:seo-parity": "node --test scripts/seo-parity.test.mjs"
   },
   "dependencies": {
     "@base44/sdk": "^0.8.49",
