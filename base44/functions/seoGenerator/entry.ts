@@ -12,7 +12,9 @@ import { secrets } from 'base44:runtime';
 //   generateContent   — generate SEO-optimized page content for a keyword
 //   monitorCompetitors — fetch competitor pages and detect changes
 //   syncSearchConsole — pull latest Search Console query data
-//   semrushParity     — owned-data-first Semrush functional parity snapshot (zero paid Semrush calls)\n//   runFullCycle      — run all of the above in sequence
+//   semrushEvidencePlan — zero-unit Semrush pilot preflight
+//   semrushParity     — owned-data-first Semrush functional parity snapshot (zero paid Semrush calls)
+//   runFullCycle      — run all of the above in sequence
 //
 // Invoke: base44.functions.invoke('seoGenerator', { action, url?, keyword?, competitorUrls? })
 // ─────────────────────────────────────────────────────────────────────────────
@@ -269,7 +271,6 @@ async function syncSearchConsole(svc, base44) {
   }
 }
 
-
 function unwrapInvoke(result) {
   return result?.data ?? result ?? null;
 }
@@ -320,7 +321,12 @@ async function semrushParity(svc, base44, body = {}) {
 
   const seoState = sourceState(settled[0], x => Array.isArray(x) ? x : []);
   const competitorState = sourceState(settled[1], x => Array.isArray(x) ? x : []);
-  const gaState = sourceState(settled[2], x => x?.metrics || null);
+  const gaState = sourceState(settled[2], x => {
+    const expected = String(registry.ga4_property_id || '').replace(/^properties\//, '');
+    const selected = String(x?.properties?.[0]?.id || '').replace(/^properties\//, '');
+    if (!expected || !selected || expected !== selected) return null;
+    return x?.metrics || null;
+  });
   const cwvState = sourceState(settled[3], x => x?.ok === false ? null : x);
 
   sourceStatus.gsc = seoState.status;
@@ -432,7 +438,6 @@ export default async function (req: Request): Promise<Response> {
     let result;
     switch (action) {
       case 'semrushEvidencePlan':
-        // Read-only, admin-gated preflight. No provider calls or fallback generation.
         result = planPilot(body.domain);
         break;
       case 'semrushParity':
