@@ -114,3 +114,13 @@ test('seoGenerator exposes the semrushParity runtime contract', async () => {
   assert.match(source, /paidSemrushCalls:\s*0/);
   assert.match(source, /refreshSources === true/);
 });
+
+
+test('empty GA object and null metrics do not become verified zero traffic', () => {
+  const input = baseInput();
+  input.ga4 = { sessions: null, users: null };
+  const snap = buildParitySnapshot(input);
+  assert.equal(snap.capabilities.trafficOverview.status, 'BLOCKED');
+  assert.equal(snap.capabilities.trafficOverview.metrics.sessions, null);
+  assert.equal(snap.capabilities.trafficOverview.metrics.users, null);
+});
