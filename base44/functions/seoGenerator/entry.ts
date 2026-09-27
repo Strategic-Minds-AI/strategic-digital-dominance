@@ -18,6 +18,7 @@ import { secrets } from 'base44:runtime';
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { generateText } from '../../shared/aiGateway.ts';
+import { planPilot } from '../../shared/semrushEvidence.mjs';
 
 function extractMeta(html, regex) {
   const m = html.match(regex);
@@ -281,6 +282,10 @@ export default async function (req: Request): Promise<Response> {
 
     let result;
     switch (action) {
+      case 'semrushEvidencePlan':
+        // Read-only, admin-gated preflight. No provider calls or fallback generation.
+        result = planPilot(body.domain);
+        break;
       case 'technicalAudit':
         result = await technicalAudit(svc, base44, body.url);
         break;
