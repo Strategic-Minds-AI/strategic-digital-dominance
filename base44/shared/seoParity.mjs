@@ -1,7 +1,7 @@
 const FRESH_GSC_MS = 72 * 60 * 60 * 1000;
 const VERIFIED_SOURCES = new Set(['direct_fetch', 'semrush']);
 
-const n = (value) => Number.isFinite(Number(value)) ? Number(value) : null;
+const n = (value) => value === null || value === undefined || value === '' ? null : (Number.isFinite(Number(value)) ? Number(value) : null);
 const round2 = (value) => value === null ? null : Math.round(value * 100) / 100;
 
 function normalizeDomain(value) {
@@ -105,7 +105,7 @@ export function buildParitySnapshot(input = {}) {
   const cwv = input.cwv && typeof input.cwv === 'object' ? input.cwv : null;
   const competitors = evidenceRows(input.competitors, 'competitor');
   const backlinks = evidenceRows(input.backlinks, 'backlink');
-  const trafficAvailable = !!ga4;
+  const trafficAvailable = !!ga4 && ['sessions', 'users', 'bounce_rate', 'avg_session_duration', 'page_views', 'engagement_rate'].some(key => n(ga4[key]) !== null);
   const technicalAvailable = !!technical;
   const cwvAvailable = !!cwv;
 
