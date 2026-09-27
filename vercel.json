@@ -1,0 +1,148 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "routes": [
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/admin(?:/.*)?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/oauth/consent/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/contractor/bid/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/smai(?:/(?:services|about|case-studies|contact|icons|portal|admin-portal))?/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/(?:results|book|booked)/[^/]+/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/p/[^/]+/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/(?:2-car-garage-epoxy-cost|3-car-garage-epoxy-cost|ThankYou|about|acquire|app-onboarding|app-settings|color-charts|connect|contact|contractor|conversations|elite|epoxy-garage-floor-cost|estimate|forgot-password|funnel|gallery|garage-floor-coating-cost|guides|how-it-works|locations|login|portal|questionnaire)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/(?:register|reset-password|reviews|tool-hub|visualizer-test)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/connecticut/(?:bridgeport|greenwich|norwalk|stamford)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/dc/(?:washington)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/delaware/(?:wilmington)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/fl/(?:pompano-beach)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/florida/(?:alafaya|altamonte-springs|apopka|atlantic-beach|bellview|biscayne-gardens|boca-raton|bradenton|cape-coral|clearwater|conway|cooper-city|coral-gables|coral-springs|crestview|cypress-lake|daytona-beach|deerfield-beach|delray-beach|deltona|destin|doctor-phillips|dunedin|edgewater|egypt-lake-leto|englewood|eustis|fernandina-beach|florida-city|florida-ridge|fort-lauderdale|fort-myers|fort-pierce|fort-walton-beach|fountainebleau|four-corners|fruit-cove|goldenrod|gulf-breeze|haines-city|hialeah|holly-hill|hollywood|homestead|horizon-west|iona|jacksonville|jacksonville-beach|kendale-lakes|kendall-west|kissimmee|lady-lake|largo|lauderhill|lealman|leesburg|leisure-city|lutz|mango|miami)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/florida/(?:miami-gardens|milton|miramar|naples|new-port-richey|new-smyrna-beach|niceville|nocatee|north-miami|north-palm-beach|north-port|ocoee|oldsmar|orlando|ormond-beach|palatka|palm-city|palm-river-clair-mel|palm-springs|palmetto|pembroke-pines|pensacola|pinellas-park|plant-city|plantation|poinciana|pompano-beach|port-charlotte|port-orange|port-st-lucie|punta-gorda|richmond-west|riverview|saint-augustine|sanford|sarasota|sarasota-springs|sebastian|south-daytona|st-cloud|st-petersburg|stuart|sunrise|sweetwater|tamiami|tampa|temple-terrace|venice|vero-beach|villas|wesley-chapel|west-little-river|west-pensacola|westchester|weston|winter-garden|winter-haven|winter-springs|wright|zephyrhills)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/georgia/(?:alpharetta|atlanta|clayton|conyers|decatur|kennesaw|lawrenceville|marietta|pooler|rome|roswell|sandy-springs|savannah|smyrna|snellville|stone-mountain|tucker|woodstock)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/illinois/(?:aurora|elgin|joliet|naperville|peoria|rockford)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/indiana/(?:evansville|fort-wayne|south-bend)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/iowa/(?:cedar-rapids|davenport)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/kentucky/(?:louisville)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/maryland/(?:bethesda|bowie|brentwood|college-park|gaithersburg|hyattsville|rockville|silver-spring)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/michigan/(?:ann-arbor|bloomfield|clinton-township|dearborn|detroit|lansing|sterling-heights|warren)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/new-jersey/(?:camden|cherry-hill|clifton|garfield|hackensack|jersey-city|little-falls|newark|paramus|passaic|paterson|trenton)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/new-york/(?:brentwood|freeport|hempstead|herkimer|huntington|levittown|long-beach|marcy|new-hartford|new-rochelle|new-york|oneida|richmond-hill|rome|utica|valley-stream|white-plains|yonkers)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/north-carolina/(?:cary|chapel-hill|charlotte|concord|durham|garner|gastonia|huntersville|kannapolis|raleigh|wake-forest)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/ohio/(?:akron|cincinnati|cleveland|columbus|dayton|toledo)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/oklahoma/(?:bethany|choctaw|del-city|edmond|midwest-city|oklahoma-city|warr-acres)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/pennsylvania/(?:allentown|bethlehem|hazleton|king-of-prussia|lebanon|norristown|philadelphia|pottsville|reading)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/south-carolina/(?:anderson|charleston|easley|goose-creek|greenville|greer|hilton-head-island|mount-pleasant|north-charleston|rock-hill|simpsonville|spartanburg|summerville)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/tennessee/(?:chattanooga|nashville)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/texas/(?:allen|amarillo|arlington|atascocita|austin|baytown|bedford|burleson|carrollton|cedar-park|channelview|conroe|coppell|dallas|duncanville|edinburg|el-paso|euless|farmers-branch|flower-mound|fort-worth|friendswood|frisco|garland|georgetown|grand-prairie|grapevine|haltom-city|harlingen|houston|hurst|irving|keller|kyle|la-porte|lancaster|league-city|lewisville|little-elm|lubbock|mansfield|mcallen|mckinney|mesquite|mission|mission-bend|missouri-city|new-braunfels|north-richland-hills|pasadena|pearland|pflugerville|pharr|plano|richardson|rockwall|rosenberg|round-rock|rowlett|san-antonio)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/texas/(?:san-marcos|schertz|socorro|south-houston|sugar-land|the-colony|timberwood-park|weslaco)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/virginia/(?:alexandria|arlington|ashburn|centreville|chantilly|chesapeake|fairfax|hampton|herndon|leesburg|manassas|manassas-park|mount-vernon|newport-news|norfolk|poquoson|portsmouth|reston|springfield|sterling|suffolk|virginia-beach|williamsburg)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/wisconsin/(?:green-bay|milwaukee)/?",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/.*",
+      "status": 404
+    }
+  ]
+}
