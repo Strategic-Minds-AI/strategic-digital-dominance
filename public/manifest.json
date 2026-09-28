@@ -1,52 +1,56 @@
 {
-  "name": "Epoxy Garage Floor Estimates",
-  "short_name": "Epoxy Floors",
-  "description": "Get an instant epoxy garage floor cost estimate. Visualize your floor with real manufacturer colors, then book your installation.",
-  "start_url": "/",
+  "name": "Strategic Minds AI",
+  "short_name": "Strategic Minds",
+  "description": "Autonomous AI systems, multi-agent operations, data intelligence, AI software, and digital growth infrastructure.",
+  "start_url": "/smai",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#0c0a09",
-  "theme_color": "#0c0a09",
-  "categories": ["business", "lifestyle", "productivity"],
+  "orientation": "any",
+  "background_color": "#090b10",
+  "theme_color": "#090b10",
+  "categories": [
+    "business",
+    "productivity",
+    "developer"
+  ],
   "icons": [
     {
-      "src": "https://media.base44.com/images/public/6a77f4491f0bf92de9a3ed8b/20999222a_Logo_XPS_Color_12-20-24.webp",
+      "src": "https://media.base44.com/images/public/6a77f4491f0bf92de9a3ed8b/27c3b4327_generated_image.png",
       "sizes": "192x192",
-      "type": "image/webp",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://media.base44.com/images/public/6a77f4491f0bf92de9a3ed8b/20999222a_Logo_XPS_Color_12-20-24.webp",
+      "src": "https://media.base44.com/images/public/6a77f4491f0bf92de9a3ed8b/27c3b4327_generated_image.png",
       "sizes": "512x512",
-      "type": "image/webp",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://media.base44.com/images/public/6a77f4491f0bf92de9a3ed8b/20999222a_Logo_XPS_Color_12-20-24.webp",
+      "src": "https://media.base44.com/images/public/6a77f4491f0bf92de9a3ed8b/27c3b4327_generated_image.png",
       "sizes": "512x512",
-      "type": "image/webp",
+      "type": "image/png",
       "purpose": "maskable"
     }
   ],
   "shortcuts": [
     {
-      "name": "Get Free Estimate",
-      "short_name": "Estimate",
-      "url": "/funnel",
-      "description": "Get your instant epoxy garage floor cost estimate"
+      "name": "AI Command",
+      "short_name": "Command",
+      "url": "/smai/command",
+      "description": "Open the Strategic Minds AI operator command surface"
     },
     {
-      "name": "Color Charts",
-      "short_name": "Colors",
-      "url": "/color-charts",
-      "description": "Browse manufacturer color charts"
+      "name": "Agent Operations",
+      "short_name": "Agent OS",
+      "url": "/smai/ops",
+      "description": "Inspect agents, tasks, queues, and validation activity"
     },
     {
-      "name": "Epoxy Pro App",
-      "short_name": "Pro App",
-      "url": "/elite",
-      "description": "Open the Epoxy Pro Assistant app"
+      "name": "Solutions",
+      "short_name": "Solutions",
+      "url": "/smai/solutions",
+      "description": "Explore Strategic Minds AI systems and consulting capabilities"
     }
   ]
 }

@@ -4,10 +4,11 @@ import { Menu, X, Brain } from "lucide-react";
 
 const LINKS = [
   { to: "/smai", label: "Home" },
+  { to: "/smai/solutions", label: "Solutions" },
   { to: "/smai/services", label: "Services" },
   { to: "/smai/about", label: "About" },
-  { to: "/smai/case-studies", label: "Case Studies" },
-  { to: "/smai/portal", label: "Portal" },
+  { to: "/smai/ops", label: "Agent OS" },
+  { to: "/smai/command", label: "Command" },
   { to: "/smai/contact", label: "Contact" },
 ];
 
