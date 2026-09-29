@@ -14,6 +14,7 @@ const robots = (html) => (html.match(/<meta[^>]+name=["']robots["'][^>]+content=
 
 const home = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const homeTitle = title(home);
+assert.equal(canonical(home), 'https://epoxyquotenearme.com/');
 
 const article = read('/polyaspartic-vs-epoxy-garage-floor');
 assert.notEqual(title(article), homeTitle, 'article shell must not reuse homepage title');
