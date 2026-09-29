@@ -152,6 +152,13 @@ export function generateServerSeoShells(rootDir=process.cwd()) {
   if (!fs.existsSync(templatePath)) throw new Error('SERVER_SEO_TEMPLATE_MISSING');
 
   const template = fs.readFileSync(templatePath, 'utf8');
+  const home = injectMetadata(template, {
+    title: 'Epoxy Garage Floor Cost & Instant Estimate | EpoxyQuoteNearMe',
+    description: 'Get an instant epoxy garage floor cost estimate in about 60 seconds. Free, no obligation, personalized price range for your garage.',
+    canonical: '/',
+    robots: 'index, follow'
+  });
+  fs.writeFileSync(templatePath, home);
   const sources = [
     path.join(rootDir, 'public', 'sitemap.xml'),
     path.join(rootDir, 'public', 'sitemap-epn.xml')
@@ -163,13 +170,13 @@ export function generateServerSeoShells(rootDir=process.cwd()) {
   for (const route of inputRoutes) {
     const meta = routeMeta(route);
     if (!meta) continue;
-    writeShell(distDir, template, route, meta);
+    writeShell(distDir, home, route, meta);
     emitted.add(route);
 
     if (meta.derivedCanonical && !emitted.has(meta.derivedCanonical)) {
       const canonicalMeta = routeMeta(meta.derivedCanonical);
       if (canonicalMeta) {
-        writeShell(distDir, template, meta.derivedCanonical, canonicalMeta);
+        writeShell(distDir, home, meta.derivedCanonical, canonicalMeta);
         emitted.add(meta.derivedCanonical);
       }
     }
