@@ -1,86 +1,86 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.40";
 import { logStep } from "../../shared/sopLog.ts";
 
-const SITE = "https://epoxyquotenearme.base44.app";
-const SITEMAP = `${SITE}/sitemap.xml`;
-// IndexNow key — the matching key file is hosted at /a3e6350908f1c2d4e6b8a0123456789a.txt
-const INDEXNOW_KEY = "a3e6350908f1c2d4e6b8a0123456789a";
-
-const URLS = [
-  `${SITE}/`,
-  `${SITE}/estimate`,
-  `${SITE}/funnel`,
-  `${SITE}/how-it-works`,
-  `${SITE}/gallery`,
-  `${SITE}/reviews`,
-  `${SITE}/about`,
-  `${SITE}/contact`,
-  `${SITE}/locations`,
-  `${SITE}/color-charts`,
-  `${SITE}/guides`,
-  `${SITE}/epoxy-garage-floor-cost`,
-  `${SITE}/2-car-garage-epoxy-cost`,
-  `${SITE}/3-car-garage-epoxy-cost`,
-  `${SITE}/garage-floor-coating-cost`,
-  `${SITE}/fl/pompano-beach`,
-  `${SITE}/fl/miami`, `${SITE}/fl/tampa`, `${SITE}/fl/orlando-altamonte-springs`,
-  `${SITE}/fl/pensacola`, `${SITE}/fl/fort-myers`, `${SITE}/fl/orlando-winter-garden`,
-  `${SITE}/fl/naples`, `${SITE}/fl/port-st-lucie`, `${SITE}/fl/jacksonville`,
-  `${SITE}/fl/sarasota`, `${SITE}/fl/daytona-beach`,
-  `${SITE}/tx/austin`, `${SITE}/tx/amarillo`, `${SITE}/tx/dallas-allen`,
-  `${SITE}/tx/dallas-euless`, `${SITE}/tx/houston`, `${SITE}/tx/south-houston`,
-  `${SITE}/tx/san-antonio`, `${SITE}/tx/el-paso`, `${SITE}/tx/mcallen`,
-  `${SITE}/va/portsmouth-tidewater`, `${SITE}/va/chantilly`, `${SITE}/dc/washington-dc`,
-  `${SITE}/ny/marcy`, `${SITE}/ny/westchester`, `${SITE}/ny/long-island`,
-  `${SITE}/nj/garfield`, `${SITE}/pa/greater-philadelphia`, `${SITE}/pa/pottsville`,
-  `${SITE}/sc/charleston`, `${SITE}/sc/greenville`,
-  `${SITE}/ga/atlanta-marietta`, `${SITE}/ga/savannah`, `${SITE}/ga/atlanta-stone-mountain`,
-  `${SITE}/nc/charlotte`, `${SITE}/nc/raleigh`,
-  `${SITE}/ok/oklahoma-city`, `${SITE}/wi/milwaukee`,
-  `${SITE}/tn/nashville`, `${SITE}/tn/chattanooga`, `${SITE}/ky/louisville`,
-  `${SITE}/ia/cedar-rapids`, `${SITE}/il/chicago`, `${SITE}/il/rockford`,
-  `${SITE}/mi/bloomfield`, `${SITE}/co/denver-englewood`,
+const STATIC_PUBLIC_ROUTES = [
+  "/", "/estimate", "/how-it-works", "/gallery", "/reviews", "/about", "/contact",
+  "/locations", "/color-charts", "/guides", "/epoxy-garage-floor-cost",
+  "/2-car-garage-epoxy-cost", "/3-car-garage-epoxy-cost",
+  "/garage-floor-coating-cost", "/polyaspartic-vs-epoxy-garage-floor",
 ];
-
-async function indexNowPost(endpoint) {
-  try {
-    const r = await fetch(endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json; charset=utf-8" },
-      body: JSON.stringify({
-        host: "epoxyquotenearme.base44.app",
-        key: INDEXNOW_KEY,
-        keyLocation: `${SITE}/${INDEXNOW_KEY}.txt`,
-        urlList: URLS,
-      }),
-    });
-    return { status: r.status, ok: r.ok || r.status === 202 };
-  } catch (e) { return { status: 0, ok: false, error: e.message }; }
-}
 
 export default async function (req: Request): Promise<Response> {
   try {
-    // Require an authenticated admin caller.
     const base44 = createClientFromRequest(req);
+    const svc = base44.asServiceRole;
+    const body = await req.json().catch(() => ({}));
+    const mode = String(body.mode || "dry_run");
+    if (!new Set(["dry_run", "execute"]).has(mode)) {
+      return Response.json({ ok: false, status: "BLOCKED", reason: "INVALID_MODE" }, { status: 400 });
+    }
 
-    // IndexNow is the single protocol consumed by Bing, Yandex, Seznam & Naver.
-    // Hit the central endpoint plus Yandex's own endpoint for redundancy.
-    const [central, yandex] = await Promise.all([
-      indexNowPost("https://api.indexnow.org/IndexNow"),
-      indexNowPost("https://yandex.com/indexnow"),
-    ]);
+    const registryRows = await svc.entities.CanonicalSiteRegistry.list(1);
+    const registry = registryRows?.[0];
+    const domain = String(registry?.canonical_domain || "").trim().toLowerCase();
+    if (!domain || domain.endsWith(".base44.app")) {
+      return Response.json({ ok: false, status: "BLOCKED", reason: "CANONICAL_DOMAIN_UNAVAILABLE" }, { status: 409 });
+    }
+    const site = `https://${domain}`;
+    const locationRows = await svc.entities.CanonicalLocationRegistry.list(1000);
+    const verifiedLocations = locationRows
+      .filter((row: any) => row.validation_status === "passed" && row.sitemap_status !== "stale" && row.canonical_url)
+      .map((row: any) => String(row.canonical_url).replace(/\/$/, ""))
+      .filter((url: string) => url.startsWith(site + "/"));
 
-    await logStep(base44, { category: "seo", action: "Submitted URLs to indexers", detail: `${URLS.length} URLs via IndexNow`, meta: `central:${central.status} yandex:${yandex.status}`, source: "submitToIndexers" });
+    const urls = [...new Set([
+      ...STATIC_PUBLIC_ROUTES.map((route) => route === "/" ? site + "/" : site + route),
+      ...verifiedLocations,
+    ])];
+
+    const plan = {
+      ok: true,
+      mode,
+      action_class: mode === "execute" ? "PROTECTED" : "READ",
+      canonical_domain: domain,
+      sitemap: `${site}/sitemap.xml`,
+      urls_planned: urls.length,
+      sample_urls: urls.slice(0, 10),
+      registry_locations_used: verifiedLocations.length,
+    };
+    if (mode === "dry_run") return Response.json({ ...plan, writes_performed: 0 });
+    if (body.approved_external_write !== true) {
+      return Response.json({ ...plan, ok: false, status: "APPROVAL_REQUIRED", reason: "INDEXNOW_SUBMISSION_REQUIRES_OPERATOR_APPROVAL", writes_performed: 0 }, { status: 403 });
+    }
+
+    const key = process.env.INDEXNOW_KEY || "";
+    if (!key) return Response.json({ ...plan, ok: false, status: "BLOCKED", reason: "INDEXNOW_KEY_UNAVAILABLE", writes_performed: 0 }, { status: 409 });
+
+    const response = await fetch("https://api.indexnow.org/IndexNow", {
+      method: "POST",
+      headers: { "Content-Type": "application/json; charset=utf-8" },
+      body: JSON.stringify({
+        host: domain,
+        key,
+        keyLocation: `${site}/${key}.txt`,
+        urlList: urls.slice(0, 1000),
+      }),
+    });
+
+    await logStep(base44, {
+      category: "seo",
+      action: "Approved IndexNow submission",
+      detail: `${urls.length} canonical URL(s) submitted`,
+      meta: `status:${response.status} host:${domain}`,
+      source: "submitToIndexers",
+    });
 
     return Response.json({
-      ok: true,
-      urls: URLS.length,
-      sitemap: SITEMAP,
-      indexNow: central,
-      yandex,
-      submittedAt: new Date().toISOString(),
-    });
+      ...plan,
+      ok: response.ok || response.status === 202,
+      status: response.ok || response.status === 202 ? "EXECUTED" : "BLOCKED",
+      writes_performed: response.ok || response.status === 202 ? 1 : 0,
+      indexNow: { status: response.status, ok: response.ok || response.status === 202 },
+    }, { status: response.ok || response.status === 202 ? 200 : 502 });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ ok: false, status: "BLOCKED", error: error instanceof Error ? error.message : "UNKNOWN_ERROR", writes_performed: 0 }, { status: 500 });
   }
 }
