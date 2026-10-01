@@ -62,6 +62,15 @@ function writeShell(distDir, template, route, meta) {
   fs.writeFileSync(target, injectMetadata(template, { ...meta, route }));
 }
 
+function sitemapXml(routes) {
+  const now = new Date().toISOString().slice(0, 10);
+  const rows = [...routes].sort().map((route) => {
+    const url = SITE + (route === '/' ? '/' : route);
+    return `  <url><loc>${url}</loc><lastmod>${now}</lastmod></url>`;
+  });
+  return ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">', ...rows, '</urlset>', ''].join('\n');
+}
+
 function verifiedStoreRoutes() {
   return XPS_LOCATIONS
     .filter((location) => location.status !== 'coming_soon')
@@ -95,6 +104,7 @@ export function generateServerSeoShells(rootDir = process.cwd()) {
     emitted.add(item.route);
   }
 
+  fs.writeFileSync(path.join(distDir, 'sitemap.xml'), sitemapXml(emitted));
   return { emitted: [...emitted].sort() };
 }
 
