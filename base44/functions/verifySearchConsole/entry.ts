@@ -1,14 +1,13 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.40";
 
-const SITE_URL = "https://epoxygaragefloorestimate.com";
-
-// Mints a fresh access token from the stored refresh token.
-async function getAccessToken(base44) {
+async function getAccessToken(base44: any) {
   const list = await base44.asServiceRole.entities.AppSettings.list(1);
   const refreshToken = list[0]?.google_refresh_token;
-  if (!refreshToken) throw new Error("Google refresh token not set — connect the verifier first");
+  if (!refreshToken) throw new Error("GOOGLE_REFRESH_TOKEN_UNAVAILABLE");
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+  if (!clientId || !clientSecret) throw new Error("GOOGLE_OAUTH_CONFIGURATION_UNAVAILABLE");
+
   const res = await fetch("https://oauth2.googleapis.com/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -20,61 +19,81 @@ async function getAccessToken(base44) {
     }),
   });
   const data = await res.json();
-  if (!data.access_token) throw new Error("Token refresh failed: " + JSON.stringify(data));
+  if (!data.access_token) throw new Error("TOKEN_REFRESH_FAILED");
   return data.access_token;
 }
 
-// Fully automatic Search Console verification:
-// 1. siteverification.getToken (META) -> verification token
-// 2. persist token to AppSettings (Seo.jsx injects it into the rendered page)
-// 3. siteverification.insert (META) -> Google fetches the rendered page and verifies
-// 4. webmasters.sites.add -> registers the now-verified property in Search Console
 export default async function (req: Request): Promise<Response> {
   try {
     const base44 = createClientFromRequest(req);
-    const accessToken = await getAccessToken(base44);
+    const body = await req.json().catch(() => ({}));
+    const registryRows = await base44.asServiceRole.entities.CanonicalSiteRegistry.list(1);
+    const registry = registryRows?.[0];
+    const domain = String(registry?.canonical_domain || "").trim().toLowerCase();
+    if (!domain) return Response.json({ ok: false, status: "BLOCKED", reason: "CANONICAL_DOMAIN_UNKNOWN" }, { status: 409 });
 
-    // 1. Get the META verification token
+    const siteUrl = `https://${domain}`;
+    if (body.approved_protected_action !== true) {
+      return Response.json({
+        ok: false,
+        status: "APPROVAL_REQUIRED",
+        action_class: "PROTECTED",
+        siteUrl,
+        reason: "SEARCH_CONSOLE_OWNERSHIP_VERIFICATION_REQUIRES_OPERATOR_APPROVAL",
+      }, { status: 403 });
+    }
+
+    const accessToken = await getAccessToken(base44);
     const tokenRes = await fetch("https://www.googleapis.com/siteVerification/v1/token?verificationMethod=META", {
       method: "POST",
       headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ site: { type: "SITE", identifier: SITE_URL } }),
+      body: JSON.stringify({ site: { type: "SITE", identifier: siteUrl } }),
     });
     const tokenData = await tokenRes.json();
-    if (!tokenData.token) return Response.json({ error: "getToken failed", detail: tokenData }, { status: 502 });
-    const verifyToken = tokenData.token;
+    if (!tokenRes.ok || !tokenData.token) {
+      return Response.json({ ok: false, status: "BLOCKED", reason: "VERIFICATION_TOKEN_REQUEST_FAILED", http_status: tokenRes.status }, { status: 502 });
+    }
 
-    // 2. Persist the token so Seo.jsx injects it site-wide
-    const list = await base44.asServiceRole.entities.AppSettings.list(1);
-    const s = list[0];
-    if (s?.id) {
-      await base44.asServiceRole.entities.AppSettings.update(s.id, { google_site_verification: verifyToken });
+    const verifyToken = tokenData.token;
+    const settings = await base44.asServiceRole.entities.AppSettings.list(1);
+    const current = settings[0];
+    if (current?.id) {
+      await base44.asServiceRole.entities.AppSettings.update(current.id, { google_site_verification: verifyToken });
     } else {
       await base44.asServiceRole.entities.AppSettings.create({ google_site_verification: verifyToken });
     }
 
-    // 3. Ask Google to verify (it fetches the rendered home page)
-    const insRes = await fetch("https://www.googleapis.com/siteVerification/v1/webResource?verificationMethod=META", {
+    const verifyRes = await fetch("https://www.googleapis.com/siteVerification/v1/webResource?verificationMethod=META", {
       method: "POST",
       headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ site: { type: "SITE", identifier: SITE_URL } }),
+      body: JSON.stringify({ site: { type: "SITE", identifier: siteUrl } }),
     });
-    const insData = await insRes.json();
-    const verified = insRes.ok && !!insData?.ownershipLevel;
+    const verifyData = await verifyRes.json();
+    const verified = verifyRes.ok && Boolean(verifyData?.ownershipLevel);
 
-    // 4. Add the property to Search Console once verified
-    let added = null;
+    let propertyAdded = false;
     if (verified) {
-      const addRes = await fetch(`https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(SITE_URL)}`, {
+      const property = registry?.google_search_console_property && registry.google_search_console_property !== "UNKNOWN"
+        ? registry.google_search_console_property
+        : siteUrl + "/";
+      const addRes = await fetch(`https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(property)}`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ siteUrl: SITE_URL }),
+        body: JSON.stringify({ siteUrl: property }),
       });
-      added = addRes.ok;
+      propertyAdded = addRes.ok;
     }
 
-    return Response.json({ ok: true, verified, token: verifyToken, insertResponse: insData, added });
+    return Response.json({
+      ok: verified,
+      status: verified ? "VERIFIED" : "BLOCKED",
+      action_class: "PROTECTED",
+      siteUrl,
+      verified,
+      propertyAdded,
+      verification_token_stored: true,
+    }, { status: verified ? 200 : 502 });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ ok: false, status: "BLOCKED", error: error instanceof Error ? error.message : "UNKNOWN_ERROR" }, { status: 500 });
   }
 }
