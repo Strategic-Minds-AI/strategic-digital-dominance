@@ -1,37 +1,47 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.40";
 
-// Light check: is the Search Console property for our domain present and verified?
+function acceptedProperties(domain: string, configured?: string) {
+  const values = new Set([
+    `sc-domain:${domain}`,
+    `https://${domain}/`,
+    `http://${domain}/`,
+  ]);
+  if (configured && configured !== "UNKNOWN") values.add(configured);
+  return values;
+}
+
 export default async function (req: Request): Promise<Response> {
   try {
     const base44 = createClientFromRequest(req);
+    const registryRows = await base44.asServiceRole.entities.CanonicalSiteRegistry.list(1);
+    const registry = registryRows?.[0];
+    const domain = String(registry?.canonical_domain || "").trim().toLowerCase();
+    if (!domain) return Response.json({ connected: false, status: "BLOCKED", reason: "CANONICAL_DOMAIN_UNKNOWN" }, { status: 409 });
+
     const { accessToken } = await base44.asServiceRole.connectors.getConnection("google_search_console");
-    // Fetch connected account email
-    let accountEmail = null;
-    try {
-      const userRes = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-      if (userRes.ok) {
-        const userData = await userRes.json();
-        accountEmail = userData.email || null;
-      }
-    } catch {}
     const res = await fetch("https://www.googleapis.com/webmasters/v3/sites", {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
     const data = await res.json();
-    if (!res.ok) return Response.json({ error: "Search Console not reachable", detail: data }, { status: 502 });
+    if (!res.ok) return Response.json({ connected: false, status: "BLOCKED", reason: "SEARCH_CONSOLE_UNREACHABLE", http_status: res.status }, { status: 502 });
+
+    const expectedDomainProperty = `sc-domain:${domain}`;
+    const allowed = acceptedProperties(domain, registry?.google_search_console_property);
     const sites = data.siteEntry || [];
-    const match = sites.find((s) => s.siteUrl.toLowerCase().includes("epoxygaragefloorestimate"));
+    const match = sites.find((site: any) => allowed.has(String(site.siteUrl || "").toLowerCase()));
+
     return Response.json({
       connected: true,
-      accountEmail,
-      propertyFound: !!match,
+      mode: "READ_ONLY",
+      canonical_domain: domain,
+      expectedDomainProperty,
+      configured_property: registry?.google_search_console_property || "UNKNOWN",
+      propertyFound: Boolean(match),
       siteUrl: match?.siteUrl || null,
       permissionLevel: match?.permissionLevel || null,
-      allSites: sites.map((s) => ({ siteUrl: s.siteUrl, permissionLevel: s.permissionLevel })),
+      available_properties: sites.map((site: any) => ({ siteUrl: site.siteUrl, permissionLevel: site.permissionLevel })),
     });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ connected: false, status: "BLOCKED", error: error instanceof Error ? error.message : "UNKNOWN_ERROR" }, { status: 500 });
   }
 }

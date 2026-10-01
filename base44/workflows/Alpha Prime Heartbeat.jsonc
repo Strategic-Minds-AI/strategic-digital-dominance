@@ -1,11 +1,11 @@
 {
   "name": "Alpha Prime Heartbeat",
-  "description": "Autonomous 5-minute health monitor \u2014 checks source drift, sitemap canonical drift, connector freshness, critical findings, stale tasks, and smoke checks. Computes a deterministic health score and updates the CanonicalSiteRegistry. This is the deepest health-monitoring layer in the two-clock heartbeat architecture.",
+  "description": "Single 5-minute control clock. Runs the proven Alpha Prime health heartbeat, then a bounded NearMe/NearYou reconciliation in dry-run mode. No second cron is created and no protected external action is executed.",
   "definition": {
     "document": {
       "dsl": "1.0.0",
       "name": "alpha_prime_heartbeat",
-      "version": "1.0",
+      "version": "1.1",
       "namespace": "base44"
     },
     "do": [
@@ -16,10 +16,26 @@
             "function_name": "alphaPrimeHeartbeat",
             "args": {}
           },
-          "then": "end",
+          "then": "run_nearme_reconcile",
           "x-base44": {
             "title": "Run Alpha Prime heartbeat",
             "description": "Source drift, sitemap canonical drift, connector freshness, smoke checks, health score"
+          }
+        }
+      },
+      {
+        "run_nearme_reconcile": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "nearmeReconcile",
+            "args": {
+              "mode": "dry_run"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Run NearMe/NearYou reconciliation",
+            "description": "Read-only registry, opportunity, validation, attribution, and approval reconciliation"
           }
         }
       }

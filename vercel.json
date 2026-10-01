@@ -1,0 +1,65 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "routes": [
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/admin(?:/.*)?",
+      "headers": {
+        "x-robots-tag": "noindex, nofollow"
+      },
+      "dest": "/index.html"
+    },
+    {
+      "src": "/download/?",
+      "headers": {
+        "x-robots-tag": "noindex, nofollow"
+      },
+      "dest": "/index.html"
+    },
+    {
+      "src": "/(?:app-onboarding|app-settings|elite|visualizer-test|questionnaire|ThankYou|login|register|forgot-password|reset-password|portal|contractor|connect|acquire|tool-hub)/?",
+      "headers": {
+        "x-robots-tag": "noindex, nofollow"
+      },
+      "dest": "/index.html"
+    },
+    {
+      "src": "/oauth/consent/?",
+      "headers": {
+        "x-robots-tag": "noindex, nofollow"
+      },
+      "dest": "/index.html"
+    },
+    {
+      "src": "/contractor/bid/?",
+      "headers": {
+        "x-robots-tag": "noindex, nofollow"
+      },
+      "dest": "/index.html"
+    },
+    {
+      "src": "/(?:results|book|booked)/[^/]+/?",
+      "headers": {
+        "x-robots-tag": "noindex, nofollow"
+      },
+      "dest": "/index.html"
+    },
+    {
+      "src": "/p/[^/]+/?",
+      "headers": {
+        "x-robots-tag": "noindex, nofollow"
+      },
+      "dest": "/index.html"
+    },
+    {
+      "src": "/",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/.*",
+      "status": 404
+    }
+  ]
+}

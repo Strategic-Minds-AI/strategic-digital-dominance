@@ -1,0 +1,110 @@
+{
+  "name": "ServiceRegistry",
+  "type": "object",
+  "properties": {
+    "service_id": {
+      "type": "string",
+      "description": "Stable service identifier"
+    },
+    "category": {
+      "type": "string"
+    },
+    "vertical": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "slug": {
+      "type": "string"
+    },
+    "aliases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "naics_codes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "intents": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "emergency": {
+      "type": "boolean",
+      "default": false
+    },
+    "residential": {
+      "type": "boolean",
+      "default": true
+    },
+    "commercial": {
+      "type": "boolean",
+      "default": true
+    },
+    "source_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "verified_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "verified",
+        "pending",
+        "conflict",
+        "retired"
+      ],
+      "default": "pending"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "service_id",
+    "category",
+    "vertical",
+    "name",
+    "slug",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

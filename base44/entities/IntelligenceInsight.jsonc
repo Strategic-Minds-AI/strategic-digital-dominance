@@ -1,0 +1,112 @@
+{
+  "name": "IntelligenceInsight",
+  "type": "object",
+  "properties": {
+    "insight_id": {
+      "type": "string"
+    },
+    "cycle_id": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "anomaly",
+        "opportunity",
+        "repair",
+        "approval",
+        "experiment",
+        "revenue",
+        "keyword",
+        "indexing",
+        "data_quality"
+      ]
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low",
+        "info"
+      ],
+      "default": "medium"
+    },
+    "evidence_status": {
+      "type": "string",
+      "enum": [
+        "VERIFIED",
+        "PARTIAL",
+        "INFERRED",
+        "BLOCKED"
+      ],
+      "default": "BLOCKED"
+    },
+    "title": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string",
+      "maxLength": 5000
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "recommended_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "acknowledged",
+        "actioned",
+        "dismissed"
+      ],
+      "default": "open"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "insight_id",
+    "cycle_id",
+    "kind",
+    "evidence_status",
+    "title",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

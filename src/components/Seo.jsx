@@ -73,6 +73,26 @@ function setCanonical(href) {
   el.setAttribute("href", href);
 }
 
+function removeCanonical() {
+  document.head.querySelector('link[rel="canonical"]')?.remove();
+  document.head.querySelector('meta[property="og:url"]')?.remove();
+}
+
+export function isLocationDraft(path = "") {
+  return /^\/[a-z]{2}\/[a-z0-9-]+\/?$/i.test(path);
+}
+
+export function shouldNoIndex(path = "") {
+  const exact = new Set([
+    "/download", "/app-onboarding", "/app-settings", "/elite", "/visualizer-test",
+    "/questionnaire", "/ThankYou", "/login", "/register", "/forgot-password",
+    "/reset-password", "/portal", "/connect", "/acquire", "/tool-hub", "/oauth/consent",
+  ]);
+  if (exact.has(path) || isLocationDraft(path)) return true;
+  return ["/admin", "/api/", "/contractor", "/results/", "/book/", "/booked/", "/p/"]
+    .some((prefix) => path === prefix.replace(/\/$/, "") || path.startsWith(prefix));
+}
+
 function clearJsonLd() {
   document.head.querySelectorAll('script[data-seo="jsonld"]').forEach((s) => s.remove());
 }
@@ -110,10 +130,21 @@ export default function RouteSeo() {
     const merged = { ...cfg, title, description: desc, faq };
 
     const url = SITE_URL + path;
+    const runtimeNotFound = document.documentElement.dataset.pageNotFound === "true";
+    const noIndex = runtimeNotFound || shouldNoIndex(path);
+
     document.title = title;
     setMeta("name", "description", desc);
-    setMeta("name", "robots", "index, follow");
-    setCanonical(url);
+    const robotsDirective = runtimeNotFound
+      ? "noindex, nofollow"
+      : isLocationDraft(path)
+        ? "noindex, follow"
+        : noIndex
+          ? "noindex, nofollow"
+          : "index, follow";
+    setMeta("name", "robots", robotsDirective);
+    if (noIndex) removeCanonical();
+    else setCanonical(url);
 
     // Google Search Console verification tag (injected from AppSettings)
     if (settings?.google_site_verification) {
@@ -124,7 +155,7 @@ export default function RouteSeo() {
     setMeta("property", "og:site_name", settings?.seo?.site_name || BUSINESS.name);
     setMeta("property", "og:title", title);
     setMeta("property", "og:description", desc);
-    setMeta("property", "og:url", url);
+    if (!noIndex) setMeta("property", "og:url", url);
     setMeta("property", "og:image", image);
 
     setMeta("name", "twitter:card", "summary_large_image");
@@ -133,7 +164,7 @@ export default function RouteSeo() {
     setMeta("name", "twitter:image", image);
 
     clearJsonLd();
-    const blocks = buildJsonLd(path, merged);
+    const blocks = noIndex ? [] : buildJsonLd(path, merged);
     blocks.forEach((obj) => {
       const s = document.createElement("script");
       s.type = "application/ld+json";

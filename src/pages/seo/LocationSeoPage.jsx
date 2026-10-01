@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import EpoxyContractorTemplate from "@/components/seo/EpoxyContractorTemplate";
 import PageNotFound from "@/lib/PageNotFound";
 import { base44 } from "@/api/base44Client";
@@ -54,7 +54,6 @@ function resolveState(segment) {
 
 export default function LocationSeoPage() {
   const { state, citySlug: slug } = useParams();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [pageData, setPageData] = useState(null);
@@ -70,7 +69,15 @@ export default function LocationSeoPage() {
 
     // Redirect full-state-name URLs to 2-letter-code canonical grammar
     if (resolved.needsRedirect) {
-      navigate(`/${resolved.code.toLowerCase()}/${slug}`, { replace: true });
+      const canonicalPath = `/${resolved.code.toLowerCase()}/${slug}`;
+      let robots = document.head.querySelector('meta[name="robots"]');
+      if (!robots) {
+        robots = document.createElement("meta");
+        robots.setAttribute("name", "robots");
+        document.head.appendChild(robots);
+      }
+      robots.setAttribute("content", "noindex, follow");
+      window.location.replace(canonicalPath);
       return;
     }
 

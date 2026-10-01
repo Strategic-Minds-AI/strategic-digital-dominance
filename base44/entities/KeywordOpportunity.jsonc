@@ -1,0 +1,169 @@
+{
+  "name": "KeywordOpportunity",
+  "type": "object",
+  "properties": {
+    "opportunity_id": {
+      "type": "string"
+    },
+    "scope_type": {
+      "type": "string",
+      "enum": [
+        "national",
+        "state",
+        "county",
+        "place",
+        "domain",
+        "page",
+        "service"
+      ]
+    },
+    "scope_id": {
+      "type": "string"
+    },
+    "service_id": {
+      "type": "string"
+    },
+    "geography_id": {
+      "type": "string"
+    },
+    "keyword": {
+      "type": "string"
+    },
+    "cluster_id": {
+      "type": "string"
+    },
+    "intent": {
+      "type": "string",
+      "enum": [
+        "transactional",
+        "informational",
+        "comparison",
+        "navigational",
+        "emergency",
+        "unknown"
+      ],
+      "default": "unknown"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "search_console",
+        "provider_estimate",
+        "trends",
+        "internal",
+        "other"
+      ]
+    },
+    "source_observed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "monthly_searches_estimate": {
+      "type": "number"
+    },
+    "trends_index": {
+      "type": "number"
+    },
+    "impressions": {
+      "type": "number"
+    },
+    "clicks": {
+      "type": "number"
+    },
+    "ctr": {
+      "type": "number"
+    },
+    "avg_position": {
+      "type": "number"
+    },
+    "cpc_estimate": {
+      "type": "number"
+    },
+    "conversions": {
+      "type": "number"
+    },
+    "verified_revenue": {
+      "type": "number"
+    },
+    "competition_level": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "unknown"
+      ],
+      "default": "unknown"
+    },
+    "evidence_status": {
+      "type": "string",
+      "enum": [
+        "VERIFIED",
+        "PARTIAL",
+        "INFERRED",
+        "BLOCKED"
+      ],
+      "default": "BLOCKED"
+    },
+    "opportunity_score": {
+      "type": "number",
+      "default": 0
+    },
+    "target_domain": {
+      "type": "string"
+    },
+    "target_path": {
+      "type": "string"
+    },
+    "cannibalization_key": {
+      "type": "string"
+    },
+    "recommended_action": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "observed",
+        "planned",
+        "approved",
+        "blocked",
+        "in_progress",
+        "completed",
+        "retired"
+      ],
+      "default": "observed"
+    }
+  },
+  "required": [
+    "opportunity_id",
+    "scope_type",
+    "keyword",
+    "source",
+    "evidence_status",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
