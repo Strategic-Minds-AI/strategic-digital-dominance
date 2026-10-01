@@ -2,8 +2,8 @@ import { createClientFromRequest } from "npm:@base44/sdk@0.8.48";
 
 type JsonMap = Record<string, any>;
 
-const DOMAIN_RE = /^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z]{2,63}$/;
-const cleanDomain = (value: unknown) => String(value || "").trim().toLowerCase().replace(/^https?:\\/\\//, "").replace(/\\/$/, "");
+const DOMAIN_RE = /^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,63}$/;
+const cleanDomain = (value: unknown) => String(value || "").trim().toLowerCase().replace(/^https?:\/\//, "").replace(/\/$/, "");
 const dateOnly = (date: Date) => date.toISOString().slice(0, 10);
 
 function requireDomain(value: unknown): string {
@@ -34,11 +34,11 @@ async function listGa4(base44: any) {
   });
   if (!response.ok) throw new Error(`GA4_LIST_FAILED_${response.status}`);
   const payload = await response.json();
-  const properties = [];
+  const properties: JsonMap[] = [];
   for (const account of payload.accountSummaries || []) {
     for (const property of account.propertySummaries || []) {
       properties.push({
-        property_id: String(property.property || "").replace(/^properties\\//, ""),
+        property_id: String(property.property || "").replace(/^properties\//, ""),
         display_name: property.displayName || "",
         account_name: account.displayName || "",
       });
@@ -58,8 +58,12 @@ export default async function (req: Request): Promise<Response> {
       return Response.json({
         ok: true,
         mode: "READ_ONLY",
-        search_console: gsc.status === "fulfilled" ? { connected: true, properties: gsc.value.sites } : { connected: false, error: String(gsc.reason?.message || gsc.reason) },
-        ga4: ga4.status === "fulfilled" ? { connected: true, properties: ga4.value.properties } : { connected: false, error: String(ga4.reason?.message || ga4.reason) },
+        search_console: gsc.status === "fulfilled"
+          ? { connected: true, properties: gsc.value.sites }
+          : { connected: false, error: String(gsc.reason?.message || gsc.reason) },
+        ga4: ga4.status === "fulfilled"
+          ? { connected: true, properties: ga4.value.properties }
+          : { connected: false, error: String(ga4.reason?.message || ga4.reason) },
       });
     }
 
@@ -87,12 +91,21 @@ export default async function (req: Request): Promise<Response> {
       });
       if (!response.ok) throw new Error(`GSC_QUERY_FAILED_${response.status}`);
       const payload = await response.json();
-      return Response.json({ ok: true, mode: "READ_ONLY", domain, siteUrl, date_range: { start: dateOnly(start), end: dateOnly(end) }, rows: payload.rows || [] });
+      return Response.json({
+        ok: true,
+        mode: "READ_ONLY",
+        domain,
+        siteUrl,
+        date_range: { start: dateOnly(start), end: dateOnly(end) },
+        rows: payload.rows || [],
+      });
     }
 
     if (action === "ga4Report") {
-      const propertyId = String(body.property_id || "").replace(/^properties\\//, "");
-      if (!/^\\d+$/.test(propertyId)) return Response.json({ ok: false, status: "BLOCKED", reason: "EXACT_GA4_PROPERTY_ID_REQUIRED" }, { status: 400 });
+      const propertyId = String(body.property_id || "").replace(/^properties\//, "");
+      if (!/^\d+$/.test(propertyId)) {
+        return Response.json({ ok: false, status: "BLOCKED", reason: "EXACT_GA4_PROPERTY_ID_REQUIRED" }, { status: 400 });
+      }
       const days = Math.min(Math.max(Number(body.days || 28), 1), 90);
       const { accessToken, properties } = await listGa4(base44);
       if (!properties.some((property) => property.property_id === propertyId)) {
@@ -113,11 +126,21 @@ export default async function (req: Request): Promise<Response> {
       });
       if (!response.ok) throw new Error(`GA4_QUERY_FAILED_${response.status}`);
       const payload = await response.json();
-      return Response.json({ ok: true, mode: "READ_ONLY", property_id: propertyId, date_range: { start: dateOnly(start), end: dateOnly(end) }, rows: payload.rows || [] });
+      return Response.json({
+        ok: true,
+        mode: "READ_ONLY",
+        property_id: propertyId,
+        date_range: { start: dateOnly(start), end: dateOnly(end) },
+        rows: payload.rows || [],
+      });
     }
 
     return Response.json({ ok: false, error: "Unknown action. Use discover, gscSearchAnalytics, or ga4Report" }, { status: 400 });
   } catch (error) {
-    return Response.json({ ok: false, status: "BLOCKED", error: error instanceof Error ? error.message : "UNKNOWN_ERROR" }, { status: 500 });
+    return Response.json({
+      ok: false,
+      status: "BLOCKED",
+      error: error instanceof Error ? error.message : "UNKNOWN_ERROR",
+    }, { status: 500 });
   }
 }
