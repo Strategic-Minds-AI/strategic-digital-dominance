@@ -94,18 +94,22 @@ export function generateServerSeoShells(rootDir = process.cwd()) {
   });
   fs.writeFileSync(templatePath, home);
 
-  const emitted = new Set(['/']);
+  const indexable = new Set(['/']);
+  const locationShells = [];
   for (const [route, [title, description]] of Object.entries(STATIC_SEO)) {
     writeShell(distDir, home, route, { title, description });
-    emitted.add(route);
+    indexable.add(route);
   }
   for (const item of verifiedStoreRoutes()) {
-    writeShell(distDir, home, item.route, item);
-    emitted.add(item.route);
+    writeShell(distDir, home, item.route, { ...item, robots: 'noindex, follow' });
+    locationShells.push(item.route);
   }
 
-  fs.writeFileSync(path.join(distDir, 'sitemap.xml'), sitemapXml(emitted));
-  return { emitted: [...emitted].sort() };
+  fs.writeFileSync(path.join(distDir, 'sitemap.xml'), sitemapXml(indexable));
+  return {
+    indexable: [...indexable].sort(),
+    location_shells: locationShells.sort(),
+  };
 }
 
 export function serverSeoShellsPlugin() {
