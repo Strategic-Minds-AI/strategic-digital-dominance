@@ -78,13 +78,17 @@ function removeCanonical() {
   document.head.querySelector('meta[property="og:url"]')?.remove();
 }
 
+export function isLocationDraft(path = "") {
+  return /^\/[a-z]{2}\/[a-z0-9-]+\/?$/i.test(path);
+}
+
 export function shouldNoIndex(path = "") {
   const exact = new Set([
     "/download", "/app-onboarding", "/app-settings", "/elite", "/visualizer-test",
     "/questionnaire", "/ThankYou", "/login", "/register", "/forgot-password",
     "/reset-password", "/portal", "/connect", "/acquire", "/tool-hub", "/oauth/consent",
   ]);
-  if (exact.has(path)) return true;
+  if (exact.has(path) || isLocationDraft(path)) return true;
   return ["/admin", "/api/", "/contractor", "/results/", "/book/", "/booked/", "/p/"]
     .some((prefix) => path === prefix.replace(/\/$/, "") || path.startsWith(prefix));
 }
@@ -131,7 +135,14 @@ export default function RouteSeo() {
 
     document.title = title;
     setMeta("name", "description", desc);
-    setMeta("name", "robots", noIndex ? "noindex, nofollow" : "index, follow");
+    const robotsDirective = runtimeNotFound
+      ? "noindex, nofollow"
+      : isLocationDraft(path)
+        ? "noindex, follow"
+        : noIndex
+          ? "noindex, nofollow"
+          : "index, follow";
+    setMeta("name", "robots", robotsDirective);
     if (noIndex) removeCanonical();
     else setCanonical(url);
 
