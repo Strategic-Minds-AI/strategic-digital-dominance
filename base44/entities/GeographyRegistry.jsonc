@@ -1,0 +1,109 @@
+{
+  "name": "GeographyRegistry",
+  "type": "object",
+  "properties": {
+    "geography_id": {
+      "type": "string",
+      "description": "Stable Census/FIPS-derived identifier"
+    },
+    "geography_type": {
+      "type": "string",
+      "enum": [
+        "state",
+        "county",
+        "place",
+        "cdp",
+        "zip",
+        "metro"
+      ]
+    },
+    "name": {
+      "type": "string"
+    },
+    "state_abbreviation": {
+      "type": "string"
+    },
+    "state_fips": {
+      "type": "string"
+    },
+    "county_fips": {
+      "type": "string"
+    },
+    "place_fips": {
+      "type": "string"
+    },
+    "parent_geography_id": {
+      "type": "string"
+    },
+    "canonical_slug": {
+      "type": "string"
+    },
+    "population": {
+      "type": "number"
+    },
+    "centroid_lat": {
+      "type": "number"
+    },
+    "centroid_lng": {
+      "type": "number"
+    },
+    "source": {
+      "type": "string",
+      "description": "Authoritative source name"
+    },
+    "source_version": {
+      "type": "string"
+    },
+    "source_url": {
+      "type": "string"
+    },
+    "verified_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "verified",
+        "pending",
+        "conflict",
+        "stale"
+      ],
+      "default": "pending"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "geography_id",
+    "geography_type",
+    "name",
+    "canonical_slug",
+    "source",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
