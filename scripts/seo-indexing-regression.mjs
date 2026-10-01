@@ -26,6 +26,7 @@ check('robots has exactly one sitemap', (robots.match(/^Sitemap:/gm) || []).leng
 check('robots retires legacy sitemap', !robots.includes('sitemap-epn.xml'));
 
 check('RouteSeo has explicit noindex policy', seo.includes('shouldNoIndex(path'));
+check('location routes default to draft noindex', seo.includes('isLocationDraft(path)') && seo.includes('noindex, follow'));
 check('RouteSeo respects runtime 404 marker', seo.includes('dataset.pageNotFound === "true"'));
 check('RouteSeo removes canonical on noindex', seo.includes('if (noIndex) removeCanonical()'));
 check('RouteSeo suppresses structured data on noindex', seo.includes('noIndex ? [] : buildJsonLd'));
@@ -37,10 +38,12 @@ check('404 sets runtime marker', notFound.includes("dataset.pageNotFound = 'true
 check('legacy full-state route uses document navigation', location.includes('window.location.replace(canonicalPath)'));
 check('legacy full-state route sets noindex', location.includes('noindex, follow'));
 
-check('server shells derive from verified store source', shell.includes('XPS_LOCATIONS') && shell.includes("location.status !== 'coming_soon'"));
-check('server shells generate sitemap from emitted routes', shell.includes("fs.writeFileSync(path.join(distDir, 'sitemap.xml')"));
+check('server shells derive known store routes without indexing them', shell.includes('XPS_LOCATIONS') && shell.includes("location.status !== 'coming_soon'") && shell.includes("robots: 'noindex, follow'"));
+check('server shells generate sitemap only from indexable routes', shell.includes("sitemapXml(indexable)"));
+check('noindex server shells remove canonical', shell.includes("startsWith('noindex')") && shell.includes("rel=[\"']canonical"));
 check('server shell regression excludes aliases', shellTest.includes('full-state aliases must not be in sitemap'));
 check('server shell regression excludes noindex download route', shellTest.includes('noindex app route must not be in sitemap'));
+check('server shell regression excludes all location drafts', shellTest.includes('no location draft may enter sitemap before PageSpec approval'));
 
 const finalRoute = vercel.routes?.[vercel.routes.length - 1];
 check('Vercel unknown routes fail with real 404', finalRoute?.status === 404 && finalRoute?.src === '/.*');
