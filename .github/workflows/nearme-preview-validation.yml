@@ -11,6 +11,10 @@ on:
       - 'base44/workflows/Alpha Prime Heartbeat.jsonc'
       - 'scripts/nearme-runtime-regression.mjs'
       - 'scripts/line-validation-ledger.mjs'
+      - 'scripts/server-seo-shells.mjs'
+      - 'scripts/server-seo-shells.test.mjs'
+      - 'vite.config.js'
+      - 'vercel.json'
       - '.github/workflows/nearme-preview-validation.yml'
 
 permissions:
@@ -38,12 +42,18 @@ jobs:
         id: seo
         continue-on-error: true
         run: npm run test:seo-indexing
-      - name: Typecheck
+      - name: Typecheck baseline
+        id: typecheck
+        continue-on-error: true
         run: npm run typecheck
-      - name: Lint
+      - name: Lint baseline
+        id: lint
+        continue-on-error: true
         run: npm run lint
       - name: Build
         run: npm run build
+      - name: Verified server route shells
+        run: node scripts/server-seo-shells.test.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -51,7 +61,10 @@ jobs:
           path: line-validation-receipt.json
           if-no-files-found: warn
       - name: Release gate
-        if: steps.seo.outcome != 'success'
+        if: steps.seo.outcome != 'success' || steps.typecheck.outcome != 'success' || steps.lint.outcome != 'success'
         run: |
-          echo 'RELEASE_BLOCKED_PREEXISTING_SEO_BASELINE'
+          echo "RELEASE_BLOCKED_BASELINE_VALIDATION"
+          echo "seo=${{ steps.seo.outcome }}"
+          echo "typecheck=${{ steps.typecheck.outcome }}"
+          echo "lint=${{ steps.lint.outcome }}"
           exit 1
