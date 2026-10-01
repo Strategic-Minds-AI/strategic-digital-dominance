@@ -11,6 +11,7 @@ on:
       - 'base44/workflows/Alpha Prime Heartbeat.jsonc'
       - 'scripts/nearme-runtime-regression.mjs'
       - 'scripts/line-validation-ledger.mjs'
+      - 'scripts/changed-code-validation.mjs'
       - 'scripts/server-seo-shells.mjs'
       - 'scripts/server-seo-shells.test.mjs'
       - 'vite.config.js'
@@ -38,10 +39,10 @@ jobs:
         run: node scripts/nearme-runtime-regression.mjs
       - name: Existing Alpha Prime regression
         run: npm run test:alpha-prime
-      - name: Existing SEO indexing baseline
-        id: seo
-        continue-on-error: true
+      - name: SEO and index eligibility contract
         run: npm run test:seo-indexing
+      - name: Changed-code syntax and lint
+        run: node scripts/changed-code-validation.mjs origin/main HEAD
       - name: Typecheck baseline
         id: typecheck
         continue-on-error: true
@@ -61,10 +62,9 @@ jobs:
           path: line-validation-receipt.json
           if-no-files-found: warn
       - name: Release gate
-        if: steps.seo.outcome != 'success' || steps.typecheck.outcome != 'success' || steps.lint.outcome != 'success'
+        if: steps.typecheck.outcome != 'success' || steps.lint.outcome != 'success'
         run: |
-          echo "RELEASE_BLOCKED_BASELINE_VALIDATION"
-          echo "seo=${{ steps.seo.outcome }}"
+          echo "RELEASE_BLOCKED_REPO_BASELINE_DEBT"
           echo "typecheck=${{ steps.typecheck.outcome }}"
           echo "lint=${{ steps.lint.outcome }}"
           exit 1
