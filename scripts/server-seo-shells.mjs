@@ -53,6 +53,10 @@ function injectMetadata(template, { title, description, route, robots = 'index, 
     `<meta property="og:description" content="${escapeHtml(description)}" />`);
   html = replaceOrInsert(html, /<meta[^>]+property=["']og:url["'][^>]*>/i,
     `<meta property="og:url" content="${escapeHtml(canonical)}" />`);
+  if (String(robots).toLowerCase().startsWith('noindex')) {
+    html = html.replace(/\s*<link[^>]+rel=["']canonical["'][^>]*>/i, '');
+    html = html.replace(/\s*<meta[^>]+property=["']og:url["'][^>]*>/i, '');
+  }
   return html;
 }
 
