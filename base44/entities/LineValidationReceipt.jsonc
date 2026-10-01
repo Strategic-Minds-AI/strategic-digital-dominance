@@ -1,0 +1,83 @@
+{
+  "name": "LineValidationReceipt",
+  "type": "object",
+  "properties": {
+    "receipt_id": {
+      "type": "string"
+    },
+    "branch": {
+      "type": "string"
+    },
+    "base_sha": {
+      "type": "string"
+    },
+    "head_sha": {
+      "type": "string"
+    },
+    "file_path": {
+      "type": "string"
+    },
+    "line_number": {
+      "type": "number"
+    },
+    "line_hash": {
+      "type": "string"
+    },
+    "validator_version": {
+      "type": "string"
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PASS",
+        "FAIL",
+        "BLOCKED"
+      ]
+    },
+    "failure_reason": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "receipt_id",
+    "file_path",
+    "line_number",
+    "line_hash",
+    "validator_version",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
