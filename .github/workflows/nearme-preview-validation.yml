@@ -1,0 +1,49 @@
+name: NearMe Preview Validation
+
+on:
+  push:
+    branches:
+      - 'apex/nearme-runtime-*'
+  pull_request:
+    paths:
+      - 'base44/entities/**'
+      - 'base44/functions/nearme*/**'
+      - 'base44/workflows/Alpha Prime Heartbeat.jsonc'
+      - 'scripts/nearme-runtime-regression.mjs'
+      - 'scripts/line-validation-ledger.mjs'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm install --no-audit --no-fund
+      - name: Line validation ledger
+        run: node scripts/line-validation-ledger.mjs origin/main HEAD
+      - name: NearMe runtime regression
+        run: node scripts/nearme-runtime-regression.mjs
+      - name: Existing Alpha Prime regression
+        run: npm run test:alpha-prime
+      - name: Existing SEO indexing regression
+        run: npm run test:seo-indexing
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Build
+        run: npm run build
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nearme-line-validation-receipt
+          path: line-validation-receipt.json
+          if-no-files-found: warn
