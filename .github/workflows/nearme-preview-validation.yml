@@ -11,6 +11,7 @@ on:
       - 'base44/workflows/Alpha Prime Heartbeat.jsonc'
       - 'scripts/nearme-runtime-regression.mjs'
       - 'scripts/line-validation-ledger.mjs'
+      - '.github/workflows/nearme-preview-validation.yml'
 
 permissions:
   contents: read
@@ -33,7 +34,9 @@ jobs:
         run: node scripts/nearme-runtime-regression.mjs
       - name: Existing Alpha Prime regression
         run: npm run test:alpha-prime
-      - name: Existing SEO indexing regression
+      - name: Existing SEO indexing baseline
+        id: seo
+        continue-on-error: true
         run: npm run test:seo-indexing
       - name: Typecheck
         run: npm run typecheck
@@ -47,3 +50,8 @@ jobs:
           name: nearme-line-validation-receipt
           path: line-validation-receipt.json
           if-no-files-found: warn
+      - name: Release gate
+        if: steps.seo.outcome != 'success'
+        run: |
+          echo 'RELEASE_BLOCKED_PREEXISTING_SEO_BASELINE'
+          exit 1
