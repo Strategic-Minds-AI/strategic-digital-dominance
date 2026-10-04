@@ -32,15 +32,24 @@
       "url": "https://epoxyquotenearme.com"
     }
     </script>
-    <!-- Google tag (gtag.js) — excluded on /admin routes -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-S9L2QREZJQ"></script>
+    <!-- Google Analytics (GA4) — canonical production host only; excluded on /admin. -->
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      if (!window.location.pathname.startsWith('/admin')) {
-        gtag('config', 'G-S9L2QREZJQ');
-      }
+      (() => {
+        const allowedHosts = new Set(['epoxyquotenearme.com', 'www.epoxyquotenearme.com']);
+        const isAdminRoute = window.location.pathname.startsWith('/admin');
+        if (!allowedHosts.has(window.location.hostname) || isAdminRoute) return;
+
+        const measurementId = 'G-S9L2QREZJQ';
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
+        document.head.appendChild(script);
+
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function gtag(){ window.dataLayer.push(arguments); };
+        window.gtag('js', new Date());
+        window.gtag('config', measurementId);
+      })();
     </script>
   </head>
   <body>
