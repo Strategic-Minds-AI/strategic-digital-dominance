@@ -1,0 +1,26 @@
+name: Digital Dominance V3 Contract Tests
+
+on:
+  push:
+    branches:
+      - feat/digital-dominance-v3-factory-plan
+  pull_request:
+    paths:
+      - "src/lib/digital-dominance-v3/**"
+      - "scripts/dd-v3-*.test.mjs"
+      - ".github/workflows/dd-v3-contract-tests.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run V3 isolated contract tests
+        run: node --test scripts/dd-v3-sitepack.test.mjs scripts/dd-v3-preview-compiler.test.mjs scripts/dd-v3-intake.test.mjs scripts/dd-v3-x1-queue-mapper.test.mjs
