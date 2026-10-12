@@ -20,7 +20,7 @@ import Footer from "@/components/home/Footer";
 // charts, reviews, FAQ, estimate funnel) and layers in city-specific SEO
 // content — so every city page is a functional contractor site, not a
 // thin article.
-export default function EpoxyContractorTemplate({ city, stateCode, stateName, seoConfig }) {
+export default function EpoxyContractorTemplate({ city, stateCode, stateName, seoConfig, previewMode = false }) {
   const { settings } = useSettings();
   const cityState = `${city}, ${stateCode}`;
   const phone = settings.phone || "(833) 700-1239";
@@ -28,13 +28,14 @@ export default function EpoxyContractorTemplate({ city, stateCode, stateName, se
   const reviewCount = settings.google_review_count || 187;
 
   useEffect(() => {
+    if (previewMode) return; // Static, non-indexable preview: no production analytics or canonicals.
     trackEvent("page_view", { page: `/${stateCode}/${city}/` });
     document.title = seoConfig.title;
     const desc = document.querySelector('meta[name="description"]');
     if (desc) desc.setAttribute("content", seoConfig.description);
     const canon = document.querySelector('link[rel="canonical"]');
     if (canon) canon.setAttribute("href", `https://epoxyquotenearme.com/${stateCode.toLowerCase()}/${slugifyCity(city)}/`);
-  }, [city, stateCode, seoConfig]);
+  }, [city, stateCode, seoConfig, previewMode]);
 
   return (
     <div className="bg-white">
@@ -178,7 +179,7 @@ export default function EpoxyContractorTemplate({ city, stateCode, stateName, se
       </section>
 
       <FAQ />
-      <FinalCta settings={settings} />
+      {!previewMode && <FinalCta settings={settings} />}
       <Footer />
     </div>
   );
