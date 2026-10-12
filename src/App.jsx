@@ -43,6 +43,7 @@ import Competitors from '@/pages/admin/Competitors';
 import GoogleSeo from '@/pages/admin/GoogleSeo';
 import SeoDominance from '@/pages/admin/SeoDominance';
 import LocationSeoPage from '@/pages/seo/LocationSeoPage';
+import FactoryPreviewPage, { FactoryPreviewIndex } from '@/pages/seo/FactoryPreviewPage';
 import GeneratedPageView from '@/pages/seo/GeneratedPageView';
 import Guides from '@/pages/seo/Guides';
 import SeoFactory from '@/pages/admin/SeoFactory';
@@ -282,6 +283,8 @@ const AuthenticatedApp = () => {
         <Route path="convergence" element={<ConvergenceEngine />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
+      <Route path="/site-previews/epoxy" element={<FactoryPreviewIndex />} />
+      <Route path="/site-previews/epoxy/:state/:citySlug" element={<FactoryPreviewPage />} />
       <Route path="/:state/:citySlug" element={<LocationSeoPage />} />
       <Route path="/:slug" element={<GeneratedPageView />} />
       <Route path="/visualizer-test" element={<VisualizerTest />} />
