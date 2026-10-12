@@ -54,7 +54,7 @@ test("Clone starts a new draft and cannot inherit approvals, claims, forms, doma
   original.conversion.active_submissions = true;
   original.deployment.production_url = "https://not-a-real-live-site.example";
   const copy = cloneDraftSitePack(original, { city: "Miami", region: "FL" });
-  assert.match(copy.id, /miami-v/);
+  assert.match(copy.id, /miami__v/);
   assert.equal(copy.design.accent_color, "#2563EB");
   assert.equal(copy.release.approved, false);
   assert.equal(copy.design.status, "provisional");
