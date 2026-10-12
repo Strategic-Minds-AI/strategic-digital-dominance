@@ -1,0 +1,39 @@
+{
+  "pack_id": "epoxy-20261012-first-pompano-preview",
+  "version": "1.0.0",
+  "source": {
+    "repository": "Strategic-Minds-AI/strategic-digital-dominance",
+    "commit_sha": "ca78546518599afc7701e6cba072f3d246d0b34d",
+    "template_id": "6aad49b993c918beea47e077"
+  },
+  "brand": {
+    "name": "Epoxy Quote Near Me",
+    "contact_phone": "(877) 958-5264",
+    "legal_business_name": "Xtreme Polishing Systems"
+  },
+  "industry": {
+    "slug": "epoxy_flooring",
+    "services": [
+      "Epoxy garage floor coating estimates",
+      "Decorative garage floor coating consultations"
+    ]
+  },
+  "design": {
+    "approved_reference": "Provisional reference: original Epoxy Quote Near Me contractor page components; awaiting final visual approval",
+    "design_token_version": "epoxy-source-2026-09-27"
+  },
+  "locations": [
+    {
+      "city": "Pompano Beach",
+      "region": "Florida",
+      "country": "US",
+      "verified_service_area": true,
+      "unique_value": "Xtreme Polishing Systems' own Epoxy Quote Near Me AppSettings identifies Pompano Beach, Florida as its primary city and service-area reference. No separate local office is asserted."
+    }
+  ],
+  "provisioning": {
+    "mode": "preview",
+    "approval_required": true,
+    "noindex_until_validated": true
+  }
+}
